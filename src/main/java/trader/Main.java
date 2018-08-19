@@ -40,7 +40,7 @@ import java.util.List;
  * The application can use Simple, Exponential and Weighted moving averages, and Relative Strength Index. For daily open is used SMA with period of 1. For Price is used also SMA with period of 1, applied on Close. The application can trade only on EUR accounts and only EUR/USD pair. Also application will open only one trade and if there is an open trade no other trades will be generated until current trade is closed.
  * @see Config
  *
- * Entries: The signals are generated from crosses between WMA(5) and WMA(20) and priceSMA(1) and WMA(20). All trades are in the direction of WMA(100). Entry signal is 25 pips away from the cross. Stop is on the cross. Entries are executed with Market If Touched Order.
+ * Entries: The signals are generated from crosses between WMA(5) and WMA(20), priceSMA(1) and WMA(20), priceSMA(1) and WMA(100). All trades are in the direction of WMA(100). Entry signal is 25 pips away from the cross. Stop is on the cross. Entries are executed with Market If Touched Order.
  *
  * There are 2 strategies for exiting:
  *  First: When price hit +32 pips, half of the position will be liquidated and stop will be set to break even. Then the stop will be trailed after each bar's extreme.

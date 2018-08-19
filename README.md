@@ -9,7 +9,7 @@ SMA with period of 1. For Price is used also SMA with period of 1, applied on Cl
 EUR accounts and only EUR/USD pair. Also application will open only one trade and if there is an open trade no other trades will 
 be generated until current trade is closed.
 
-Entries: The signals are generated from crosses between WMA(5) and WMA(20) and priceSMA(1) and WMA(20). All trades are in the 
+Entries: The signals are generated from crosses between WMA(5) and WMA(20), priceSMA(1) and WMA(20), priceSMA(1) and WMA(100). All trades are in the 
 direction of WMA(100). Entry signal is 25 pips away from the cross. Stop is on the cross. Entries are executed with 
 Market If Touched Order.
 
