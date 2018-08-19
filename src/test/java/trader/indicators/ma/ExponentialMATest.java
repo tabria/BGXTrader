@@ -5,7 +5,6 @@ import com.oanda.v20.RequestException;
 import com.oanda.v20.instrument.*;
 import com.oanda.v20.pricing_common.PriceValue;
 import com.oanda.v20.primitives.DateTime;
-import com.sun.istack.internal.NotNull;
 import org.junit.Before;
 import org.junit.Test;
 import trader.candles.CandlesUpdater;
@@ -52,7 +51,7 @@ public class ExponentialMATest {
 
 
     @Before
-    public void before() throws ExecuteException, RequestException {
+    public void before() {
 
         this.ask = BigDecimal.ONE;
         this.bid = BigDecimal.TEN;
@@ -213,7 +212,7 @@ public class ExponentialMATest {
         this.period = period;
     }
 
-    private ZonedDateTime dateTimeConversion(@NotNull DateTime dateTime){
+    private ZonedDateTime dateTimeConversion(DateTime dateTime){
         Instant instantDateTime = Instant.parse(dateTime.toString());
         ZoneId zoneId = ZoneId.of("UTC");
         return ZonedDateTime.ofInstant(instantDateTime, zoneId);

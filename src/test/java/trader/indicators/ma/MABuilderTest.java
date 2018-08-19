@@ -12,7 +12,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static trader.indicators.ma.enums.MAType.*;
@@ -171,7 +171,7 @@ public class MABuilderTest {
      * Test build
      */
     @Test
-    public void WhenBuildThenReturnCorrectObject() throws NoSuchFieldException, IllegalAccessException {
+    public void WhenBuildThenReturnCorrectObject()  {
 
         Indicator sma = this.builder.setMAType(MAType.SIMPLE).build();
         String smaName = sma.getClass().getSimpleName();
@@ -200,9 +200,9 @@ public class MABuilderTest {
         return (long) field.get(this.builder);
     }
 
-    private void setMockRequest() throws NoSuchFieldException, IllegalAccessException {
-        Field request = this.builder.getClass().getDeclaredField("request");
-        request.setAccessible(true);
-        request.set(this.builder, this.mockRequest);
-    }
+//    private void setMockRequest() throws NoSuchFieldException, IllegalAccessException {
+//        Field request = this.builder.getClass().getDeclaredField("request");
+//        request.setAccessible(true);
+//        request.set(this.builder, this.mockRequest);
+//    }
 }

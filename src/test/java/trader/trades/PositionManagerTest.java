@@ -18,7 +18,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 public class PositionManagerTest {
@@ -35,8 +34,8 @@ public class PositionManagerTest {
     private Order mockOrder;
     private List<TradeSummary> trades;
     private List<Order> orders;
-    BigDecimal ask = BigDecimal.ONE;
-    BigDecimal bid = BigDecimal.TEN;
+    private BigDecimal ask = BigDecimal.ONE;
+    private BigDecimal bid = BigDecimal.TEN;
 
     @Before
     public void before() throws Exception {

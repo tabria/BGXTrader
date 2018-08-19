@@ -3,7 +3,6 @@ package trader.indicators.ma;
 import com.oanda.v20.instrument.*;
 import com.oanda.v20.pricing_common.PriceValue;
 import com.oanda.v20.primitives.DateTime;
-import com.sun.istack.internal.NotNull;
 import org.junit.Before;
 import org.junit.Test;
 import trader.candles.CandlesUpdater;
@@ -47,7 +46,7 @@ public class WeightedMATest {
     private BigDecimal bid;
 
     @Before
-    public void before() throws Exception {
+    public void before()  {
 
         this.ask = BigDecimal.ONE;
         this.bid = BigDecimal.TEN;
@@ -202,7 +201,7 @@ public class WeightedMATest {
         this.period = period;
     }
 
-    private ZonedDateTime dateTimeConversion(@NotNull DateTime dateTime){
+    private ZonedDateTime dateTimeConversion(DateTime dateTime){
         Instant instantDateTime = Instant.parse(dateTime.toString());
         ZoneId zoneId = ZoneId.of("UTC");
         return ZonedDateTime.ofInstant(instantDateTime, zoneId);

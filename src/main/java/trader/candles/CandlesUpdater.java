@@ -8,7 +8,6 @@ import com.oanda.v20.instrument.CandlestickGranularity;
 import com.oanda.v20.instrument.InstrumentCandlesRequest;
 import com.oanda.v20.instrument.InstrumentCandlesResponse;
 import com.oanda.v20.primitives.DateTime;
-import com.sun.istack.internal.NotNull;
 import trader.prices.PriceObservable;
 
 import java.time.Instant;
@@ -107,7 +106,7 @@ public final class CandlesUpdater {
      * @return {@link ZonedDateTime} next candle open time
      *
      */
-    private ZonedDateTime nextCandleOpenTime(@NotNull DateTime lastCandleDateTime) {
+    private ZonedDateTime nextCandleOpenTime(DateTime lastCandleDateTime) {
 
         long timeFrameSeconds = timeFrameToSeconds();
         ZonedDateTime nextCandleOpenDateTime = this.dateTimeConversion(lastCandleDateTime);
@@ -122,7 +121,7 @@ public final class CandlesUpdater {
      * @return {@link ZonedDateTime}zoned DateTime value
      * @see DateTime
      */
-    private ZonedDateTime dateTimeConversion(@NotNull DateTime dateTime){
+    private ZonedDateTime dateTimeConversion( DateTime dateTime){
         Instant instantDateTime = Instant.parse(dateTime.toString());
         ZoneId zoneId = ZoneId.of("UTC");
         return ZonedDateTime.ofInstant(instantDateTime, zoneId);
