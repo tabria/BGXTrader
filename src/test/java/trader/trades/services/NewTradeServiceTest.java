@@ -7,6 +7,7 @@ import com.oanda.v20.primitives.AccountUnits;
 import com.oanda.v20.primitives.DateTime;
 import com.oanda.v20.trade.TradeSummary;
 import com.oanda.v20.transaction.OrderFillTransaction;
+import com.oanda.v20.transaction.Transaction;
 import com.oanda.v20.transaction.TransactionID;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,7 +45,7 @@ public class NewTradeServiceTest {
     private AccountUnits mockMarginAvailable;
     private AccountUnits mockMarginUsed;
     private OrderCreateResponse mockOrderCreateResponse;
-    private OrderFillTransaction mockOrderFillTransaction;
+    private Transaction mockTransaction;
     private TransactionID mockTransactionID;
     private DateTime mockDateTime;
 
@@ -55,15 +56,15 @@ public class NewTradeServiceTest {
         this.mockContext.order = mock(OrderContext.class);
 
         this.mockOrderCreateResponse = mock(OrderCreateResponse.class);
-        this.mockOrderFillTransaction = mock(OrderFillTransaction.class);
+        this.mockTransaction = mock(Transaction.class);
         this.mockTransactionID = mock(TransactionID.class);
         when(this.mockTransactionID.toString()).thenReturn(TRANSACTION_ID);
-        when(this.mockOrderFillTransaction.getId()).thenReturn(this.mockTransactionID);
+        when(this.mockTransaction.getId()).thenReturn(this.mockTransactionID);
 
         this.mockDateTime = mock(DateTime.class);
         when(this.mockDateTime.toString()).thenReturn(DATE_TIME);
-        when(this.mockOrderFillTransaction.getTime()).thenReturn(this.mockDateTime);
-        when(this.mockOrderCreateResponse.getOrderFillTransaction()).thenReturn(this.mockOrderFillTransaction);
+        when(this.mockTransaction.getTime()).thenReturn(this.mockDateTime);
+        when(this.mockOrderCreateResponse.getOrderCreateTransaction()).thenReturn(this.mockTransaction);
 
         when(this.mockContext.order.create(any(OrderCreateRequest.class))).thenReturn(this.mockOrderCreateResponse);
 

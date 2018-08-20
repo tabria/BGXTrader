@@ -81,9 +81,8 @@ public final class NewTradeService {
                         //get the response from the server
                         this.orderCreateResponse = context.order.create(request);
 
-
-                        TransactionID id = this.orderCreateResponse.getOrderFillTransaction().getId();
-                        DateTime time = this.orderCreateResponse.getOrderFillTransaction().getTime();
+                        TransactionID id = this.orderCreateResponse.getOrderCreateTransaction().getId();
+                        DateTime time = this.orderCreateResponse.getOrderCreateTransaction().getTime();
                         System.out.println("New Trade has been added with id: " +id.toString() + " and time: " +time.toString() );
                     } catch (RequestException | ExecuteException e){
                         throw new RuntimeException(e);

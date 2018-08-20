@@ -12,7 +12,9 @@ import java.math.BigDecimal;
 
 public final class Config {
 
-    private Config(){ };
+    private Config(){
+
+    }
 
 
     /**
@@ -24,7 +26,7 @@ public final class Config {
      * TOKEN - The OANDA API Personal Access token, obtained from OANDA website.
      */
     //fxPractice token
-    public static final String TOKEN = "3f74e7c9f6d6076442eacbaad10d0062-1405cb80e3f409f8865c1327a3fdde0d";
+    public static final String TOKEN = "a5dfc497694bdd0db804cada6374ba8e-b05567bf7a6b38ce6b54cebe87bbe53a";
 
 
     /**
