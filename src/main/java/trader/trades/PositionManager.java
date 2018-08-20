@@ -74,9 +74,6 @@ public final class PositionManager implements Observer {
         } catch (RequestException | ExecuteException e) {
             throw new RuntimeException(e);
         }
-
-
-
     }
 
     /**

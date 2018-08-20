@@ -22,6 +22,7 @@ public final class MABuilder {
     private static final CandlestickGranularity DEFAULT_CANDLE_TIME_FRAME = CandlestickGranularity.H4;
     private static final AppliedPrice DEFAULT_APPLIED_PRICE = AppliedPrice.CLOSE;
     private static final MAType DEFAULT_MA_TYPE = MAType.SIMPLE;
+    private static final long PERIOD_MULTIPLIER = 4L;
 
     private Context ctx;
     private long period;
@@ -136,8 +137,7 @@ public final class MABuilder {
      */
     private InstrumentCandlesRequest createRequest(){
 
-
-        long candlesCount = this.period * 2L + 2L;
+        long candlesCount = this.period * PERIOD_MULTIPLIER + 2L;
 
         return new InstrumentCandlesRequest(Config.INSTRUMENT)
                     .setCount(candlesCount)

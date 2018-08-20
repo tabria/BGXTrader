@@ -33,7 +33,7 @@ public final class IntersectionService {
      */
     public static boolean doBoundaryBoxesIntersect(BoundaryBox a, BoundaryBox b) {
 
-        //Time intervals are irrelevant for the moment.They are left for future use
+        //Time intervals are irrelevant for the moment.They are left future use
         BigDecimal startPriceA = a.getPointA().getPrice();
     //    BigDecimal startTimeA = a.getPointA().getTime();
         BigDecimal endPriceA = a.getPointB().getPrice();
@@ -100,7 +100,7 @@ public final class IntersectionService {
             return false;
         }
 
-        //check if start point of segmentA lies on top ot start point of segmentB. It is not real intersection, but the signal generated will be equal to the one if it was real intersection
+        //check if start point of segmentA lies on top ot start point of segmentB. It is not real intersection, but the signal generated will be same as if it was real intersection
         if(pointA2y2.compareTo(pointB2y4) == 0){
             return true;
         }
@@ -149,12 +149,11 @@ public final class IntersectionService {
                 return false;
             }
         }
-        /**
-         * This code check if lines are on top of each other. And if this is so. it will return true. For now the system needs only real intersections. If after collinearity, no intersection occurs, then the trade direction is different from the one after the intersection. The code is here for future use
-         */
+
+         // This code check if lines are on top of each other. And if this is so. it will return true. For now the system needs only real intersections. If after collinearity, no intersection occurs, then the trade direction is different from the one after the intersection. The code is here for future use
+
 
         if (denominatorZeroCompare == 0){
-//            // This code wasn't in Franklin Antonio's method. It was added by Keith Woodward.
 //            // The lines are parallel.
 //            // Check if they're collinear.
 //
