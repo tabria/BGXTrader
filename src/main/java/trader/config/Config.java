@@ -24,13 +24,13 @@ public final class Config {
      * TOKEN - The OANDA API Personal Access token, obtained from OANDA website.
      */
     //fxPractice token
-    public static final String TOKEN = "3f74e7c9f6d6076442eacbaad10d0062-1405cb80e3f409f8865c1327a3fdde0d";
+    public static final String TOKEN = "";
 
 
     /**
      * ACCOUNTID - object storing OANDA's account ID, obtained from OANDA website
      */
-    public static final AccountID ACCOUNTID = new AccountID("101-004-8077015-001");
+    public static final AccountID ACCOUNTID = new AccountID("");
 
     /**
      * INSTRUMENT - object storing the main trading pair. This can be only a pair supported by OANDA
