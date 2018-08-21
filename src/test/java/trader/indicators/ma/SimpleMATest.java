@@ -167,6 +167,13 @@ public class SimpleMATest {
 
     }
 
+    @Test
+    public void TestToString(){
+        String result = this.sma.toString();
+        String expected = String.format("SimpleMA{period=%d, appliedPrice=%s, maValues=[], points=[], isTradeGenerated=false}", this.period, this.mockAppliedPrice.toString());
+
+        assertEquals(expected, result);
+    }
 
     //total candles count for the given periods are calculated with this formula:
     // {@code period*2 + 2 => period = (number of candles - 2) /2}

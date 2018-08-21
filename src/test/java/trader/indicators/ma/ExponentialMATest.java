@@ -177,6 +177,14 @@ public class ExponentialMATest {
 
     }
 
+    @Test
+    public void TestToString(){
+        String result = this.ema.toString();
+        String expected = String.format("ExponentialMA{period=%d, appliedPrice=%s, maValues=[], points=[], isTradeGenerated=false}", period, this.mockAppliedPrice.toString());
+        assertEquals(expected, result);
+    }
+
+
     //fill candlestick list with candles. Candles have only time and close price
     private void fillCandlestickList(){
 

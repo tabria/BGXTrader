@@ -10,8 +10,7 @@ EUR accounts and only EUR/USD pair. Also application will open only one trade an
 be generated until current trade is closed.
 
 Entries: The signals are generated from crosses between WMA(5) and WMA(20), priceSMA(1) and WMA(20), priceSMA(1) and WMA(100). All trades are in the 
-direction of WMA(100). Entry signal is 25 pips away from the cross. Stop is on the cross. Entries are executed with 
-Market If Touched Order.
+direction of WMA(100). Entry signal is 25 pips away from the cross. Stop is on the cross. Entries are executed with Market If Touched Order. If there is an unfilled order and price move more than 5 pips below(for longs)/above(for shorts) cross point, then the waiting order will be canceled.
 
 There are 2 strategies for exiting:
 

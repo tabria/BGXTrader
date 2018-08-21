@@ -19,7 +19,7 @@ public class BoundaryBoxTest {
 
 
     @Before
-    public void before() throws Exception {
+    public void before(){
 
         this.mockPointX = mock(Point.class);
         when(this.mockPointX.getTime()).thenReturn(BigDecimal.valueOf(1));
@@ -29,7 +29,6 @@ public class BoundaryBoxTest {
 
 
         this.mockLineSegment = mock(LineSegment.class);
-
 
     }
 
@@ -174,5 +173,26 @@ public class BoundaryBoxTest {
 
         assertEquals(0, compareAPrices);
         assertEquals(0, compareBPrices);
+    }
+
+    @Test
+    public void TestToString(){
+        BigDecimal priceA = BigDecimal.valueOf(1.16000);
+        BigDecimal priceB = BigDecimal.valueOf(1.16000);
+
+        when(this.mockPointX.getPrice()).thenReturn(priceA);
+        when(this.mockPointX.toString()).thenReturn("Point{price=1.16040, time=1}");
+
+        when(this.mockPointY.getPrice()).thenReturn(priceB);
+        when(this.mockPointY.toString()).thenReturn("Point{price=1.15960, time=2}");
+
+        when(this.mockLineSegment.getPointA()).thenReturn(this.mockPointX);
+        when(this.mockLineSegment.getPointB()).thenReturn(this.mockPointY);
+
+        this.boundaryBox = new BoundaryBox(this.mockLineSegment);
+        String result = this.boundaryBox.toString();
+//        String expected = String.format("WeightedMA{period=%d, appliedPrice=%s, maValues=[], points=[], isTradeGenerated=false}", this.period, this.mockAppliedPrice.toString());
+        String expected = String.format("BoundaryBox{lineSegment=%s, offset=0.00040, pointA=%s, pointB=%s}",this.mockLineSegment.toString(), this.mockPointX.toString(), this.mockPointY.toString());
+        assertEquals(expected, result);
     }
 }

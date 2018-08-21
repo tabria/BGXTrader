@@ -115,6 +115,14 @@ public class RelativeStrengthIndexTest {
 
     }
 
+    @Test
+    public void TestToString(){
+        String result = this.rsi.toString();
+        String expected = String.format("RelativeStrengthIndex{period=%d, appliedPrice=%s, rsiValues=[], points=[], isTradeGenerated=false}", this.period, this.mockAppliedPrice.toString());
+
+        assertEquals(expected, result);
+    }
+
     private RelativeStrengthIndex createRSI() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         Class<?> objClass = RelativeStrengthIndex.class;
         Constructor<?> cons = objClass.getDeclaredConstructor(long.class, AppliedPrice.class, CandlesUpdater.class);

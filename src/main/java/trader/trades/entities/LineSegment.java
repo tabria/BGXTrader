@@ -1,6 +1,7 @@
 package trader.trades.entities;
 
 
+import javax.sound.sampled.Line;
 import java.math.BigDecimal;
 
 /**
@@ -35,7 +36,7 @@ public final class LineSegment {
 
     /**
      * Copy Constructor
-     * @param lineSegment
+     * @param lineSegment current line segment
      * @throws NullPointerException when argument is null
      */
     public LineSegment(LineSegment lineSegment){
@@ -60,6 +61,36 @@ public final class LineSegment {
      */
     public Point getPointB(){
         return new Point(this.pointB);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = this.pointA.hashCode();
+        result = 31*result + this.pointB.hashCode();
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this){
+            return true;
+        }
+        if(!(obj instanceof LineSegment)){
+            return false;
+        }
+
+        LineSegment newSegment = (LineSegment) obj;
+
+        return newSegment.pointA.equals(this.pointA) &&
+                newSegment.pointB.equals(this.pointB);
+    }
+
+    @Override
+    public String toString() {
+        return "LineSegment{" +
+                "pointA=" + pointA.toString() +
+                ", pointB=" + pointB.toString() +
+                '}';
     }
 
     /**
@@ -94,7 +125,7 @@ public final class LineSegment {
         }
         int result = this.pointA.getTime().compareTo(b.getTime());
         if (result >= 0 ){
-            throw new IllegalArgumentException("PointB time mus be bigger than PointA time");
+            throw new IllegalArgumentException("PointB time must be bigger than PointA time");
         }
         this.pointB = b;
     }

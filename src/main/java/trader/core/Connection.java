@@ -4,12 +4,18 @@ import trader.config.Config;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+/**
+ * Provide methods for connectivity
+ */
 public final class Connection {
 
 
     private Connection() {
     }
 
+    /**
+     * Waiting till reconnect
+     */
     public static void waitToConnect() {
         String host = Config.URL.substring(8);
        while (true){
@@ -25,8 +31,6 @@ public final class Connection {
                }
            }
        }
-
-        String debig = "";
     }
 
 

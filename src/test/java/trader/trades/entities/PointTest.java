@@ -18,7 +18,7 @@ public class PointTest {
     private BigDecimal startTime = BigDecimal.valueOf(10);
 
     @Before
-    public void before() throws Exception {
+    public void before() {
 
         this.point = new Point.PointBuilder(DEFAULT_PRICE_START)
                 .setTime(this.startTime)
@@ -56,7 +56,7 @@ public class PointTest {
     }
 
     @Test (expected = NullPointerException.class)
-    public void WhenCreateNewPointWithNullStartTimeThenException() throws NoSuchFieldException, IllegalAccessException {
+    public void WhenCreateNewPointWithNullStartTimeThenException()  {
 
         Point point = new Point.PointBuilder(DEFAULT_PRICE_START)
                 .setTime(null)
@@ -95,4 +95,119 @@ public class PointTest {
         assertEquals(0, result);
 
     }
+
+    //Reflexive
+    @Test
+    public void WhenCallEqualsOnSameObjectsThenReturnTrue(){
+        boolean equals = this.point.equals(this.point);
+        assertTrue(equals);
+    }
+
+    //Symmetric
+    @Test
+    public void WhenCallEqualsThenResultMustBeSymmetric(){
+        Point newPoint = new Point.PointBuilder(DEFAULT_PRICE_START)
+                .setTime(this.startTime)
+                .build();
+
+        boolean symmetricResult1 = this.point.equals(newPoint);
+        boolean symmetricResult2 = newPoint.equals(this.point);
+
+        assertNotSame(this.point, newPoint);
+        assertTrue(symmetricResult1);
+        assertTrue(symmetricResult2);
+    }
+
+    //Transitive
+    @Test
+    public void WhenCallEqualsThenResultMustBeTransitive(){
+        Point newPoint = new Point.PointBuilder(DEFAULT_PRICE_START)
+                .setTime(this.startTime)
+                .build();
+        Point lastPoint = new Point.PointBuilder(DEFAULT_PRICE_START)
+                .setTime(this.startTime)
+                .build();
+        boolean pointNewPointResult = this.point.equals(newPoint);
+        boolean newPointLastPointResult = newPoint.equals(lastPoint);
+
+        boolean pointLastPointResult = this.point.equals(lastPoint);
+
+
+        assertNotSame(this.point, newPoint);
+        assertNotSame(this.point, lastPoint);
+        assertNotSame(newPoint, lastPoint);
+
+        assertTrue(pointNewPointResult);
+        assertTrue(newPointLastPointResult);
+        assertTrue(pointLastPointResult);
+    }
+
+    //Consistence
+    @Test
+    public void WhenCallEqualsThenResultMustBeConsistence(){
+        Point newPoint = new Point.PointBuilder(DEFAULT_PRICE_START)
+                .setTime(this.startTime)
+                .build();
+
+        assertNotSame(this.point, newPoint);
+
+        for (int i = 0; i <10 ; i++) {
+            boolean pointNewPointResult = this.point.equals(newPoint);
+            assertTrue(pointNewPointResult);
+        }
+    }
+
+    //Null
+    @Test
+    public void WhenCallEqulasWithNullThenReturnFalse(){
+        assertFalse(this.point.equals(null));
+    }
+
+    @Test
+    public void WhenCallHashCodeMultipleTimesThenSameResultEachTime(){
+        int expected = this.point.hashCode();
+        for (int i = 0; i <100 ; i++) {
+            int result = this.point.hashCode();
+            assertEquals(expected, result);
+        }
+    }
+
+    @Test
+    public void WhenCallHashCodeOnEqualObjectsThenResultsMustBeSame(){
+
+        Point newPoint = new Point.PointBuilder(DEFAULT_PRICE_START)
+                .setTime(this.startTime)
+                .build();
+
+        assertNotSame(this.point, newPoint);
+
+        boolean equalResult = this.point.equals(newPoint);
+        assertTrue(equalResult);
+
+        int pointHashCodeResult = this.point.hashCode();
+        int newPointHashCodeResult = newPoint.hashCode();
+
+        assertEquals(pointHashCodeResult, newPointHashCodeResult);
+
+    }
+
+    @Test
+    public void WhenCallHashCodeOnNonEqualObjectsThenResultsMustBeDifferent(){
+
+        Point newPoint = new Point.PointBuilder(DEFAULT_PRICE_START)
+                .setTime(BigDecimal.valueOf(10.1))
+                .build();
+
+        assertNotSame(this.point, newPoint);
+
+        boolean equalResult = this.point.equals(newPoint);
+        assertFalse(equalResult);
+
+        int pointHashCodeResult = this.point.hashCode();
+        int newPointHashCodeResult = newPoint.hashCode();
+
+        assertNotEquals(pointHashCodeResult, newPointHashCodeResult);
+
+    }
+
 }

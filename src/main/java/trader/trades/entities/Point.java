@@ -116,4 +116,32 @@ public final class Point {
         return this.time;
     }
 
+    @Override
+    public int hashCode() {
+        int result = this.price.hashCode();
+        result = 31*result + this.time.hashCode();
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this){
+            return true;
+        }
+        if(!(obj instanceof Point)){
+            return false;
+        }
+        Point newPoint = (Point) obj;
+
+        return newPoint.price.compareTo(this.price)==0
+                && newPoint.time.compareTo(this.time)==0;
+    }
+
+    @Override
+    public String toString() {
+        return "Point{" +
+                "price=" + price.toString() +
+                ", time=" + time.toString() +
+                '}';
+    }
 }

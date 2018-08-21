@@ -91,16 +91,36 @@ public final class ExponentialMA implements Indicator {
         }
     }
 
+    /**
+     * Getter for generated trade check
+     * @return {@link boolean} {@code true} if trade is generated
+     *                         {@code false} otherwise
+     */
     @Override
     public boolean isTradeGenerated() {
         return this.isTradeGenerated;
     }
 
+    /**
+     * Setter for isTradeGenerated field
+     * @param isGenerated boolean value for current trade
+     */
     @Override
     public void setIsTradeGenerated(boolean isGenerated) {
         this.isTradeGenerated = isGenerated;
     }
 
+
+    @Override
+    public String toString() {
+        return "ExponentialMA{" +
+                "period=" + period +
+                ", appliedPrice=" + appliedPrice.toString() +
+                ", maValues=" + maValues.toString() +
+                ", points=" + points.toString() +
+                ", isTradeGenerated=" + isTradeGenerated +
+                '}';
+    }
 
     /**
      * Get fill points for signal checking

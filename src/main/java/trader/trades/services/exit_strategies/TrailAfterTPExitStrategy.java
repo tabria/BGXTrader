@@ -6,6 +6,7 @@ import com.oanda.v20.account.Account;
 import com.oanda.v20.instrument.CandlestickGranularity;
 import com.oanda.v20.primitives.DateTime;
 import com.oanda.v20.trade.*;
+import com.oanda.v20.transaction.TransactionID;
 import trader.candles.CandlesUpdater;
 import trader.config.Config;
 
@@ -93,10 +94,16 @@ public final class TrailAfterTPExitStrategy implements ExitStrategy {
                     if (currentStopLossPrice.compareTo(this.lastSignificantHigh) > 0 && this.lastSignificantHigh.compareTo(firstStopPrice) < 0 ){
                         BigDecimal newStopLossPrice = this.lastSignificantHigh.add(Config.SPREAD);
                         this.tradeSetDependentOrdersResponse = this.baseExitStrategy.changeStopLoss(id, newStopLossPrice);
+
+                        TransactionID lastTransactionID = this.tradeSetDependentOrdersResponse.getLastTransactionID();
+                        System.out.println("Trade with id: " + lastTransactionID+" StopLoss moved to: " + newStopLossPrice);
                     }
                     //set stop to firstStopPrice
                     else if(currentStopLossPrice.compareTo(this.lastSignificantHigh) > 0 && this.lastSignificantHigh.compareTo(firstStopPrice) >=0){
                         this.tradeSetDependentOrdersResponse = this.baseExitStrategy.changeStopLoss(id, firstStopPrice);
+
+                        TransactionID lastTransactionID = this.tradeSetDependentOrdersResponse.getLastTransactionID();
+                        System.out.println("Trade with id: " + lastTransactionID+" StopLoss moved to: " + firstStopPrice);
                     }
                 }
             }
@@ -115,10 +122,16 @@ public final class TrailAfterTPExitStrategy implements ExitStrategy {
                     if (currentStopLossPrice.compareTo(this.lastSignificantLow) < 0 && this.lastSignificantLow.compareTo(firstStopPrice) > 0){
                         BigDecimal newStopLossPrice = this.lastSignificantLow.subtract(Config.SPREAD);
                         this.tradeSetDependentOrdersResponse = this.baseExitStrategy.changeStopLoss(id, newStopLossPrice);
+
+                        TransactionID lastTransactionID = this.tradeSetDependentOrdersResponse.getLastTransactionID();
+                        System.out.println("Trade with id: " + lastTransactionID+" StopLoss moved to: " + newStopLossPrice);
                     }
                     //set stop to firstStopPrice
                     else if(currentStopLossPrice.compareTo(this.lastSignificantLow) < 0 && this.lastSignificantLow.compareTo(firstStopPrice) <= 0){
                         this.tradeSetDependentOrdersResponse = this.baseExitStrategy.changeStopLoss(id, firstStopPrice);
+
+                        TransactionID lastTransactionID = this.tradeSetDependentOrdersResponse.getLastTransactionID();
+                        System.out.println("Trade with id: " + lastTransactionID+" StopLoss moved to: " + firstStopPrice);
                     }
                 }
             }
@@ -141,7 +154,7 @@ public final class TrailAfterTPExitStrategy implements ExitStrategy {
      * @return {@link BigDecimal} calculated price
      */
     private BigDecimal priceDistance(int unitsSign, BigDecimal startPrice, BigDecimal distance) {
-        BigDecimal price = BigDecimal.ZERO;
+        BigDecimal price;
         if(unitsSign < 0){
             price = startPrice.subtract(distance).subtract(Config.SPREAD).setScale(5, BigDecimal.ROUND_HALF_UP);
         } else {

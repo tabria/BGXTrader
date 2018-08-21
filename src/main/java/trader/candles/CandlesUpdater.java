@@ -66,6 +66,14 @@ public final class CandlesUpdater {
         return false;
     }
 
+    @Override
+    public String toString() {
+        return "CandlesUpdater{" +
+                "candlestickList=" + candlestickList.toString() +
+                ", candlesTimeFrame=" + candlesTimeFrame.toString() +
+                '}';
+    }
+
     /**
      * Sometimes new candles came with time like old ones. Which cause multiple updates
      * This loop will check last candle time before and after update to assure that new candle have different time

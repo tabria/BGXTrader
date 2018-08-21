@@ -62,6 +62,16 @@ public final class Trade {
         return this.stopLossPrice;
     }
 
+    @Override
+    public String toString() {
+        return "Trade{" +
+                "entryPrice=" + entryPrice .toString() +
+                ", stopLossPrice=" + stopLossPrice.toString() +
+                ", tradable=" + tradable +
+                ", direction=" + direction.toString() +
+                '}';
+    }
+
     /**
      * Setter for tradability of the trade
      *

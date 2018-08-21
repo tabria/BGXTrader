@@ -71,7 +71,6 @@ public final class SimpleMA implements Indicator {
            fillPoints();
            this.isTradeGenerated = false;
        }
-
     }
 
     /**
@@ -84,14 +83,34 @@ public final class SimpleMA implements Indicator {
         return Collections.unmodifiableList(this.points);
     }
 
+    /**
+     * Getter for generated trade check
+     * @return {@link boolean} {@code true} if trade is generated
+     *                         {@code false} otherwise
+     */
     @Override
     public boolean isTradeGenerated() {
         return this.isTradeGenerated;
     }
 
+    /**
+     * Setter for isTradeGenerated field
+     * @param isGenerated boolean value for current trade
+     */
     @Override
     public void setIsTradeGenerated(boolean isGenerated) {
         this.isTradeGenerated = isGenerated;
+    }
+
+    @Override
+    public String toString() {
+        return "SimpleMA{" +
+                "period=" + period +
+                ", appliedPrice=" + appliedPrice.toString() +
+                ", maValues=" + maValues.toString() +
+                ", points=" + points.toString() +
+                ", isTradeGenerated=" + isTradeGenerated +
+                '}';
     }
 
     /**

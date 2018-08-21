@@ -55,7 +55,7 @@ public final class OrderService {
                 delta = stopLossPrice.subtract(bid).setScale(5, BigDecimal.ROUND_HALF_UP);
 
             }
-            if(delta != null && delta.compareTo(STOP_LOSS_OFFSET) >= 0){
+            if(delta != null && delta.compareTo(STOP_LOSS_OFFSET) > 0){
                 this.cancelOrder(account.getId(), notFilledOrder.getId());
 
                 TransactionID id = this.cancelOrderResponse.getOrderCancelTransaction().getId();

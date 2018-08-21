@@ -80,21 +80,21 @@ public final class BGXTradeGenerator {
         boolean isLineSegmentIntersecting = IntersectionService.doLineSegmentsIntersect(fastWMALineSegment, middleWMALineSegment);
 
         if(isLineSegmentIntersecting && isRSITradable()){
-            System.out.println("New WMA crossover trade has been generated:");
+            System.out.println("New WMA crossover");
             return this.generateTradeAfterIntersection(fastWMALineSegment, middleWMALineSegment);
         }
 
         //signal from intersection between priceSMA and middleWMA
         isLineSegmentIntersecting = IntersectionService.doLineSegmentsIntersect(priceSMALineSegment, middleWMALineSegment);
         if(isLineSegmentIntersecting && isRSITradable()){
-            System.out.println("New priceSMA and middleWMA crossover trade has been generated:");
+            System.out.println("New priceSMA and middleWMA crossover");
             return this.generateTradeAfterIntersection(priceSMALineSegment, middleWMALineSegment);
         }
 
         //signal from intersection between priceSMA and slowWMA
         isLineSegmentIntersecting = IntersectionService.doLineSegmentsIntersect(priceSMALineSegment, slowWMALineSegment);
         if(isLineSegmentIntersecting && isRSITradable()){
-            System.out.println("New priceSMA and slowWMA crossover trade has been generated:");
+            System.out.println("New priceSMA and slowWMA crossover");
             return this.generateTradeAfterIntersection(priceSMALineSegment, middleWMALineSegment);
         }
 

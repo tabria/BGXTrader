@@ -191,6 +191,16 @@ public class WeightedMATest {
         assertEquals( 0, point3Time.compareTo(BigDecimal.valueOf(3)));
 
     }
+
+    @Test
+    public void TestToString(){
+        String result = this.wma.toString();
+        String expected = String.format("WeightedMA{period=%d, appliedPrice=%s, maValues=[], points=[], isTradeGenerated=false}", this.period, this.mockAppliedPrice.toString());
+
+        assertEquals(expected, result);
+    }
+
+
     //total candles count for the given periods are calculated with this formula:
     // {@code period*2 + 2 => period = (number of candles - 2) /2}
     private void setPeriod(){

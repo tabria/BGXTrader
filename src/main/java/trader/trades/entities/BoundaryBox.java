@@ -24,9 +24,7 @@ public final class BoundaryBox {
      * @param lineSegment current LineSegment
      */
     public BoundaryBox(LineSegment lineSegment){
-        this.setOffset(DEFAULT_OFFSET);
-        this.setLineSegment(lineSegment);
-        this.setPoints(DEFAULT_OFFSET);
+        this(lineSegment, DEFAULT_OFFSET);
     }
 
     /**
@@ -64,6 +62,16 @@ public final class BoundaryBox {
         return new Point(this.pointB);
     }
 
+    @Override
+    public String toString() {
+        return "BoundaryBox{" +
+                "lineSegment=" + lineSegment.toString() +
+                ", offset=" + offset.toString() +
+                ", pointA=" + pointA.toString() +
+                ", pointB=" + pointB.toString() +
+                '}';
+    }
+
     /**
      * Setter for offset
      * @param offset offset value
@@ -86,7 +94,7 @@ public final class BoundaryBox {
 
     /**
      * Setter for lineSegment
-     * @param lineSegment
+     * @param lineSegment current lineSegment
      * @throws NullPointerException when line segment is null
      */
     private void setLineSegment(LineSegment lineSegment){
@@ -98,7 +106,7 @@ public final class BoundaryBox {
 
     /**
      * Setter of offset. Offset is the difference between line segment point A and boundary box point A, and line segment point B and boundary box point B
-     * @param offsetValue
+     * @param offsetValue offset
      */
     private void setPoints(BigDecimal offsetValue){
         BigDecimal segmentPricePointA = this.lineSegment.getPointA().getPrice();
