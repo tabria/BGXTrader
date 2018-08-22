@@ -52,15 +52,12 @@ public final class HalfCloseTrailExitStrategy implements ExitStrategy {
     public void execute(Account account, BigDecimal ask, BigDecimal bid, DateTime dateTime) {
 
         TradeSummary trade = this.baseExitStrategy.getTrade(account);
-        TradeID id = trade.getId();
-        BigDecimal initialUnits = trade.getInitialUnits().bigDecimalValue();
-        BigDecimal currentUnits = trade.getCurrentUnits().bigDecimalValue();
-        BigDecimal tradeOpenPrice = trade.getPrice().bigDecimalValue();
 
         this.baseExitStrategy.updaterUpdateCandles(dateTime);
 
         //close half position
         this.closeHalfPosition(trade, ask, bid);
+
         //if 1st half is closed then trail the rest after prev bar extremes
         this.trailStopLoss(account, trade);
     }
@@ -237,14 +234,6 @@ public final class HalfCloseTrailExitStrategy implements ExitStrategy {
         return this.exitBarLow;
     }
 
-
-
-
-
-
-
-
-
     /**
      * Printing id of the closed transaction
      */
@@ -252,8 +241,4 @@ public final class HalfCloseTrailExitStrategy implements ExitStrategy {
         TransactionID lastTransactionID = this.tradeSetDependentOrdersResponse.getLastTransactionID();
         System.out.println("Trade with id: " + lastTransactionID+" StopLoss moved to: " + newStopLoss);
     }
-
-
-
-
 }

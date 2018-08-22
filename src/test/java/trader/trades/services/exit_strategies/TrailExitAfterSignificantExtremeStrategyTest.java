@@ -24,7 +24,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class TrailAfterTPExitStrategyTest {
+public class TrailExitAfterSignificantExtremeStrategyTest {
 
     private static final BigDecimal INITIAL_UNITS = BigDecimal.valueOf(100);
     private static final BigDecimal CURRENT_UNITS = BigDecimal.valueOf(50);
@@ -37,7 +37,7 @@ public class TrailAfterTPExitStrategyTest {
     private OrderCreateResponse mockOrderCreateResponse;
     private TradeSetDependentOrdersResponse mockTradeSetDependentOrdersResponse;
     private CandlestickGranularity candlestickGranularity;
-    private TrailAfterTPExitStrategy trailAfterTPExitStrategy;
+    private TrailExitAfterSignificantExtremeStrategy trailExitAfterSignificantExtremeStrategy;
     private StopLossOrder mockOrder;
     private TradeSummary mockTrade;
     private TradeID mockTradeID;
@@ -111,7 +111,7 @@ public class TrailAfterTPExitStrategyTest {
         when(this.mockBaseExitStrategy.changeStopLoss(any(TradeID.class), any(BigDecimal.class))).thenReturn(this.mockTradeSetDependentOrdersResponse);
         when(this.mockBaseExitStrategy.partialTradeClose(any(BigDecimal.class), any(BigDecimal.class))).thenReturn(this.mockOrderCreateResponse);
 
-        this.trailAfterTPExitStrategy = new TrailAfterTPExitStrategy(this.mockContext, this.candlestickGranularity);
+        this.trailExitAfterSignificantExtremeStrategy = new TrailExitAfterSignificantExtremeStrategy(this.mockContext, this.candlestickGranularity);
 
     }
 
@@ -130,7 +130,7 @@ public class TrailAfterTPExitStrategyTest {
 
         this.setBaseExitStrategyToMock();
 
-        this.trailAfterTPExitStrategy.execute(this.mockAccount, ask, bid, this.mockDateTime);
+        this.trailExitAfterSignificantExtremeStrategy.execute(this.mockAccount, ask, bid, this.mockDateTime);
 
         TradeSetDependentOrdersResponse tradeStopResponse = this.getTradeSetStopResponse();
 
@@ -160,7 +160,7 @@ public class TrailAfterTPExitStrategyTest {
 
         this.setBaseExitStrategyToMock();
 
-        this.trailAfterTPExitStrategy.execute(this.mockAccount, ask, bid, this.mockDateTime);
+        this.trailExitAfterSignificantExtremeStrategy.execute(this.mockAccount, ask, bid, this.mockDateTime);
 
         TradeSetDependentOrdersResponse tradeStopResponse = this.getTradeSetStopResponse();
 
@@ -193,7 +193,7 @@ public class TrailAfterTPExitStrategyTest {
 
         this.setBaseExitStrategyToMock();
 
-        this.trailAfterTPExitStrategy.execute(this.mockAccount, ask, bid, this.mockDateTime);
+        this.trailExitAfterSignificantExtremeStrategy.execute(this.mockAccount, ask, bid, this.mockDateTime);
 
         //first lower candle
         lastFullCandleHigh = BigDecimal.valueOf(1.14786);
@@ -205,7 +205,7 @@ public class TrailAfterTPExitStrategyTest {
         //when call changeStopLoss with significantLow higher than stopLossPrice the response must be ordersResponse;
         when(this.mockBaseExitStrategy.changeStopLoss(this.mockTradeID, lastFullCandleLow.subtract(Config.SPREAD))).thenReturn(ordersResponse);
 
-        this.trailAfterTPExitStrategy.execute(this.mockAccount, ask, bid, this.mockDateTime);
+        this.trailExitAfterSignificantExtremeStrategy.execute(this.mockAccount, ask, bid, this.mockDateTime);
 
         //second higher candle
         lastFullCandleHigh = BigDecimal.valueOf(1.14986);
@@ -214,7 +214,7 @@ public class TrailAfterTPExitStrategyTest {
         when(this.mockBaseExitStrategy.getLastFullCandleHigh()).thenReturn(lastFullCandleHigh);
         when(this.mockBaseExitStrategy.getLastFullCandleLow()).thenReturn(lastFullCandleLow);
 
-        this.trailAfterTPExitStrategy.execute(this.mockAccount, ask, bid, this.mockDateTime);
+        this.trailExitAfterSignificantExtremeStrategy.execute(this.mockAccount, ask, bid, this.mockDateTime);
 
 
         TradeSetDependentOrdersResponse tradeStopResponse = this.getTradeSetStopResponse();
@@ -238,7 +238,7 @@ public class TrailAfterTPExitStrategyTest {
 
         this.setBaseExitStrategyToMock();
 
-        this.trailAfterTPExitStrategy.execute(this.mockAccount, ask, bid, this.mockDateTime);
+        this.trailExitAfterSignificantExtremeStrategy.execute(this.mockAccount, ask, bid, this.mockDateTime);
 
         TradeSetDependentOrdersResponse tradeStopResponse = this.getTradeSetStopResponse();
 
@@ -268,7 +268,7 @@ public class TrailAfterTPExitStrategyTest {
 
         this.setBaseExitStrategyToMock();
 
-        this.trailAfterTPExitStrategy.execute(this.mockAccount, ask, bid, this.mockDateTime);
+        this.trailExitAfterSignificantExtremeStrategy.execute(this.mockAccount, ask, bid, this.mockDateTime);
 
         TradeSetDependentOrdersResponse tradeStopResponse = this.getTradeSetStopResponse();
 
@@ -302,7 +302,7 @@ public class TrailAfterTPExitStrategyTest {
 
         this.setBaseExitStrategyToMock();
 
-        this.trailAfterTPExitStrategy.execute(this.mockAccount, ask, bid, this.mockDateTime);
+        this.trailExitAfterSignificantExtremeStrategy.execute(this.mockAccount, ask, bid, this.mockDateTime);
 
         //first higher candle
         lastFullCandleHigh = BigDecimal.valueOf(1.14105);
@@ -314,7 +314,7 @@ public class TrailAfterTPExitStrategyTest {
         //when call changeStopLoss with significantHigh lower than stopLossPrice the response must be ordersResponse;
         when(this.mockBaseExitStrategy.changeStopLoss(this.mockTradeID, lastFullCandleHigh.add(Config.SPREAD))).thenReturn(ordersResponse);
 
-        this.trailAfterTPExitStrategy.execute(this.mockAccount, ask, bid, this.mockDateTime);
+        this.trailExitAfterSignificantExtremeStrategy.execute(this.mockAccount, ask, bid, this.mockDateTime);
 
         //second lower candle
         lastFullCandleHigh = BigDecimal.valueOf(1.1401);
@@ -323,7 +323,7 @@ public class TrailAfterTPExitStrategyTest {
         when(this.mockBaseExitStrategy.getLastFullCandleHigh()).thenReturn(lastFullCandleHigh);
         when(this.mockBaseExitStrategy.getLastFullCandleLow()).thenReturn(lastFullCandleLow);
 
-        this.trailAfterTPExitStrategy.execute(this.mockAccount, ask, bid, this.mockDateTime);
+        this.trailExitAfterSignificantExtremeStrategy.execute(this.mockAccount, ask, bid, this.mockDateTime);
 
 
         TradeSetDependentOrdersResponse tradeStopResponse = this.getTradeSetStopResponse();
@@ -333,15 +333,15 @@ public class TrailAfterTPExitStrategyTest {
     }
 
     private TradeSetDependentOrdersResponse getTradeSetStopResponse() throws NoSuchFieldException, IllegalAccessException {
-        Field halfTradeResponse = this.trailAfterTPExitStrategy.getClass().getDeclaredField("tradeSetDependentOrdersResponse");
+        Field halfTradeResponse = this.trailExitAfterSignificantExtremeStrategy.getClass().getDeclaredField("tradeSetDependentOrdersResponse");
         halfTradeResponse.setAccessible(true);
-        return (TradeSetDependentOrdersResponse) halfTradeResponse.get(this.trailAfterTPExitStrategy);
+        return (TradeSetDependentOrdersResponse) halfTradeResponse.get(this.trailExitAfterSignificantExtremeStrategy);
 
     }
 
     private void setBaseExitStrategyToMock() throws NoSuchFieldException, IllegalAccessException {
-        Field updater = this.trailAfterTPExitStrategy.getClass().getDeclaredField("baseExitStrategy");
+        Field updater = this.trailExitAfterSignificantExtremeStrategy.getClass().getDeclaredField("baseExitStrategy");
         updater.setAccessible(true);
-        updater.set(this.trailAfterTPExitStrategy, this.mockBaseExitStrategy);
+        updater.set(this.trailExitAfterSignificantExtremeStrategy, this.mockBaseExitStrategy);
     }
 }
