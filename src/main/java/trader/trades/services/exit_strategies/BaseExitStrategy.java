@@ -110,7 +110,7 @@ final class BaseExitStrategy{
     }
 
     /**
-     * Get stop loss price
+     * Get stop loss order price
      * @param account current account
      * @param id order id
      * @return {@link BigDecimal} stop loss price
