@@ -127,7 +127,9 @@ public class LineSegmentTest {
     //Reflexive
     @Test
     public void WhenCallEqualsOnSameObjectThenReturnsTrue(){
-        assertTrue(this.lineSegment.equals(this.lineSegment));
+        LineSegment newSegment = this.lineSegment;
+        boolean result = this.lineSegment.equals(newSegment);
+        assertTrue(result);
     }
 
     //Symmetric

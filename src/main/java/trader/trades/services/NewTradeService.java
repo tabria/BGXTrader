@@ -52,45 +52,51 @@ public final class NewTradeService {
 
             Trade newTrade = this.tradeGenerator.generateTrade();
 
-            if (newTrade.getTradable()){
-                BigDecimal unitsSize = calculateUnitsSize(account, newTrade, bid);
-                BigDecimal availableMargin = account.getMarginAvailable().bigDecimalValue();
-                BigDecimal futureMargin = this.calculateTradeMargin(account, unitsSize);
-                if (availableMargin.compareTo(futureMargin)>0 && unitsSize.compareTo(BigDecimal.ZERO)!=0){
+            if (!newTrade.getTradable()) {
+                return;
+            }
 
-                    //setting stop Loss for the new order
-                    StopLossDetails stopLossDetails = new StopLossDetails()
-                            .setPrice(newTrade.getStopLossPrice());
+            BigDecimal unitsSize = calculateUnitsSize(account, newTrade, bid);
+            BigDecimal availableMargin = account.getMarginAvailable().bigDecimalValue();
+            BigDecimal futureMargin = this.calculateTradeMargin(account, unitsSize);
+            if (availableMargin.compareTo(futureMargin)>0 && unitsSize.compareTo(BigDecimal.ZERO)!=0){
 
-                    //check if trade direction is down(short) then units must be negative
-                    if(newTrade.getDirection().equals(Direction.DOWN) ){
-                        unitsSize = unitsSize.multiply(BigDecimal.valueOf(-1)).setScale(5, BigDecimal.ROUND_HALF_UP);
-                    }
+                //create order request
+                OrderCreateRequest request = this.createOrderRequest(unitsSize, newTrade);
+                try {
+                    //get the response from the server
+                    this.orderCreateResponse = context.order.create(request);
 
-                    MarketIfTouchedOrderRequest marketIfTouchedOrderRequest = new MarketIfTouchedOrderRequest()
-                            .setInstrument(Config.INSTRUMENT)
-                            .setUnits(unitsSize)
-                            .setStopLossOnFill(stopLossDetails)
-                            .setPrice(newTrade.getEntryPrice());
+                    TransactionID id = this.orderCreateResponse.getOrderCreateTransaction().getId();
+                    DateTime time = this.orderCreateResponse.getOrderCreateTransaction().getTime();
+                    System.out.println("New Trade has been added with id: " +id.toString() + " and time: " +time.toString() );
+                } catch (RequestException | ExecuteException e){
+                    throw new RuntimeException(e);
 
-                    //create order request
-                    OrderCreateRequest request = new OrderCreateRequest(Config.ACCOUNTID)
-                            .setOrder(marketIfTouchedOrderRequest);
-
-                    try {
-                        //get the response from the server
-                        this.orderCreateResponse = context.order.create(request);
-
-                        TransactionID id = this.orderCreateResponse.getOrderCreateTransaction().getId();
-                        DateTime time = this.orderCreateResponse.getOrderCreateTransaction().getTime();
-                        System.out.println("New Trade has been added with id: " +id.toString() + " and time: " +time.toString() );
-                    } catch (RequestException | ExecuteException e){
-                        throw new RuntimeException(e);
-
-                    }
                 }
             }
         }
+    }
+
+    /**
+     * Create Order Request for MarketIfTouchedOrder
+     * @param unitsSize trade's unit size
+     * @param newTrade current trade
+     * @return {@link OrderCreateRequest} object
+     */
+    private OrderCreateRequest createOrderRequest(BigDecimal unitsSize, Trade newTrade){
+
+        //setting stop Loss for the new order
+        StopLossDetails stopLossDetails = new StopLossDetails()
+                .setPrice(newTrade.getStopLossPrice());
+
+        MarketIfTouchedOrderRequest marketIfTouchedOrderRequest = new MarketIfTouchedOrderRequest()
+                .setInstrument(Config.INSTRUMENT)
+                .setUnits(unitsSize)
+                .setStopLossOnFill(stopLossDetails)
+                .setPrice(newTrade.getEntryPrice());
+
+        return new OrderCreateRequest(Config.ACCOUNTID).setOrder(marketIfTouchedOrderRequest);
     }
 
     /**
@@ -135,6 +141,11 @@ public final class NewTradeService {
 
         BigDecimal stopSize = calculateStopSize(newTrade);
         BigDecimal divider = stopSize.multiply(pipValue).setScale(5, BigDecimal.ROUND_HALF_UP);
+
+        //if direction is down the trade must be short, so the units must be negative number
+        if(newTrade.getDirection().equals(Direction.DOWN) ){
+            divider = divider.multiply(BigDecimal.valueOf(-1)).setScale(5, BigDecimal.ROUND_HALF_UP);
+        }
 
         BigDecimal unitsSize = balance.multiply(Config.RISK_PER_TRADE).setScale(5, BigDecimal.ROUND_HALF_UP);
         if (divider.compareTo(BigDecimal.ZERO) > 0){

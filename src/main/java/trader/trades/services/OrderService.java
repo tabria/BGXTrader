@@ -34,6 +34,38 @@ public final class OrderService {
      */
     public void closeUnfilledOrder(Account account, BigDecimal ask, BigDecimal bid){
 
+        MarketIfTouchedOrder notFilledOrder = this.getMarketIfTouchedOrder(account);
+
+        if (notFilledOrder == null) {
+            return;
+        }
+
+        BigDecimal stopLossPrice = notFilledOrder.getStopLossOnFill().getPrice().bigDecimalValue();
+        BigDecimal units = notFilledOrder.getUnits().bigDecimalValue();
+
+        BigDecimal delta = null;
+        if(units.compareTo(BigDecimal.ZERO) < 0) {
+            delta = ask.subtract(stopLossPrice).setScale(5, BigDecimal.ROUND_HALF_UP);
+        } else if(units.compareTo(BigDecimal.ZERO) > 0){
+            delta = stopLossPrice.subtract(bid).setScale(5, BigDecimal.ROUND_HALF_UP);
+
+        }
+        if(delta != null && delta.compareTo(STOP_LOSS_OFFSET) > 0){
+            this.cancelOrder(account.getId(), notFilledOrder.getId());
+
+            TransactionID id = this.cancelOrderResponse.getOrderCancelTransaction().getId();
+            DateTime time = this.cancelOrderResponse.getOrderCancelTransaction().getTime();
+
+            System.out.println("Order canceled id: "+id.toString()+" time: "+time);
+        }
+    }
+
+    /**
+     * Getting first not filled MarketIfTouchOrder from orders list
+     * @param account current account
+     * @return {@link MarketIfTouchedOrder} object. If there is not such order then the returned object will be {@code null}
+     */
+    private MarketIfTouchedOrder getMarketIfTouchedOrder(Account account){
         MarketIfTouchedOrder notFilledOrder = null;
 
         for (Order order:account.getOrders()) {
@@ -42,28 +74,7 @@ public final class OrderService {
                 break;
             }
         }
-
-        if (notFilledOrder != null){
-
-            BigDecimal stopLossPrice = notFilledOrder.getStopLossOnFill().getPrice().bigDecimalValue();
-            BigDecimal units = notFilledOrder.getUnits().bigDecimalValue();
-
-            BigDecimal delta = null;
-            if(units.compareTo(BigDecimal.ZERO) < 0) {
-                delta = ask.subtract(stopLossPrice).setScale(5, BigDecimal.ROUND_HALF_UP);
-            } else if(units.compareTo(BigDecimal.ZERO) > 0){
-                delta = stopLossPrice.subtract(bid).setScale(5, BigDecimal.ROUND_HALF_UP);
-
-            }
-            if(delta != null && delta.compareTo(STOP_LOSS_OFFSET) > 0){
-                this.cancelOrder(account.getId(), notFilledOrder.getId());
-
-                TransactionID id = this.cancelOrderResponse.getOrderCancelTransaction().getId();
-                DateTime time = this.cancelOrderResponse.getOrderCancelTransaction().getTime();
-
-                System.out.println("Order canceled id: "+id.toString()+" time: "+time);
-            }
-        }
+        return notFilledOrder;
     }
 
     /**

@@ -142,8 +142,6 @@ public final class TrailAfterTPExitStrategy implements ExitStrategy {
 
         this.prevBarHigh = lastFullCandleHigh;
         this.prevBarLow = lastFullCandleLow;
-//        this.prevBarHigh = lastFullCandleLow;
-//        this.lastSignificantLow = lastFullCandleLow;
     }
 
     /**

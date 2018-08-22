@@ -99,7 +99,8 @@ public class PointTest {
     //Reflexive
     @Test
     public void WhenCallEqualsOnSameObjectsThenReturnTrue(){
-        boolean equals = this.point.equals(this.point);
+        Point newPoint = this.point;
+        boolean equals = this.point.equals(newPoint);
         assertTrue(equals);
     }
 
@@ -159,7 +160,7 @@ public class PointTest {
 
     //Null
     @Test
-    public void WhenCallEqulasWithNullThenReturnFalse(){
+    public void WhenCallEqualsWithNullThenReturnFalse(){
         assertFalse(this.point.equals(null));
     }
 
