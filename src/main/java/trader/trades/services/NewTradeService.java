@@ -72,7 +72,6 @@ public final class NewTradeService {
                     System.out.println("New Trade has been added with id: " +id.toString() + " and time: " +time.toString() );
                 } catch (RequestException | ExecuteException e){
                     throw new RuntimeException(e);
-
                 }
             }
         }
@@ -148,9 +147,8 @@ public final class NewTradeService {
         }
 
         BigDecimal unitsSize = balance.multiply(Config.RISK_PER_TRADE).setScale(5, BigDecimal.ROUND_HALF_UP);
-        if (divider.compareTo(BigDecimal.ZERO) > 0){
-            unitsSize =  unitsSize.divide(divider, 0, BigDecimal.ROUND_HALF_UP);
-            return unitsSize.compareTo(BigDecimal.ZERO) < 1 ? BigDecimal.ZERO : unitsSize;
+        if (divider.compareTo(BigDecimal.ZERO) != 0){
+            return  unitsSize.divide(divider, 0, BigDecimal.ROUND_HALF_UP);
         }
 
         return BigDecimal.ZERO;
