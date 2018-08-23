@@ -9,6 +9,9 @@ import trader.indicators.Indicator;
 import trader.indicators.enums.AppliedPrice;
 import trader.indicators.ma.enums.MAType;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
 
 /**
  *  Builder for creating moving average
@@ -23,6 +26,7 @@ public final class MABuilder {
     private static final AppliedPrice DEFAULT_APPLIED_PRICE = AppliedPrice.CLOSE;
     private static final MAType DEFAULT_MA_TYPE = MAType.SIMPLE;
     private static final long PERIOD_MULTIPLIER = 4L;
+    private static final String MA_LOCATION = "trader.indicators.ma.";
 
     private Context ctx;
     private long period;
@@ -113,20 +117,23 @@ public final class MABuilder {
      * Build Moving Average
      *
      * @return {@link Indicator} new Indicator object
+     * @throws RuntimeException if cannot find the class or if cannot create object of the concrete type
      * @see Indicator
      */
     public Indicator build(){
         InstrumentCandlesRequest request = createRequest();
         CandlesUpdater updater = new CandlesUpdater(this.ctx, request, this.candleTimeFrame);
 
-        if (this.maType.equals(MAType.EXPONENTIAL)){
-            return new ExponentialMA(period, appliedPrice, updater);
+        String className = this.maType.toString().charAt(0) + this.maType.toString().toLowerCase().substring(1) +"MA";
+        Object object = null;
+        try {
+            Class<?> aClass = Class.forName(MA_LOCATION + className);
+            Constructor<?> declaredConstructor = aClass.getDeclaredConstructor(long.class, AppliedPrice.class, CandlesUpdater.class);
+            object = declaredConstructor.newInstance(period, appliedPrice, updater);
+            return (Indicator) object;
 
-        } else if (this.maType.equals(MAType.WEIGHTED)){
-            return new WeightedMA(period, appliedPrice, updater);
-
-        } else {
-            return new SimpleMA(period, appliedPrice, updater);
+        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+            throw new RuntimeException(e);
         }
     }
 
