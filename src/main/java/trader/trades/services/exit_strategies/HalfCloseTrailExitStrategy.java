@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 
 
 /**
- * This exit strategy will close part of the position when price hit first target point. After that it will trail position stop behind previous bar high(for short) or low(for long)
+ * This exit strategy will close part of the position when price hit first target point. After that it will trail position's stop behind previous bar high(for short) or low(for long). For short trades stop will be moved if last closed candle's close is below current low and last closed candle's high is also below current high. For long trades stop will be moved if last closed candle's close is above current high and last closed candle's low is also above current low;
  */
 public final class HalfCloseTrailExitStrategy implements ExitStrategy {
 
@@ -167,7 +167,9 @@ public final class HalfCloseTrailExitStrategy implements ExitStrategy {
     }
 
     /**
-     * Check if stop loss can be trailed
+     * Check if stop loss can be trailed.
+     * For short trade stop will be trailed if candle close is lower than current low and candle high is also lower than current high.
+     * For long trade stop will be trailed if candle close is higher than current high and candle low is also higher than current low
      * @param currentUnits current size of the trade
      * @param lastFullCandleClose last full candle close
      * @param lastFullCandleHigh last full candle high

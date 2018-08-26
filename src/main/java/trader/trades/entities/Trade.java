@@ -92,25 +92,11 @@ public final class Trade {
 
         this.tradable = false;
         if (direction.equals(Direction.DOWN)){
-            if (compareIntersectionPriceDailyOpen > 0 && compareEntryPriceDailyOpen > 0){
-                BigDecimal delta = this.entryPrice.subtract(dailyOpenPrice).setScale(5, BigDecimal.ROUND_HALF_UP);
-                this.tradable = delta.compareTo(FIRST_TARGET) >= 0;
-            }else if (compareIntersectionPriceDailyOpen >= 0 && compareEntryPriceDailyOpen <= 0){
-                this.tradable = true;
-            } else if (compareIntersectionPriceDailyOpen < 0 && compareEntryPriceDailyOpen < 0 ){
-                this.tradable = true;
-            }
-        } else if(direction.equals(Direction.UP)) {
-            if(compareIntersectionPriceDailyOpen < 0 && compareEntryPriceDailyOpen < 0) {
-                BigDecimal delta = dailyOpenPrice.subtract(this.entryPrice).setScale(5, BigDecimal.ROUND_HALF_UP);
-                this.tradable = delta.compareTo(FIRST_TARGET) >= 0;
-            } else if (compareIntersectionPriceDailyOpen <=0 && compareEntryPriceDailyOpen >= 0){
-                this.tradable = true;
-            } else if (compareIntersectionPriceDailyOpen > 0 && compareEntryPriceDailyOpen > 0){
-                this.tradable = true;
-            }
-        }
+            this.setTradableDownDirection(compareIntersectionPriceDailyOpen, compareEntryPriceDailyOpen, dailyOpenPrice);
 
+        } else if(direction.equals(Direction.UP)) {
+            this.setTradableUpDirection(compareIntersectionPriceDailyOpen, compareEntryPriceDailyOpen, dailyOpenPrice);
+        }
     }
 
     /**
@@ -147,6 +133,38 @@ public final class Trade {
             this.stopLossPrice = this.stopLossPrice.add(DEFAULT_STOP_LOSS_FILTER).setScale(5, BigDecimal.ROUND_HALF_UP);
         } else {
             this.stopLossPrice = intersectionPoint.getPrice().subtract(DEFAULT_STOP_LOSS_FILTER).setScale(5, BigDecimal.ROUND_HALF_UP);
+        }
+    }
+
+    /**
+     * Setting tradable for down move
+     * @param compareIntersectionPriceDailyOpen comparision result between intersection price and daily open
+     * @param compareEntryPriceDailyOpen comparision result between entry price and daily open
+     * @param dailyOpenPrice daily open price
+     */
+    private void setTradableDownDirection(int compareIntersectionPriceDailyOpen, int compareEntryPriceDailyOpen, BigDecimal dailyOpenPrice){
+        if (compareIntersectionPriceDailyOpen > 0 && compareEntryPriceDailyOpen > 0){
+            BigDecimal delta = this.entryPrice.subtract(dailyOpenPrice).setScale(5, BigDecimal.ROUND_HALF_UP);
+            this.tradable = delta.compareTo(FIRST_TARGET) >= 0;
+        }else if( (compareIntersectionPriceDailyOpen >= 0 && compareEntryPriceDailyOpen <= 0) ||
+                (compareIntersectionPriceDailyOpen < 0 && compareEntryPriceDailyOpen < 0)) {
+            this.tradable = true;
+        }
+    }
+
+    /**
+     * Setting tradable for up move
+     * @param compareIntersectionPriceDailyOpen comparision result between intersection price and daily open
+     * @param compareEntryPriceDailyOpen comparision result between entry price and daily open
+     * @param dailyOpenPrice daily open price
+     */
+    private void setTradableUpDirection(int compareIntersectionPriceDailyOpen, int compareEntryPriceDailyOpen, BigDecimal dailyOpenPrice){
+        if(compareIntersectionPriceDailyOpen < 0 && compareEntryPriceDailyOpen < 0) {
+            BigDecimal delta = dailyOpenPrice.subtract(this.entryPrice).setScale(5, BigDecimal.ROUND_HALF_UP);
+            this.tradable = delta.compareTo(FIRST_TARGET) >= 0;
+        } else if( (compareIntersectionPriceDailyOpen <=0 && compareEntryPriceDailyOpen >= 0) ||
+                (compareIntersectionPriceDailyOpen > 0 && compareEntryPriceDailyOpen > 0) ){
+            this.tradable = true;
         }
     }
 }

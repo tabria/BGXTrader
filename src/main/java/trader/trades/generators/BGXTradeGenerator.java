@@ -50,8 +50,11 @@ public final class BGXTradeGenerator {
         this.setDefaultTrade();
     }
 
-
-
+    /**
+     * Check if trade is generated
+     * @return {@link boolean} {@code true} if trade is already generated
+     *                          {@code false} otherwise
+     */
     public boolean isGenerated(){
         if (this.fastWMA.getValues().size() == 0 && this.middleWMA.getValues().size() == 0 &&
                 this.slowWMA.getValues().size() == 0 && this.rsi.getValues().size() == 0){
@@ -66,7 +69,6 @@ public final class BGXTradeGenerator {
      * @return {@link Trade} object
      * @see Trade
      */
-
     public Trade generateTrade(){
 
         setIsTradeGenerated();

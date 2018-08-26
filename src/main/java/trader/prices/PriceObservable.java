@@ -128,7 +128,11 @@ public final class PriceObservable implements Observable {
             } catch(ExecuteException ee){
                 Connection.waitToConnect();
             } catch (RequestException  | InterruptedException e ) {
-               throw new RuntimeException(e);
+                if (e.getMessage().equalsIgnoreCase("Service unavailable, please try again later.")){
+                    Connection.waitToConnect();
+                } else {
+                    throw new RuntimeException(e);
+                }
             }
         }
     }

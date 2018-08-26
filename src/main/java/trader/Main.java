@@ -3,12 +3,15 @@ package trader;
 
 import com.oanda.v20.Context;
 import com.oanda.v20.ContextBuilder;
+import com.oanda.v20.ExecuteException;
+import com.oanda.v20.RequestException;
 import com.oanda.v20.account.Account;
 import com.oanda.v20.account.AccountGetResponse;
 import com.oanda.v20.account.AccountListResponse;
 import com.oanda.v20.account.AccountProperties;
 import com.oanda.v20.instrument.CandlestickGranularity;
 import com.oanda.v20.primitives.InstrumentName;
+import com.oanda.v20.user.UserGetInfoResponse;
 import trader.config.Config;
 import trader.core.Connection;
 import trader.core.Observable;
@@ -27,6 +30,7 @@ import trader.trades.services.NewTradeService;
 import trader.trades.services.OrderService;
 import trader.trades.services.exit_strategies.ExitStrategy;
 import trader.trades.services.exit_strategies.HalfCloseTrailExitStrategy;
+import trader.trades.services.exit_strategies.TrailExitAfterSignificantExtremeStrategy;
 
 import java.util.List;
 
@@ -58,6 +62,9 @@ public class Main {
                 .setToken(Config.TOKEN)
                 .setApplication("Context")
                 .build();
+
+
+
 
         validateAccount(context);
 
