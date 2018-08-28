@@ -141,12 +141,15 @@ public final class HalfCloseTrailExitStrategy implements ExitStrategy {
         //initial prev bar values
         this.initialSetExitBar(trade);
 
-        boolean readyToTrailStopLoss = this.isReadyToTrailStopLoss(currentUnits, lastFullCandleClose, lastFullCandleHigh, lastFullCandleLow);
+        boolean isReadyToTrailStopLoss = this.isReadyToTrailStopLoss(currentUnits, lastFullCandleClose, lastFullCandleHigh, lastFullCandleLow);
 
-        this.updateExitBarHigh(readyToTrailStopLoss, lastFullCandleHigh);
-        this.updateExitBarLow(readyToTrailStopLoss, lastFullCandleLow);
 
-        if (this.isReadyToSendTrailOrder(account, trade) && readyToTrailStopLoss){
+        this.exitBarLow = updateExitBarComponent(this.exitBarLow, lastFullCandleLow, currentUnits);
+        this.exitBarHigh = updateExitBarComponent(this.exitBarHigh, lastFullCandleHigh, currentUnits);
+        //this.updateExitBarHigh(isReadyToTrailStopLoss, lastFullCandleHigh);
+       // this.updateExitBarLow(isReadyToTrailStopLoss, lastFullCandleLow, currentUnits);
+
+        if (this.isReadyToSendTrailOrder(account, trade, currentUnits) && isReadyToTrailStopLoss){
             BigDecimal newStopLossPrice = this.setNewStopLoss(currentUnits);
             this.tradeSetDependentOrdersResponse = this.baseExitStrategy.changeStopLoss(trade.getId(), newStopLossPrice);
 
@@ -183,28 +186,25 @@ public final class HalfCloseTrailExitStrategy implements ExitStrategy {
         boolean shortCondition = currentUnits.compareTo(BigDecimal.ZERO) < 0 && lastFullCandleClose.compareTo(this.exitBarLow) < 0
                 && lastFullCandleHigh.compareTo(this.exitBarHigh) < 0;
 
-        boolean longCondition = currentUnits.compareTo(BigDecimal.ZERO) > 0 &&lastFullCandleClose.compareTo(this.exitBarHigh) > 0
+        boolean longCondition = currentUnits.compareTo(BigDecimal.ZERO) > 0 && lastFullCandleClose.compareTo(this.exitBarHigh) > 0
                 && lastFullCandleLow.compareTo(this.exitBarLow) > 0;
 
         return shortCondition || longCondition;
     }
 
     /**
-     * Update exit bar low
-     * @param isReadyToTrailStopLoss will update bar if this is true
+     * Update exit bar components - low or high
+     * @param exitBarComponent exit bar component - exitBarHigh or exitBarLow
      * @param lastFullCandleLow last full candle low
+     * @param currentUnits trade's units
      */
-    private void updateExitBarLow(boolean isReadyToTrailStopLoss, BigDecimal lastFullCandleLow){
-        this.exitBarLow = isReadyToTrailStopLoss ? lastFullCandleLow : this.exitBarLow;
-    }
-
-    /**
-     * Update exit bat high
-     * @param isReadyToTrailStopLoss will update if this is true
-     * @param lastFullCandleHigh last full candle high
-     */
-    private void updateExitBarHigh(boolean isReadyToTrailStopLoss, BigDecimal lastFullCandleHigh){
-        this.exitBarHigh = isReadyToTrailStopLoss ? lastFullCandleHigh : this.exitBarHigh;
+    private BigDecimal updateExitBarComponent(BigDecimal exitBarComponent, BigDecimal lastFullCandleLow, BigDecimal currentUnits){
+        if(currentUnits.compareTo(BigDecimal.ZERO) < 0){
+            exitBarComponent = lastFullCandleLow.compareTo(exitBarComponent) < 0 ? lastFullCandleLow : exitBarComponent;
+        } else {
+            exitBarComponent = lastFullCandleLow.compareTo(exitBarComponent) > 0 ? lastFullCandleLow : exitBarComponent;
+        }
+        return exitBarComponent;
     }
 
     /**
@@ -214,12 +214,12 @@ public final class HalfCloseTrailExitStrategy implements ExitStrategy {
      * @return {@link boolean} {@code true} if stopLoss can be moved
      *                         {@code false} otherwise
      */
-    private boolean isReadyToSendTrailOrder(Account account, TradeSummary trade){
+    private boolean isReadyToSendTrailOrder(Account account, TradeSummary trade, BigDecimal currentUnits){
 
         BigDecimal stopLossPrice = this.baseExitStrategy.getStopLossOrderPriceByID(account, trade.getStopLossOrderID());
 
-        boolean shortCondition = stopLossPrice.compareTo(BigDecimal.ZERO) == 0 || stopLossPrice.compareTo(this.exitBarHigh) > 0;
-        boolean longCondition = stopLossPrice.compareTo(BigDecimal.ZERO) == 0 || stopLossPrice.compareTo(this.exitBarLow) < 0;
+        boolean shortCondition = (currentUnits.compareTo(BigDecimal.ZERO) < 0) && ( stopLossPrice.compareTo(BigDecimal.ZERO) == 0 || stopLossPrice.compareTo(this.exitBarHigh) > 0);
+        boolean longCondition = (currentUnits.compareTo(BigDecimal.ZERO) > 0) && ( stopLossPrice.compareTo(BigDecimal.ZERO) == 0 || stopLossPrice.compareTo(this.exitBarLow) < 0);
 
         return shortCondition || longCondition;
     }

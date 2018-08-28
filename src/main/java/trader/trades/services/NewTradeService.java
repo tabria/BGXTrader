@@ -66,7 +66,7 @@ public final class NewTradeService {
         BigDecimal unitsSize = calculateUnitsSize(account, newTrade, bid);
         BigDecimal availableMargin = account.getMarginAvailable().bigDecimalValue();
         BigDecimal futureMargin = this.calculateTradeMargin(account, unitsSize);
-        if (availableMargin.compareTo(futureMargin)>0 || unitsSize.compareTo(BigDecimal.ZERO)!=0){
+        if (availableMargin.compareTo(futureMargin)>0 && unitsSize.compareTo(BigDecimal.ZERO)!=0){
 
             //create order request
             OrderCreateRequest request = this.createOrderRequest(unitsSize, newTrade);
@@ -207,6 +207,4 @@ public final class NewTradeService {
         }
         this.context = context;
     }
-
-
 }

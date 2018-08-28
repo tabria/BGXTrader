@@ -201,6 +201,7 @@ public class TrailExitAfterSignificantExtremeStrategyTest {
         ask = BigDecimal.valueOf(1.14688);
         when(this.mockBaseExitStrategy.getLastFullCandleHigh()).thenReturn(lastFullCandleHigh);
         when(this.mockBaseExitStrategy.getLastFullCandleLow()).thenReturn(lastFullCandleLow);
+        when(this.mockBaseExitStrategy.getStopLossOrderPriceByID(any(Account.class), any(OrderID.class))).thenReturn(BigDecimal.valueOf(1.14525));
 
         //when call changeStopLoss with significantLow higher than stopLossPrice the response must be ordersResponse;
         when(this.mockBaseExitStrategy.changeStopLoss(this.mockTradeID, lastFullCandleLow.subtract(Config.SPREAD))).thenReturn(ordersResponse);
@@ -310,6 +311,7 @@ public class TrailExitAfterSignificantExtremeStrategyTest {
         bid = BigDecimal.valueOf(1.14010);
         when(this.mockBaseExitStrategy.getLastFullCandleHigh()).thenReturn(lastFullCandleHigh);
         when(this.mockBaseExitStrategy.getLastFullCandleLow()).thenReturn(lastFullCandleLow);
+        when(this.mockBaseExitStrategy.getStopLossOrderPriceByID(any(Account.class), any(OrderID.class))).thenReturn(BigDecimal.valueOf(1.14165));
 
         //when call changeStopLoss with significantHigh lower than stopLossPrice the response must be ordersResponse;
         when(this.mockBaseExitStrategy.changeStopLoss(this.mockTradeID, lastFullCandleHigh.add(Config.SPREAD))).thenReturn(ordersResponse);
