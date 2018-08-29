@@ -115,15 +115,111 @@ public class HalfCloseTrailExitStrategyTest {
     }
 
     @Test
+    public void WhenFullUnitsSizeAndUnitsSizePositiveAndPriceOverBreakEvenPriceThenMoveStopToBreakEven() throws NoSuchFieldException, IllegalAccessException {
+
+        BigDecimal bid = BigDecimal.valueOf(1.14595);
+        BigDecimal breakEvenTargetPrice = BigDecimal.valueOf(1.14344);
+
+        when(this.mockCurrentUnits.bigDecimalValue()).thenReturn(INITIAL_UNITS);
+
+        //ask not needed
+        BigDecimal ask = BigDecimal.ONE;
+
+        when(this.mockBaseExitStrategy.getStopLossOrderPriceByID(any(Account.class), any(OrderID.class))).thenReturn(breakEvenTargetPrice);
+
+        this.setBaseExitStrategyToMock();
+
+        this.halfCloseTrailExitStrategy.execute(this.mockAccount, ask, bid, this.mockDateTime);
+
+        TradeSetDependentOrdersResponse stopResponse = this.getTradeSetStopResponse();
+
+        assertSame(this.mockTradeSetDependentOrdersResponse, stopResponse);
+
+    }
+
+    @Test
+    public void WhenFullUnitsSizeAndUnitsSizePositiveAndStopOverOrAtBreakEvenPriceThenDoNotMoveStopToBreakEven() throws NoSuchFieldException, IllegalAccessException {
+
+        BigDecimal bid = BigDecimal.valueOf(1.14365);
+        BigDecimal breakEvenTargetPrice = BigDecimal.valueOf(1.14345);
+
+        when(this.mockCurrentUnits.bigDecimalValue()).thenReturn(INITIAL_UNITS);
+
+        //ask not needed
+        BigDecimal ask = BigDecimal.ONE;
+
+        when(this.mockBaseExitStrategy.getStopLossOrderPriceByID(any(Account.class), any(OrderID.class))).thenReturn(breakEvenTargetPrice);
+
+        this.setBaseExitStrategyToMock();
+
+        this.halfCloseTrailExitStrategy.execute(this.mockAccount, ask, bid, this.mockDateTime);
+
+        TradeSetDependentOrdersResponse stopResponse = this.getTradeSetStopResponse();
+
+        assertNull(stopResponse);
+
+    }
+
+    @Test
+    public void WhenFullUnitsSizeAndUnitsSizeNegativeAndPriceBelowBreakEvenPriceThenMoveStopToBreakEven() throws NoSuchFieldException, IllegalAccessException {
+
+        BigDecimal ask = BigDecimal.valueOf(1.14095);
+        BigDecimal breakEvenTargetPrice = BigDecimal.valueOf(1.14346);
+
+        when(this.mockInitialUnits.bigDecimalValue()).thenReturn(INITIAL_UNITS.multiply(BigDecimal.valueOf(-1)));
+        when(this.mockCurrentUnits.bigDecimalValue()).thenReturn(INITIAL_UNITS.multiply(BigDecimal.valueOf(-1)));
+
+        //bid not needed
+        BigDecimal bid = BigDecimal.ONE;
+
+        when(this.mockBaseExitStrategy.getStopLossOrderPriceByID(any(Account.class), any(OrderID.class))).thenReturn(breakEvenTargetPrice);
+
+        this.setBaseExitStrategyToMock();
+
+        this.halfCloseTrailExitStrategy.execute(this.mockAccount, ask, bid, this.mockDateTime);
+
+        TradeSetDependentOrdersResponse stopResponse = this.getTradeSetStopResponse();
+
+        assertSame(this.mockTradeSetDependentOrdersResponse, stopResponse);
+
+    }
+
+    @Test
+    public void WhenFullUnitsSizeAndUnitsSizeNegativeAndStopAtOrBelowBreakEvenPriceThenNoMoveStopToBreakEven() throws NoSuchFieldException, IllegalAccessException {
+
+        BigDecimal ask = BigDecimal.valueOf(1.14095);
+        BigDecimal breakEvenTargetPrice = BigDecimal.valueOf(1.14345);
+
+        when(this.mockInitialUnits.bigDecimalValue()).thenReturn(INITIAL_UNITS.multiply(BigDecimal.valueOf(-1)));
+        when(this.mockCurrentUnits.bigDecimalValue()).thenReturn(INITIAL_UNITS.multiply(BigDecimal.valueOf(-1)));
+
+        //bid not needed
+        BigDecimal bid = BigDecimal.ONE;
+
+        when(this.mockBaseExitStrategy.getStopLossOrderPriceByID(any(Account.class), any(OrderID.class))).thenReturn(breakEvenTargetPrice);
+
+        this.setBaseExitStrategyToMock();
+
+        this.halfCloseTrailExitStrategy.execute(this.mockAccount, ask, bid, this.mockDateTime);
+
+        TradeSetDependentOrdersResponse stopResponse = this.getTradeSetStopResponse();
+
+        assertNull(stopResponse);
+
+    }
+
+    @Test
     public void WhenFullUnitsSizeAndUnitsSizePositiveAndBidPriceBelowTargetThenNoChangeToTrade() throws NoSuchFieldException, IllegalAccessException {
 
         //orderCreateResponse must be null
         //tradeSetDependentOrdersRequest must be null
 
         when(this.mockCurrentUnits.bigDecimalValue()).thenReturn(INITIAL_UNITS);
-        BigDecimal ask = BigDecimal.valueOf(1.14345);
-        //bid not needed
-        BigDecimal bid = BigDecimal.ONE;
+        BigDecimal bid = BigDecimal.valueOf(1.14345);
+        //ask not needed
+        BigDecimal ask = BigDecimal.ONE;
+
+        when(this.mockBaseExitStrategy.getStopLossOrderPriceByID( any(Account.class), any(OrderID.class))).thenReturn(TRADE_PRICE);
 
         this.setBaseExitStrategyToMock();
 
@@ -138,13 +234,14 @@ public class HalfCloseTrailExitStrategyTest {
     }
 
     @Test
-    public void WhenFullUnitsSizeAndUnitsSizePositiveAndPriceOverTargetThenCloseHalf() throws NoSuchFieldException, IllegalAccessException {
-
+    public void WhenFullUnitsSizeAndUnitsSizePositiveAndPriceOverOrOnTargetThenCloseHalf() throws NoSuchFieldException, IllegalAccessException {
 
         when(this.mockCurrentUnits.bigDecimalValue()).thenReturn(INITIAL_UNITS);
-        BigDecimal ask = BigDecimal.valueOf(1.14665);
-        //bid not needed
-        BigDecimal bid = BigDecimal.ONE;
+        BigDecimal bid = BigDecimal.valueOf(1.14665);
+        //ask not needed
+        BigDecimal ask = BigDecimal.ONE;
+
+        when(this.mockBaseExitStrategy.getStopLossOrderPriceByID( any(Account.class), any(OrderID.class))).thenReturn(TRADE_PRICE);
 
         this.setBaseExitStrategyToMock();
 
@@ -155,17 +252,20 @@ public class HalfCloseTrailExitStrategyTest {
         assertSame(this.mockOrderCreateResponse, orderCreateResponse);
 
     }
+
     @Test
-    public void WhenFullUnitsSizeAndUnitsSizeNegativeAndBidPriceBelowTargetThenNoChangeToTrade() throws NoSuchFieldException, IllegalAccessException {
+    public void WhenFullUnitsSizeAndUnitsSizeNegativeAndAskPriceAboveTargetThenNoChangeToTrade() throws NoSuchFieldException, IllegalAccessException {
 
         //orderCreateResponse must be null
         //tradeSetDependentOrdersRequest must be null
 
         when(this.mockInitialUnits.bigDecimalValue()).thenReturn(INITIAL_UNITS.multiply(BigDecimal.valueOf(-1)));
         when(this.mockCurrentUnits.bigDecimalValue()).thenReturn(INITIAL_UNITS.multiply(BigDecimal.valueOf(-1)));
-        BigDecimal bid = BigDecimal.valueOf(1.14345);
-        //ask not needed
-        BigDecimal ask = BigDecimal.ONE;
+        BigDecimal ask = BigDecimal.valueOf(1.14345);
+        //bid not needed
+        BigDecimal bid = BigDecimal.ONE;
+
+        when(this.mockBaseExitStrategy.getStopLossOrderPriceByID( any(Account.class), any(OrderID.class))).thenReturn(TRADE_PRICE);
 
         this.setBaseExitStrategyToMock();
 
@@ -180,14 +280,16 @@ public class HalfCloseTrailExitStrategyTest {
     }
 
     @Test
-    public void WhenFullUnitsSizeAndUnitsSizeNegativeAndBidPriceOverTargetThenCloseHalf() throws NoSuchFieldException, IllegalAccessException {
+    public void WhenFullUnitsSizeAndUnitsSizeNegativeAndAskPriceBelowOrOnTargetThenCloseHalf() throws NoSuchFieldException, IllegalAccessException {
 
 
         when(this.mockInitialUnits.bigDecimalValue()).thenReturn(INITIAL_UNITS.multiply(BigDecimal.valueOf(-1)));
         when(this.mockCurrentUnits.bigDecimalValue()).thenReturn(INITIAL_UNITS.multiply(BigDecimal.valueOf(-1)));
-        BigDecimal ask = BigDecimal.valueOf(1.14665);
+        BigDecimal ask = BigDecimal.valueOf(1.14025);
         //bid not needed
         BigDecimal bid = BigDecimal.ONE;
+
+        when(this.mockBaseExitStrategy.getStopLossOrderPriceByID( any(Account.class), any(OrderID.class))).thenReturn(TRADE_PRICE);
 
         this.setBaseExitStrategyToMock();
 
@@ -213,11 +315,11 @@ public class HalfCloseTrailExitStrategyTest {
 
         when(this.mockInitialUnits.bigDecimalValue()).thenReturn(INITIAL_UNITS.multiply(BigDecimal.valueOf(-1)));
         when(this.mockCurrentUnits.bigDecimalValue()).thenReturn(CURRENT_UNITS.multiply(BigDecimal.valueOf(-1)));
-        BigDecimal bid = BigDecimal.valueOf(1.14345);
+        BigDecimal ask = BigDecimal.valueOf(1.14345);
 
-        when(this.mockBaseExitStrategy.getStopLossOrderPriceByID( any(Account.class), any(OrderID.class))).thenReturn(bid);
+        when(this.mockBaseExitStrategy.getStopLossOrderPriceByID( any(Account.class), any(OrderID.class))).thenReturn(ask);
         //ask not needed
-        BigDecimal ask = BigDecimal.ONE;
+        BigDecimal bid = BigDecimal.ONE;
 
         this.setBaseExitStrategyToMock();
 
@@ -241,12 +343,12 @@ public class HalfCloseTrailExitStrategyTest {
 
         when(this.mockInitialUnits.bigDecimalValue()).thenReturn(INITIAL_UNITS.multiply(BigDecimal.valueOf(-1)));
         when(this.mockCurrentUnits.bigDecimalValue()).thenReturn(CURRENT_UNITS.multiply(BigDecimal.valueOf(-1)));
-        BigDecimal bid = BigDecimal.valueOf(1.14345);
-        //ask not needed
-        BigDecimal ask = BigDecimal.ONE;
+        BigDecimal ask = BigDecimal.valueOf(1.14345);
+        //bid not needed
+        BigDecimal bid = BigDecimal.ONE;
 
         //set stopLoss price
-        when(this.mockBaseExitStrategy.getStopLossOrderPriceByID(any(Account.class), any(OrderID.class))).thenReturn(bid);
+        when(this.mockBaseExitStrategy.getStopLossOrderPriceByID(any(Account.class), any(OrderID.class))).thenReturn(ask);
 
         this.setBaseExitStrategyToMock();
 
@@ -269,12 +371,12 @@ public class HalfCloseTrailExitStrategyTest {
 
         when(this.mockInitialUnits.bigDecimalValue()).thenReturn(INITIAL_UNITS);
         when(this.mockCurrentUnits.bigDecimalValue()).thenReturn(CURRENT_UNITS);
-        BigDecimal ask = BigDecimal.valueOf(1.14345);
-        //bid not needed
-        BigDecimal bid = BigDecimal.ONE;
+        BigDecimal bid = BigDecimal.valueOf(1.14345);
+        //ask not needed
+        BigDecimal ask = BigDecimal.ONE;
 
         //set stopLoss price
-        when(this.mockBaseExitStrategy.getStopLossOrderPriceByID(any(Account.class), any(OrderID.class))).thenReturn(ask);
+        when(this.mockBaseExitStrategy.getStopLossOrderPriceByID(any(Account.class), any(OrderID.class))).thenReturn(bid);
 
         this.setBaseExitStrategyToMock();
 
@@ -297,12 +399,12 @@ public class HalfCloseTrailExitStrategyTest {
 
         when(this.mockInitialUnits.bigDecimalValue()).thenReturn(INITIAL_UNITS);
         when(this.mockCurrentUnits.bigDecimalValue()).thenReturn(CURRENT_UNITS);
-        BigDecimal ask = BigDecimal.valueOf(1.14345);
-        //bid not needed
-        BigDecimal bid = BigDecimal.ONE;
+        BigDecimal bid = BigDecimal.valueOf(1.14345);
+        //ask not needed
+        BigDecimal ask = BigDecimal.ONE;
 
         //set stopLoss price
-        when(this.mockBaseExitStrategy.getStopLossOrderPriceByID(any(Account.class), any(OrderID.class))).thenReturn(ask);
+        when(this.mockBaseExitStrategy.getStopLossOrderPriceByID(any(Account.class), any(OrderID.class))).thenReturn(bid);
 
         this.setBaseExitStrategyToMock();
 

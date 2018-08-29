@@ -80,24 +80,26 @@ public final class BGXTradeGenerator {
 
         //signal from intersection between fastWMA and middleWMA
         boolean isLineSegmentIntersecting = IntersectionService.doLineSegmentsIntersect(fastWMALineSegment, middleWMALineSegment);
-
-        if(isLineSegmentIntersecting && isRSITradable()){
+        Direction direction = this.getIntersectionDirection(fastWMALineSegment);
+        if(isLineSegmentIntersecting && isRSITradable(direction)){
             System.out.println("New WMA crossover");
-            return this.generateTradeAfterIntersection(fastWMALineSegment, middleWMALineSegment);
+            return this.generateTradeAfterIntersection(fastWMALineSegment, middleWMALineSegment, direction);
         }
 
         //signal from intersection between priceSMA and middleWMA
         isLineSegmentIntersecting = IntersectionService.doLineSegmentsIntersect(priceSMALineSegment, middleWMALineSegment);
-        if(isLineSegmentIntersecting && isRSITradable()){
+        direction = this.getIntersectionDirection(priceSMALineSegment);
+        if(isLineSegmentIntersecting && isRSITradable(direction)){
             System.out.println("New priceSMA and middleWMA crossover");
-            return this.generateTradeAfterIntersection(priceSMALineSegment, middleWMALineSegment);
+            return this.generateTradeAfterIntersection(priceSMALineSegment, middleWMALineSegment, direction);
         }
 
         //signal from intersection between priceSMA and slowWMA
         isLineSegmentIntersecting = IntersectionService.doLineSegmentsIntersect(priceSMALineSegment, slowWMALineSegment);
-        if(isLineSegmentIntersecting && isRSITradable()){
+        direction = this.getIntersectionDirection(priceSMALineSegment);
+        if(isLineSegmentIntersecting && isRSITradable(direction)){
             System.out.println("New priceSMA and slowWMA crossover");
-            return this.generateTradeAfterIntersection(priceSMALineSegment, middleWMALineSegment);
+            return this.generateTradeAfterIntersection(priceSMALineSegment, middleWMALineSegment, direction);
         }
 
         return this.defaultTrade;
@@ -127,12 +129,13 @@ public final class BGXTradeGenerator {
      * Generate trade after intersection
      * @param fastWMALineSegment fast WMA (5 period)
      * @param middleWMALineSegment middle WMA (20 period)
+     * @param direction direction of the intersection
      * @return {@link Trade} object
      */
-    private Trade generateTradeAfterIntersection(LineSegment fastWMALineSegment, LineSegment middleWMALineSegment){
+    private Trade generateTradeAfterIntersection(LineSegment fastWMALineSegment, LineSegment middleWMALineSegment,
+                                                 Direction direction){
 
         Point intersectionPoint = IntersectionService.calculateIntersectionPoint(fastWMALineSegment, middleWMALineSegment);
-        Direction direction = this.getIntersectionDirection(fastWMALineSegment);
         List<BigDecimal> dailyValues = this.dailySMA.getValues();
 
         if (direction.equals(Direction.UP) && isAbove(this.fastWMA, this.slowWMA) && isAbove(this.middleWMA, this.slowWMA)){
@@ -153,10 +156,16 @@ public final class BGXTradeGenerator {
      * @return {@link boolean} {@code true} if it is on 50 or above
      *                         {@code false} otherwise
      */
-    private boolean isRSITradable() {
+    private boolean isRSITradable(Direction direction) {
         List<BigDecimal> rsiValues = this.rsi.getValues();
         BigDecimal checkValue = rsiValues.get(rsiValues.size() - 2);
-        return checkValue.compareTo(RSI_FILTER) >= 0;
+        if (direction.equals(Direction.UP)){
+            return checkValue.compareTo(RSI_FILTER) >= 0;
+        }
+        if (direction.equals(Direction.DOWN)){
+            return checkValue.compareTo(RSI_FILTER) <= 0;
+        }
+        return false;
     }
 
     /**
@@ -211,7 +220,7 @@ public final class BGXTradeGenerator {
      * @see Direction
      */
     private Direction getIntersectionDirection(LineSegment segmentA){
-        Direction direction = Direction.DOWN;
+        Direction direction = Direction.FLAT;
 
         BigDecimal segmentAStartPrice = segmentA.getPointA().getPrice();
         BigDecimal segmentAEndPrice = segmentA.getPointB().getPrice();
@@ -219,6 +228,8 @@ public final class BGXTradeGenerator {
         BigDecimal delta = segmentAStartPrice.subtract(segmentAEndPrice).setScale(5, BigDecimal.ROUND_HALF_UP);
         if (delta.compareTo(BigDecimal.ZERO) < 0) {
             direction = Direction.UP;
+        } else if (delta.compareTo(BigDecimal.ZERO) > 0){
+            direction = Direction.DOWN;
         }
         return direction;
     }

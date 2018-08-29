@@ -20,6 +20,7 @@ public final class HalfCloseTrailExitStrategy implements ExitStrategy {
 
     private static final BigDecimal FIRST_TARGET_DISTANCE = BigDecimal.valueOf(0.0032);
     private static final BigDecimal PARTS_TO_CLOSE = BigDecimal.valueOf(2);
+    private static final BigDecimal BREAK_EVEN_DISTANCE = BigDecimal.valueOf(0.0025);
 
     private final BaseExitStrategy baseExitStrategy;
     private OrderCreateResponse halfTradeResponse;
@@ -55,11 +56,39 @@ public final class HalfCloseTrailExitStrategy implements ExitStrategy {
 
         this.baseExitStrategy.updaterUpdateCandles(dateTime);
 
-        //close half position
+        this.moveToBreakEven(account, trade, ask, bid);
+
         this.closeHalfPosition(trade, ask, bid);
 
         //if 1st half is closed then trail the rest after prev bar extremes
         this.trailStopLoss(account, trade);
+    }
+
+    /**
+     * Move stop loss to break even when price move X amount of pips in trade's direction
+      * @param trade current trade
+     * @param ask current ask price
+     * @param bid current bid price
+     */
+    private void moveToBreakEven(Account account, TradeSummary trade, BigDecimal ask, BigDecimal bid){
+        BigDecimal tradeOpenPrice = trade.getPrice().bigDecimalValue();
+        BigDecimal stopLossPrice = this.baseExitStrategy.getStopLossOrderPriceByID(account, trade.getStopLossOrderID());
+        BigDecimal currentUnits = trade.getCurrentUnits().bigDecimalValue();
+
+        if (currentUnits.compareTo(BigDecimal.ZERO) > 0 && stopLossPrice.compareTo(tradeOpenPrice) >= 0){
+            return;
+        }
+
+        if (currentUnits.compareTo(BigDecimal.ZERO) < 0 && stopLossPrice.compareTo(tradeOpenPrice) <= 0){
+            return;
+        }
+
+        BigDecimal breakEvenPrice = this.calculateTargetPrice(currentUnits, tradeOpenPrice, BREAK_EVEN_DISTANCE);
+        if (isFilterPassed(currentUnits, breakEvenPrice, ask, bid)){
+            TradeID id = trade.getId();
+
+            this.tradeSetDependentOrdersResponse = this.baseExitStrategy.changeStopLoss(id, tradeOpenPrice);
+        }
     }
 
     /**
@@ -79,15 +108,15 @@ public final class HalfCloseTrailExitStrategy implements ExitStrategy {
             return;
         }
 
-        BigDecimal firstTargetPrice = this.calculateFirstTargetPrice(currentUnits, tradeOpenPrice);
+        BigDecimal firstTargetPrice = this.calculateTargetPrice(currentUnits, tradeOpenPrice, FIRST_TARGET_DISTANCE);
 
-        if (isReadyToCloseHalf(currentUnits, firstTargetPrice, ask, bid)){
+        if (isFilterPassed(currentUnits, firstTargetPrice, ask, bid)){
             this.halfTradeResponse = this.baseExitStrategy.partialTradeClose(currentUnits, PARTS_TO_CLOSE);
         }
     }
 
     /**
-     * Check if half ot the trade can be closed
+     * Check if half of the trade can be closed
      * @param currentUnits trade current amount of units
      * @param firstTargetPrice price of the first target
      * @param ask ask price
@@ -95,10 +124,10 @@ public final class HalfCloseTrailExitStrategy implements ExitStrategy {
      * @return {@link boolean} {@code true} if the half of the trade can be closed
      *                         {@code false} otherwise
      */
-    private boolean isReadyToCloseHalf(BigDecimal currentUnits, BigDecimal firstTargetPrice, BigDecimal ask, BigDecimal bid){
+    private boolean isFilterPassed(BigDecimal currentUnits, BigDecimal firstTargetPrice, BigDecimal ask, BigDecimal bid){
         //for short trade
-        boolean shortCondition = currentUnits.compareTo(BigDecimal.ZERO) < 0 && firstTargetPrice.compareTo(bid) >= 0;
-        boolean longCondition = currentUnits.compareTo(BigDecimal.ZERO) > 0 && firstTargetPrice.compareTo(ask) <= 0;
+        boolean shortCondition = currentUnits.compareTo(BigDecimal.ZERO) < 0 && firstTargetPrice.compareTo(ask) >= 0;
+        boolean longCondition = currentUnits.compareTo(BigDecimal.ZERO) > 0 && firstTargetPrice.compareTo(bid) <= 0;
 
         return shortCondition || longCondition;
     }
@@ -109,13 +138,13 @@ public final class HalfCloseTrailExitStrategy implements ExitStrategy {
      * @param tradeOpenPrice open price of the trade
      * @return {@link BigDecimal} value of the price
      */
-    private BigDecimal calculateFirstTargetPrice(BigDecimal currentUnits, BigDecimal tradeOpenPrice){
+    private BigDecimal calculateTargetPrice(BigDecimal currentUnits, BigDecimal tradeOpenPrice, BigDecimal distance){
         if (currentUnits.compareTo(BigDecimal.ZERO) < 0){
 
-            return tradeOpenPrice.subtract(FIRST_TARGET_DISTANCE).setScale(5, BigDecimal.ROUND_HALF_UP);
+            return tradeOpenPrice.subtract(distance).setScale(5, BigDecimal.ROUND_HALF_UP);
         } else  {
 
-           return tradeOpenPrice.add(FIRST_TARGET_DISTANCE).setScale(5, BigDecimal.ROUND_HALF_UP);
+           return tradeOpenPrice.add(distance).setScale(5, BigDecimal.ROUND_HALF_UP);
         }
     }
 

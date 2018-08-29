@@ -144,7 +144,7 @@ public class BGXTradeGeneratorTest {
     }
 
     @Test
-    public void WhenFastWMACrossMiddleWMAWithRSIBelowFilterThenGenerateNonTradableSignal() {
+    public void WhenFastWMACrossMiddleWMAFromAboveWithRSIAboveFilterThenGenerateNonTradableSignal() {
 
         List<BigDecimal> fastWMAValues = new ArrayList<>(Arrays.asList(
                 BigDecimal.valueOf(1.23219), BigDecimal.valueOf(1.23196), BigDecimal.valueOf(1.23196)
@@ -160,7 +160,44 @@ public class BGXTradeGeneratorTest {
         ));
 
         List<BigDecimal> rsiValues = new ArrayList<>(Arrays.asList(
-                BigDecimal.valueOf(49), BigDecimal.valueOf(49), BigDecimal.valueOf(22)
+                BigDecimal.valueOf(51), BigDecimal.valueOf(51), BigDecimal.valueOf(51)
+        ));
+
+        when(this.mockRsi.getValues()).thenReturn(rsiValues);
+
+        when(this.mockFastWma.getValues()).thenReturn(fastWMAValues);
+        when(this.mockMiddleWma.getValues()).thenReturn(middleWMAValues);
+        when(this.mockDailySma.getValues()).thenReturn(dailyValues);
+
+        //slowWMA and priceSma line segments are irrelevant for this test
+        when(this.mockSlowWma.getValues()).thenReturn(middleWMAValues);
+        when(this.mockPriceSma.getValues()).thenReturn(middleWMAValues);
+
+        Trade trade = this.signalGenerator.generateTrade();
+
+
+        assertFalse("Trade must not be tradable", trade.getTradable());
+
+    }
+
+    @Test
+    public void WhenFastWMACrossMiddleWMAFromBelowWithRSIBelowFilterThenGenerateNonTradableSignal() {
+
+        List<BigDecimal> fastWMAValues = new ArrayList<>(Arrays.asList(
+                BigDecimal.valueOf(1.23119), BigDecimal.valueOf(1.23296), BigDecimal.valueOf(1.23296)
+
+        ));
+
+        List<BigDecimal> middleWMAValues = new ArrayList<>(Arrays.asList(
+                BigDecimal.valueOf(1.23159), BigDecimal.valueOf(1.23239), BigDecimal.valueOf(1.23239)
+        ));
+
+        List<BigDecimal> dailyValues = new ArrayList<>(Arrays.asList(
+                BigDecimal.valueOf(1.5656), BigDecimal.valueOf(1.5656), BigDecimal.valueOf(1.5656)
+        ));
+
+        List<BigDecimal> rsiValues = new ArrayList<>(Arrays.asList(
+                BigDecimal.valueOf(49), BigDecimal.valueOf(49), BigDecimal.valueOf(49)
         ));
 
         when(this.mockRsi.getValues()).thenReturn(rsiValues);
@@ -335,7 +372,50 @@ public class BGXTradeGeneratorTest {
     }
 
     @Test
-    public void WhenPriceSMACrossMiddleWMAWithRSIBelowFilterThenGenerateNonTradableSignal() {
+    public void WhenPriceSMACrossMiddleWMAFromBelowWithRSIBelowFilterThenGenerateNonTradableSignal() {
+
+        List<BigDecimal> fastWMAValues = new ArrayList<>(Arrays.asList(
+                BigDecimal.valueOf(1.23419), BigDecimal.valueOf(1.23419), BigDecimal.valueOf(1.23419)
+
+        ));
+
+        List<BigDecimal> priceSMAValues = new ArrayList<>(Arrays.asList(
+                BigDecimal.valueOf(1.23219), BigDecimal.valueOf(1.23376), BigDecimal.valueOf(1.23386)
+
+        ));
+
+        List<BigDecimal> middleWMAValues = new ArrayList<>(Arrays.asList(
+                BigDecimal.valueOf(1.23289), BigDecimal.valueOf(1.23339), BigDecimal.valueOf(1.23339)
+        ));
+
+        List<BigDecimal> dailyValues = new ArrayList<>(Arrays.asList(
+                BigDecimal.valueOf(1.5656), BigDecimal.valueOf(1.5656), BigDecimal.valueOf(1.5656)
+        ));
+
+        List<BigDecimal> rsiValues = new ArrayList<>(Arrays.asList(
+                BigDecimal.valueOf(49), BigDecimal.valueOf(49), BigDecimal.valueOf(22)
+        ));
+
+        when(this.mockRsi.getValues()).thenReturn(rsiValues);
+
+        when(this.mockFastWma.getValues()).thenReturn(fastWMAValues);
+        when(this.mockPriceSma.getValues()).thenReturn(priceSMAValues);
+        when(this.mockMiddleWma.getValues()).thenReturn(middleWMAValues);
+        when(this.mockDailySma.getValues()).thenReturn(dailyValues);
+
+
+        when(this.mockSlowWma.getValues()).thenReturn(middleWMAValues);
+
+
+        Trade trade = this.signalGenerator.generateTrade();
+
+
+        assertFalse("Trade must not be tradable", trade.getTradable());
+
+    }
+
+    @Test
+    public void WhenPriceSMACrossMiddleWMAFromAboveWithRSIAboveFilterThenGenerateNonTradableSignal() {
 
         List<BigDecimal> fastWMAValues = new ArrayList<>(Arrays.asList(
                 BigDecimal.valueOf(1.23419), BigDecimal.valueOf(1.23419), BigDecimal.valueOf(1.23419)
@@ -356,7 +436,7 @@ public class BGXTradeGeneratorTest {
         ));
 
         List<BigDecimal> rsiValues = new ArrayList<>(Arrays.asList(
-                BigDecimal.valueOf(49), BigDecimal.valueOf(49), BigDecimal.valueOf(22)
+                BigDecimal.valueOf(51), BigDecimal.valueOf(51), BigDecimal.valueOf(51)
         ));
 
         when(this.mockRsi.getValues()).thenReturn(rsiValues);
@@ -530,7 +610,7 @@ public class BGXTradeGeneratorTest {
     }
 
     @Test
-    public void WhenPriceSMACrossSlowWMAWithRSIBelowFilterThenGenerateNonTradableSignal() {
+    public void WhenPriceSMACrossSlowWMAFromAboveWithRSIAboveFilterThenGenerateNonTradableSignal() {
 
         List<BigDecimal> fastWMAValues = new ArrayList<>(Arrays.asList(
                 BigDecimal.valueOf(1.23639), BigDecimal.valueOf(1.23496), BigDecimal.valueOf(1.23496)
@@ -555,7 +635,54 @@ public class BGXTradeGeneratorTest {
         ));
 
         List<BigDecimal> rsiValues = new ArrayList<>(Arrays.asList(
-                BigDecimal.valueOf(49), BigDecimal.valueOf(49), BigDecimal.valueOf(22)
+                BigDecimal.valueOf(51), BigDecimal.valueOf(51), BigDecimal.valueOf(51)
+        ));
+
+        when(this.mockRsi.getValues()).thenReturn(rsiValues);
+
+        when(this.mockFastWma.getValues()).thenReturn(fastWMAValues);
+        when(this.mockPriceSma.getValues()).thenReturn(priceSMAValues);
+        when(this.mockMiddleWma.getValues()).thenReturn(middleWMAValues);
+        when(this.mockDailySma.getValues()).thenReturn(dailyValues);
+
+
+        when(this.mockSlowWma.getValues()).thenReturn(slowWMAValues);
+
+
+        Trade trade = this.signalGenerator.generateTrade();
+
+
+        assertFalse("Trade must not be tradable", trade.getTradable());
+
+    }
+
+    @Test
+    public void WhenPriceSMACrossSlowWMAFromBelowWithRSIBelowFilterThenGenerateNonTradableSignal() {
+
+        List<BigDecimal> fastWMAValues = new ArrayList<>(Arrays.asList(
+                BigDecimal.valueOf(1.23639), BigDecimal.valueOf(1.23496), BigDecimal.valueOf(1.23496)
+
+        ));
+
+        List<BigDecimal> priceSMAValues = new ArrayList<>(Arrays.asList(
+                BigDecimal.valueOf(1.23789), BigDecimal.valueOf(1.23826), BigDecimal.valueOf(1.23826)
+
+        ));
+
+        List<BigDecimal> middleWMAValues = new ArrayList<>(Arrays.asList(
+                BigDecimal.valueOf(1.23619), BigDecimal.valueOf(1.23239), BigDecimal.valueOf(1.23339)
+        ));
+
+        List<BigDecimal> slowWMAValues = new ArrayList<>(Arrays.asList(
+                BigDecimal.valueOf(1.23791), BigDecimal.valueOf(1.23793), BigDecimal.valueOf(1.23793)
+        ));
+
+        List<BigDecimal> dailyValues = new ArrayList<>(Arrays.asList(
+                BigDecimal.valueOf(1.5656), BigDecimal.valueOf(1.5656), BigDecimal.valueOf(1.5656)
+        ));
+
+        List<BigDecimal> rsiValues = new ArrayList<>(Arrays.asList(
+                BigDecimal.valueOf(49), BigDecimal.valueOf(49), BigDecimal.valueOf(49)
         ));
 
         when(this.mockRsi.getValues()).thenReturn(rsiValues);
