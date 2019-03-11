@@ -11,7 +11,8 @@ import java.math.BigDecimal;
 public final class Trade {
 
     private static final BigDecimal DEFAULT_SPREAD = BigDecimal.valueOf(0.0002);
-    private static final BigDecimal DEFAULT_FILTER = BigDecimal.valueOf(0.0025);
+    //unoptimized value 0.0025
+    private static final BigDecimal DEFAULT_ENTRY_FILTER = BigDecimal.valueOf(0.0020);
     private static final BigDecimal DEFAULT_STOP_LOSS_FILTER = BigDecimal.valueOf(0.0005);
     private static final BigDecimal FIRST_TARGET = BigDecimal.valueOf(0.0050);
     
@@ -111,9 +112,9 @@ public final class Trade {
             throw new NullPointerException("Arguments must not be null");
         }
         if (direction.equals(Direction.DOWN)){
-            this.entryPrice = intersectionPoint.getPrice().subtract(DEFAULT_FILTER).setScale(5, BigDecimal.ROUND_HALF_UP);
+            this.entryPrice = intersectionPoint.getPrice().subtract(DEFAULT_ENTRY_FILTER).setScale(5, BigDecimal.ROUND_HALF_UP);
         } else {
-            this.entryPrice = intersectionPoint.getPrice().add(DEFAULT_FILTER).setScale(5, BigDecimal.ROUND_HALF_UP);
+            this.entryPrice = intersectionPoint.getPrice().add(DEFAULT_ENTRY_FILTER).setScale(5, BigDecimal.ROUND_HALF_UP);
             this.entryPrice = this.entryPrice.add(DEFAULT_SPREAD).setScale(5, BigDecimal.ROUND_HALF_UP);
         }
     }

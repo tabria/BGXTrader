@@ -27,7 +27,7 @@ public final class OrderService {
     }
 
     /**
-     * Closing unfilled orders if price is more than delta
+     * Closing unfilled orders. For short orders if ask is STOP_LOSS_OFFSET  above stopLossPrice and for long orders if bid is STOP_LOSS_OFFSET below stopLossPrice
      * @param account current account
      * @param ask last ask price
      * @param bid last bid price

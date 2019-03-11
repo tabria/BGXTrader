@@ -20,18 +20,21 @@ public final class Config {
     /**
      * URL - The fxTrade or fxPractice API URL
      */
-    public static final String URL = "https://api-fxpractice.oanda.com";
+    public static final String URL = "https://api-fxtrade.oanda.com";
+    //public static final String URL = "https://api-fxpractice.oanda.com";
 
     /**
      * TOKEN - The OANDA API Personal Access token, obtained from OANDA website.
      */
     //fxPractice token
-    public static final String TOKEN = "7312804a0ce1f0052589036b020130d7-7b2ee676e1767783b932ab8965c1eaee";
+    public static final String TOKEN = "";
+
 
     /**
      * ACCOUNTID - object storing OANDA's account ID, obtained from OANDA website
      */
-    public static final AccountID ACCOUNTID = new AccountID("101-004-8077015-001");
+    public static final AccountID ACCOUNTID = new AccountID("");
+
 
     /**
      * INSTRUMENT - object storing the main trading pair. This can be only a pair supported by OANDA

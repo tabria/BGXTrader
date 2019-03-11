@@ -6,6 +6,7 @@ import com.oanda.v20.RequestException;
 import com.oanda.v20.account.Account;
 import com.oanda.v20.primitives.DateTime;
 import trader.config.Config;
+import trader.core.Connection;
 import trader.core.Observer;
 import trader.trades.services.NewTradeService;
 import trader.trades.services.OrderService;
@@ -71,8 +72,14 @@ public final class PositionManager implements Observer {
                 this.newTradeService.sendNewTradeOrder(account, bid);
             }
 
-        } catch (RequestException | ExecuteException e) {
-            throw new RuntimeException(e);
+        } catch(ExecuteException ee){
+            Connection.waitToConnect();
+        } catch (RequestException re ) {
+            if (re.getMessage().equalsIgnoreCase("Service unavailable, please try again later.")){
+                Connection.waitToConnect();
+            } else {
+                throw new RuntimeException(re);
+            }
         }
     }
 

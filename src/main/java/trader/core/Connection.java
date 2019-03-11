@@ -9,6 +9,7 @@ import java.net.UnknownHostException;
  */
 public final class Connection {
 
+//TODO make method to check for exceptions 503 and 504 - no service for account
 
     private Connection() {
     }

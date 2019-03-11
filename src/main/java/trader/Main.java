@@ -3,7 +3,6 @@ package trader;
 
 import com.oanda.v20.Context;
 import com.oanda.v20.ContextBuilder;
-import com.oanda.v20.ExecuteException;
 import com.oanda.v20.RequestException;
 import com.oanda.v20.account.Account;
 import com.oanda.v20.account.AccountGetResponse;
@@ -11,7 +10,6 @@ import com.oanda.v20.account.AccountListResponse;
 import com.oanda.v20.account.AccountProperties;
 import com.oanda.v20.instrument.CandlestickGranularity;
 import com.oanda.v20.primitives.InstrumentName;
-import com.oanda.v20.user.UserGetInfoResponse;
 import trader.config.Config;
 import trader.core.Connection;
 import trader.core.Observable;
@@ -29,8 +27,8 @@ import trader.trades.generators.BGXTradeGenerator;
 import trader.trades.services.NewTradeService;
 import trader.trades.services.OrderService;
 import trader.trades.services.exit_strategies.ExitStrategy;
-import trader.trades.services.exit_strategies.HalfCloseTrailExitStrategy;
-import trader.trades.services.exit_strategies.TrailExitAfterSignificantExtremeStrategy;
+import trader.trades.services.exit_strategies.FullCloseStrategy;
+
 
 import java.util.List;
 
@@ -54,17 +52,17 @@ import java.util.List;
  *
  */
 
+//TODO log exceptions, remove active orders if price is equal or beyond break even point
+
 public class Main {
 
     public static void main(String[] args){
+
 
         Context context = new ContextBuilder(Config.URL)
                 .setToken(Config.TOKEN)
                 .setApplication("Context")
                 .build();
-
-
-
 
         validateAccount(context);
 
@@ -125,7 +123,7 @@ public class Main {
 
         //create trade services
         NewTradeService newTradeService = new NewTradeService(context, signalGenerator);
-        ExitStrategy exitStrategy = new HalfCloseTrailExitStrategy(context, Config.TIME_FRAME);
+        ExitStrategy exitStrategy = new FullCloseStrategy(context, Config.TIME_FRAME);
         OrderService orderService = new OrderService(context);
 
         //create position manager
@@ -185,7 +183,16 @@ public class Main {
             if(!account.getCurrency().toString().equalsIgnoreCase("EUR")){
                 throw  new IllegalArgumentException("Robot must be used only on EURO based accounts");
             }
-        } catch (Exception e) {
+        } catch(RequestException re){
+            if (re.getStatus() == 504 || re.getStatus() == 503){
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    throw  new RuntimeException(e);
+                }
+            }
+        }
+        catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

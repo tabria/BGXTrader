@@ -4,7 +4,7 @@ package trader.prices;
 import trader.core.Observable;
 
 /**
- * This is a wrapper class for Observable, giving the ability to run in separate thread
+ * This is a wrapper class for PriceObservable, giving the ability to run in separate thread
  * @see Observable
  * @see PriceObservable
  */

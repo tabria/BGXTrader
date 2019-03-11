@@ -15,13 +15,14 @@ import trader.indicators.IndicatorObserver;
 
 
 import java.math.BigDecimal;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 
 /**
- * This class is requesting for new prices every second
+ * This class is requesting new prices every second
  */
 
 public final class PriceObservable implements Observable {
@@ -117,7 +118,7 @@ public final class PriceObservable implements Observable {
                 BigDecimal newAsk = newClientPrice.getAsks().get(0).getPrice().bigDecimalValue();
                 BigDecimal newBid = newClientPrice.getBids().get(0).getPrice().bigDecimalValue();
 
-                if(newClientPrice.getTradeable() && (oldAsk.compareTo(newAsk) != 0 || oldBid.compareTo(newBid) !=0 )){
+                if (newClientPrice.getTradeable() && (oldAsk.compareTo(newAsk) != 0 || oldBid.compareTo(newBid) != 0)) {
                     oldAsk = newAsk;
                     oldBid = newBid;
                     this.notifyObservers(response.getTime(), newAsk, newBid);
@@ -128,12 +129,36 @@ public final class PriceObservable implements Observable {
             } catch(ExecuteException ee){
                 Connection.waitToConnect();
             } catch (RequestException  | InterruptedException e ) {
-                if (e.getMessage().equalsIgnoreCase("Service unavailable, please try again later.")){
+                String message = e.getMessage();
+                //message is null
+                //HTTP 500 exception An internal server error has occurred
+                if (message == null){
+                    this.sleepThread(THREAD_SLEEP_INTERVAL);
+
+                }else if (message.equalsIgnoreCase("Service unavailable, please try again later.")){
                     Connection.waitToConnect();
-                } else {
+
+                }else{
                     throw new RuntimeException(e);
                 }
+            }  catch (RuntimeException re){
+                //HTTP 503 exception "Unable to service request, please try again later.
+                String message = re.getMessage();
+                if (message == null || message.equalsIgnoreCase("Unable to service request, please try again later.")){
+                    this.sleepThread(THREAD_SLEEP_INTERVAL);
+
+                } else {
+                    throw new RuntimeException(re.getMessage());
+                }
             }
+        }
+    }
+
+    private void sleepThread(int sleepInterval){
+        try {
+            Thread.sleep(sleepInterval);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 

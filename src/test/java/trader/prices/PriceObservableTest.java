@@ -230,8 +230,8 @@ public class PriceObservableTest {
 
         try{
             this.observable.execute();
-        } catch (IllegalArgumentException ie){
-            assertEquals("From mock observer", ie.getMessage());
+        } catch (RuntimeException re){
+            assertEquals("From mock observer", re.getMessage());
         }
 
     }

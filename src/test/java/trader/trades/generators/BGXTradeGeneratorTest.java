@@ -83,7 +83,7 @@ public class BGXTradeGeneratorTest {
         Trade trade = this.signalGenerator.generateTrade();
 
         BigDecimal entryPrice = trade.getEntryPrice();
-        int compareEntry = BigDecimal.valueOf(1.23436).compareTo(entryPrice);
+        int compareEntry = BigDecimal.valueOf(1.23386).compareTo(entryPrice);
 
         BigDecimal stopLossPrice = trade.getStopLossPrice();
         int compareStopLoss = BigDecimal.valueOf(1.23116).compareTo(stopLossPrice);
@@ -132,7 +132,7 @@ public class BGXTradeGeneratorTest {
         Trade trade = this.signalGenerator.generateTrade();
 
         BigDecimal entryPrice = trade.getEntryPrice();
-        int compareEntry = BigDecimal.valueOf(1.22953).compareTo(entryPrice);
+        int compareEntry = BigDecimal.valueOf(1.23003).compareTo(entryPrice);
 
         BigDecimal stopLossPrice = trade.getStopLossPrice();
         int compareStopLoss = BigDecimal.valueOf(1.23273).compareTo(stopLossPrice);
@@ -258,7 +258,7 @@ public class BGXTradeGeneratorTest {
         Trade trade = this.signalGenerator.generateTrade();
 
         BigDecimal entryPrice = trade.getEntryPrice();
-        int compareEntry = BigDecimal.valueOf(1.23389).compareTo(entryPrice);
+        int compareEntry = BigDecimal.valueOf(1.23339).compareTo(entryPrice);
 
         BigDecimal stopLossPrice = trade.getStopLossPrice();
         int compareStopLoss = BigDecimal.valueOf(1.23069).compareTo(stopLossPrice);
@@ -309,7 +309,7 @@ public class BGXTradeGeneratorTest {
         Trade trade = this.signalGenerator.generateTrade();
 
         BigDecimal entryPrice = trade.getEntryPrice();
-        int compareEntry = BigDecimal.valueOf(1.23436).compareTo(entryPrice);
+        int compareEntry = BigDecimal.valueOf(1.23386).compareTo(entryPrice);
 
         BigDecimal stopLossPrice = trade.getStopLossPrice();
         int compareStopLoss = BigDecimal.valueOf(1.23116).compareTo(stopLossPrice);
@@ -360,7 +360,7 @@ public class BGXTradeGeneratorTest {
         Trade trade = this.signalGenerator.generateTrade();
 
         BigDecimal entryPrice = trade.getEntryPrice();
-        int compareEntry = BigDecimal.valueOf(1.22953).compareTo(entryPrice);
+        int compareEntry = BigDecimal.valueOf(1.23003).compareTo(entryPrice);
 
         BigDecimal stopLossPrice = trade.getStopLossPrice();
         int compareStopLoss = BigDecimal.valueOf(1.23273).compareTo(stopLossPrice);
@@ -497,7 +497,7 @@ public class BGXTradeGeneratorTest {
         Trade trade = this.signalGenerator.generateTrade();
 
         BigDecimal entryPrice = trade.getEntryPrice();
-        int compareEntry = BigDecimal.valueOf(1.23389).compareTo(entryPrice);
+        int compareEntry = BigDecimal.valueOf(1.23339).compareTo(entryPrice);
 
         BigDecimal stopLossPrice = trade.getStopLossPrice();
         int compareStopLoss = BigDecimal.valueOf(1.23069).compareTo(stopLossPrice);
@@ -547,7 +547,7 @@ public class BGXTradeGeneratorTest {
         Trade trade = this.signalGenerator.generateTrade();
 
         BigDecimal entryPrice = trade.getEntryPrice();
-        int compareEntry = BigDecimal.valueOf(1.24045).compareTo(entryPrice);
+        int compareEntry = BigDecimal.valueOf(1.23995).compareTo(entryPrice);
 
         BigDecimal stopLossPrice = trade.getStopLossPrice();
         int compareStopLoss = BigDecimal.valueOf(1.23725).compareTo(stopLossPrice);
@@ -598,7 +598,7 @@ public class BGXTradeGeneratorTest {
         Trade trade = this.signalGenerator.generateTrade();
 
         BigDecimal entryPrice = trade.getEntryPrice();
-        int compareEntry = BigDecimal.valueOf(1.24715).compareTo(entryPrice);
+        int compareEntry = BigDecimal.valueOf(1.24765).compareTo(entryPrice);
 
         BigDecimal stopLossPrice = trade.getStopLossPrice();
         int compareStopLoss = BigDecimal.valueOf(1.25035).compareTo(stopLossPrice);
@@ -743,7 +743,7 @@ public class BGXTradeGeneratorTest {
         Trade trade = this.signalGenerator.generateTrade();
 
         BigDecimal entryPrice = trade.getEntryPrice();
-        int compareEntry = BigDecimal.valueOf(1.25956).compareTo(entryPrice);
+        int compareEntry = BigDecimal.valueOf(1.25906).compareTo(entryPrice);
 
         BigDecimal stopLossPrice = trade.getStopLossPrice();
         int compareStopLoss = BigDecimal.valueOf(1.25636).compareTo(stopLossPrice);
