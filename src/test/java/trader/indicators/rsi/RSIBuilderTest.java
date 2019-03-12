@@ -4,7 +4,7 @@ import com.oanda.v20.Context;
 import com.oanda.v20.instrument.*;
 import org.junit.Before;
 import org.junit.Test;
-import trader.indicators.enums.AppliedPrice;
+import trader.indicators.enums.CandlestickPrice;
 import trader.indicators.Indicator;
 
 import java.lang.reflect.Field;
@@ -61,12 +61,12 @@ public class RSIBuilderTest {
         RSIBuilder rsiBuilder = new RSIBuilder(this.context);
 
         Field field = getFieldValue(rsiBuilder, "DEFAULT_APPLIED_PRICE");
-        AppliedPrice expected = (AppliedPrice) field.get(rsiBuilder);
+        CandlestickPrice expected = (CandlestickPrice) field.get(rsiBuilder);
 
-        Field field2 = getFieldValue(rsiBuilder, "appliedPrice");
-        AppliedPrice appliedPrice = (AppliedPrice) field2.get(rsiBuilder);
+        Field field2 = getFieldValue(rsiBuilder, "candlestickPrice");
+        CandlestickPrice candlestickPrice = (CandlestickPrice) field2.get(rsiBuilder);
 
-        assertEquals(expected, appliedPrice);
+        assertEquals(expected, candlestickPrice);
     }
 
     @Test
@@ -118,23 +118,23 @@ public class RSIBuilderTest {
 
     @Test
     public void WhenSetAppliedPriceThenReturnCurrentObject(){
-        RSIBuilder rsiBuilder = this.builder.setAppliedPrice(AppliedPrice.CLOSE);
+        RSIBuilder rsiBuilder = this.builder.setCandlestickPrice(CandlestickPrice.CLOSE);
         assertEquals(this.builder, rsiBuilder);
     }
 
     @Test(expected = NullPointerException.class)
     public void WhenSetAppliedPriceWithNullThenException(){
-        this.builder.setAppliedPrice(null);
+        this.builder.setCandlestickPrice(null);
     }
 
     @Test
     public void WhenSetAppliedPriceWithCorrectValueThenReturnCorrectValue() throws NoSuchFieldException, IllegalAccessException {
 
-        AppliedPrice expected = AppliedPrice.MEDIAN;
-        this.builder.setAppliedPrice(expected);
+        CandlestickPrice expected = CandlestickPrice.MEDIAN;
+        this.builder.setCandlestickPrice(expected);
 
-        Field field = getFieldValue(this.builder,"appliedPrice");
-        AppliedPrice result = (AppliedPrice) field.get(this.builder);
+        Field field = getFieldValue(this.builder,"candlestickPrice");
+        CandlestickPrice result = (CandlestickPrice) field.get(this.builder);
 
         assertEquals(expected, result);
     }

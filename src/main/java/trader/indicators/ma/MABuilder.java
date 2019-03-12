@@ -6,7 +6,7 @@ import com.oanda.v20.instrument.InstrumentCandlesRequest;
 import trader.candles.CandlesUpdater;
 import trader.config.Config;
 import trader.indicators.Indicator;
-import trader.indicators.enums.AppliedPrice;
+import trader.indicators.enums.CandlestickPrice;
 import trader.indicators.ma.enums.MAType;
 
 import java.lang.reflect.Constructor;
@@ -23,7 +23,7 @@ public final class MABuilder {
     private static final long MIN_PERIOD = 1L;
     private static final long MAX_PERIOD = 4000L;
     private static final CandlestickGranularity DEFAULT_CANDLE_TIME_FRAME = CandlestickGranularity.H4;
-    private static final AppliedPrice DEFAULT_APPLIED_PRICE = AppliedPrice.CLOSE;
+    private static final CandlestickPrice DEFAULT_APPLIED_PRICE = CandlestickPrice.CLOSE;
     private static final MAType DEFAULT_MA_TYPE = MAType.SIMPLE;
     private static final long PERIOD_MULTIPLIER = 4L;
     private static final String MA_LOCATION = "trader.indicators.ma.";
@@ -31,7 +31,7 @@ public final class MABuilder {
     private Context ctx;
     private long period;
     private CandlestickGranularity candleTimeFrame;
-    private AppliedPrice appliedPrice;
+    private CandlestickPrice candlestickPrice;
     private MAType maType;
 
     /**
@@ -44,7 +44,7 @@ public final class MABuilder {
         setContext(context);
         this.period = DEFAULT_PERIOD;
         this.candleTimeFrame = DEFAULT_CANDLE_TIME_FRAME;
-        this.appliedPrice = DEFAULT_APPLIED_PRICE;
+        this.candlestickPrice = DEFAULT_APPLIED_PRICE;
         this.maType = DEFAULT_MA_TYPE;
     }
 
@@ -82,19 +82,19 @@ public final class MABuilder {
     }
 
     /**
-     * Set the appliedPrice.
+     * Set the candlestickPrice.
      * This is the price which will be use to calculate SMA. The price is taken or calculated from candle structure - High, Low, Open, Close
      *
-     * @param appliedPrice candle price
+     * @param candlestickPrice candle price
      * @return {@link MABuilder} current builder object
-     * @throws NullPointerException when appliedPrice is null
-     * @see AppliedPrice
+     * @throws NullPointerException when candlestickPrice is null
+     * @see CandlestickPrice
      */
-    public MABuilder setAppliedPrice(AppliedPrice appliedPrice){
-        if(appliedPrice == null){
-            throw new NullPointerException("AppliedPrice must not be null");
+    public MABuilder setCandlestickPrice(CandlestickPrice candlestickPrice){
+        if(candlestickPrice == null){
+            throw new NullPointerException("CandlestickPrice must not be null");
         }
-        this.appliedPrice = appliedPrice;
+        this.candlestickPrice = candlestickPrice;
         return this;
     }
 
@@ -128,8 +128,8 @@ public final class MABuilder {
         Object object = null;
         try {
             Class<?> aClass = Class.forName(MA_LOCATION + className);
-            Constructor<?> declaredConstructor = aClass.getDeclaredConstructor(long.class, AppliedPrice.class, CandlesUpdater.class);
-            object = declaredConstructor.newInstance(period, appliedPrice, updater);
+            Constructor<?> declaredConstructor = aClass.getDeclaredConstructor(long.class, CandlestickPrice.class, CandlesUpdater.class);
+            object = declaredConstructor.newInstance(period, candlestickPrice, updater);
             return (Indicator) object;
 
         } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {

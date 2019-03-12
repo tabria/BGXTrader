@@ -5,7 +5,7 @@ import com.oanda.v20.instrument.*;
 import org.junit.Before;
 import org.junit.Test;
 import trader.indicators.Indicator;
-import trader.indicators.enums.AppliedPrice;
+import trader.indicators.enums.CandlestickPrice;
 import trader.indicators.ma.enums.MAType;
 
 import java.lang.reflect.Field;
@@ -119,24 +119,24 @@ public class MABuilderTest {
 
     @Test(expected = NullPointerException.class)
     public void WhenSetAppliedPriceWithNullThenException() {
-        this.builder.setAppliedPrice(null);
+        this.builder.setCandlestickPrice(null);
     }
 
     @Test
     public void WhenSetAppliedPriceCorrectValueThenCorrectResult() throws NoSuchFieldException, IllegalAccessException {
-        AppliedPrice expected = AppliedPrice.MEDIAN;
-        this.builder.setAppliedPrice(expected);
+        CandlestickPrice expected = CandlestickPrice.MEDIAN;
+        this.builder.setCandlestickPrice(expected);
 
-        Field field = this.builder.getClass().getDeclaredField("appliedPrice");
+        Field field = this.builder.getClass().getDeclaredField("candlestickPrice");
         field.setAccessible(true);
-        AppliedPrice result = (AppliedPrice) field.get(this.builder);
+        CandlestickPrice result = (CandlestickPrice) field.get(this.builder);
 
         assertSame(expected, result);
     }
 
     @Test
     public void WhenSetAppliedPriceThenReturnSameObject(){
-        MABuilder builderObj = this.builder.setAppliedPrice(AppliedPrice.CLOSE);
+        MABuilder builderObj = this.builder.setCandlestickPrice(CandlestickPrice.CLOSE);
 
         assertEquals(this.builder, builderObj);
     }

@@ -4,8 +4,8 @@ import com.oanda.v20.instrument.CandlestickData;
 
 import java.math.BigDecimal;
 
-public interface AppliedPriceOperations {
+public interface CandlestickPriceOperations {
 
-    BigDecimal apply(CandlestickData candle);
+    BigDecimal extractPrice(CandlestickData candle);
 
 }

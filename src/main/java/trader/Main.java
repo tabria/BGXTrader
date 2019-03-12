@@ -16,7 +16,7 @@ import trader.core.Observable;
 import trader.core.Observer;
 import trader.indicators.Indicator;
 import trader.indicators.IndicatorObserver;
-import trader.indicators.enums.AppliedPrice;
+import trader.indicators.enums.CandlestickPrice;
 import trader.indicators.ma.MABuilder;
 import trader.indicators.ma.enums.MAType;
 import trader.indicators.rsi.RSIBuilder;
@@ -69,42 +69,42 @@ public class Main {
         //simple ma with period of 1 representing the price
         Indicator smaPrice = new MABuilder(context)
                 .setPeriod(1)
-                .setAppliedPrice(AppliedPrice.CLOSE)
+                .setCandlestickPrice(CandlestickPrice.CLOSE)
                 .setCandleTimeFrame(Config.TIME_FRAME)
                 .setMAType(MAType.SIMPLE)
                 .build();
 
         Indicator dailyPrice = new MABuilder(context)
                 .setPeriod(1)
-                .setAppliedPrice(AppliedPrice.OPEN)
+                .setCandlestickPrice(CandlestickPrice.OPEN)
                 .setCandleTimeFrame(CandlestickGranularity.D)
                 .setMAType(MAType.SIMPLE)
                 .build();
 
         Indicator wmaFast = new MABuilder(context)
                 .setPeriod(5)
-                .setAppliedPrice(AppliedPrice.CLOSE)
+                .setCandlestickPrice(CandlestickPrice.CLOSE)
                 .setCandleTimeFrame(Config.TIME_FRAME)
                 .setMAType(MAType.WEIGHTED)
                 .build();
 
         Indicator wmaMiddle = new MABuilder(context)
                 .setPeriod(20)
-                .setAppliedPrice(AppliedPrice.CLOSE)
+                .setCandlestickPrice(CandlestickPrice.CLOSE)
                 .setCandleTimeFrame(Config.TIME_FRAME)
                 .setMAType(MAType.WEIGHTED)
                 .build();
 
         Indicator wmaSlow = new MABuilder(context)
                 .setPeriod(100)
-                .setAppliedPrice(AppliedPrice.CLOSE)
+                .setCandlestickPrice(CandlestickPrice.CLOSE)
                 .setCandleTimeFrame(Config.TIME_FRAME)
                 .setMAType(MAType.WEIGHTED)
                 .build();
 
         Indicator rsi = new RSIBuilder(context)
                 .setPeriod(14)
-                .setAppliedPrice(AppliedPrice.CLOSE)
+                .setCandlestickPrice(CandlestickPrice.CLOSE)
                 .setCandlesTimeFrame(Config.TIME_FRAME)
                 .build();
 

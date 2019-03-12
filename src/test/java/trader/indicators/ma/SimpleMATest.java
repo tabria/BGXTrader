@@ -7,7 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import trader.candles.CandlesUpdater;
 import trader.trades.entities.Point;
-import trader.indicators.enums.AppliedPrice;
+import trader.indicators.enums.CandlestickPrice;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -41,7 +41,7 @@ public class SimpleMATest {
     private CandlesUpdater updater;
 
     private List<Candlestick> candlestickList;
-    private AppliedPrice mockAppliedPrice;
+    private CandlestickPrice mockCandlestickPrice;
     private long period;
     private DateTime mockDateTime;
     private BigDecimal bid;
@@ -55,7 +55,7 @@ public class SimpleMATest {
         this.bid = BigDecimal.ONE;
         this.ask = BigDecimal.TEN;
 
-        this.mockAppliedPrice = mock(AppliedPrice.class);
+        this.mockCandlestickPrice = mock(CandlestickPrice.class);
         fillCandlestickList();
         setPeriod();
 
@@ -82,18 +82,18 @@ public class SimpleMATest {
 //        this.mockMA = mock(MovingAverage.class);
 //        when(this.mockMA.getPeriod()).thenReturn(this.period);
 //        when(this.mockMA.getCandles()).thenReturn(this.candlestickList);
-//        when(this.mockMA.getAppliedPrice()).thenReturn(this.mockAppliedPrice);
+//        when(this.mockMA.getAppliedPrice()).thenReturn(this.mockCandlestickPrice);
 //        when(this.mockMA.getLastCandleDateTime()).thenReturn(this.dateTime);
 //        when(this.mockMA.nextCandleOpenTime(this.dateTime)).thenReturn(zd);
 
 
-        this.sma = new SimpleMA(this.period, this.mockAppliedPrice, this.updater);
+        this.sma = new SimpleMA(this.period, this.mockCandlestickPrice, this.updater);
 
     }
 
     @Test
     public void WhenCallCreateThenReturnDifferentObject() {
-        SimpleMA simpleMA = new SimpleMA(this.period, this.mockAppliedPrice, this.updater);
+        SimpleMA simpleMA = new SimpleMA(this.period, this.mockCandlestickPrice, this.updater);
 
         assertNotEquals("Objects must not be equal ",this.sma, simpleMA);
     }
@@ -170,7 +170,7 @@ public class SimpleMATest {
     @Test
     public void TestToString(){
         String result = this.sma.toString();
-        String expected = String.format("SimpleMA{period=%d, appliedPrice=%s, maValues=[], points=[], isTradeGenerated=false}", this.period, this.mockAppliedPrice.toString());
+        String expected = String.format("SimpleMA{period=%d, candlestickPrice=%s, maValues=[], points=[], isTradeGenerated=false}", this.period, this.mockCandlestickPrice.toString());
 
         assertEquals(expected, result);
     }
@@ -211,7 +211,7 @@ public class SimpleMATest {
             when(candle1.getTime()).thenReturn(dateTime1);
             when(candle1.getMid()).thenReturn(candlestickData1);
 
-            when(this.mockAppliedPrice.apply(candlestickData1)).thenReturn(new BigDecimal(candlesClosePrices.get(i)));
+            when(this.mockCandlestickPrice.extractPrice(candlestickData1)).thenReturn(new BigDecimal(candlesClosePrices.get(i)));
 
             this.candlestickList.add(candle1);
         }

@@ -7,19 +7,19 @@ import com.oanda.v20.instrument.InstrumentCandlesRequest;
 import trader.candles.CandlesUpdater;
 import trader.config.Config;
 import trader.indicators.Indicator;
-import trader.indicators.enums.AppliedPrice;
+import trader.indicators.enums.CandlestickPrice;
 
 public final class RSIBuilder {
 
     private static final long DEFAULT_PERIOD = 14L;
     private static final long MIN_PERIOD = 1L;
     private static final long MAX_PERIOD = 4000L;
-    private static final AppliedPrice DEFAULT_APPLIED_PRICE = AppliedPrice.CLOSE;
+    private static final CandlestickPrice DEFAULT_APPLIED_PRICE = CandlestickPrice.CLOSE;
     private static final CandlestickGranularity DEFAULT_CANDLE_TIME_FRAME = CandlestickGranularity.H4;
 
     private Context context;
     private long period;
-    private AppliedPrice appliedPrice;
+    private CandlestickPrice candlestickPrice;
     private CandlestickGranularity candlesTimeFrame;
 
     /**
@@ -30,7 +30,7 @@ public final class RSIBuilder {
     public RSIBuilder(Context context){
             setContext(context);
             setPeriod(DEFAULT_PERIOD);
-            setAppliedPrice(DEFAULT_APPLIED_PRICE);
+            setCandlestickPrice(DEFAULT_APPLIED_PRICE);
             setCandlesTimeFrame(DEFAULT_CANDLE_TIME_FRAME);
     }
 
@@ -49,17 +49,17 @@ public final class RSIBuilder {
     }
 
     /**
-     * Set appliedPrice
-     * @param appliedPrice the price part of the candle on which indicator will be calculated
+     * Set candlestickPrice
+     * @param candlestickPrice the price part of the candle on which indicator will be calculated
      * @return {@link RSIBuilder} current builder object
-     * @throws IllegalArgumentException when appliedPrice is null
-     * @see AppliedPrice
+     * @throws IllegalArgumentException when candlestickPrice is null
+     * @see CandlestickPrice
      */
-    public RSIBuilder setAppliedPrice(AppliedPrice appliedPrice) {
-        if (appliedPrice == null){
-            throw  new NullPointerException("appliedPrice must not be null");
+    public RSIBuilder setCandlestickPrice(CandlestickPrice candlestickPrice) {
+        if (candlestickPrice == null){
+            throw  new NullPointerException("candlestickPrice must not be null");
         }
-        this.appliedPrice = appliedPrice;
+        this.candlestickPrice = candlestickPrice;
         return this;
     }
 
@@ -82,7 +82,7 @@ public final class RSIBuilder {
     public Indicator build(){
         InstrumentCandlesRequest request = createCandlesRequest(this.period, this.candlesTimeFrame);
         CandlesUpdater updater = new CandlesUpdater(this.context, request, this.candlesTimeFrame);
-        return new RelativeStrengthIndex(this.period, this.appliedPrice, updater);
+        return new RelativeStrengthIndex(this.period, this.candlestickPrice, updater);
     }
 
     /**

@@ -42,7 +42,7 @@ public enum CandlestickPrice implements CandlestickPriceOperations {
         public BigDecimal extractPrice(CandlestickData candle) {
             return medianPrice(candle.getH().bigDecimalValue(), candle.getL().bigDecimalValue());
         }
-        
+
         private BigDecimal medianPrice(BigDecimal high, BigDecimal low) {
             return high.add(low).divide(BigDecimal.valueOf(2), BigDecimal.ROUND_HALF_UP);
         }

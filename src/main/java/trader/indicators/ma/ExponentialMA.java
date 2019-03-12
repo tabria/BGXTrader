@@ -5,7 +5,7 @@ import com.oanda.v20.instrument.CandlestickData;
 import com.oanda.v20.primitives.DateTime;
 import trader.candles.CandlesUpdater;
 import trader.indicators.Indicator;
-import trader.indicators.enums.AppliedPrice;
+import trader.indicators.enums.CandlestickPrice;
 import trader.trades.entities.Point;
 
 
@@ -23,7 +23,7 @@ public final class ExponentialMA implements Indicator {
     private static final BigDecimal MULTIPLIER_CONSTANT = BigDecimal.valueOf(2);
 
     private final long period;
-    private final AppliedPrice appliedPrice;
+    private final CandlestickPrice candlestickPrice;
     private final CandlesUpdater updater;
     private List<BigDecimal> maValues;
     private List<Point> points;
@@ -36,14 +36,14 @@ public final class ExponentialMA implements Indicator {
      * Constructor
      *
      * @param period sma period
-     * @param appliedPrice what price to get from the candlestick to calculate sma
+     * @param candlestickPrice what price to get from the candlestick to calculate sma
      * @param updater update candlestick collection
-     * @see AppliedPrice
+     * @see CandlestickPrice
      * @see CandlesUpdater
      */
-    ExponentialMA(long period, AppliedPrice appliedPrice, CandlesUpdater updater) {
+    ExponentialMA(long period, CandlestickPrice candlestickPrice, CandlesUpdater updater) {
         this.period = period;
-        this.appliedPrice = appliedPrice;
+        this.candlestickPrice = candlestickPrice;
         this.updater = updater;
         this.setDivisor(this.period);
         this.setMultiplier();
@@ -115,7 +115,7 @@ public final class ExponentialMA implements Indicator {
     public String toString() {
         return "ExponentialMA{" +
                 "period=" + period +
-                ", appliedPrice=" + appliedPrice.toString() +
+                ", candlestickPrice=" + candlestickPrice.toString() +
                 ", maValues=" + maValues.toString() +
                 ", points=" + points.toString() +
                 ", isTradeGenerated=" + isTradeGenerated +
@@ -167,8 +167,8 @@ public final class ExponentialMA implements Indicator {
         int maValuesIndex = 0;
         for (int i = (int) this.period; i < candlestickList.size() ; i++) {
             CandlestickData candleMid = candlestickList.get(i).getMid();
-            BigDecimal lastPriceCorrected = this.appliedPrice
-                    .apply(candleMid)
+            BigDecimal lastPriceCorrected = this.candlestickPrice
+                    .extractPrice(candleMid)
                     .multiply(this.multiplier)
                     .setScale(5, BigDecimal.ROUND_HALF_UP);
 
@@ -206,7 +206,7 @@ public final class ExponentialMA implements Indicator {
     /**
      * Calculate the SMA
      * @param candlestickList list of available candlesticks
-     * @return {@link BigDecimal} sma value for the chosen period and appliedPrice
+     * @return {@link BigDecimal} sma value for the chosen period and candlestickPrice
      * @see Candlestick
      */
     private BigDecimal calculateSMAValue(List<Candlestick> candlestickList){
@@ -214,8 +214,8 @@ public final class ExponentialMA implements Indicator {
 
         for (int i = 0; i <= this.period-1 ; i++) {
             CandlestickData candleMid = candlestickList.get(i).getMid();
-            //add the price based on the appliedPrice enum
-            result = result.add(this.appliedPrice.apply(candleMid))
+            //add the price based on the candlestickPrice enum
+            result = result.add(this.candlestickPrice.extractPrice(candleMid))
                     .setScale(5, BigDecimal.ROUND_HALF_UP);
         }
         return result.divide(this.divisor, 5, BigDecimal.ROUND_HALF_UP);
