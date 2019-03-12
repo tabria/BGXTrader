@@ -1,10 +1,9 @@
 package trader.indicators;
 
-import com.oanda.v20.Context;
-import com.oanda.v20.instrument.InstrumentContext;
 import com.oanda.v20.primitives.DateTime;
 import org.junit.Before;
 import org.junit.Test;
+import trader.OandaAPI.OandaContextMock;
 import trader.core.Observer;
 
 
@@ -17,7 +16,7 @@ import static org.mockito.Mockito.*;
 public class IndicatorObserverTest {
 
     private Observer observer;
-    private Context context;
+    private OandaContextMock oandaContextMock;
     private Indicator mockMA;
     private BigDecimal ask;
     private BigDecimal bid;
@@ -29,8 +28,7 @@ public class IndicatorObserverTest {
         this.bid = BigDecimal.TEN;
 
         this.mockMA = mock(Indicator.class);
-        this.context = mock(Context.class);
-        this.context.instrument = mock(InstrumentContext.class);
+        this.oandaContextMock = new OandaContextMock();
         this.observer = IndicatorObserver.create(this.mockMA);
     }
 
