@@ -7,15 +7,13 @@ import trader.prices.PriceObservable;
 
 import java.math.BigDecimal;
 
-/**
- *  This class is an Observer wrapper for Indicators
- */
-
 public final class IndicatorObserver implements Observer {
 
     private final Indicator indicator;
 
     private IndicatorObserver(Indicator indicator){
+        if(indicator == null)
+            throw new IllegalArgumentException("Indicator must not be null");
         this.indicator = indicator;
     }
 
@@ -23,17 +21,10 @@ public final class IndicatorObserver implements Observer {
         return new IndicatorObserver(indicator);
     }
 
-    /**
-     * Update observers
-     * @param dateTime this is the time of the last fetched candle
-     * @see DateTime
-     * @see PriceObservable
-     */
     @Override
-    public void updateObserver(DateTime dateTime, BigDecimal ask, BigDecimal bid) {
-        if (dateTime == null){
+    public void updateObserver(DateTime lastCandleTime, BigDecimal ask, BigDecimal bid) {
+        if (lastCandleTime == null)
             throw new NullPointerException("DateTime is null");
-        }
-        this.indicator.update(dateTime, ask, bid);
+        this.indicator.update(lastCandleTime, ask, bid);
     }
 }
