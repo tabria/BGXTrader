@@ -18,23 +18,17 @@ import java.util.List;
 
 public final class CandlesUpdater {
 
-    public static final DateTime DEFAULT_DATE_TIME = new DateTime("2018-01-01T01:01:01Z");
-
-    private static final long MINUTE = 60;
-    private static final long HOUR = 3600;
-    private static final long DAY = 86_400;
-    private static final long WEEK = 604_800;
-    private static final long MONTH = 2_629_746;
+    private static final DateTime DEFAULT_DATE_TIME = new DateTime("2018-01-01T01:01:01Z");
     private static final int SLEEP_TIME_MILLISECONDS = 1000;
 
     private final Context context;
     private List<Candlestick> candlestickList;
-    private final CandleGranularity candlesTimeFrame;
+    private final CandleGranularity candleTimeFrame;
     private InstrumentCandlesRequest request;
 
-    public CandlesUpdater(Context context, InstrumentCandlesRequest request, CandleGranularity candlesTimeFrame){
+    public CandlesUpdater(Context context, InstrumentCandlesRequest request, CandleGranularity candleTimeFrame){
         this.context = context;
-        this.candlesTimeFrame = candlesTimeFrame;
+        this.candleTimeFrame = candleTimeFrame;
         this.request = request;
         this.candlestickList = new ArrayList<>();
 
@@ -45,15 +39,9 @@ public final class CandlesUpdater {
         return Collections.unmodifiableList(this.candlestickList);
     }
 
-    public boolean updateCandles(DateTime dateTime){
-        DateTime lastCandleDateTimeBeforeUpdate = getLastCandleDateTime();
-
-        ZonedDateTime nextCandleOpenDateTime = this.nextCandleOpenDateTime(lastCandleDateTimeBeforeUpdate);
-        ZonedDateTime newCandleOpenDateTime = this.dateTimeConversion(dateTime);
-
-        if(newCandleOpenDateTime.compareTo(nextCandleOpenDateTime) > 0){
-
-            this.singleUpdate(lastCandleDateTimeBeforeUpdate);
+    public boolean updateCandles(DateTime candleDateTime){
+        if(isUpdatable(candleDateTime)){
+            executeUpdate(getLastCandleDateTime());
             return true;
         }
         return false;
@@ -62,18 +50,53 @@ public final class CandlesUpdater {
     /**
      * Sometimes new candles came with time like old ones. Which cause multiple updates
      * This loop will check last candle time before and after updateMovingAverage to assure that new candle have different time
-     * @param lastCandleTimeBeforeUpdate last candle time before updateMovingAverage
+     * @param lastCandleDateTimeBeforeUpdate last candle's datetime before updating
      * @see DateTime
      */
-    private void singleUpdate(DateTime lastCandleTimeBeforeUpdate){
+    private void executeUpdate(DateTime lastCandleDateTimeBeforeUpdate){
         while(true){
             this.requestCandles();
-            if (lastCandleTimeBeforeUpdate.equals(this.getLastCandleDateTime())){
+            if (noChangeInDateTime(lastCandleDateTimeBeforeUpdate))
                 threadSleep(SLEEP_TIME_MILLISECONDS);
-            } else {
-                break;
-            }
+            break;
         }
+    }
+
+    private DateTime getLastCandleDateTime(){
+        if (haveCandlesticks())
+            return lastCandle().getTime();
+        return DEFAULT_DATE_TIME;
+    }
+
+        private boolean haveCandlesticks() {
+            return this.candlestickList.size() > 0;
+        }
+
+        private Candlestick lastCandle() {
+            return this.candlestickList.get(this.candlestickList.size()-1);
+        }
+
+    private ZonedDateTime nextCandleOpenDateTime(DateTime lastCandleDateTime) {
+        long timeFrameSeconds = candleTimeFrame.extractSeconds();
+        ZonedDateTime nextCandleOpenDateTime = this.convertDateTimeToZonnedDateTime(lastCandleDateTime);
+
+        return nextCandleOpenDateTime.plusSeconds(timeFrameSeconds);
+    }
+
+        private ZonedDateTime convertDateTimeToZonnedDateTime(DateTime dateTime){
+            Instant instantDateTime = Instant.parse(dateTime.toString());
+            ZoneId zoneId = ZoneId.of("UTC");
+            return ZonedDateTime.ofInstant(instantDateTime, zoneId);
+        }
+
+    private boolean isUpdatable(DateTime candleDateTime) {
+        ZonedDateTime nextCandleOpenDateTime = this.nextCandleOpenDateTime(getLastCandleDateTime());
+        ZonedDateTime newCandleOpenDateTime = this.convertDateTimeToZonnedDateTime(candleDateTime);
+        return newCandleOpenDateTime.compareTo(nextCandleOpenDateTime) > 0;
+    }
+
+    private boolean noChangeInDateTime(DateTime lastCandleDateTimeBeforeUpdate) {
+        return lastCandleDateTimeBeforeUpdate.equals(this.getLastCandleDateTime());
     }
 
     private void threadSleep(long milliseconds) {
@@ -84,75 +107,16 @@ public final class CandlesUpdater {
         }
     }
 
-    private DateTime getLastCandleDateTime(){
-        if (haveCandlesticks()){
-            return lastCandle().getTime();
-        } else {
-            return DEFAULT_DATE_TIME;
-        }
-    }
-
-    private boolean haveCandlesticks() {
-        return this.candlestickList.size() > 0;
-    }
-
-    private Candlestick lastCandle() {
-        return this.candlestickList.get(this.candlestickList.size()-1);
-    }
-
-    private ZonedDateTime nextCandleOpenDateTime(DateTime lastCandleDateTime) {
-        long timeFrameSeconds = candlesTimeFrame.extractSeconds();
-        ZonedDateTime nextCandleOpenDateTime = this.dateTimeConversion(lastCandleDateTime);
-        nextCandleOpenDateTime = nextCandleOpenDateTime.plusSeconds(timeFrameSeconds);
-
-        return nextCandleOpenDateTime;
-    }
-
-    /**
-     * Transform dateTime in utc zone
-     * @param dateTime dateTime from OANDA
-     * @return {@link ZonedDateTime}zoned DateTime value
-     * @see DateTime
-     */
-    private ZonedDateTime dateTimeConversion( DateTime dateTime){
-        Instant instantDateTime = Instant.parse(dateTime.toString());
-        ZoneId zoneId = ZoneId.of("UTC");
-        return ZonedDateTime.ofInstant(instantDateTime, zoneId);
-    }
-
-//    /**
-//     * Convert MA's candlestick Granularity to seconds
-//     * @return {@link long} converted value for the candle in seconds
-//     * @see CandlestickGranularity
-//     */
-//    private long convertMovingAverageTimeFrameToSeconds(){
-//        String timeFrameType = this.candlesTimeFrame.name().toLowerCase().substring(0, 1);
-//        String timeFrameNumber = this.candlesTimeFrame.name().toLowerCase().substring(1);
-//        switch (timeFrameType){
-//            case "s": return Integer.parseInt(timeFrameNumber);
-//            case "m": return this.candlesTimeFrame.toString().length() > 1 ? Integer.parseInt(timeFrameNumber) * MINUTE : MONTH;
-//            case "h": return Integer.parseInt(timeFrameNumber) * HOUR;
-//            case "d": return DAY;
-//            case "w": return WEEK;
-//            default: return 0;
-//        }
-//    }
-
     /**
      * Get candles from OANDA
      * @see InstrumentCandlesRequest
      */
     private void requestCandles(){
         try {
-
             InstrumentCandlesResponse response = this.context.instrument.candles(this.request);
             this.candlestickList = response.getCandles();
-        } catch (RequestException e) {
-            System.out.println(e.getErrorMessage());
-            //e.printStackTrace();
-        } catch (ExecuteException e) {
+        } catch (RequestException | ExecuteException e) {
             System.out.println(e.getMessage());
-            //e.printStackTrace();
         }
     }
 

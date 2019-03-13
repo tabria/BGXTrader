@@ -1,18 +1,11 @@
 package trader.indicators.ma;
 
-import com.oanda.v20.ExecuteException;
-import com.oanda.v20.RequestException;
 import com.oanda.v20.instrument.Candlestick;
 import com.oanda.v20.instrument.CandlestickData;
-import com.oanda.v20.instrument.InstrumentCandlesRequest;
-import com.oanda.v20.instrument.InstrumentCandlesResponse;
 import com.oanda.v20.primitives.DateTime;
 import trader.candles.CandlesUpdater;
-import trader.config.Config;
 import trader.indicators.enums.CandlestickPriceType;
 import trader.trades.entities.Point;
-
-
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
