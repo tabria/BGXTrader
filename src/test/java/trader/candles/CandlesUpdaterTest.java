@@ -56,7 +56,6 @@ public class CandlesUpdaterTest {
         when(currentCandleDateTime.toString()).thenReturn(DEFAULT_DATE_TIME);
 
         assertFalse(candlesUpdater.updateCandles(currentCandleDateTime));
-
     }
 
     @Test
