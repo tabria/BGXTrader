@@ -21,7 +21,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class SimpleMATest {
+public class SimpleMovingAverageTest {
 
     private List<String> candlesClosePrices = new ArrayList<>(Arrays.asList(
             "1.16114", "1.16214", "1.16314", "1.16414", "1.16514", "1.16614", "1.16714",
@@ -36,7 +36,7 @@ public class SimpleMATest {
     ));
 
 
-    private SimpleMA sma;
+    private SimpleMovingAverage sma;
     private CandlesUpdater updater;
     private List<Candlestick> candlestickList;
     private CandlestickPriceType mockCandlestickPriceType;
@@ -85,13 +85,13 @@ public class SimpleMATest {
 //        when(this.mockMA.nextCandleOpenTime(this.dateTime)).thenReturn(zd);
 
 
-        this.sma = new SimpleMA(this.period, this.mockCandlestickPriceType, this.updater);
+        this.sma = new SimpleMovingAverage(this.period, this.mockCandlestickPriceType, this.updater);
 
     }
 
     @Test
     public void WhenCallCreateThenReturnDifferentObject() {
-        SimpleMA simpleMA = new SimpleMA(this.period, this.mockCandlestickPriceType, this.updater);
+        SimpleMovingAverage simpleMA = new SimpleMovingAverage(this.period, this.mockCandlestickPriceType, this.updater);
 
         assertNotEquals("Objects must not be equal ",this.sma, simpleMA);
     }
@@ -168,7 +168,7 @@ public class SimpleMATest {
     @Test
     public void TestToString(){
         String result = this.sma.toString();
-        String expected = String.format("SimpleMA{candlesticksQuantity=%d, candlestickPriceType=%s, maValues=[], points=[], isTradeGenerated=false}", this.period, this.mockCandlestickPriceType.toString());
+        String expected = String.format("SimpleMovingAverage{candlesticksQuantity=%d, candlestickPriceType=%s, maValues=[], points=[], isTradeGenerated=false}", this.period, this.mockCandlestickPriceType.toString());
 
         assertEquals(expected, result);
     }

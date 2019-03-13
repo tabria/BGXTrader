@@ -118,7 +118,7 @@ public final class MovingAverageBuilder {
     }
 
     private String composeIndicatorClassName() {
-        return this.maType.toString().charAt(0) + this.maType.toString().toLowerCase().substring(1) +"MA";
+        return this.maType.toString().charAt(0) + this.maType.toString().toLowerCase().substring(1) +"MovingAverage";
     }
 
 }

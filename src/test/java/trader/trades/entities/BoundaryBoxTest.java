@@ -191,7 +191,7 @@ public class BoundaryBoxTest {
 
         this.boundaryBox = new BoundaryBox(this.mockLineSegment);
         String result = this.boundaryBox.toString();
-//        String expected = String.format("WeightedMA{candlesticksQuantity=%d, appliedPrice=%s, maValues=[], points=[], isTradeGenerated=false}", this.candlesticksQuantity, this.mockAppliedPrice.toString());
+//        String expected = String.format("WeightedMovingAverage{candlesticksQuantity=%d, appliedPrice=%s, maValues=[], points=[], isTradeGenerated=false}", this.candlesticksQuantity, this.mockAppliedPrice.toString());
         String expected = String.format("BoundaryBox{lineSegment=%s, offset=0.00040, pointA=%s, pointB=%s}",this.mockLineSegment.toString(), this.mockPointX.toString(), this.mockPointY.toString());
         assertEquals(expected, result);
     }

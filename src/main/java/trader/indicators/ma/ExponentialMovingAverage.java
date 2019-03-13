@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public final class ExponentialMA implements Indicator {
+public final class ExponentialMovingAverage implements Indicator {
 
     private static final BigDecimal MULTIPLIER_CONSTANT = BigDecimal.valueOf(2);
 
@@ -37,7 +37,7 @@ public final class ExponentialMA implements Indicator {
      * @see CandlestickPriceType
      * @see CandlesUpdater
      */
-    ExponentialMA(long period, CandlestickPriceType candlestickPriceType, CandlesUpdater updater) {
+    ExponentialMovingAverage(long period, CandlestickPriceType candlestickPriceType, CandlesUpdater updater) {
         this.period = period;
         this.candlestickPriceType = candlestickPriceType;
         this.updater = updater;
@@ -109,7 +109,7 @@ public final class ExponentialMA implements Indicator {
 
     @Override
     public String toString() {
-        return "ExponentialMA{" +
+        return "ExponentialMovingAverage{" +
                 "candlesticksQuantity=" + period +
                 ", candlestickPriceType=" + candlestickPriceType.toString() +
                 ", maValues=" + maValues.toString() +

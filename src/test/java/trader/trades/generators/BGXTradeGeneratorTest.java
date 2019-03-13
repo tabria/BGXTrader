@@ -3,8 +3,8 @@ package trader.trades.generators;
 import org.junit.Before;
 import org.junit.Test;
 import trader.indicators.Indicator;
-import trader.indicators.ma.SimpleMA;
-import trader.indicators.ma.WeightedMA;
+import trader.indicators.ma.SimpleMovingAverage;
+import trader.indicators.ma.WeightedMovingAverage;
 import trader.indicators.rsi.RelativeStrengthIndex;
 import trader.trades.entities.Trade;
 
@@ -36,11 +36,11 @@ public class BGXTradeGeneratorTest {
     public void before() throws Exception {
 
 
-        this.mockSlowWma = mock(WeightedMA.class);
-        this.mockMiddleWma = mock(WeightedMA.class);
-        this.mockFastWma = mock(WeightedMA.class);
-        this.mockPriceSma = mock(SimpleMA.class);
-        this.mockDailySma = mock(SimpleMA.class);
+        this.mockSlowWma = mock(WeightedMovingAverage.class);
+        this.mockMiddleWma = mock(WeightedMovingAverage.class);
+        this.mockFastWma = mock(WeightedMovingAverage.class);
+        this.mockPriceSma = mock(SimpleMovingAverage.class);
+        this.mockDailySma = mock(SimpleMovingAverage.class);
         this.mockRsi = mock(RelativeStrengthIndex.class);
 
         this.signalGenerator = new BGXTradeGenerator(this.mockFastWma, this.mockMiddleWma, this.mockSlowWma, this.mockPriceSma, this.mockDailySma, this.mockRsi);

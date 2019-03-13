@@ -17,7 +17,7 @@ import java.util.List;
  * Simple Moving Average (SMA)
  */
 
-public final class SimpleMA implements Indicator {
+public final class SimpleMovingAverage implements Indicator {
 
     private final long period;
     private final CandlestickPriceType candlestickPriceType;
@@ -37,7 +37,7 @@ public final class SimpleMA implements Indicator {
      * @see CandlestickPriceType
      * @see CandlesUpdater
      */
-    SimpleMA(long period, CandlestickPriceType candlestickPriceType, CandlesUpdater updater) {
+    SimpleMovingAverage(long period, CandlestickPriceType candlestickPriceType, CandlesUpdater updater) {
         this.period = period;
         this.candlestickPriceType = candlestickPriceType;
         this.updater = updater;
@@ -104,7 +104,7 @@ public final class SimpleMA implements Indicator {
 
     @Override
     public String toString() {
-        return "SimpleMA{" +
+        return "SimpleMovingAverage{" +
                 "candlesticksQuantity=" + period +
                 ", candlestickPriceType=" + candlestickPriceType.toString() +
                 ", maValues=" + maValues.toString() +

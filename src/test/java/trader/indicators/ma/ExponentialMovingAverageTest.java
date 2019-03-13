@@ -15,18 +15,18 @@ import static org.mockito.Mockito.when;
 import static trader.CommonConstants.ASK;
 import static trader.CommonConstants.BID;
 
-public class ExponentialMATest extends BaseMATest {
+public class ExponentialMovingAverageTest extends BaseMATest {
 
     private static final BigDecimal EXPECTED_CANDLESTICK_PRICE =BigDecimal.valueOf(1.16204);
     private static final String NEW_PRICE_ENTRY = "1.16814";
     private static final String NEW_DATETIME_ENTRY = "2018-08-01T09:53:00Z";
 
-    private ExponentialMA ema;
+    private ExponentialMovingAverage ema;
 
     @Before
     public void before() {
         super.before();
-        this.ema = new ExponentialMA(this.candlesticksQuantity,
+        this.ema = new ExponentialMovingAverage(this.candlesticksQuantity,
                 this.mockCandlestickPriceType, this.candlesUpdater);
     }
 
@@ -87,7 +87,7 @@ public class ExponentialMATest extends BaseMATest {
     @Test
     public void TestToString(){
         String result = this.ema.toString();
-        String expected = String.format("ExponentialMA{candlesticksQuantity=%d, candlestickPriceType=%s, maValues=[], points=[], isTradeGenerated=false}", candlesticksQuantity, this.mockCandlestickPriceType.toString());
+        String expected = String.format("ExponentialMovingAverage{candlesticksQuantity=%d, candlestickPriceType=%s, maValues=[], points=[], isTradeGenerated=false}", candlesticksQuantity, this.mockCandlestickPriceType.toString());
         assertEquals(expected, result);
     }
 

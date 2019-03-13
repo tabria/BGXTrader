@@ -109,9 +109,9 @@ public class MovingAverageBuilderTest {
         Indicator ema = this.builder.setMAType(EXPONENTIAL).build();
         Indicator wma = this.builder.setMAType(WEIGHTED).build();
 
-        assertEquals("The object is not SMA","SimpleMA", sma.getClass().getSimpleName());
-        assertEquals("The object is not EMA","ExponentialMA", ema.getClass().getSimpleName());
-        assertEquals("The object is not WMA","WeightedMA", wma.getClass().getSimpleName());
+        assertEquals("The object is not SMA","SimpleMovingAverage", sma.getClass().getSimpleName());
+        assertEquals("The object is not EMA","ExponentialMovingAverage", ema.getClass().getSimpleName());
+        assertEquals("The object is not WMA","WeightedMovingAverage", wma.getClass().getSimpleName());
     }
 
     private Object extractFieldObject(String fieldName) throws NoSuchFieldException, IllegalAccessException {
