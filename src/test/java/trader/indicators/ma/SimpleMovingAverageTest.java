@@ -98,7 +98,7 @@ public class SimpleMovingAverageTest {
 
     @Test
     public void WhenGetMAValuesThenReturnCorrectResult() {
-        this.sma.update(this.mockDateTime, this.ask, this.bid);
+        this.sma.updateMovingAverage(this.mockDateTime, this.ask, this.bid);
         List<BigDecimal> maValues = this.sma.getValues();
         assertEquals(9, maValues.size());
         int result = maValues.get(maValues.size()-1).compareTo(BigDecimal.valueOf(1.16281));
@@ -108,7 +108,7 @@ public class SimpleMovingAverageTest {
     @Test
     public void WhenCallUpdateThenReturnCorrectValues() {
 
-        this.sma.update(this.mockDateTime, this.ask, this.bid);
+        this.sma.updateMovingAverage(this.mockDateTime, this.ask, this.bid);
 
         DateTime newDt = mock(DateTime.class);
 
@@ -118,7 +118,7 @@ public class SimpleMovingAverageTest {
 
         when(this.updater.getCandles()).thenReturn(this.candlestickList);
 
-        this.sma.update(newDt, this.ask, this.bid);
+        this.sma.updateMovingAverage(newDt, this.ask, this.bid);
 
         List<BigDecimal> getMaValues = this.sma.getValues();
 
@@ -131,7 +131,7 @@ public class SimpleMovingAverageTest {
 
     @Test
     public void WhenCallGetPointsThenReturnCorrectResult(){
-        this.sma.update(this.mockDateTime, this.ask, this.bid);
+        this.sma.updateMovingAverage(this.mockDateTime, this.ask, this.bid);
         List<BigDecimal> values = this.sma.getValues();
 
         BigDecimal price1 = values.get(values.size()-4);

@@ -1,5 +1,6 @@
 package trader.indicators.ma;
 
+import com.oanda.v20.instrument.Candlestick;
 import com.oanda.v20.primitives.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,23 +39,23 @@ public class ExponentialMovingAverageTest extends BaseMATest {
 
     @Test
     public void WhenGetMAValuesThenReturnCorrectResult() {
-        this.ema.update(super.mockDateTime, ASK, BID);
+        this.ema.updateMovingAverage(super.mockDateTime, ASK, BID);
         BigDecimal lastCandlestickPrice = getLastCandlestickPrice();
         assertEquals(0, lastCandlestickPrice.compareTo(EXPECTED_CANDLESTICK_PRICE));
     }
 
     @Test
     public void whenUpdateEMAPricesThenReturnCorrectResults() {
-        this.ema.update(this.mockDateTime, ASK, BID);
+        this.ema.updateMovingAverage(this.mockDateTime, ASK, BID);
         updateCandlestickListInSuper();
-        this.ema.update(mock(DateTime.class),  ASK, BID);
+        this.ema.updateMovingAverage(mock(DateTime.class),  ASK, BID);
         assertEquals(0, getLastCandlestickPrice().compareTo(EXPECTED_CANDLESTICK_PRICE));
     }
 
 
     @Test
     public void whenCallGetPointsThenReturnCorrectResult(){
-        this.ema.update(this.mockDateTime,  ASK, BID);
+        this.ema.updateMovingAverage(this.mockDateTime,  ASK, BID);
         List<Point> points = this.ema.getPoints();
         List<BigDecimal> values = this.ema.getValues();
 
@@ -99,8 +100,9 @@ public class ExponentialMovingAverageTest extends BaseMATest {
     private void updateCandlestickListInSuper() {
         this.candlesClosePrices.add(NEW_PRICE_ENTRY);
         this.candlesDateTime.add(NEW_DATETIME_ENTRY);
-        fillCandlestickList();
-        when(this.candlesUpdater.getCandles()).thenReturn(this.candlestickList);
+        this.indicatorUpdateHelper.fillCandlestickList();
+        List<Candlestick> candlestickList = this.indicatorUpdateHelper.getCandlestickList();
+        when(this.candlesUpdater.getCandles()).thenReturn(candlestickList);
     }
 
     private ZonedDateTime dateTimeConversion(DateTime dateTime){

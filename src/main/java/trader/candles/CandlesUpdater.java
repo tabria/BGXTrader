@@ -24,6 +24,7 @@ public final class CandlesUpdater {
     private static final long DAY = 86_400;
     private static final long WEEK = 604_800;
     private static final long MONTH = 2_629_746;
+    private static final int SLEEP_TIME_MILLISECONDS = 1000;
 
     private final Context context;
     private List<Candlestick> candlestickList;
@@ -53,14 +54,14 @@ public final class CandlesUpdater {
      * @see PriceObservable
      */
     public boolean updateCandles(DateTime dateTime){
-        DateTime lastCandleTimeBeforeUpdate = getLastCandleDateTime();
+        DateTime lastCandleDateTimeBeforeUpdate = getLastCandleDateTime();
 
-        ZonedDateTime nextCandleOpenDateTime = this.nextCandleOpenTime(lastCandleTimeBeforeUpdate);
+        ZonedDateTime nextCandleOpenDateTime = this.nextCandleOpenDateTime(lastCandleDateTimeBeforeUpdate);
         ZonedDateTime newCandleOpenDateTime = this.dateTimeConversion(dateTime);
 
         if(newCandleOpenDateTime.compareTo(nextCandleOpenDateTime) > 0){
 
-            this.singleUpdate(lastCandleTimeBeforeUpdate);
+            this.singleUpdate(lastCandleDateTimeBeforeUpdate);
             return true;
         }
         return false;
@@ -76,22 +77,26 @@ public final class CandlesUpdater {
 
     /**
      * Sometimes new candles came with time like old ones. Which cause multiple updates
-     * This loop will check last candle time before and after update to assure that new candle have different time
-     * @param lastCandleTimeBeforeUpdate last candle time before update
+     * This loop will check last candle time before and after updateMovingAverage to assure that new candle have different time
+     * @param lastCandleTimeBeforeUpdate last candle time before updateMovingAverage
      * @see DateTime
      */
     private void singleUpdate(DateTime lastCandleTimeBeforeUpdate){
         while(true){
             this.requestCandles();
             if (lastCandleTimeBeforeUpdate.equals(this.getLastCandleDateTime())){
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
+                threadSleep(SLEEP_TIME_MILLISECONDS);
             } else {
                 break;
             }
+        }
+    }
+
+    private void threadSleep(long milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
 
@@ -114,9 +119,9 @@ public final class CandlesUpdater {
      * @return {@link ZonedDateTime} next candle open time
      *
      */
-    private ZonedDateTime nextCandleOpenTime(DateTime lastCandleDateTime) {
+    private ZonedDateTime nextCandleOpenDateTime(DateTime lastCandleDateTime) {
 
-        long timeFrameSeconds = timeFrameToSeconds();
+        long timeFrameSeconds = convertMovingAverageTimeFrameToSeconds();
         ZonedDateTime nextCandleOpenDateTime = this.dateTimeConversion(lastCandleDateTime);
         nextCandleOpenDateTime = nextCandleOpenDateTime.plusSeconds(timeFrameSeconds);
 
@@ -140,7 +145,7 @@ public final class CandlesUpdater {
      * @return {@link long} converted value for the candle in seconds
      * @see CandlestickGranularity
      */
-    private long timeFrameToSeconds(){
+    private long convertMovingAverageTimeFrameToSeconds(){
         String timeFrameType = this.candlesTimeFrame.name().toLowerCase().substring(0, 1);
         String timeFrameNumber = this.candlesTimeFrame.name().toLowerCase().substring(1);
         switch (timeFrameType){
@@ -159,6 +164,7 @@ public final class CandlesUpdater {
      */
     private void requestCandles(){
         try {
+
             InstrumentCandlesResponse response = this.context.instrument.candles(this.request);
             this.candlestickList = response.getCandles();
         } catch (RequestException e) {

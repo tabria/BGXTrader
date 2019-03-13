@@ -74,11 +74,6 @@ public final class MovingAverageBuilder {
         return instantiatesIndicator(createCandlesUpdater());
     }
 
-    private long calculateCandlesQuantity() {
-        long offset = 2L;
-        return this.candlestickQuantity * CANDLESTICK_QUANTITY_MULTIPLIER + offset;
-    }
-
     private void setContext(Context context){
         if (context == null)
             throw new NullPointerException("Context is null");
@@ -100,6 +95,11 @@ public final class MovingAverageBuilder {
                 .setCount(calculateCandlesQuantity())
                 .setGranularity(this.candleTimeFrame)
                 .setSmooth(false);
+    }
+
+    private long calculateCandlesQuantity() {
+        long offset = 2L;
+        return this.candlestickQuantity * CANDLESTICK_QUANTITY_MULTIPLIER + offset;
     }
 
     private CandlesUpdater createCandlesUpdater() {

@@ -33,7 +33,7 @@ public final class SimpleMovingAverage implements Indicator {
      *
      * @param period sma period
      * @param candlestickPriceType what price to get from the candlestick to calculate sma
-     * @param updater update candlestick collection
+     * @param updater updateMovingAverage candlestick collection
      * @see CandlestickPriceType
      * @see CandlesUpdater
      */
@@ -62,7 +62,7 @@ public final class SimpleMovingAverage implements Indicator {
      * @see CandlesUpdater
      */
     @Override
-    public void update(DateTime dateTime, BigDecimal ask, BigDecimal bid) {
+    public void updateMovingAverage(DateTime dateTime, BigDecimal ask, BigDecimal bid) {
 
        boolean isUpdated =  this.updater.updateCandles(dateTime);
         isUpdated = !isUpdated && this.maValues.size() == 0 ? true : isUpdated;

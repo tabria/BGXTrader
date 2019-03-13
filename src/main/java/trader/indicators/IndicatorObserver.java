@@ -2,7 +2,6 @@ package trader.indicators;
 
 import com.oanda.v20.primitives.DateTime;
 import trader.core.Observer;
-import trader.prices.PriceObservable;
 
 
 import java.math.BigDecimal;
@@ -25,6 +24,6 @@ public final class IndicatorObserver implements Observer {
     public void updateObserver(DateTime lastCandleTime, BigDecimal ask, BigDecimal bid) {
         if (lastCandleTime == null)
             throw new NullPointerException("DateTime is null");
-        this.indicator.update(lastCandleTime, ask, bid);
+        this.indicator.updateMovingAverage(lastCandleTime, ask, bid);
     }
 }

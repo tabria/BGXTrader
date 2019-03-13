@@ -32,7 +32,7 @@ public final class WeightedMovingAverage implements Indicator {
      *
      * @param period sma period
      * @param candlestickPriceType what price to get from the candlestick to calculate sma
-     * @param updater update candlestick collection
+     * @param updater updateMovingAverage candlestick collection
      * @see CandlestickPriceType
      * @see CandlesUpdater
      */
@@ -61,10 +61,10 @@ public final class WeightedMovingAverage implements Indicator {
      * @see CandlesUpdater
      */
     @Override
-    public void update(DateTime dateTime, BigDecimal ask, BigDecimal bid) {
+    public void updateMovingAverage(DateTime dateTime, BigDecimal ask, BigDecimal bid) {
 
         boolean isUpdated =  this.updater.updateCandles(dateTime);
-        //cannot be simplified because will break update for first update or for every update after first
+        //cannot be simplified because will break updateMovingAverage for first updateMovingAverage or for every updateMovingAverage after first
         isUpdated = !isUpdated && this.maValues.size() == 0 ? true : isUpdated;
         if (isUpdated){
             this.setWMAValues();

@@ -9,7 +9,7 @@ import java.util.List;
 public interface Indicator {
 
     List<BigDecimal> getValues();
-    void update(DateTime dateTime, BigDecimal ask, BigDecimal bid);
+    void updateMovingAverage(DateTime dateTime, BigDecimal ask, BigDecimal bid);
     List<Point> getPoints();
     boolean isTradeGenerated();
     void setIsTradeGenerated(boolean isGenerated);

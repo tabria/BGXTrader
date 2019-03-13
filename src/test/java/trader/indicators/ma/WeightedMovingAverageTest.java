@@ -100,7 +100,7 @@ public class WeightedMovingAverageTest {
 
     @Test
     public void getMAValues() {
-        this.wma.update(this.mockDateTime, this.ask, this.bid);
+        this.wma.updateMovingAverage(this.mockDateTime, this.ask, this.bid);
         List<BigDecimal> maValues = this.wma.getValues();
         assertEquals(9, maValues.size());
         int result = maValues.get(maValues.size()-1).compareTo(BigDecimal.valueOf(1.16162));
@@ -110,7 +110,7 @@ public class WeightedMovingAverageTest {
     @Test
     public void WhenCallUpdateThenReturnCorrectValues() {
 
-        this.wma.update(this.mockDateTime, this.ask, this.bid);
+        this.wma.updateMovingAverage(this.mockDateTime, this.ask, this.bid);
 
         DateTime newDt = mock(DateTime.class);
 
@@ -120,7 +120,7 @@ public class WeightedMovingAverageTest {
 
         when(this.updater.getCandles()).thenReturn(this.candlestickList);
 
-        this.wma.update(newDt, this.ask, this.bid);
+        this.wma.updateMovingAverage(newDt, this.ask, this.bid);
 
         List<BigDecimal> getMaValues = this.wma.getValues();
 
@@ -159,7 +159,7 @@ public class WeightedMovingAverageTest {
 
     @Test
     public void WhenCallGetPointsThenReturnCorrectResult(){
-        this.wma.update(this.mockDateTime, this.ask, this.bid);
+        this.wma.updateMovingAverage(this.mockDateTime, this.ask, this.bid);
         List<BigDecimal> values = this.wma.getValues();
 
         BigDecimal price1 = values.get(values.size()-4);

@@ -78,7 +78,7 @@ final class BaseExitStrategy{
      * Call updateCandles method in candlesUpdater
      * * Index for the candle is calculated with this formula: listSize - numberOfCandles
      * @param dateTime of the last price
-     * @return {@link boolean} {@code true} if update successful
+     * @return {@link boolean} {@code true} if updateMovingAverage successful
      *                        {@code false} otherwise
      * @see CandlesUpdater
      */
@@ -207,7 +207,7 @@ final class BaseExitStrategy{
      */
     private InstrumentCandlesRequest createCandleRequest(CandlestickGranularity candlestickGranularity){
         if (candlestickGranularity == null){
-            throw  new NullPointerException("CandlestickGranularity must not be null");
+            throw  new NullPointerException("CandleGranularity must not be null");
         }
         return new InstrumentCandlesRequest(Config.INSTRUMENT)
                 .setCount(NUMBER_OF_CANDLES)
