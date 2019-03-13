@@ -18,7 +18,7 @@ import static trader.CommonConstants.BID;
 
 public class ExponentialMovingAverageTest extends BaseMATest {
 
-    private static final BigDecimal EXPECTED_CANDLESTICK_PRICE =BigDecimal.valueOf(1.16204);
+    private static final BigDecimal EXPECTED_CANDLESTICK_PRICE = BigDecimal.valueOf(1.16204);
     private static final String NEW_PRICE_ENTRY = "1.16814";
     private static final String NEW_DATETIME_ENTRY = "2018-08-01T09:53:00Z";
 
@@ -38,29 +38,37 @@ public class ExponentialMovingAverageTest extends BaseMATest {
     }
 
     @Test
-    public void WhenGetMAValuesThenReturnCorrectResult() {
+    public void getMAValuesReturnCorrectResult() {
         this.ema.updateMovingAverage(super.mockDateTime, ASK, BID);
         BigDecimal lastCandlestickPrice = getLastCandlestickPrice();
         assertEquals(0, lastCandlestickPrice.compareTo(EXPECTED_CANDLESTICK_PRICE));
     }
 
     @Test
-    public void whenUpdateEMAPricesThenReturnCorrectResults() {
+    public void whenUpdateEMAsPrices_SuccessfulUpdate() {
         this.ema.updateMovingAverage(this.mockDateTime, ASK, BID);
         updateCandlestickListInSuper();
         this.ema.updateMovingAverage(mock(DateTime.class),  ASK, BID);
         assertEquals(0, getLastCandlestickPrice().compareTo(EXPECTED_CANDLESTICK_PRICE));
     }
 
-
     @Test
-    public void whenCallGetPointsThenReturnCorrectResult(){
+    public void getPointsReturnCorrectResult(){
         this.ema.updateMovingAverage(this.mockDateTime,  ASK, BID);
         List<Point> points = this.ema.getPoints();
         List<BigDecimal> values = this.ema.getValues();
 
         testPointPrice(points, values);
         testPointTime(points, values);
+    }
+
+    @Test
+    public void TestToString(){
+        String result = this.ema.toString();
+        String expected = String.format("ExponentialMovingAverage{candlesticksQuantity=%d, " +
+                        "candlestickPriceType=%s, maValues=[], points=[], isTradeGenerated=false}",
+                         candlesticksQuantity, this.mockCandlestickPriceType.toString());
+        assertEquals(expected, result);
     }
 
     private void testPointTime(List<Point> points, List<BigDecimal> values) {
@@ -85,13 +93,6 @@ public class ExponentialMovingAverageTest extends BaseMATest {
         }
     }
 
-    @Test
-    public void TestToString(){
-        String result = this.ema.toString();
-        String expected = String.format("ExponentialMovingAverage{candlesticksQuantity=%d, candlestickPriceType=%s, maValues=[], points=[], isTradeGenerated=false}", candlesticksQuantity, this.mockCandlestickPriceType.toString());
-        assertEquals(expected, result);
-    }
-
     private BigDecimal getLastCandlestickPrice() {
         List<BigDecimal> maValues = this.ema.getValues();
         return maValues.get(maValues.size() - 1);
@@ -103,11 +104,5 @@ public class ExponentialMovingAverageTest extends BaseMATest {
         this.indicatorUpdateHelper.fillCandlestickList();
         List<Candlestick> candlestickList = this.indicatorUpdateHelper.getCandlestickList();
         when(this.candlesUpdater.getCandles()).thenReturn(candlestickList);
-    }
-
-    private ZonedDateTime dateTimeConversion(DateTime dateTime){
-        Instant instantDateTime = Instant.parse(dateTime.toString());
-        ZoneId zoneId = ZoneId.of("UTC");
-        return ZonedDateTime.ofInstant(instantDateTime, zoneId);
     }
 }
