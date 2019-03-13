@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import trader.OandaAPI.OandaAPIMock;
 import trader.indicators.IndicatorUpdateHelper;
+import trader.indicators.enums.CandleGranularity;
 import trader.indicators.enums.CandlestickPriceType;
 
 import java.util.ArrayList;
@@ -32,7 +33,7 @@ public class CandlesUpdaterTest {
         initializeIndicatorUpdateHelper();
         initializeOandaAPIMock();
         candlesUpdater = new CandlesUpdater(oandaAPIMock.getContext(),
-                                oandaAPIMock.getMockRequest(), CandlestickGranularity.M30);
+                                oandaAPIMock.getMockRequest(), CandleGranularity.M30);
     }
 
 
@@ -51,7 +52,7 @@ public class CandlesUpdaterTest {
     public void callUpdateCandlesWithBlankCandlestickList_UpdateFalse(){
         oandaAPIMock.setMockResponseToGetCandles(new ArrayList<>());
         CandlesUpdater candlesUpdater = new CandlesUpdater(oandaAPIMock.getContext(),
-                oandaAPIMock.getMockRequest(), CandlestickGranularity.M30);
+                oandaAPIMock.getMockRequest(), CandleGranularity.M30);
         DateTime currentCandleDateTime = mock(DateTime.class);
         when(currentCandleDateTime.toString()).thenReturn(DEFAULT_DATE_TIME);
 

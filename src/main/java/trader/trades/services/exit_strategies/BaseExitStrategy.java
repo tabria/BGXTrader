@@ -5,7 +5,6 @@ import com.oanda.v20.ExecuteException;
 import com.oanda.v20.RequestException;
 import com.oanda.v20.account.Account;
 import com.oanda.v20.instrument.Candlestick;
-import com.oanda.v20.instrument.CandlestickGranularity;
 import com.oanda.v20.instrument.InstrumentCandlesRequest;
 import com.oanda.v20.order.*;
 import com.oanda.v20.primitives.DateTime;
@@ -13,6 +12,7 @@ import com.oanda.v20.trade.*;
 import com.oanda.v20.transaction.StopLossDetails;
 import trader.candles.CandlesUpdater;
 import trader.config.Config;
+import trader.indicators.enums.CandleGranularity;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -34,7 +34,7 @@ final class BaseExitStrategy{
      * @param context current context
      * @see Context
      */
-    BaseExitStrategy(Context context, CandlestickGranularity candlestickGranularity) {
+    BaseExitStrategy(Context context, CandleGranularity candlestickGranularity) {
         this.context = this.setContext(context);
         this.candlesUpdater = new CandlesUpdater(this.context, this.createCandleRequest(candlestickGranularity), candlestickGranularity);
     }
@@ -205,13 +205,13 @@ final class BaseExitStrategy{
      * @throws NullPointerException if candlestickGranularity is null
      * @see InstrumentCandlesRequest
      */
-    private InstrumentCandlesRequest createCandleRequest(CandlestickGranularity candlestickGranularity){
+    private InstrumentCandlesRequest createCandleRequest(CandleGranularity candlestickGranularity){
         if (candlestickGranularity == null){
             throw  new NullPointerException("CandleGranularity must not be null");
         }
         return new InstrumentCandlesRequest(Config.INSTRUMENT)
                 .setCount(NUMBER_OF_CANDLES)
-                .setGranularity(candlestickGranularity)
+                .setGranularity(candlestickGranularity.extractOANDAGranularity())
                 .setSmooth(false);
     }
 }

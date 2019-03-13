@@ -2,12 +2,12 @@ package trader.trades.services.exit_strategies;
 
 import com.oanda.v20.Context;
 import com.oanda.v20.account.Account;
-import com.oanda.v20.instrument.CandlestickGranularity;
 import com.oanda.v20.order.*;
 import com.oanda.v20.primitives.DateTime;
 import com.oanda.v20.trade.*;
 import com.oanda.v20.transaction.TransactionID;
 import trader.candles.CandlesUpdater;
+import trader.indicators.enums.CandleGranularity;
 
 
 import java.math.BigDecimal;
@@ -33,9 +33,8 @@ public final class HalfCloseTrailExitStrategy implements ExitStrategy {
      * @param context current context
      * @param candlestickGranularity time frame
      * @see Context
-     * @see CandlestickGranularity
      */
-    public HalfCloseTrailExitStrategy(Context context, CandlestickGranularity candlestickGranularity) {
+    public HalfCloseTrailExitStrategy(Context context, CandleGranularity candlestickGranularity) {
         this.baseExitStrategy = new BaseExitStrategy(context, candlestickGranularity);
         this.exitBarHigh = null;
         this.exitBarLow = null;

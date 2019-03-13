@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import trader.OandaAPI.OandaAPIMock;
 import trader.indicators.Indicator;
+import trader.indicators.enums.CandleGranularity;
 import trader.indicators.enums.CandlestickPriceType;
 import trader.indicators.ma.enums.MAType;
 
@@ -54,9 +55,9 @@ public class MovingAverageBuilderTest {
 
     @Test
     public void testForCorrectCandleTimeFrame() throws NoSuchFieldException, IllegalAccessException {
-        this.builder.setCandleTimeFrame(CandlestickGranularity.M15);
+        this.builder.setCandleTimeFrame(CandleGranularity.M15);
 
-        assertSame(CandlestickGranularity.M15, extractFieldObject(CANDLE_TIME_FRAME));
+        assertEquals(CandlestickGranularity.M15.toString(), extractFieldObject(CANDLE_TIME_FRAME).toString());
     }
 
     @Test(expected = IllegalArgumentException.class)

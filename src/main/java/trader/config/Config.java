@@ -1,8 +1,8 @@
 package trader.config;
 
 import com.oanda.v20.account.AccountID;
-import com.oanda.v20.instrument.CandlestickGranularity;
 import com.oanda.v20.primitives.InstrumentName;
+import trader.indicators.enums.CandleGranularity;
 
 import java.math.BigDecimal;
 
@@ -54,6 +54,6 @@ public final class Config {
     /**
      * System default timeFrame (@code CandleStickGranularity)
      */
-    public static final CandlestickGranularity TIME_FRAME = CandlestickGranularity.M30;
+    public static final CandleGranularity TIME_FRAME = CandleGranularity.M30;
 
 }

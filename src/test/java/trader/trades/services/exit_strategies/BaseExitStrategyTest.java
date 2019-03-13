@@ -10,6 +10,7 @@ import com.oanda.v20.trade.*;
 import org.junit.Before;
 import org.junit.Test;
 import trader.candles.CandlesUpdater;
+import trader.indicators.enums.CandleGranularity;
 
 
 import java.lang.reflect.Field;
@@ -34,7 +35,7 @@ public class BaseExitStrategyTest {
 
     private BaseExitStrategy baseExitStrategy;
     private List<Candlestick> candlestickList;
-    private CandlestickGranularity candlestickGranularity;
+    private CandleGranularity candlestickGranularity;
     private Context mockContext;
     private Account mockAccount;
     private CandlesUpdater mockCandlesUpdater;
@@ -54,7 +55,7 @@ public class BaseExitStrategyTest {
     @Before
     public void before() throws Exception {
 
-        this.candlestickGranularity = CandlestickGranularity.M30;
+        this.candlestickGranularity = CandleGranularity.M30;
 
         this.mockContext = mock(Context.class);
 

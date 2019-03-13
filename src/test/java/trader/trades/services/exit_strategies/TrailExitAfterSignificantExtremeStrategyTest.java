@@ -2,7 +2,6 @@ package trader.trades.services.exit_strategies;
 
 import com.oanda.v20.Context;
 import com.oanda.v20.account.Account;
-import com.oanda.v20.instrument.CandlestickGranularity;
 import com.oanda.v20.instrument.InstrumentCandlesRequest;
 import com.oanda.v20.instrument.InstrumentCandlesResponse;
 import com.oanda.v20.instrument.InstrumentContext;
@@ -14,6 +13,7 @@ import com.oanda.v20.trade.*;
 import org.junit.Before;
 import org.junit.Test;
 import trader.config.Config;
+import trader.indicators.enums.CandleGranularity;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -36,7 +36,7 @@ public class TrailExitAfterSignificantExtremeStrategyTest {
     private Account mockAccount;
     private OrderCreateResponse mockOrderCreateResponse;
     private TradeSetDependentOrdersResponse mockTradeSetDependentOrdersResponse;
-    private CandlestickGranularity candlestickGranularity;
+    private CandleGranularity candlestickGranularity;
     private TrailExitAfterSignificantExtremeStrategy trailExitAfterSignificantExtremeStrategy;
     private StopLossOrder mockOrder;
     private TradeSummary mockTrade;
@@ -52,7 +52,7 @@ public class TrailExitAfterSignificantExtremeStrategyTest {
     @Before
     public void before() throws Exception {
 
-        this.candlestickGranularity = CandlestickGranularity.M30;
+        this.candlestickGranularity = CandleGranularity.M30;
 
         //mock order
         this.mockContext = mock(Context.class);

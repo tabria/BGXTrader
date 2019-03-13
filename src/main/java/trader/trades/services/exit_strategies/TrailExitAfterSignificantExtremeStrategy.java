@@ -3,13 +3,13 @@ package trader.trades.services.exit_strategies;
 
 import com.oanda.v20.Context;
 import com.oanda.v20.account.Account;
-import com.oanda.v20.instrument.CandlestickGranularity;
 import com.oanda.v20.order.OrderID;
 import com.oanda.v20.primitives.DateTime;
 import com.oanda.v20.trade.*;
 import com.oanda.v20.transaction.TransactionID;
 import trader.candles.CandlesUpdater;
 import trader.config.Config;
+import trader.indicators.enums.CandleGranularity;
 
 
 import java.math.BigDecimal;
@@ -35,9 +35,8 @@ public final class TrailExitAfterSignificantExtremeStrategy implements ExitStrat
      * @param context current context
      * @param candlestickGranularity current time frame
      * @see Context
-     * @see CandlestickGranularity
      */
-    public TrailExitAfterSignificantExtremeStrategy(Context context, CandlestickGranularity candlestickGranularity){
+    public TrailExitAfterSignificantExtremeStrategy(Context context, CandleGranularity candlestickGranularity){
         this.baseExitStrategy = new BaseExitStrategy(context, candlestickGranularity);
         this.prevBarHigh = null;
         this.prevBarLow = null;

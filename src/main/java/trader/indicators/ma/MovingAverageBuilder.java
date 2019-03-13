@@ -1,11 +1,11 @@
 package trader.indicators.ma;
 
 import com.oanda.v20.Context;
-import com.oanda.v20.instrument.CandlestickGranularity;
 import com.oanda.v20.instrument.InstrumentCandlesRequest;
 import trader.candles.CandlesUpdater;
 import trader.config.Config;
 import trader.indicators.Indicator;
+import trader.indicators.enums.CandleGranularity;
 import trader.indicators.enums.CandlestickPriceType;
 import trader.indicators.ma.enums.MAType;
 
@@ -18,7 +18,7 @@ public final class MovingAverageBuilder {
     private static final long DEFAULT_CANDLESTICK_QUANTITY = 20L;
     private static final long MIN_CANDLESTICK_QUANTITY = 1L;
     private static final long MAX_CANDLESTICK_QUANTITY = 4000L;
-    private static final CandlestickGranularity DEFAULT_CANDLE_TIME_FRAME = CandlestickGranularity.H4;
+    private static final CandleGranularity DEFAULT_CANDLE_TIME_FRAME = CandleGranularity.H4;
     private static final CandlestickPriceType DEFAULT_CANDLESTICK_PRICE_TYPE = CandlestickPriceType.CLOSE;
     private static final MAType DEFAULT_MA_TYPE = MAType.SIMPLE;
     private static final long CANDLESTICK_QUANTITY_MULTIPLIER = 4L;
@@ -26,7 +26,7 @@ public final class MovingAverageBuilder {
 
     private Context ctx;
     private long candlestickQuantity;
-    private CandlestickGranularity candleTimeFrame;
+    private CandleGranularity candleTimeFrame;
     private CandlestickPriceType candlestickPriceType;
     private MAType maType;
 
@@ -38,7 +38,7 @@ public final class MovingAverageBuilder {
         this.maType = DEFAULT_MA_TYPE;
     }
 
-    public MovingAverageBuilder setCandleTimeFrame(CandlestickGranularity candleTimeFrame){
+    public MovingAverageBuilder setCandleTimeFrame(CandleGranularity candleTimeFrame){
         if (candleTimeFrame == null)
             throw new NullPointerException("Candle time frame is null");
         this.candleTimeFrame = candleTimeFrame;
@@ -93,7 +93,7 @@ public final class MovingAverageBuilder {
 
         return new InstrumentCandlesRequest(Config.INSTRUMENT)
                 .setCount(calculateCandlesQuantity())
-                .setGranularity(this.candleTimeFrame)
+                .setGranularity(this.candleTimeFrame.extractOANDAGranularity())
                 .setSmooth(false);
     }
 

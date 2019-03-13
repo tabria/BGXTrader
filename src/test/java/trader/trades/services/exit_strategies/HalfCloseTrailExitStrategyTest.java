@@ -13,6 +13,7 @@ import com.oanda.v20.trade.*;
 import org.junit.Before;
 import org.junit.Test;
 import trader.candles.CandlesUpdater;
+import trader.indicators.enums.CandleGranularity;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -35,7 +36,7 @@ public class HalfCloseTrailExitStrategyTest {
     private Account mockAccount;
     private OrderCreateResponse mockOrderCreateResponse;
     private TradeSetDependentOrdersResponse mockTradeSetDependentOrdersResponse;
-    private CandlestickGranularity candlestickGranularity;
+    private CandleGranularity candlestickGranularity;
     private HalfCloseTrailExitStrategy halfCloseTrailExitStrategy;
     private StopLossOrder mockOrder;
     private TradeSummary mockTrade;
@@ -52,7 +53,7 @@ public class HalfCloseTrailExitStrategyTest {
     @Before
     public void before() throws ExecuteException, RequestException {
 
-        this.candlestickGranularity = CandlestickGranularity.M30;
+        this.candlestickGranularity = CandleGranularity.M30;
 
         //mock order
         this.mockContext = mock(Context.class);

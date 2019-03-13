@@ -1,12 +1,12 @@
 package trader.indicators.rsi;
 
 import com.oanda.v20.Context;
-import com.oanda.v20.instrument.CandlestickGranularity;
 import com.oanda.v20.instrument.InstrumentCandlesRequest;
 
 import trader.candles.CandlesUpdater;
 import trader.config.Config;
 import trader.indicators.Indicator;
+import trader.indicators.enums.CandleGranularity;
 import trader.indicators.enums.CandlestickPriceType;
 
 public final class RSIBuilder {
@@ -15,12 +15,12 @@ public final class RSIBuilder {
     private static final long MIN_PERIOD = 1L;
     private static final long MAX_PERIOD = 4000L;
     private static final CandlestickPriceType DEFAULT_APPLIED_PRICE = CandlestickPriceType.CLOSE;
-    private static final CandlestickGranularity DEFAULT_CANDLE_TIME_FRAME = CandlestickGranularity.H4;
+    private static final CandleGranularity DEFAULT_CANDLE_TIME_FRAME = CandleGranularity.H4;
 
     private Context context;
     private long candlesticksQuantity;
     private CandlestickPriceType candlestickPriceType;
-    private CandlestickGranularity candlesTimeFrame;
+    private CandleGranularity candlesTimeFrame;
 
     /**
      * Constructor for RSIBuileder
@@ -68,9 +68,8 @@ public final class RSIBuilder {
      * @param candlesTimeFrame candles time frame
      * @return {@link RSIBuilder} current builder object
      * @throws NullPointerException when candlesTimeFrame is null
-     * @see CandlestickGranularity
      */
-    public RSIBuilder setCandlesTimeFrame(CandlestickGranularity candlesTimeFrame) {
+    public RSIBuilder setCandlesTimeFrame(CandleGranularity candlesTimeFrame) {
         if (candlesTimeFrame == null){
             throw new NullPointerException("Candles time frame must not be null");
         }
@@ -104,13 +103,12 @@ public final class RSIBuilder {
      * @param period current candlesticksQuantity
      * @param candlesTimeFrame current time frame
      * @see InstrumentCandlesRequest
-     * @see CandlestickGranularity
      */
-    private InstrumentCandlesRequest createCandlesRequest(long period, CandlestickGranularity candlesTimeFrame){
+    private InstrumentCandlesRequest createCandlesRequest(long period, CandleGranularity candlesTimeFrame){
         long candlesCount = period * 20;
             return new InstrumentCandlesRequest(Config.INSTRUMENT)
                     .setCount(candlesCount)
-                    .setGranularity(candlesTimeFrame)
+                    .setGranularity(candlesTimeFrame.extractOANDAGranularity())
                     .setSmooth(false);
     }
 

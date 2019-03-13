@@ -8,7 +8,6 @@ import com.oanda.v20.account.Account;
 import com.oanda.v20.account.AccountGetResponse;
 import com.oanda.v20.account.AccountListResponse;
 import com.oanda.v20.account.AccountProperties;
-import com.oanda.v20.instrument.CandlestickGranularity;
 import com.oanda.v20.primitives.InstrumentName;
 import trader.config.Config;
 import trader.core.Connection;
@@ -16,6 +15,7 @@ import trader.core.Observable;
 import trader.core.Observer;
 import trader.indicators.Indicator;
 import trader.indicators.IndicatorObserver;
+import trader.indicators.enums.CandleGranularity;
 import trader.indicators.enums.CandlestickPriceType;
 import trader.indicators.ma.MovingAverageBuilder;
 import trader.indicators.ma.enums.MAType;
@@ -77,7 +77,7 @@ public class Main {
         Indicator dailyPrice = new MovingAverageBuilder(context)
                 .setCandlesQuantity(1)
                 .setCandlestickPriceType(CandlestickPriceType.OPEN)
-                .setCandleTimeFrame(CandlestickGranularity.D)
+                .setCandleTimeFrame(CandleGranularity.D)
                 .setMAType(MAType.SIMPLE)
                 .build();
 

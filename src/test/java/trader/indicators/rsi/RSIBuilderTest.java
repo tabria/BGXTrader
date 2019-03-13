@@ -4,6 +4,7 @@ import com.oanda.v20.Context;
 import com.oanda.v20.instrument.*;
 import org.junit.Before;
 import org.junit.Test;
+import trader.indicators.enums.CandleGranularity;
 import trader.indicators.enums.CandlestickPriceType;
 import trader.indicators.Indicator;
 
@@ -74,10 +75,10 @@ public class RSIBuilderTest {
         RSIBuilder rsiBuilder = new RSIBuilder(this.context);
 
         Field field = getFieldValue(rsiBuilder,"DEFAULT_CANDLE_TIME_FRAME");
-        CandlestickGranularity expected = (CandlestickGranularity) field.get(rsiBuilder);
+        CandleGranularity expected = (CandleGranularity) field.get(rsiBuilder);
 
         Field field2 = getFieldValue(rsiBuilder,"candlesTimeFrame");
-        CandlestickGranularity result = (CandlestickGranularity) field2.get(rsiBuilder);
+        CandleGranularity result = ( CandleGranularity) field2.get(rsiBuilder);
 
         assertEquals(expected, result);
     }
@@ -141,7 +142,7 @@ public class RSIBuilderTest {
 
     @Test
     public void WhenSetCandlesTimeFrameThenReturnSameObject(){
-        RSIBuilder builder = this.builder.setCandlesTimeFrame(CandlestickGranularity.M1);
+        RSIBuilder builder = this.builder.setCandlesTimeFrame(CandleGranularity.M1);
         assertEquals(this.builder, builder);
     }
 
@@ -153,11 +154,11 @@ public class RSIBuilderTest {
     @Test
     public void WhenSetCandlesTimeFrameWithCorrectValueThenCorrectResult() throws NoSuchFieldException, IllegalAccessException {
 
-        CandlestickGranularity expected = CandlestickGranularity.D;
+        CandleGranularity expected = CandleGranularity.D;
         this.builder.setCandlesTimeFrame(expected);
 
         Field field = getFieldValue(this.builder, "candlesTimeFrame");
-        CandlestickGranularity result = (CandlestickGranularity) field.get(this.builder);
+        CandleGranularity result = ( CandleGranularity) field.get(this.builder);
 
         assertEquals(expected, result);
     }
