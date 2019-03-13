@@ -48,11 +48,16 @@ public class IndicatorUpdateHelper {
         return candlesDateTime;
     }
 
+    public void setCandlesDateTime(String dateTime, int index){
+        this.candlesDateTime.set(index, dateTime);
+    }
+
     public void fillCandlestickList(){
         candlestickList = new ArrayList<>();
         for (int candlestickNumber = 0; candlestickNumber < candlesClosePrices.size() ; candlestickNumber++)
             addCandlestick(candlestickNumber);
     }
+
     private void addCandlestick(int candlestickNumber) {
         Candlestick candlestick = mock(Candlestick.class);
         setCandlestickDateTime(candlestick, candlestickNumber);

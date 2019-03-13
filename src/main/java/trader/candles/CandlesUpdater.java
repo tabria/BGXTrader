@@ -67,13 +67,13 @@ public final class CandlesUpdater {
         return false;
     }
 
-    @Override
-    public String toString() {
-        return "CandlesUpdater{" +
-                "candlestickList=" + candlestickList.toString() +
-                ", candlesTimeFrame=" + candlesTimeFrame.toString() +
-                '}';
-    }
+//    @Override
+//    public String toString() {
+//        return "CandlesUpdater{" +
+//                "candlestickList=" + candlestickList.toString() +
+//                ", candlesTimeFrame=" + candlesTimeFrame.toString() +
+//                '}';
+//    }
 
     /**
      * Sometimes new candles came with time like old ones. Which cause multiple updates
