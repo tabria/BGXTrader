@@ -46,7 +46,7 @@ public final class MovingAverageBuilder {
     }
 
     public MovingAverageBuilder setCandlesQuantity(long candlestickQuantity){
-        if (isOutOfBoundary(candlestickQuantity)){
+        if (quantityIsOutOfBoundary(candlestickQuantity)){
             throw new IllegalArgumentException (
                     String.format("Quantity is %d, must be between %d and %d.",
                             candlestickQuantity, MIN_CANDLESTICK_QUANTITY, MAX_CANDLESTICK_QUANTITY)
@@ -71,22 +71,7 @@ public final class MovingAverageBuilder {
     }
 
     public Indicator build(){
-
-        return instantiatesIndicatorWithReflection(createCandlesUpdater());
-
-    }
-
-    /**
-     * Create Candle Request Object
-     * @return {@link InstrumentCandlesRequest} new request object for the OANDA api
-     * @see InstrumentCandlesRequest
-     */
-    private InstrumentCandlesRequest createCandlesRequest(){
-
-        return new InstrumentCandlesRequest(Config.INSTRUMENT)
-                    .setCount(calculateCandlesQuantity())
-                    .setGranularity(this.candleTimeFrame)
-                    .setSmooth(false);
+        return instantiatesIndicator(createCandlesUpdater());
     }
 
     private long calculateCandlesQuantity() {
@@ -100,15 +85,28 @@ public final class MovingAverageBuilder {
         this.ctx = context;
     }
 
-    private boolean isOutOfBoundary(long candlestickQuantity) {
+    private boolean quantityIsOutOfBoundary(long candlestickQuantity) {
         return candlestickQuantity < MIN_CANDLESTICK_QUANTITY || candlestickQuantity > MAX_CANDLESTICK_QUANTITY;
+    }
+
+    /**
+     * Create Candle Request Object
+     * @return {@link InstrumentCandlesRequest} new request object for the OANDA api
+     * @see InstrumentCandlesRequest
+     */
+    private InstrumentCandlesRequest createCandlesRequest(){
+
+        return new InstrumentCandlesRequest(Config.INSTRUMENT)
+                .setCount(calculateCandlesQuantity())
+                .setGranularity(this.candleTimeFrame)
+                .setSmooth(false);
     }
 
     private CandlesUpdater createCandlesUpdater() {
         return new CandlesUpdater(this.ctx, createCandlesRequest(), this.candleTimeFrame);
     }
 
-    private Indicator instantiatesIndicatorWithReflection(CandlesUpdater updater) {
+    private Indicator instantiatesIndicator(CandlesUpdater updater) {
         try {
             Class<?> indicatorClass = Class.forName(MA_LOCATION + composeIndicatorClassName());
             Constructor<?> indicatorConstructor = indicatorClass.getDeclaredConstructor(long.class, CandlestickPriceType.class, CandlesUpdater.class);

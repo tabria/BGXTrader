@@ -20,9 +20,15 @@ import static trader.indicators.ma.enums.MAType.*;
 public class MovingAverageBuilderTest {
 
 
+    private static final String CANDLESTICK_PRICE_TYPE = "candlestickPriceType";
+    private static final String MOVING_AVERAGE_TYPE = "maType";
+    private static final String CANDLESTICK_QUANTITY = "candlestickQuantity";
+    private static final String CANDLE_TIME_FRAME = "candleTimeFrame";
+    private static final String MAX_CANDLESTICK_QUANTITY = "MAX_CANDLESTICK_QUANTITY";
+    private static final String MIN_CANDLESTICK_QUANTITY = "MIN_CANDLESTICK_QUANTITY";
+
     private MovingAverageBuilder builder;
-    private long minCandlesQuantity;
-    private long maxCandlesQuantity;
+
 
     
     @Before
@@ -34,8 +40,6 @@ public class MovingAverageBuilderTest {
                 .thenReturn(oandaAPIMock.getMockResponse());
 
         this.builder = new MovingAverageBuilder(oandaAPIMock.getContext());
-        this.minCandlesQuantity = extractMinCandlesQuantity();
-        this.maxCandlesQuantity = extractMaxCandlesQuantity();
     }
 
     @Test(expected = NullPointerException.class)
@@ -52,17 +56,19 @@ public class MovingAverageBuilderTest {
     public void testForCorrectCandleTimeFrame() throws NoSuchFieldException, IllegalAccessException {
         this.builder.setCandleTimeFrame(CandlestickGranularity.M15);
 
-        assertSame(CandlestickGranularity.M15, extractCandlestickGranularity());
+        assertSame(CandlestickGranularity.M15, extractFieldObject(CANDLE_TIME_FRAME));
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void whenCallSetCandlesQuantityWithLessThanMinimumCandlesQuantity_Exception() {
-        this.builder.setCandlesQuantity(this.minCandlesQuantity - 1);
+    public void whenCallSetCandlesQuantityWithLessThanMinimumCandlesQuantity_Exception() throws NoSuchFieldException, IllegalAccessException {
+        long minCandlesQuantity = (long) extractFieldObject(MIN_CANDLESTICK_QUANTITY);
+        this.builder.setCandlesQuantity(minCandlesQuantity - 1);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void whenCallSetCandlesQuantityWithMoreThanMaxCandleQuantity_Exception(){
-        this.builder.setCandlesQuantity(this.maxCandlesQuantity + 1);
+    public void whenCallSetCandlesQuantityWithMoreThanMaxCandleQuantity_Exception() throws NoSuchFieldException, IllegalAccessException {
+        long maxCandlesQuantity = (long) extractFieldObject(MAX_CANDLESTICK_QUANTITY);
+        this.builder.setCandlesQuantity(maxCandlesQuantity + 1);
     }
 
     @Test
@@ -70,7 +76,7 @@ public class MovingAverageBuilderTest {
         long expected = 11L;
         this.builder.setCandlesQuantity(expected);
 
-        assertEquals(expected, extractCandlesQuantity());
+        assertEquals(expected, extractFieldObject(CANDLESTICK_QUANTITY));
     }
 
     @Test(expected = NullPointerException.class)
@@ -82,7 +88,7 @@ public class MovingAverageBuilderTest {
     public void callSetCandlestickPriceTypeWithMediumType() throws NoSuchFieldException, IllegalAccessException {
         this.builder.setCandlestickPriceType(CandlestickPriceType.MEDIAN);
 
-        assertSame(CandlestickPriceType.MEDIAN, extractCandlestickPriceType());
+        assertSame(CandlestickPriceType.MEDIAN, extractFieldObject(CANDLESTICK_PRICE_TYPE));
     }
 
     @Test(expected = NullPointerException.class)
@@ -94,55 +100,23 @@ public class MovingAverageBuilderTest {
     public void testForCorrectMovingAverageType() throws NoSuchFieldException, IllegalAccessException {
         this.builder.setMAType(EXPONENTIAL);
 
-        assertSame(EXPONENTIAL, extractMaType());
+        assertSame(EXPONENTIAL, extractFieldObject(MOVING_AVERAGE_TYPE));
     }
 
     @Test
     public void buildMovingAverage()  {
-
         Indicator sma = this.builder.setMAType(MAType.SIMPLE).build();
         Indicator ema = this.builder.setMAType(EXPONENTIAL).build();
         Indicator wma = this.builder.setMAType(WEIGHTED).build();
-
 
         assertEquals("The object is not SMA","SimpleMA", sma.getClass().getSimpleName());
         assertEquals("The object is not EMA","ExponentialMA", ema.getClass().getSimpleName());
         assertEquals("The object is not WMA","WeightedMA", wma.getClass().getSimpleName());
     }
 
-    private long extractMinCandlesQuantity() throws NoSuchFieldException, IllegalAccessException {
-        Field field = this.builder.getClass().getDeclaredField("MIN_CANDLESTICK_QUANTITY");
+    private Object extractFieldObject(String fieldName) throws NoSuchFieldException, IllegalAccessException {
+        Field field = this.builder.getClass().getDeclaredField(fieldName);
         field.setAccessible(true);
-        return (long) field.get(this.builder);
-    }
-
-    private long extractMaxCandlesQuantity() throws NoSuchFieldException, IllegalAccessException {
-        Field field = this.builder.getClass().getDeclaredField("MAX_CANDLESTICK_QUANTITY");
-        field.setAccessible(true);
-        return (long) field.get(this.builder);
-    }
-
-    private CandlestickGranularity extractCandlestickGranularity() throws NoSuchFieldException, IllegalAccessException {
-        Field field = this.builder.getClass().getDeclaredField("candleTimeFrame");
-        field.setAccessible(true);
-        return (CandlestickGranularity) field.get(this.builder);
-    }
-
-    private long extractCandlesQuantity() throws NoSuchFieldException, IllegalAccessException {
-        Field field = this.builder.getClass().getDeclaredField("candlestickQuantity");
-        field.setAccessible(true);
-        return (long) field.get(this.builder);
-    }
-
-    private CandlestickPriceType extractCandlestickPriceType() throws NoSuchFieldException, IllegalAccessException {
-        Field field = this.builder.getClass().getDeclaredField("candlestickPriceType");
-        field.setAccessible(true);
-        return (CandlestickPriceType) field.get(this.builder);
-    }
-
-    private MAType extractMaType() throws NoSuchFieldException, IllegalAccessException {
-        Field field = this.builder.getClass().getDeclaredField("maType");
-        field.setAccessible(true);
-        return (MAType) field.get(this.builder);
+        return field.get(this.builder);
     }
 }
