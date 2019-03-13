@@ -5,7 +5,7 @@ import com.oanda.v20.instrument.CandlestickData;
 import com.oanda.v20.primitives.DateTime;
 import trader.candles.CandlesUpdater;
 import trader.indicators.Indicator;
-import trader.indicators.enums.CandlestickPrice;
+import trader.indicators.enums.CandlestickPriceType;
 import trader.trades.entities.Point;
 
 
@@ -20,7 +20,7 @@ import java.util.List;
 public final class WeightedMA implements Indicator {
 
     private final long period;
-    private final CandlestickPrice candlestickPrice;
+    private final CandlestickPriceType candlestickPriceType;
     private final CandlesUpdater updater;
     private List<BigDecimal> maValues;
     private List<Point> points;
@@ -31,14 +31,14 @@ public final class WeightedMA implements Indicator {
      * Constructor
      *
      * @param period sma period
-     * @param candlestickPrice what price to get from the candlestick to calculate sma
+     * @param candlestickPriceType what price to get from the candlestick to calculate sma
      * @param updater update candlestick collection
-     * @see CandlestickPrice
+     * @see CandlestickPriceType
      * @see CandlesUpdater
      */
-    WeightedMA(long period, CandlestickPrice candlestickPrice, CandlesUpdater updater) {
+    WeightedMA(long period, CandlestickPriceType candlestickPriceType, CandlesUpdater updater) {
         this.period = period;
-        this.candlestickPrice = candlestickPrice;
+        this.candlestickPriceType = candlestickPriceType;
         this.updater = updater;
         this.maValues = new ArrayList<>();
         this.points = new ArrayList<>();
@@ -107,7 +107,7 @@ public final class WeightedMA implements Indicator {
     public String toString() {
         return "WeightedMA{" +
                 "period=" + period +
-                ", candlestickPrice=" + candlestickPrice.toString() +
+                ", candlestickPriceType=" + candlestickPriceType.toString() +
                 ", maValues=" + maValues.toString() +
                 ", points=" + points.toString() +
                 ", isTradeGenerated=" + isTradeGenerated +
@@ -149,7 +149,7 @@ public final class WeightedMA implements Indicator {
 
             CandlestickData candleMid = candlestickList.get(i).getMid();
 
-            BigDecimal lastPrice = this.candlestickPrice.extractPrice(candleMid);
+            BigDecimal lastPrice = this.candlestickPriceType.extractPrice(candleMid);
             lastPrice = lastPrice.multiply(BigDecimal.valueOf(period)).setScale(5, BigDecimal.ROUND_HALF_UP);
 
             result = result.add(lastPrice).setScale(5, BigDecimal.ROUND_HALF_UP);

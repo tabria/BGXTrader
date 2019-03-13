@@ -7,7 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import trader.candles.CandlesUpdater;
 import trader.trades.entities.Point;
-import trader.indicators.enums.CandlestickPrice;
+import trader.indicators.enums.CandlestickPriceType;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -41,7 +41,7 @@ public class ExponentialMATest {
     private ExponentialMA ema;
     private CandlesUpdater updater;
     private List<Candlestick> candlestickList;
-    private CandlestickPrice mockCandlestickPrice;
+    private CandlestickPriceType mockCandlestickPriceType;
     private long period;
     private DateTime mockDateTime;
     private BigDecimal ask;
@@ -59,7 +59,7 @@ public class ExponentialMATest {
 
        // this.candlestickData = mock(CandlestickData.class);
 
-        this.mockCandlestickPrice = mock(CandlestickPrice.class);
+        this.mockCandlestickPriceType = mock(CandlestickPriceType.class);
         fillCandlestickList();
         setPeriod();
         this.updater = mock(CandlesUpdater.class);
@@ -91,18 +91,18 @@ public class ExponentialMATest {
 //        this.mockMA = mock(MovingAverage.class);
 //        when(this.mockMA.getPeriod()).thenReturn(this.period);
 //        when(this.mockMA.getCandles()).thenReturn(this.candlestickList);
-//        when(this.mockMA.getAppliedPrice()).thenReturn(this.mockCandlestickPrice);
+//        when(this.mockMA.getAppliedPrice()).thenReturn(this.mockCandlestickPriceType);
 //        when(this.mockMA.getLastCandleDateTime()).thenReturn(this.dateTime);
 //        when(this.mockMA.nextCandleOpenTime(this.dateTime)).thenReturn(zd);
 
 
-        this.ema = new ExponentialMA(this.period, this.mockCandlestickPrice, this.updater);
+        this.ema = new ExponentialMA(this.period, this.mockCandlestickPriceType, this.updater);
 
     }
 
     @Test
     public void WhenCreateThenReturnNewObject() {
-        ExponentialMA exponentialMA2 = new ExponentialMA(this.period, this.mockCandlestickPrice, this.updater);
+        ExponentialMA exponentialMA2 = new ExponentialMA(this.period, this.mockCandlestickPriceType, this.updater);
 
         assertNotEquals("Objects must not be equal ",this.ema, exponentialMA2);
     }
@@ -178,7 +178,7 @@ public class ExponentialMATest {
     @Test
     public void TestToString(){
         String result = this.ema.toString();
-        String expected = String.format("ExponentialMA{period=%d, candlestickPrice=%s, maValues=[], points=[], isTradeGenerated=false}", period, this.mockCandlestickPrice.toString());
+        String expected = String.format("ExponentialMA{period=%d, candlestickPriceType=%s, maValues=[], points=[], isTradeGenerated=false}", period, this.mockCandlestickPriceType.toString());
         assertEquals(expected, result);
     }
 
@@ -203,7 +203,7 @@ public class ExponentialMATest {
             when(candle1.getTime()).thenReturn(dateTime1);
             when(candle1.getMid()).thenReturn(candlestickData1);
 
-            when(this.mockCandlestickPrice.extractPrice(candlestickData1)).thenReturn(new BigDecimal(candlesClosePrices.get(i)));
+            when(this.mockCandlestickPriceType.extractPrice(candlestickData1)).thenReturn(new BigDecimal(candlesClosePrices.get(i)));
 
             this.candlestickList.add(candle1);
         }

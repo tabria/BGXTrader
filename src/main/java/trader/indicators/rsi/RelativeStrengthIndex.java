@@ -5,7 +5,7 @@ import com.oanda.v20.primitives.DateTime;
 
 import trader.candles.CandlesUpdater;
 import trader.indicators.Indicator;
-import trader.indicators.enums.CandlestickPrice;
+import trader.indicators.enums.CandlestickPriceType;
 import trader.prices.PriceObservable;
 import trader.trades.entities.Point;
 
@@ -21,16 +21,16 @@ public final class RelativeStrengthIndex implements Indicator {
     private static final BigDecimal RSI_MIDDLE_VALUE = BigDecimal.valueOf(50);
 
     private final long period;
-    private final CandlestickPrice candlestickPrice;
+    private final CandlestickPriceType candlestickPriceType;
     private List<BigDecimal> rsiValues;
     private final CandlesUpdater updater;
     private List<Point> points;
     private boolean isTradeGenerated;
 
 
-    RelativeStrengthIndex(long period, CandlestickPrice candlestickPrice, CandlesUpdater candlesUpdater){
+    RelativeStrengthIndex(long period, CandlestickPriceType candlestickPriceType, CandlesUpdater candlesUpdater){
         this.period = period;
-        this.candlestickPrice = candlestickPrice;
+        this.candlestickPriceType = candlestickPriceType;
         this.updater = candlesUpdater;
         this.rsiValues = new ArrayList<>();
         this.points = new ArrayList<>();
@@ -97,7 +97,7 @@ public final class RelativeStrengthIndex implements Indicator {
     public String toString() {
         return "RelativeStrengthIndex{" +
                 "period=" + period +
-                ", candlestickPrice=" + candlestickPrice.toString() +
+                ", candlestickPriceType=" + candlestickPriceType.toString() +
                 ", rsiValues=" + rsiValues.toString() +
                 ", points=" + points.toString() +
                 ", isTradeGenerated=" + isTradeGenerated +
@@ -123,8 +123,8 @@ public final class RelativeStrengthIndex implements Indicator {
 
         //calculate First RS from 1 to period candlesticks
         for (int i = 1; i <=this.period ; i++) {
-            BigDecimal currentPrice = this.candlestickPrice.extractPrice(candlestickList.get(i).getMid());
-            BigDecimal previousPrice =  this.candlestickPrice.extractPrice(candlestickList.get(i-1).getMid());
+            BigDecimal currentPrice = this.candlestickPriceType.extractPrice(candlestickList.get(i).getMid());
+            BigDecimal previousPrice =  this.candlestickPriceType.extractPrice(candlestickList.get(i-1).getMid());
 
             BigDecimal change = currentPrice.subtract(previousPrice).setScale(5, BigDecimal.ROUND_HALF_UP);
 
@@ -144,8 +144,8 @@ public final class RelativeStrengthIndex implements Indicator {
         //main calculation
         for (int i = (int) this.period + 1; i < candlestickList.size() ; i++) {
 
-            BigDecimal currentPrice = this.candlestickPrice.extractPrice(candlestickList.get(i).getMid());
-            BigDecimal previousPrice =  this.candlestickPrice.extractPrice(candlestickList.get(i-1).getMid());
+            BigDecimal currentPrice = this.candlestickPriceType.extractPrice(candlestickList.get(i).getMid());
+            BigDecimal previousPrice =  this.candlestickPriceType.extractPrice(candlestickList.get(i-1).getMid());
 
             BigDecimal change = currentPrice.subtract(previousPrice).setScale(5, BigDecimal.ROUND_HALF_UP);
 

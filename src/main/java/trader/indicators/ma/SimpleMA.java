@@ -5,7 +5,7 @@ import com.oanda.v20.instrument.CandlestickData;
 import com.oanda.v20.primitives.DateTime;
 import trader.candles.CandlesUpdater;
 import trader.indicators.Indicator;
-import trader.indicators.enums.CandlestickPrice;
+import trader.indicators.enums.CandlestickPriceType;
 import trader.trades.entities.Point;
 
 import java.math.BigDecimal;
@@ -20,7 +20,7 @@ import java.util.List;
 public final class SimpleMA implements Indicator {
 
     private final long period;
-    private final CandlestickPrice candlestickPrice;
+    private final CandlestickPriceType candlestickPriceType;
     private final CandlesUpdater updater;
     private List<BigDecimal> maValues;
     private BigDecimal divisor;
@@ -32,14 +32,14 @@ public final class SimpleMA implements Indicator {
      * Constructor
      *
      * @param period sma period
-     * @param candlestickPrice what price to get from the candlestick to calculate sma
+     * @param candlestickPriceType what price to get from the candlestick to calculate sma
      * @param updater update candlestick collection
-     * @see CandlestickPrice
+     * @see CandlestickPriceType
      * @see CandlesUpdater
      */
-    SimpleMA(long period, CandlestickPrice candlestickPrice, CandlesUpdater updater) {
+    SimpleMA(long period, CandlestickPriceType candlestickPriceType, CandlesUpdater updater) {
         this.period = period;
-        this.candlestickPrice = candlestickPrice;
+        this.candlestickPriceType = candlestickPriceType;
         this.updater = updater;
         this.setDivisor(this.period);
         this.maValues = new ArrayList<>();
@@ -106,7 +106,7 @@ public final class SimpleMA implements Indicator {
     public String toString() {
         return "SimpleMA{" +
                 "period=" + period +
-                ", candlestickPrice=" + candlestickPrice.toString() +
+                ", candlestickPriceType=" + candlestickPriceType.toString() +
                 ", maValues=" + maValues.toString() +
                 ", points=" + points.toString() +
                 ", isTradeGenerated=" + isTradeGenerated +
@@ -138,8 +138,8 @@ public final class SimpleMA implements Indicator {
             //getting Open, Close, High, Low prices for each candle
             CandlestickData candleMid = candlestickList.get(i).getMid();
 
-            //add the price based on the candlestickPrice enum
-            result = result.add(this.candlestickPrice.extractPrice(candleMid)).setScale(5, BigDecimal.ROUND_HALF_UP);
+            //add the price based on the candlestickPriceType enum
+            result = result.add(this.candlestickPriceType.extractPrice(candleMid)).setScale(5, BigDecimal.ROUND_HALF_UP);
 
             count++;
             if (count == this.period){
@@ -151,7 +151,7 @@ public final class SimpleMA implements Indicator {
                 candleMid = candlestickList.get(i + count -1).getMid();
 
                 //removing oldest candle's price from the result
-                result = result.subtract(this.candlestickPrice.extractPrice(candleMid))
+                result = result.subtract(this.candlestickPriceType.extractPrice(candleMid))
                         .setScale(5,BigDecimal.ROUND_HALF_UP);
                 count--;
             }

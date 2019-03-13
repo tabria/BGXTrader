@@ -7,7 +7,7 @@ import trader.indicators.CandlestickPriceOperations;
 import java.math.BigDecimal;
 
 
-public enum CandlestickPrice implements CandlestickPriceOperations {
+public enum CandlestickPriceType implements CandlestickPriceOperations {
 
     OPEN {
         @Override

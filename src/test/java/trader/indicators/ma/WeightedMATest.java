@@ -6,8 +6,8 @@ import com.oanda.v20.primitives.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import trader.candles.CandlesUpdater;
+import trader.indicators.enums.CandlestickPriceType;
 import trader.trades.entities.Point;
-import trader.indicators.enums.CandlestickPrice;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -39,7 +39,7 @@ public class WeightedMATest {
     private WeightedMA wma;
     private CandlesUpdater updater;
     private List<Candlestick> candlestickList;
-    private CandlestickPrice mockCandlestickPrice;
+    private CandlestickPriceType mockCandlestickPriceType;
     private long period;
     private DateTime mockDateTime;
     private BigDecimal ask;
@@ -54,7 +54,7 @@ public class WeightedMATest {
         this.mockDateTime = mock(DateTime.class);
         //this.candlestickData = mock(CandlestickData.class);
 
-        this.mockCandlestickPrice = mock(CandlestickPrice.class);
+        this.mockCandlestickPriceType = mock(CandlestickPriceType.class);
         fillCandlestickList();
         setPeriod();
 
@@ -81,19 +81,19 @@ public class WeightedMATest {
 //        this.mockMA = mock(MovingAverage.class);
 //        when(this.mockMA.getPeriod()).thenReturn(this.period);
 //        when(this.mockMA.getCandles()).thenReturn(this.candlestickList);
-//        when(this.mockMA.getAppliedPrice()).thenReturn(this.mockCandlestickPrice);
+//        when(this.mockMA.getAppliedPrice()).thenReturn(this.mockCandlestickPriceType);
 //        when(this.mockMA.getLastCandleDateTime()).thenReturn(this.dateTime);
 //        when(this.mockMA.nextCandleOpenTime(this.dateTime)).thenReturn(zd);
 
 
-        this.wma = new WeightedMA(this.period, this.mockCandlestickPrice, this.updater) ;
+        this.wma = new WeightedMA(this.period, this.mockCandlestickPriceType, this.updater) ;
 
 
     }
 
     @Test
     public void WhenCallCreateThenReturnDifferenObject() {
-        WeightedMA weightedMA = new WeightedMA(this.period, this.mockCandlestickPrice, this.updater);
+        WeightedMA weightedMA = new WeightedMA(this.period, this.mockCandlestickPriceType, this.updater);
 
         assertNotEquals("Objects must not be equal ",this.wma, weightedMA);
     }
@@ -151,7 +151,7 @@ public class WeightedMATest {
             when(candle1.getTime()).thenReturn(dateTime1);
             when(candle1.getMid()).thenReturn(candlestickData1);
 
-            when(this.mockCandlestickPrice.extractPrice(candlestickData1)).thenReturn(new BigDecimal(candlesClosePrices.get(i)));
+            when(this.mockCandlestickPriceType.extractPrice(candlestickData1)).thenReturn(new BigDecimal(candlesClosePrices.get(i)));
 
             this.candlestickList.add(candle1);
         }
@@ -195,7 +195,7 @@ public class WeightedMATest {
     @Test
     public void TestToString(){
         String result = this.wma.toString();
-        String expected = String.format("WeightedMA{period=%d, candlestickPrice=%s, maValues=[], points=[], isTradeGenerated=false}", this.period, this.mockCandlestickPrice.toString());
+        String expected = String.format("WeightedMA{period=%d, candlestickPriceType=%s, maValues=[], points=[], isTradeGenerated=false}", this.period, this.mockCandlestickPriceType.toString());
 
         assertEquals(expected, result);
     }

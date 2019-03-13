@@ -1,11 +1,11 @@
 package trader.indicators.ma;
 
-import com.oanda.v20.Context;
 import com.oanda.v20.instrument.*;
 import org.junit.Before;
 import org.junit.Test;
+import trader.OandaAPI.OandaAPIMock;
 import trader.indicators.Indicator;
-import trader.indicators.enums.CandlestickPrice;
+import trader.indicators.enums.CandlestickPriceType;
 import trader.indicators.ma.enums.MAType;
 
 import java.lang.reflect.Field;
@@ -21,122 +21,79 @@ public class MABuilderTest {
 
 
     private MABuilder builder;
-    private Context mockContext;
-    private long min_period;
-    private long max_period;
-    private InstrumentCandlesRequest mockRequest;
-    private InstrumentCandlesResponse mockResponse;
+    private OandaAPIMock oandaAPIMock;
+    private long minCandlesQuantity;
+    private long maxCandlesQuantity;
 
+    
     @Before
     public void setUp() throws Exception {
 
-       // this.mockCandlestickList = mock(List.class);
-       // when(this.mockCandlestickList.get(0)).thenReturn(this.mockCandlestick);
+        oandaAPIMock = new OandaAPIMock();
+        when(oandaAPIMock.getMockResponse().getCandles()).thenReturn(new ArrayList<>());
+        when(oandaAPIMock.getContext().instrument.candles(any(InstrumentCandlesRequest.class)))
+                .thenReturn(oandaAPIMock.getMockResponse());
 
-        this.mockRequest = mock(InstrumentCandlesRequest.class);
-
-        this.mockResponse = mock(InstrumentCandlesResponse.class);
-        when(this.mockResponse.getCandles()).thenReturn(new ArrayList<>());
-
-        this.mockContext = mock(Context.class);
-        this.mockContext.instrument = mock(InstrumentContext.class);
-        when(this.mockContext.instrument.candles(any(InstrumentCandlesRequest.class))).thenReturn(this.mockResponse);
-
-        this.builder = new MABuilder(this.mockContext);
-
-        this.min_period = getMinPeriod();
-        this.max_period = getMaxPeriod();
-
-        //setMockRequest();
+        this.builder = new MABuilder(oandaAPIMock.getContext());
+        this.minCandlesQuantity = extractMinCandlesQuantity();
+        this.maxCandlesQuantity = extractMaxCandlesQuantity();
     }
 
-
     @Test(expected = NullPointerException.class)
-    public void WhenCreateMABuilderWithNullContextThenException(){
+    public void whenCreateMABuilderWithNullContext_Exception(){
         new MABuilder(null);
     }
 
-    /**
-     * Test setCandleTimeFrame
-     */
     @Test(expected = NullPointerException.class)
-    public void WhenSetCandleTimeFrameWithNullThenException() {
+    public void whenCallSetCandleTimeFrameWithNull_Exception() {
         this.builder = this.builder.setCandleTimeFrame(null);
     }
 
     @Test
-    public void WhenSetCandleTimeFrameWithCorrectValueThenCorrectResult() throws NoSuchFieldException, IllegalAccessException {
-        CandlestickGranularity expected = CandlestickGranularity.M15;
-        this.builder.setCandleTimeFrame(expected);
-        Field field = this.builder.getClass().getDeclaredField("candleTimeFrame");
-        field.setAccessible(true);
-        CandlestickGranularity result = (CandlestickGranularity) field.get(this.builder);
+    public void callSetCandleTimeFrame() throws NoSuchFieldException, IllegalAccessException {
+        this.builder.setCandleTimeFrame(CandlestickGranularity.M15);
 
-        assertSame(expected, result);
-    }
-
-    @Test
-    public void WhenCallSetCandleTimeFrameThenMustReturnSameBuilderObject(){
-        MABuilder builderObj2 = this.builder.setCandleTimeFrame(CandlestickGranularity.H8);
-        assertSame(this.builder, builderObj2);
-    }
-
-    /**
-     * Test setPeriod
-     */
-    @Test(expected = IllegalArgumentException.class)
-    public void WhenSetPeriodWithLessThanMIN_PERIODThenException() {
-        this.builder.setPeriod(this.min_period - 1);
+        assertSame(CandlestickGranularity.M15, extractCandlestickGranularity());
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void WhenSetPeriodWithMoreThanMAX_PERIODThenException(){
-        this.builder.setPeriod(this.max_period + 1);
+    public void whenCallSetCandlesQuantityWithLessThanMinimumCandlesQuantity_Exception() {
+        this.builder.setCandlesQuantity(this.minCandlesQuantity - 1);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void whenCallSetCandlesQuantityWithMoreThanMaxCandleQuantity_Exception(){
+        this.builder.setCandlesQuantity(this.maxCandlesQuantity + 1);
     }
 
     @Test
-    public void WhenSetPeriodBetweenMIN_PERIODAndMAX_PERIODThenCorrectResult() throws NoSuchFieldException, IllegalAccessException {
+    public void callSetCandleQuantity() throws NoSuchFieldException, IllegalAccessException {
         long expected = 11L;
-        this.builder.setPeriod(expected);
+        this.builder.setCandlesQuantity(expected);
 
-        Field field = this.builder.getClass().getDeclaredField("period");
-        field.setAccessible(true);
-        long result = (long) field.get(this.builder);
-
-        assertEquals(expected, result);
+        assertEquals(expected, extractCandlesQuantity());
     }
-
-    @Test
-    public void WhenSetPeriodThenReturnSameObject(){
-        MABuilder builderObj = this.builder.setPeriod(11);
-
-        assertSame(this.builder, builderObj);
-    }
-
-    /**
-     * Test appliedPrice
-     */
 
     @Test(expected = NullPointerException.class)
-    public void WhenSetAppliedPriceWithNullThenException() {
-        this.builder.setCandlestickPrice(null);
+    public void whenCallSetCandlestickPriceWithNull_Exception() {
+        this.builder.setCandlestickPriceType(null);
     }
 
     @Test
-    public void WhenSetAppliedPriceCorrectValueThenCorrectResult() throws NoSuchFieldException, IllegalAccessException {
-        CandlestickPrice expected = CandlestickPrice.MEDIAN;
-        this.builder.setCandlestickPrice(expected);
+    public void callSetCandlestickPrice() throws NoSuchFieldException, IllegalAccessException {
+        CandlestickPriceType expected = CandlestickPriceType.MEDIAN;
+        this.builder.setCandlestickPriceType(expected);
 
-        Field field = this.builder.getClass().getDeclaredField("candlestickPrice");
+        Field field = this.builder.getClass().getDeclaredField("candlestickPriceType");
         field.setAccessible(true);
-        CandlestickPrice result = (CandlestickPrice) field.get(this.builder);
+        CandlestickPriceType result = (CandlestickPriceType) field.get(this.builder);
 
         assertSame(expected, result);
     }
 
     @Test
     public void WhenSetAppliedPriceThenReturnSameObject(){
-        MABuilder builderObj = this.builder.setCandlestickPrice(CandlestickPrice.CLOSE);
+        MABuilder builderObj = this.builder.setCandlestickPriceType(CandlestickPriceType.CLOSE);
 
         assertEquals(this.builder, builderObj);
     }
@@ -188,14 +145,26 @@ public class MABuilderTest {
         assertEquals("The object is not WMA","WeightedMA", wmaName);
     }
 
-    private long getMinPeriod() throws NoSuchFieldException, IllegalAccessException {
+    private long extractMinCandlesQuantity() throws NoSuchFieldException, IllegalAccessException {
         Field field = this.builder.getClass().getDeclaredField("MIN_PERIOD");
         field.setAccessible(true);
         return (long) field.get(this.builder);
     }
 
-    private long getMaxPeriod() throws NoSuchFieldException, IllegalAccessException {
+    private long extractMaxCandlesQuantity() throws NoSuchFieldException, IllegalAccessException {
         Field field = this.builder.getClass().getDeclaredField("MAX_PERIOD");
+        field.setAccessible(true);
+        return (long) field.get(this.builder);
+    }
+
+    private CandlestickGranularity extractCandlestickGranularity() throws NoSuchFieldException, IllegalAccessException {
+        Field field = this.builder.getClass().getDeclaredField("candleTimeFrame");
+        field.setAccessible(true);
+        return (CandlestickGranularity) field.get(this.builder);
+    }
+
+    private long extractCandlesQuantity() throws NoSuchFieldException, IllegalAccessException {
+        Field field = this.builder.getClass().getDeclaredField("period");
         field.setAccessible(true);
         return (long) field.get(this.builder);
     }

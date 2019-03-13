@@ -4,7 +4,7 @@ import com.oanda.v20.Context;
 import com.oanda.v20.instrument.*;
 import org.junit.Before;
 import org.junit.Test;
-import trader.indicators.enums.CandlestickPrice;
+import trader.indicators.enums.CandlestickPriceType;
 import trader.indicators.Indicator;
 
 import java.lang.reflect.Field;
@@ -61,12 +61,12 @@ public class RSIBuilderTest {
         RSIBuilder rsiBuilder = new RSIBuilder(this.context);
 
         Field field = getFieldValue(rsiBuilder, "DEFAULT_APPLIED_PRICE");
-        CandlestickPrice expected = (CandlestickPrice) field.get(rsiBuilder);
+        CandlestickPriceType expected = (CandlestickPriceType) field.get(rsiBuilder);
 
-        Field field2 = getFieldValue(rsiBuilder, "candlestickPrice");
-        CandlestickPrice candlestickPrice = (CandlestickPrice) field2.get(rsiBuilder);
+        Field field2 = getFieldValue(rsiBuilder, "candlestickPriceType");
+        CandlestickPriceType candlestickPriceType = (CandlestickPriceType) field2.get(rsiBuilder);
 
-        assertEquals(expected, candlestickPrice);
+        assertEquals(expected, candlestickPriceType);
     }
 
     @Test
@@ -118,23 +118,23 @@ public class RSIBuilderTest {
 
     @Test
     public void WhenSetAppliedPriceThenReturnCurrentObject(){
-        RSIBuilder rsiBuilder = this.builder.setCandlestickPrice(CandlestickPrice.CLOSE);
+        RSIBuilder rsiBuilder = this.builder.setCandlestickPriceType(CandlestickPriceType.CLOSE);
         assertEquals(this.builder, rsiBuilder);
     }
 
     @Test(expected = NullPointerException.class)
     public void WhenSetAppliedPriceWithNullThenException(){
-        this.builder.setCandlestickPrice(null);
+        this.builder.setCandlestickPriceType(null);
     }
 
     @Test
     public void WhenSetAppliedPriceWithCorrectValueThenReturnCorrectValue() throws NoSuchFieldException, IllegalAccessException {
 
-        CandlestickPrice expected = CandlestickPrice.MEDIAN;
-        this.builder.setCandlestickPrice(expected);
+        CandlestickPriceType expected = CandlestickPriceType.MEDIAN;
+        this.builder.setCandlestickPriceType(expected);
 
-        Field field = getFieldValue(this.builder,"candlestickPrice");
-        CandlestickPrice result = (CandlestickPrice) field.get(this.builder);
+        Field field = getFieldValue(this.builder,"candlestickPriceType");
+        CandlestickPriceType result = (CandlestickPriceType) field.get(this.builder);
 
         assertEquals(expected, result);
     }
