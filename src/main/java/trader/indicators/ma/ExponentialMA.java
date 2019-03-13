@@ -114,7 +114,7 @@ public final class ExponentialMA implements Indicator {
     @Override
     public String toString() {
         return "ExponentialMA{" +
-                "period=" + period +
+                "candlesticksQuantity=" + period +
                 ", candlestickPriceType=" + candlestickPriceType.toString() +
                 ", maValues=" + maValues.toString() +
                 ", points=" + points.toString() +

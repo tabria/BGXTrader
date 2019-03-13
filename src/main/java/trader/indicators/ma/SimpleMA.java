@@ -105,7 +105,7 @@ public final class SimpleMA implements Indicator {
     @Override
     public String toString() {
         return "SimpleMA{" +
-                "period=" + period +
+                "candlesticksQuantity=" + period +
                 ", candlestickPriceType=" + candlestickPriceType.toString() +
                 ", maValues=" + maValues.toString() +
                 ", points=" + points.toString() +

@@ -1,19 +1,14 @@
 package trader.indicators.ma;
 
-import com.oanda.v20.instrument.*;
-import com.oanda.v20.pricing_common.PriceValue;
 import com.oanda.v20.primitives.DateTime;
 import org.junit.Before;
 import org.junit.Test;
-import trader.candles.CandlesUpdater;
 import trader.trades.entities.Point;
-import trader.indicators.enums.CandlestickPriceType;
+
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -26,39 +21,25 @@ public class ExponentialMATest extends BaseMATest {
 
 
     private ExponentialMA ema;
-    private CandlesUpdater updater;
-    private List<Candlestick> candlestickList;
-    private CandlestickPriceType mockCandlestickPriceType;
-    private long period;
-    private DateTime mockDateTime;
-
 
     @Before
     public void before() {
-
-        this.mockDateTime = mock(DateTime.class);
-
-        this.mockCandlestickPriceType = mock(CandlestickPriceType.class);
-        fillCandlestickList();
-        setPeriod();
-        this.updater = mock(CandlesUpdater.class);
-        when(this.updater.getCandles()).thenReturn(this.candlestickList);
-        when(this.updater.updateCandles(this.mockDateTime)).thenReturn(true);
-
-        this.ema = new ExponentialMA(this.period, this.mockCandlestickPriceType, this.updater);
+        super.before();
+        this.ema = new ExponentialMA(this.candlesticksQuantity, this.mockCandlestickPriceType, this.candlesUpdater);
 
     }
 
+
     @Test
     public void WhenCreateThenReturnNewObject() {
-        ExponentialMA exponentialMA2 = new ExponentialMA(this.period, this.mockCandlestickPriceType, this.updater);
+        ExponentialMA exponentialMA2 = new ExponentialMA(this.candlesticksQuantity, this.mockCandlestickPriceType, this.candlesUpdater);
 
         assertNotEquals("Objects must not be equal ",this.ema, exponentialMA2);
     }
 
     @Test
     public void WhenGetMAValuesThenReturnCorrectResult() {
-        this.ema.update(this.mockDateTime, ASK, BID);
+        this.ema.update(super.mockDateTime, ASK, BID);
         List<BigDecimal> maValues = this.ema.getValues();
         assertEquals(9, maValues.size());
         int result = maValues.get(maValues.size()-1).compareTo(BigDecimal.valueOf(1.16204));
@@ -75,7 +56,7 @@ public class ExponentialMATest extends BaseMATest {
         this.candlesDateTime.add("2018-08-01T09:53:00Z");
         fillCandlestickList();
 
-        when(this.updater.getCandles()).thenReturn(this.candlestickList);
+        when(this.candlesUpdater.getCandles()).thenReturn(this.candlestickList);
 
         this.ema.update(newDt,  ASK, BID);
 
@@ -127,45 +108,10 @@ public class ExponentialMATest extends BaseMATest {
     @Test
     public void TestToString(){
         String result = this.ema.toString();
-        String expected = String.format("ExponentialMA{period=%d, candlestickPriceType=%s, maValues=[], points=[], isTradeGenerated=false}", period, this.mockCandlestickPriceType.toString());
+        String expected = String.format("ExponentialMA{candlesticksQuantity=%d, candlestickPriceType=%s, maValues=[], points=[], isTradeGenerated=false}", candlesticksQuantity, this.mockCandlestickPriceType.toString());
         assertEquals(expected, result);
     }
 
-
-    //fill candlestick list with candles. Candles have only time and close price
-    private void fillCandlestickList(){
-
-        this.candlestickList = new ArrayList<>();
-
-        for (int i = 0; i < candlesClosePrices.size() ; i++) {
-            //candle 1
-            DateTime dateTime1 = mock(DateTime.class);
-            when(dateTime1.toString()).thenReturn(candlesDateTime.get(i));
-
-            PriceValue priceValue1 = mock(PriceValue.class);
-            when(priceValue1.toString()).thenReturn(candlesClosePrices.get(i));
-
-            CandlestickData candlestickData1 = mock(CandlestickData.class);
-            when(candlestickData1.getC()).thenReturn(priceValue1);
-
-            Candlestick candle1 = mock(Candlestick.class);
-            when(candle1.getTime()).thenReturn(dateTime1);
-            when(candle1.getMid()).thenReturn(candlestickData1);
-
-            when(this.mockCandlestickPriceType.extractPrice(candlestickData1)).thenReturn(new BigDecimal(candlesClosePrices.get(i)));
-
-            this.candlestickList.add(candle1);
-        }
-    }
-    //total candles count for the given periods are calculated with this formula:
-    // {@code period*2 + 2 => period = (number of candles - 2) /2}
-    private void setPeriod(){
-        long period = (candlesClosePrices.size() - 2)/2;
-        if (period <= 0){
-            throw new IllegalArgumentException("Prices in CANDLES_CLOSE_PRICES must be at least 3");
-        }
-        this.period = period;
-    }
 
     private ZonedDateTime dateTimeConversion(DateTime dateTime){
         Instant instantDateTime = Instant.parse(dateTime.toString());

@@ -106,7 +106,7 @@ public final class WeightedMA implements Indicator {
     @Override
     public String toString() {
         return "WeightedMA{" +
-                "period=" + period +
+                "candlesticksQuantity=" + period +
                 ", candlestickPriceType=" + candlestickPriceType.toString() +
                 ", maValues=" + maValues.toString() +
                 ", points=" + points.toString() +

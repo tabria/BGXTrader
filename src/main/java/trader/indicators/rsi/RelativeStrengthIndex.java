@@ -20,7 +20,7 @@ public final class RelativeStrengthIndex implements Indicator {
     private static final BigDecimal RSI_MAX_VALUE = BigDecimal.valueOf(100);
     private static final BigDecimal RSI_MIDDLE_VALUE = BigDecimal.valueOf(50);
 
-    private final long period;
+    private final long candlesticksQuantity;
     private final CandlestickPriceType candlestickPriceType;
     private List<BigDecimal> rsiValues;
     private final CandlesUpdater updater;
@@ -28,8 +28,8 @@ public final class RelativeStrengthIndex implements Indicator {
     private boolean isTradeGenerated;
 
 
-    RelativeStrengthIndex(long period, CandlestickPriceType candlestickPriceType, CandlesUpdater candlesUpdater){
-        this.period = period;
+    RelativeStrengthIndex(long candlesticksQuantity, CandlestickPriceType candlestickPriceType, CandlesUpdater candlesUpdater){
+        this.candlesticksQuantity = candlesticksQuantity;
         this.candlestickPriceType = candlestickPriceType;
         this.updater = candlesUpdater;
         this.rsiValues = new ArrayList<>();
@@ -96,7 +96,7 @@ public final class RelativeStrengthIndex implements Indicator {
     @Override
     public String toString() {
         return "RelativeStrengthIndex{" +
-                "period=" + period +
+                "candlesticksQuantity=" + candlesticksQuantity +
                 ", candlestickPriceType=" + candlestickPriceType.toString() +
                 ", rsiValues=" + rsiValues.toString() +
                 ", points=" + points.toString() +
@@ -121,8 +121,8 @@ public final class RelativeStrengthIndex implements Indicator {
         BigDecimal frsGains = BigDecimal.ZERO;
         BigDecimal frsLosses = BigDecimal.ZERO;
 
-        //calculate First RS from 1 to period candlesticks
-        for (int i = 1; i <=this.period ; i++) {
+        //calculate First RS from 1 to candlesticksQuantity candlesticks
+        for (int i = 1; i <=this.candlesticksQuantity; i++) {
             BigDecimal currentPrice = this.candlestickPriceType.extractPrice(candlestickList.get(i).getMid());
             BigDecimal previousPrice =  this.candlestickPriceType.extractPrice(candlestickList.get(i-1).getMid());
 
@@ -135,14 +135,14 @@ public final class RelativeStrengthIndex implements Indicator {
             }
         }
 
-        BigDecimal averageGains = frsGains.divide(BigDecimal.valueOf(this.period), 5, BigDecimal.ROUND_HALF_UP);
-        BigDecimal averageLosses = frsLosses.divide(BigDecimal.valueOf(this.period), 5, BigDecimal.ROUND_HALF_UP);
+        BigDecimal averageGains = frsGains.divide(BigDecimal.valueOf(this.candlesticksQuantity), 5, BigDecimal.ROUND_HALF_UP);
+        BigDecimal averageLosses = frsLosses.divide(BigDecimal.valueOf(this.candlesticksQuantity), 5, BigDecimal.ROUND_HALF_UP);
 
         //add RSI Value
         addRSIValue(averageGains, averageLosses);
 
         //main calculation
-        for (int i = (int) this.period + 1; i < candlestickList.size() ; i++) {
+        for (int i = (int) this.candlesticksQuantity + 1; i < candlestickList.size() ; i++) {
 
             BigDecimal currentPrice = this.candlestickPriceType.extractPrice(candlestickList.get(i).getMid());
             BigDecimal previousPrice =  this.candlestickPriceType.extractPrice(candlestickList.get(i-1).getMid());
@@ -157,9 +157,9 @@ public final class RelativeStrengthIndex implements Indicator {
                 negativeChange = change.abs();
             }
 
-            //(prevAverageGains * (period - 1) + (change > 0 ? change : 0))/period
+            //(prevAverageGains * (candlesticksQuantity - 1) + (change > 0 ? change : 0))/candlesticksQuantity
             BigDecimal currentAverageGains = calculateAverage(averageGains, positiveChange);
-            //(prevAverageLosses * (period - 1) + (change < 0 ? -change : 0))/period
+            //(prevAverageLosses * (candlesticksQuantity - 1) + (change < 0 ? -change : 0))/candlesticksQuantity
             BigDecimal currentAverageLosses = calculateAverage(averageLosses, negativeChange);
 
             //set rsiValue
@@ -178,15 +178,15 @@ public final class RelativeStrengthIndex implements Indicator {
      */
     private BigDecimal calculateAverage(BigDecimal prevAverage, BigDecimal change){
 
-        //(prevAverageGains * (period - 1) + (change > 0 ? change : 0))/period
-        //(prevAverageLosses * (period - 1) + (change < 0 ? -change : 0))/period
+        //(prevAverageGains * (candlesticksQuantity - 1) + (change > 0 ? change : 0))/candlesticksQuantity
+        //(prevAverageLosses * (candlesticksQuantity - 1) + (change < 0 ? -change : 0))/candlesticksQuantity
 
-        //(prevAverageGains * (period - 1)
-        BigDecimal result = prevAverage.multiply(BigDecimal.valueOf(this.period - 1)).setScale(5, BigDecimal.ROUND_HALF_UP);
-        //(prevAverageGains * (period - 1) + (change > 0 ? change : 0))
+        //(prevAverageGains * (candlesticksQuantity - 1)
+        BigDecimal result = prevAverage.multiply(BigDecimal.valueOf(this.candlesticksQuantity - 1)).setScale(5, BigDecimal.ROUND_HALF_UP);
+        //(prevAverageGains * (candlesticksQuantity - 1) + (change > 0 ? change : 0))
         result = result.add(change).setScale(5, BigDecimal.ROUND_HALF_UP);
-        //(prevAverageGains * (period - 1) + (change > 0 ? change : 0))/period
-        return result.divide(BigDecimal.valueOf(this.period), 5, BigDecimal.ROUND_HALF_UP);
+        //(prevAverageGains * (candlesticksQuantity - 1) + (change > 0 ? change : 0))/candlesticksQuantity
+        return result.divide(BigDecimal.valueOf(this.candlesticksQuantity), 5, BigDecimal.ROUND_HALF_UP);
     }
 
     private void addRSIValue(BigDecimal currentAverageGains, BigDecimal currentAverageLosses){

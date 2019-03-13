@@ -103,7 +103,7 @@ public class Main {
                 .build();
 
         Indicator rsi = new RSIBuilder(context)
-                .setPeriod(14)
+                .setCandlesticksQuantity(14)
                 .setCandlestickPriceType(CandlestickPriceType.CLOSE)
                 .setCandlesTimeFrame(Config.TIME_FRAME)
                 .build();

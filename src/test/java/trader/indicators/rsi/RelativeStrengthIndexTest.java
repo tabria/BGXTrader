@@ -118,7 +118,7 @@ public class RelativeStrengthIndexTest {
     @Test
     public void TestToString(){
         String result = this.rsi.toString();
-        String expected = String.format("RelativeStrengthIndex{period=%d, candlestickPriceType=%s, rsiValues=[], points=[], isTradeGenerated=false}", this.period, this.mockCandlestickPriceType.toString());
+        String expected = String.format("RelativeStrengthIndex{candlesticksQuantity=%d, candlestickPriceType=%s, rsiValues=[], points=[], isTradeGenerated=false}", this.period, this.mockCandlestickPriceType.toString());
 
         assertEquals(expected, result);
     }

@@ -79,7 +79,7 @@ public class WeightedMATest {
 //        ZonedDateTime zd = dateTimeConversion(this.dateTime);
 //
 //        this.mockMA = mock(MovingAverage.class);
-//        when(this.mockMA.getPeriod()).thenReturn(this.period);
+//        when(this.mockMA.getPeriod()).thenReturn(this.candlesticksQuantity);
 //        when(this.mockMA.getCandles()).thenReturn(this.candlestickList);
 //        when(this.mockMA.getAppliedPrice()).thenReturn(this.mockCandlestickPriceType);
 //        when(this.mockMA.getLastCandleDateTime()).thenReturn(this.dateTime);
@@ -195,14 +195,14 @@ public class WeightedMATest {
     @Test
     public void TestToString(){
         String result = this.wma.toString();
-        String expected = String.format("WeightedMA{period=%d, candlestickPriceType=%s, maValues=[], points=[], isTradeGenerated=false}", this.period, this.mockCandlestickPriceType.toString());
+        String expected = String.format("WeightedMA{candlesticksQuantity=%d, candlestickPriceType=%s, maValues=[], points=[], isTradeGenerated=false}", this.period, this.mockCandlestickPriceType.toString());
 
         assertEquals(expected, result);
     }
 
 
     //total candles count for the given periods are calculated with this formula:
-    // {@code period*2 + 2 => period = (number of candles - 2) /2}
+    // {@code candlesticksQuantity*2 + 2 => candlesticksQuantity = (number of candles - 2) /2}
     private void setPeriod(){
         long period = (candlesClosePrices.size() - 2)/2;
         if (period <= 0){

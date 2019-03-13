@@ -18,7 +18,7 @@ public final class RSIBuilder {
     private static final CandlestickGranularity DEFAULT_CANDLE_TIME_FRAME = CandlestickGranularity.H4;
 
     private Context context;
-    private long period;
+    private long candlesticksQuantity;
     private CandlestickPriceType candlestickPriceType;
     private CandlestickGranularity candlesTimeFrame;
 
@@ -29,22 +29,22 @@ public final class RSIBuilder {
      */
     public RSIBuilder(Context context){
             setContext(context);
-            setPeriod(DEFAULT_PERIOD);
+            setCandlesticksQuantity(DEFAULT_PERIOD);
             setCandlestickPriceType(DEFAULT_APPLIED_PRICE);
             setCandlesTimeFrame(DEFAULT_CANDLE_TIME_FRAME);
     }
 
     /**
-     * Set period
-     * @param period period for the RSI
-     * @throws IllegalArgumentException when period is: {@code period < MIN_PERIOD || period > MAX_PERIOD}
+     * Set candlesticksQuantity
+     * @param candlesticksQuantity candlesticksQuantity for the RSI
+     * @throws IllegalArgumentException when candlesticksQuantity is: {@code candlesticksQuantity < MIN_PERIOD || candlesticksQuantity > MAX_PERIOD}
      * @return {@link RSIBuilder} current builder object
      */
-    public RSIBuilder setPeriod(long period) {
-        if (period < MIN_PERIOD || period > MAX_PERIOD){
+    public RSIBuilder setCandlesticksQuantity(long candlesticksQuantity) {
+        if (candlesticksQuantity < MIN_PERIOD || candlesticksQuantity > MAX_PERIOD){
             throw  new IllegalArgumentException("Period must be between " + MIN_PERIOD + " and " + MAX_PERIOD);
         }
-        this.period = period;
+        this.candlesticksQuantity = candlesticksQuantity;
         return this;
     }
 
@@ -80,9 +80,9 @@ public final class RSIBuilder {
 
 
     public Indicator build(){
-        InstrumentCandlesRequest request = createCandlesRequest(this.period, this.candlesTimeFrame);
+        InstrumentCandlesRequest request = createCandlesRequest(this.candlesticksQuantity, this.candlesTimeFrame);
         CandlesUpdater updater = new CandlesUpdater(this.context, request, this.candlesTimeFrame);
-        return new RelativeStrengthIndex(this.period, this.candlestickPriceType, updater);
+        return new RelativeStrengthIndex(this.candlesticksQuantity, this.candlestickPriceType, updater);
     }
 
     /**
@@ -101,7 +101,7 @@ public final class RSIBuilder {
     /**
      * Set Candle Request Object.
      * Candles count affect result greatly. On small time frame (M1, M5)  {@code candlesCount} must be as much as possible.
-     * @param period current period
+     * @param period current candlesticksQuantity
      * @param candlesTimeFrame current time frame
      * @see InstrumentCandlesRequest
      * @see CandlestickGranularity

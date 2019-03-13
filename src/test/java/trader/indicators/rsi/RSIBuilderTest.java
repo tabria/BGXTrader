@@ -50,7 +50,7 @@ public class RSIBuilderTest {
 
         RSIBuilder rsiBuilder = new RSIBuilder(this.context);
 
-        Field field2 = getFieldValue(rsiBuilder, "period");
+        Field field2 = getFieldValue(rsiBuilder, "candlesticksQuantity");
         long resultPeriod =(long) field.get(this.builder);
 
         assertEquals(expectedPeriod, resultPeriod);
@@ -84,7 +84,7 @@ public class RSIBuilderTest {
 
     @Test
     public void WhenCallSetPeriodThenReturnCurrentObject(){
-        RSIBuilder rsiBuilder = this.builder.setPeriod(17L);
+        RSIBuilder rsiBuilder = this.builder.setCandlesticksQuantity(17L);
         assertEquals(this.builder, rsiBuilder);
     }
 
@@ -93,7 +93,7 @@ public class RSIBuilderTest {
 
         Field field = getFieldValue(this.builder, "MIN_PERIOD");
         long minValue =(long) field.get(this.builder) ;
-        this.builder.setPeriod(minValue - 1);
+        this.builder.setCandlesticksQuantity(minValue - 1);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -102,14 +102,14 @@ public class RSIBuilderTest {
         Field field = getFieldValue(this.builder, "MAX_PERIOD");
         long maxValue =(long) field.get(this.builder);
 
-                this.builder.setPeriod(maxValue + 1);
+                this.builder.setCandlesticksQuantity(maxValue + 1);
     }
 
     @Test
     public void WhenSetPeriodWithCorrectValueThenCorrectResult() throws NoSuchFieldException, IllegalAccessException {
 
-        this.builder.setPeriod(17L);
-        Field field =  getFieldValue(this.builder, "period");
+        this.builder.setCandlesticksQuantity(17L);
+        Field field =  getFieldValue(this.builder, "candlesticksQuantity");
         long period = (long) field.get(this.builder);
 
         assertEquals(17L, period);
