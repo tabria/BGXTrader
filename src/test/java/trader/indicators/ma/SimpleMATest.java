@@ -23,7 +23,6 @@ import static org.mockito.Mockito.when;
 
 public class SimpleMATest {
 
-
     private List<String> candlesClosePrices = new ArrayList<>(Arrays.asList(
             "1.16114", "1.16214", "1.16314", "1.16414", "1.16514", "1.16614", "1.16714",
             "1.16814", "1.16914", "1.16114", "1.16214", "1.16314", "1.16414", "1.15714"

@@ -8,7 +8,6 @@ import org.junit.Test;
 import trader.candles.CandlesUpdater;
 import trader.trades.entities.Point;
 import trader.indicators.enums.CandlestickPriceType;
-
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -20,22 +19,10 @@ import java.util.List;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static trader.CommonConstants.ASK;
+import static trader.CommonConstants.BID;
 
-
-public class ExponentialMATest {
-
-
-    private List<String> candlesClosePrices = new ArrayList<>(Arrays.asList(
-            "1.16114", "1.16214", "1.16314", "1.16414", "1.16514", "1.16614", "1.16714",
-            "1.16814", "1.16914", "1.16114", "1.16214", "1.16314", "1.16414", "1.15714"
-    ));
-    private List<String> candlesDateTime = new ArrayList<>(Arrays.asList(
-            "2018-08-01T09:39:00Z", "2018-08-01T09:40:00Z", "2018-08-01T09:41:00Z", "2018-08-01T09:42:00Z",
-            "2018-08-01T09:43:00Z", "2018-08-01T09:44:00Z", "2018-08-01T09:45:00Z", "2018-08-01T09:46:00Z",
-            "2018-08-01T09:47:00Z", "2018-08-01T09:48:00Z", "2018-08-01T09:49:00Z", "2018-08-01T09:50:00Z",
-            "2018-08-01T09:51:00Z", "2018-08-01T09:52:00Z"
-
-    ));
+public class ExponentialMATest extends BaseMATest {
 
 
     private ExponentialMA ema;
@@ -44,20 +31,12 @@ public class ExponentialMATest {
     private CandlestickPriceType mockCandlestickPriceType;
     private long period;
     private DateTime mockDateTime;
-    private BigDecimal ask;
-    private BigDecimal bid;
 
 
     @Before
     public void before() {
 
-        this.ask = BigDecimal.ONE;
-        this.bid = BigDecimal.TEN;
-
         this.mockDateTime = mock(DateTime.class);
-
-
-       // this.candlestickData = mock(CandlestickData.class);
 
         this.mockCandlestickPriceType = mock(CandlestickPriceType.class);
         fillCandlestickList();
@@ -65,36 +44,6 @@ public class ExponentialMATest {
         this.updater = mock(CandlesUpdater.class);
         when(this.updater.getCandles()).thenReturn(this.candlestickList);
         when(this.updater.updateCandles(this.mockDateTime)).thenReturn(true);
-
-
-//        this.mockRequest = mock(InstrumentCandlesRequest.class);
-//
-//        this.mockResponse = mock(InstrumentCandlesResponse.class);
-//        when(this.mockResponse.getCandles()).thenReturn(this.candlestickList);
-//
-//        this.mockContext = mock(Context.class);
-//        this.mockContext.instrument = mock(InstrumentContext.class);
-//        when(this.mockContext.instrument.candles(this.mockRequest)).thenReturn(this.mockResponse);
-
-        //this.mockSignal = mock(BGXTradeGenerator.class);
-
-        //this.dateTime = new DateTime("2018-01-01T01:01:01Z");
-
-        //cannot be mock or spy
-        //this.candleTimeFrame = CandlestickGranularity.H4;
-
-//        this.mockMAType = mock(MAType.class);
-//
-//        this.dateTime = new DateTime("2018-08-01T09:53:00Z");
-//        ZonedDateTime zd = dateTimeConversion(this.dateTime);
-
-//        this.mockMA = mock(MovingAverage.class);
-//        when(this.mockMA.getPeriod()).thenReturn(this.period);
-//        when(this.mockMA.getCandles()).thenReturn(this.candlestickList);
-//        when(this.mockMA.getAppliedPrice()).thenReturn(this.mockCandlestickPriceType);
-//        when(this.mockMA.getLastCandleDateTime()).thenReturn(this.dateTime);
-//        when(this.mockMA.nextCandleOpenTime(this.dateTime)).thenReturn(zd);
-
 
         this.ema = new ExponentialMA(this.period, this.mockCandlestickPriceType, this.updater);
 
@@ -109,7 +58,7 @@ public class ExponentialMATest {
 
     @Test
     public void WhenGetMAValuesThenReturnCorrectResult() {
-        this.ema.update(this.mockDateTime, this.ask, this.bid);
+        this.ema.update(this.mockDateTime, ASK, BID);
         List<BigDecimal> maValues = this.ema.getValues();
         assertEquals(9, maValues.size());
         int result = maValues.get(maValues.size()-1).compareTo(BigDecimal.valueOf(1.16204));
@@ -118,7 +67,7 @@ public class ExponentialMATest {
 
     @Test
     public void WhenCallUpdateThenCorrectResults() {
-        this.ema.update(this.mockDateTime, this.ask, this.bid);
+        this.ema.update(this.mockDateTime, ASK, BID);
 
         DateTime newDt = mock(DateTime.class);
 
@@ -128,7 +77,7 @@ public class ExponentialMATest {
 
         when(this.updater.getCandles()).thenReturn(this.candlestickList);
 
-        this.ema.update(newDt, this.ask, this.bid);
+        this.ema.update(newDt,  ASK, BID);
 
         List<BigDecimal> getMaValues = this.ema.getValues();
 
@@ -142,7 +91,7 @@ public class ExponentialMATest {
 
     @Test
     public void WhenCallGetPointsThenReturnCorrectResult(){
-        this.ema.update(this.mockDateTime, this.ask, this.bid);
+        this.ema.update(this.mockDateTime,  ASK, BID);
         List<BigDecimal> values = this.ema.getValues();
 
         BigDecimal price1 = values.get(values.size()-4);
