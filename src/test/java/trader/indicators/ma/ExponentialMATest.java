@@ -4,13 +4,11 @@ import com.oanda.v20.primitives.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import trader.trades.entities.Point;
-
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
-
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -19,90 +17,71 @@ import static trader.CommonConstants.BID;
 
 public class ExponentialMATest extends BaseMATest {
 
+    private static final BigDecimal EXPECTED_CANDLESTICK_PRICE =BigDecimal.valueOf(1.16204);
+    private static final String NEW_PRICE_ENTRY = "1.16814";
+    private static final String NEW_DATETIME_ENTRY = "2018-08-01T09:53:00Z";
 
     private ExponentialMA ema;
 
     @Before
     public void before() {
         super.before();
-        this.ema = new ExponentialMA(this.candlesticksQuantity, this.mockCandlestickPriceType, this.candlesUpdater);
-
+        this.ema = new ExponentialMA(this.candlesticksQuantity,
+                this.mockCandlestickPriceType, this.candlesUpdater);
     }
 
-
-    @Test
-    public void WhenCreateThenReturnNewObject() {
-        ExponentialMA exponentialMA2 = new ExponentialMA(this.candlesticksQuantity, this.mockCandlestickPriceType, this.candlesUpdater);
-
-        assertNotEquals("Objects must not be equal ",this.ema, exponentialMA2);
+    @Test(expected = UnsupportedOperationException.class )
+    public void getValuesReturnImmutableResult(){
+        List<BigDecimal> values = this.ema.getValues();
+        values.add(null);
     }
 
     @Test
     public void WhenGetMAValuesThenReturnCorrectResult() {
         this.ema.update(super.mockDateTime, ASK, BID);
-        List<BigDecimal> maValues = this.ema.getValues();
-        assertEquals(9, maValues.size());
-        int result = maValues.get(maValues.size()-1).compareTo(BigDecimal.valueOf(1.16204));
-        assertEquals(0, result);
+        BigDecimal lastCandlestickPrice = getLastCandlestickPrice();
+        assertEquals(0, lastCandlestickPrice.compareTo(EXPECTED_CANDLESTICK_PRICE));
     }
 
     @Test
-    public void WhenCallUpdateThenCorrectResults() {
+    public void whenUpdateEMAPricesThenReturnCorrectResults() {
         this.ema.update(this.mockDateTime, ASK, BID);
-
-        DateTime newDt = mock(DateTime.class);
-
-        this.candlesClosePrices.add("1.16814");
-        this.candlesDateTime.add("2018-08-01T09:53:00Z");
-        fillCandlestickList();
-
-        when(this.candlesUpdater.getCandles()).thenReturn(this.candlestickList);
-
-        this.ema.update(newDt,  ASK, BID);
-
-        List<BigDecimal> getMaValues = this.ema.getValues();
-
-        assertEquals(9, getMaValues.size());
-
-        BigDecimal bd = new BigDecimal("1.16204");
-        int result = getMaValues.get(getMaValues.size()-1).compareTo(bd);
-        assertEquals(0, result);
-
+        updateCandlestickListInSuper();
+        this.ema.update(mock(DateTime.class),  ASK, BID);
+        assertEquals(0, getLastCandlestickPrice().compareTo(EXPECTED_CANDLESTICK_PRICE));
     }
 
+
     @Test
-    public void WhenCallGetPointsThenReturnCorrectResult(){
+    public void whenCallGetPointsThenReturnCorrectResult(){
         this.ema.update(this.mockDateTime,  ASK, BID);
+        List<Point> points = this.ema.getPoints();
         List<BigDecimal> values = this.ema.getValues();
 
-        BigDecimal price1 = values.get(values.size()-4);
-        BigDecimal price2 = values.get(values.size()-3);
-        BigDecimal price3 = values.get(values.size()-2);
+        testPointPrice(points, values);
+        testPointTime(points, values);
+    }
 
-        List<Point> points = this.ema.getPoints();
+    private void testPointTime(List<Point> points, List<BigDecimal> values) {
+        int pointPosition = 0;
+        for (int candlePosition = 5  ; candlePosition < values.size()-1 ; candlePosition++) {
+            BigDecimal pointExpectedTime = BigDecimal.valueOf(pointPosition + 1);
+            BigDecimal pointResultTime = points.get(pointPosition).getTime();
 
-        //point 1
-        BigDecimal point1Price = points.get(0).getPrice();
-        BigDecimal point1Time = points.get(0).getTime();
+            assertEquals( 0, pointResultTime.compareTo(pointExpectedTime));
 
-        assertEquals( 0, point1Price.compareTo(price1));
-        assertEquals( 0, point1Time.compareTo(BigDecimal.ONE));
+            pointPosition++;
+        }
+    }
 
-        //point 2
-        BigDecimal point2Price = points.get(1).getPrice();
-        BigDecimal point2Time = points.get(1).getTime();
+    private void testPointPrice(List<Point> points, List<BigDecimal> values) {
+        int pointPosition = 0;
+        for (int candlePosition = 5  ; candlePosition < values.size()-1 ; candlePosition++) {
+            BigDecimal pointExpectedPrice = values.get(candlePosition);
+            BigDecimal pointResultPrice = points.get(pointPosition++).getPrice();
 
-        assertEquals( 0, point2Price.compareTo(price2));
-        assertEquals( 0, point2Time.compareTo(BigDecimal.valueOf(2)));
-
-        //point 3
-        BigDecimal point3Price = points.get(2).getPrice();
-        BigDecimal point3Time = points.get(2).getTime();
-
-
-        assertEquals( 0, point3Price.compareTo(price3));
-        assertEquals( 0, point3Time.compareTo(BigDecimal.valueOf(3)));
-
+            assertEquals( 0, pointResultPrice.compareTo(pointExpectedPrice));
+        }
     }
 
     @Test
@@ -112,6 +91,17 @@ public class ExponentialMATest extends BaseMATest {
         assertEquals(expected, result);
     }
 
+    private BigDecimal getLastCandlestickPrice() {
+        List<BigDecimal> maValues = this.ema.getValues();
+        return maValues.get(maValues.size() - 1);
+    }
+
+    private void updateCandlestickListInSuper() {
+        this.candlesClosePrices.add(NEW_PRICE_ENTRY);
+        this.candlesDateTime.add(NEW_DATETIME_ENTRY);
+        fillCandlestickList();
+        when(this.candlesUpdater.getCandles()).thenReturn(this.candlestickList);
+    }
 
     private ZonedDateTime dateTimeConversion(DateTime dateTime){
         Instant instantDateTime = Instant.parse(dateTime.toString());

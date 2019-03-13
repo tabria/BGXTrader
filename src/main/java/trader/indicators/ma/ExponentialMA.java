@@ -14,10 +14,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Exponential Moving Average (EMA)
- */
-
 public final class ExponentialMA implements Indicator {
 
     private static final BigDecimal MULTIPLIER_CONSTANT = BigDecimal.valueOf(2);
