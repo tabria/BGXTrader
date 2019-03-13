@@ -17,7 +17,7 @@ import trader.core.Observer;
 import trader.indicators.Indicator;
 import trader.indicators.IndicatorObserver;
 import trader.indicators.enums.CandlestickPriceType;
-import trader.indicators.ma.MABuilder;
+import trader.indicators.ma.MovingAverageBuilder;
 import trader.indicators.ma.enums.MAType;
 import trader.indicators.rsi.RSIBuilder;
 import trader.prices.PriceObservable;
@@ -67,35 +67,35 @@ public class Main {
         validateAccount(context);
 
         //simple ma with period of 1 representing the price
-        Indicator smaPrice = new MABuilder(context)
+        Indicator smaPrice = new MovingAverageBuilder(context)
                 .setCandlesQuantity(1)
                 .setCandlestickPriceType(CandlestickPriceType.CLOSE)
                 .setCandleTimeFrame(Config.TIME_FRAME)
                 .setMAType(MAType.SIMPLE)
                 .build();
 
-        Indicator dailyPrice = new MABuilder(context)
+        Indicator dailyPrice = new MovingAverageBuilder(context)
                 .setCandlesQuantity(1)
                 .setCandlestickPriceType(CandlestickPriceType.OPEN)
                 .setCandleTimeFrame(CandlestickGranularity.D)
                 .setMAType(MAType.SIMPLE)
                 .build();
 
-        Indicator wmaFast = new MABuilder(context)
+        Indicator wmaFast = new MovingAverageBuilder(context)
                 .setCandlesQuantity(5)
                 .setCandlestickPriceType(CandlestickPriceType.CLOSE)
                 .setCandleTimeFrame(Config.TIME_FRAME)
                 .setMAType(MAType.WEIGHTED)
                 .build();
 
-        Indicator wmaMiddle = new MABuilder(context)
+        Indicator wmaMiddle = new MovingAverageBuilder(context)
                 .setCandlesQuantity(20)
                 .setCandlestickPriceType(CandlestickPriceType.CLOSE)
                 .setCandleTimeFrame(Config.TIME_FRAME)
                 .setMAType(MAType.WEIGHTED)
                 .build();
 
-        Indicator wmaSlow = new MABuilder(context)
+        Indicator wmaSlow = new MovingAverageBuilder(context)
                 .setCandlesQuantity(100)
                 .setCandlestickPriceType(CandlestickPriceType.CLOSE)
                 .setCandleTimeFrame(Config.TIME_FRAME)

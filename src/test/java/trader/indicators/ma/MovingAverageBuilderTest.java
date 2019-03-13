@@ -17,11 +17,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static trader.indicators.ma.enums.MAType.*;
 
-public class MABuilderTest {
+public class MovingAverageBuilderTest {
 
 
-    private MABuilder builder;
-    private OandaAPIMock oandaAPIMock;
+    private MovingAverageBuilder builder;
     private long minCandlesQuantity;
     private long maxCandlesQuantity;
 
@@ -29,19 +28,19 @@ public class MABuilderTest {
     @Before
     public void setUp() throws Exception {
 
-        oandaAPIMock = new OandaAPIMock();
+        OandaAPIMock oandaAPIMock = new OandaAPIMock();
         when(oandaAPIMock.getMockResponse().getCandles()).thenReturn(new ArrayList<>());
         when(oandaAPIMock.getContext().instrument.candles(any(InstrumentCandlesRequest.class)))
                 .thenReturn(oandaAPIMock.getMockResponse());
 
-        this.builder = new MABuilder(oandaAPIMock.getContext());
+        this.builder = new MovingAverageBuilder(oandaAPIMock.getContext());
         this.minCandlesQuantity = extractMinCandlesQuantity();
         this.maxCandlesQuantity = extractMaxCandlesQuantity();
     }
 
     @Test(expected = NullPointerException.class)
     public void whenCreateMABuilderWithNullContext_Exception(){
-        new MABuilder(null);
+        new MovingAverageBuilder(null);
     }
 
     @Test(expected = NullPointerException.class)
@@ -112,13 +111,13 @@ public class MABuilderTest {
     }
 
     private long extractMinCandlesQuantity() throws NoSuchFieldException, IllegalAccessException {
-        Field field = this.builder.getClass().getDeclaredField("MIN_PERIOD");
+        Field field = this.builder.getClass().getDeclaredField("MIN_CANDLESTICK_QUANTITY");
         field.setAccessible(true);
         return (long) field.get(this.builder);
     }
 
     private long extractMaxCandlesQuantity() throws NoSuchFieldException, IllegalAccessException {
-        Field field = this.builder.getClass().getDeclaredField("MAX_PERIOD");
+        Field field = this.builder.getClass().getDeclaredField("MAX_CANDLESTICK_QUANTITY");
         field.setAccessible(true);
         return (long) field.get(this.builder);
     }
@@ -130,7 +129,7 @@ public class MABuilderTest {
     }
 
     private long extractCandlesQuantity() throws NoSuchFieldException, IllegalAccessException {
-        Field field = this.builder.getClass().getDeclaredField("period");
+        Field field = this.builder.getClass().getDeclaredField("candlestickQuantity");
         field.setAccessible(true);
         return (long) field.get(this.builder);
     }
