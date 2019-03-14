@@ -78,7 +78,7 @@ final class BaseExitStrategy{
      * Call updateCandles method in candlesUpdater
      * * Index for the candle is calculated with this formula: listSize - numberOfCandles
      * @param dateTime of the last price
-     * @return {@link boolean} {@code true} if updateMovingAverage successful
+     * @return {@link boolean} {@code true} if updateIndicator successful
      *                        {@code false} otherwise
      * @see CandlesUpdater
      */

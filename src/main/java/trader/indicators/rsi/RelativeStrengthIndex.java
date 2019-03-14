@@ -2,75 +2,48 @@ package trader.indicators.rsi;
 
 import com.oanda.v20.instrument.Candlestick;
 import com.oanda.v20.primitives.DateTime;
-
 import trader.candles.CandlesUpdater;
-import trader.indicators.Indicator;
+import trader.indicators.BaseIndicator;
 import trader.indicators.enums.CandlestickPriceType;
-import trader.prices.PriceObservable;
 import trader.trades.entities.Point;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public final class RelativeStrengthIndex implements Indicator {
+public final class RelativeStrengthIndex extends BaseIndicator {
 
 
     private static final BigDecimal RSI_MAX_VALUE = BigDecimal.valueOf(100);
     private static final BigDecimal RSI_MIDDLE_VALUE = BigDecimal.valueOf(50);
 
-    private final long candlesticksQuantity;
-    private final CandlestickPriceType candlestickPriceType;
-    private List<BigDecimal> rsiValues;
-    private final CandlesUpdater updater;
-    private List<Point> points;
-    private boolean isTradeGenerated;
-
 
     RelativeStrengthIndex(long candlesticksQuantity, CandlestickPriceType candlestickPriceType, CandlesUpdater candlesUpdater){
-        this.candlesticksQuantity = candlesticksQuantity;
-        this.candlestickPriceType = candlestickPriceType;
-        this.updater = candlesUpdater;
-        this.rsiValues = new ArrayList<>();
-        this.points = new ArrayList<>();
-        this.isTradeGenerated = false;
+        super(candlesticksQuantity, candlestickPriceType, candlesUpdater);
     }
 
-    /**
-     * Get the current values of the RSI
-     * @return {@link List} unmodifiable list of {@link BigDecimal} values
-     */
     @Override
     public List<BigDecimal> getValues() {
-        return Collections.unmodifiableList(this.rsiValues);
+        return Collections.unmodifiableList(indicatorValues);
     }
 
-    /**
-     * Update RSI
-     * @param dateTime new dateTime from price polling
-     * @see CandlesUpdater
-     * @see PriceObservable
-     */
-    @Override
-    public void updateMovingAverage(DateTime dateTime) {
-
-        boolean isUpdated =  this.updater.updateCandles(dateTime);
-        isUpdated = !isUpdated && this.rsiValues.size() == 0 ? true : isUpdated;
-        if (isUpdated){
-            this.setRSIValues();
-            this.isTradeGenerated = false;
-        }
-    }
-
-    /**
-     * Get point for calculating intersections
-     * @return {@link List<Point>}
-     * @see Point
-     */
     @Override
     public List<Point> getPoints() {
         return Collections.unmodifiableList(this.points);
+    }
+
+    @Override
+    public void updateIndicator(DateTime dateTime) {
+        if (candlesUpdated(dateTime)){
+            setRSIValues();
+            fillPoints();
+            isTradeGenerated = false;
+        }
+    }
+
+    @Override
+    protected void setDivisor() {
+
     }
 
     /**
@@ -80,7 +53,7 @@ public final class RelativeStrengthIndex implements Indicator {
      */
     @Override
     public boolean isTradeGenerated() {
-        return this.isTradeGenerated;
+        return isTradeGenerated;
     }
 
     /**
@@ -89,7 +62,7 @@ public final class RelativeStrengthIndex implements Indicator {
      */
     @Override
     public void setIsTradeGenerated(boolean isGenerated) {
-        this.isTradeGenerated = isGenerated;
+        isTradeGenerated = isGenerated;
     }
 
 
@@ -98,133 +71,117 @@ public final class RelativeStrengthIndex implements Indicator {
         return "RelativeStrengthIndex{" +
                 "candlesticksQuantity=" + candlesticksQuantity +
                 ", candlestickPriceType=" + candlestickPriceType.toString() +
-                ", rsiValues=" + rsiValues.toString() +
+                ", rsiValues=" + indicatorValues.toString() +
                 ", points=" + points.toString() +
                 ", isTradeGenerated=" + isTradeGenerated +
                 '}';
     }
 
-    /**
-     * Set calculated value
-     */
     private void setRSIValues() {
-        List<Candlestick> candlestickList = this.updater.getCandles();
-        this.rsiValues = new ArrayList<>();
-        calculateRSI(candlestickList);
+        List<Candlestick> candlestickList = candlesUpdater.getCandles();
+        indicatorValues = new ArrayList<>();
+        fillIndicatorValues(candlestickList);
     }
 
-    /**
-     * Calculate RSI value
-     * @param candlestickList available candlesticks
-     */
-    private void calculateRSI(List<Candlestick> candlestickList) {
-        BigDecimal frsGains = BigDecimal.ZERO;
-        BigDecimal frsLosses = BigDecimal.ZERO;
+    private void fillIndicatorValues(List<Candlestick> candlestickList) {
 
-        //calculate First RS from 1 to candlesticksQuantity candlesticks
-        for (int i = 1; i <=this.candlesticksQuantity; i++) {
-            BigDecimal currentPrice = this.candlestickPriceType.extractPrice(candlestickList.get(i).getMid());
-            BigDecimal previousPrice =  this.candlestickPriceType.extractPrice(candlestickList.get(i-1).getMid());
-
-            BigDecimal change = currentPrice.subtract(previousPrice).setScale(5, BigDecimal.ROUND_HALF_UP);
-
-            if (change.compareTo(BigDecimal.ZERO) > 0){
-                frsGains = frsGains.add(change).setScale(5, BigDecimal.ROUND_HALF_UP);
-            } else if (change.compareTo(BigDecimal.ZERO) < 0)  {
-                frsLosses = frsLosses.subtract(change).setScale(5, BigDecimal.ROUND_HALF_UP);
-            }
-        }
-
-        BigDecimal averageGains = frsGains.divide(BigDecimal.valueOf(this.candlesticksQuantity), 5, BigDecimal.ROUND_HALF_UP);
-        BigDecimal averageLosses = frsLosses.divide(BigDecimal.valueOf(this.candlesticksQuantity), 5, BigDecimal.ROUND_HALF_UP);
-
-        //add RSI Value
+        FirstRelativeStrength firstRelativeStrength = new FirstRelativeStrength(candlestickList).invoke();
+        BigDecimal averageGains = firstRelativeStrength.getAverageGains();
+        BigDecimal averageLosses = firstRelativeStrength.getAverageLosses();
         addRSIValue(averageGains, averageLosses);
 
-        //main calculation
-        for (int i = (int) this.candlesticksQuantity + 1; i < candlestickList.size() ; i++) {
+        for (int candleIndex = (int) this.candlesticksQuantity + 1; candleIndex < candlestickList.size() ; candleIndex++) {
 
-            BigDecimal currentPrice = this.candlestickPriceType.extractPrice(candlestickList.get(i).getMid());
-            BigDecimal previousPrice =  this.candlestickPriceType.extractPrice(candlestickList.get(i-1).getMid());
-
-            BigDecimal change = currentPrice.subtract(previousPrice).setScale(5, BigDecimal.ROUND_HALF_UP);
-
-            BigDecimal positiveChange = BigDecimal.ZERO;
-            BigDecimal negativeChange = BigDecimal.ZERO;
-            if (change.compareTo(BigDecimal.ZERO) > 0){
-                positiveChange = change;
-            } else {
-                negativeChange = change.abs();
-            }
-
-            //(prevAverageGains * (candlesticksQuantity - 1) + (change > 0 ? change : 0))/candlesticksQuantity
+            BigDecimal priceDifference = calculatePriceDifference(candlestickList, candleIndex);
+            BigDecimal positiveChange = isPositive(priceDifference) ? priceDifference : ZERO;
             BigDecimal currentAverageGains = calculateAverage(averageGains, positiveChange);
-            //(prevAverageLosses * (candlesticksQuantity - 1) + (change < 0 ? -change : 0))/candlesticksQuantity
+            BigDecimal negativeChange = isPositive(priceDifference) ? ZERO : priceDifference.abs();
             BigDecimal currentAverageLosses = calculateAverage(averageLosses, negativeChange);
-
-            //set rsiValue
             addRSIValue(currentAverageGains, currentAverageLosses);
-
             averageGains = currentAverageGains;
             averageLosses = currentAverageLosses;
         }
     }
 
-    /**
-     * Calculate averages
-     * @param prevAverage previous average
-     * @param change difference between current and previous price
-     * @return {@link BigDecimal} calculated average value
-     */
-    private BigDecimal calculateAverage(BigDecimal prevAverage, BigDecimal change){
+    private boolean isPositive(BigDecimal value) {
+        return value.compareTo(ZERO) > 0;
+    }
 
-        //(prevAverageGains * (candlesticksQuantity - 1) + (change > 0 ? change : 0))/candlesticksQuantity
-        //(prevAverageLosses * (candlesticksQuantity - 1) + (change < 0 ? -change : 0))/candlesticksQuantity
+    private BigDecimal candlePrice(List<Candlestick> candlestickList, int candleIndex) {
+        return candlestickPriceType.extractPrice(candlestickPriceData(candlestickList, candleIndex));
+    }
 
-        //(prevAverageGains * (candlesticksQuantity - 1)
-        BigDecimal result = prevAverage.multiply(BigDecimal.valueOf(this.candlesticksQuantity - 1)).setScale(5, BigDecimal.ROUND_HALF_UP);
-        //(prevAverageGains * (candlesticksQuantity - 1) + (change > 0 ? change : 0))
-        result = result.add(change).setScale(5, BigDecimal.ROUND_HALF_UP);
-        //(prevAverageGains * (candlesticksQuantity - 1) + (change > 0 ? change : 0))/candlesticksQuantity
-        return result.divide(BigDecimal.valueOf(this.candlesticksQuantity), 5, BigDecimal.ROUND_HALF_UP);
+    private BigDecimal calculateAverage(BigDecimal currentAverage, BigDecimal change){
+        return currentAverage
+                .multiply(BigDecimal.valueOf(this.candlesticksQuantity - 1))
+                .add(change)
+                .divide(BigDecimal.valueOf(this.candlesticksQuantity), SCALE, BigDecimal.ROUND_HALF_UP);
     }
 
     private void addRSIValue(BigDecimal currentAverageGains, BigDecimal currentAverageLosses){
-        //calculate rsiValue
-        if (currentAverageLosses.compareTo(BigDecimal.ZERO) != 0){
-            this.rsiValues.add(calculateRSIValue(currentAverageGains, currentAverageLosses));
-        } else {
-            if (currentAverageGains.compareTo(BigDecimal.ZERO) != 0){
-                this.rsiValues.add(RSI_MAX_VALUE);
-            } else {
-                this.rsiValues.add(RSI_MIDDLE_VALUE);
-            }
+        if (isNotZero(currentAverageLosses)){
+            indicatorValues.add(calculateRSIValue(currentAverageGains, currentAverageLosses));
+            return;
         }
+        if (isNotZero(currentAverageGains)) {
+            indicatorValues.add(RSI_MAX_VALUE);
+            return;
+        }
+        indicatorValues.add(RSI_MIDDLE_VALUE);
     }
 
-    /**
-     * Calculate single rsi value
-     * @param averageGains average gains
-     * @param averageLosses average losses
-     * @return {@link BigDecimal} calculated value
-     */
+    private boolean isNotZero(BigDecimal currentAverages) {
+        return currentAverages.compareTo(ZERO) != 0;
+    }
+
     private BigDecimal calculateRSIValue(BigDecimal averageGains, BigDecimal averageLosses){
+        BigDecimal averageResult = averageGains.divide(averageLosses, SCALE, BigDecimal.ROUND_HALF_UP);
+        BigDecimal divider = BigDecimal.ONE.add(averageResult).setScale(SCALE,BigDecimal.ROUND_HALF_UP);
+        BigDecimal divisionResult = RSI_MAX_VALUE.divide(divider, SCALE, BigDecimal.ROUND_HALF_UP);
 
-        //100 - (100/(1+frsAverageGains/frsAverageLosses))
-
-        //AverageGains/AverageLosses
-        BigDecimal averageResult = averageGains.divide(averageLosses, 5, BigDecimal.ROUND_HALF_UP);
-        //(1+AverageGains/AverageLosses)
-        BigDecimal divider = BigDecimal.ONE.add(averageResult).setScale(5,BigDecimal.ROUND_HALF_UP);
-        //100/(1+AverageGains/AverageLosses)
-        BigDecimal divisionResult = RSI_MAX_VALUE.divide(divider, 5, BigDecimal.ROUND_HALF_UP);
-
-        //100 - (100/(1+AverageGains/AverageLosses))
-        return RSI_MAX_VALUE.subtract(divisionResult).setScale(5, BigDecimal.ROUND_HALF_UP);
+        return RSI_MAX_VALUE.subtract(divisionResult).setScale(SCALE, BigDecimal.ROUND_HALF_UP);
     }
 
-    //TODO to be implemented for divergence
-    private void fillPoints() {
+    private BigDecimal calculatePriceDifference(List<Candlestick> candlestickList, int candleIndex) {
+        BigDecimal currentPrice = candlePrice(candlestickList, candleIndex);
+        BigDecimal previousPrice = candlePrice(candlestickList, candleIndex-1);
+        return currentPrice.subtract(previousPrice).setScale(SCALE, BigDecimal.ROUND_HALF_UP);
+    }
 
+    private class FirstRelativeStrength {
+        private List<Candlestick> candlesticks;
+        private BigDecimal gains;
+        private BigDecimal losses;
+
+        FirstRelativeStrength(List<Candlestick> candlestickList) {
+            candlesticks = candlestickList;
+            gains = ZERO;
+            losses =ZERO;
+        }
+
+        BigDecimal getAverageGains(){
+            return gains.divide(BigDecimal.valueOf(candlesticksQuantity), SCALE, BigDecimal.ROUND_HALF_UP);
+        }
+
+        BigDecimal getAverageLosses(){
+            return losses.divide(BigDecimal.valueOf(candlesticksQuantity), SCALE, BigDecimal.ROUND_HALF_UP);
+        }
+
+        FirstRelativeStrength invoke() {
+            for (int candleIndex = 1; candleIndex <= candlesticksQuantity; candleIndex++) {
+                BigDecimal priceDifference = calculatePriceDifference(candlesticks, candleIndex);
+                gains = isPositive(priceDifference) ? gains
+                                                         .add(priceDifference)
+                                                         .setScale(SCALE, BigDecimal.ROUND_HALF_UP) : gains;
+                losses = isNegative(priceDifference) ? losses
+                                                          .subtract(priceDifference)
+                                                          .setScale(SCALE, BigDecimal.ROUND_HALF_UP) : losses;
+            }
+            return this;
+        }
+
+        private boolean isNegative(BigDecimal value) {
+            return value.compareTo(ZERO) < 0;
+        }
     }
 }

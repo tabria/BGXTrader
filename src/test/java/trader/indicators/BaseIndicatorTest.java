@@ -1,4 +1,4 @@
-package trader.indicators.ma;
+package trader.indicators;
 
 import com.oanda.v20.instrument.Candlestick;
 import com.oanda.v20.instrument.CandlestickData;
@@ -20,7 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-abstract class BaseMATest {
+public abstract class BaseIndicatorTest {
 
     private static final int DIVIDER = 2;
     private static final int IGNORED_CANDLES = 2;
@@ -31,11 +31,11 @@ abstract class BaseMATest {
 
     private List<String> candlesClosePrices;
     private List<String> candlesDateTime;
-    CandlesUpdater candlesUpdater;
-    CandlestickPriceType mockCandlestickPriceType;
+    protected CandlesUpdater candlesUpdater;
+    protected CandlestickPriceType mockCandlestickPriceType;
     private IndicatorUpdateHelper indicatorUpdateHelper;
-    long candlesticksQuantity;
-    DateTime mockDateTime;
+    protected long candlesticksQuantity;
+    protected DateTime mockDateTime;
 
     @Before
     public void before() {
@@ -66,7 +66,7 @@ abstract class BaseMATest {
 
     protected abstract BigDecimal getLastCandlestickPrice();
 
-    void updateCandlestickListInSuper() {
+    protected void updateCandlestickListInSuper() {
         this.candlesClosePrices.add(NEW_PRICE_ENTRY);
         this.candlesDateTime.add(NEW_DATETIME_ENTRY);
         this.indicatorUpdateHelper.fillCandlestickList();
@@ -74,7 +74,7 @@ abstract class BaseMATest {
         when(this.candlesUpdater.getCandles()).thenReturn(candlestickList);
     }
 
-    void testPointTime(List<Point> points, List<BigDecimal> values) {
+    protected void testPointTime(List<Point> points, List<BigDecimal> values) {
         int pointPosition = 0;
         for (int candlePosition = 5  ; candlePosition < values.size()-1 ; candlePosition++) {
             BigDecimal pointExpectedTime = BigDecimal.valueOf(pointPosition + 1);
@@ -86,7 +86,7 @@ abstract class BaseMATest {
         }
     }
 
-    void testPointPrice(List<Point> points, List<BigDecimal> values) {
+    protected void testPointPrice(List<Point> points, List<BigDecimal> values) {
         int pointPosition = 0;
         for (int candlePosition = 5  ; candlePosition < values.size()-1 ; candlePosition++) {
             BigDecimal pointExpectedPrice = values.get(candlePosition);

@@ -3,13 +3,14 @@ package trader.indicators.ma;
 import com.oanda.v20.primitives.DateTime;
 import org.junit.Before;
 import org.junit.Test;
+import trader.indicators.BaseIndicatorTest;
 import trader.trades.entities.Point;
 import java.math.BigDecimal;
 import java.util.List;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 
-public class ExponentialMovingAverageTest extends BaseMATest {
+public class ExponentialMovingAverageTest extends BaseIndicatorTest {
 
     private static final BigDecimal EXPECTED_CANDLESTICK_PRICE = BigDecimal.valueOf(1.16204);
 
@@ -32,7 +33,7 @@ public class ExponentialMovingAverageTest extends BaseMATest {
     @Override
     @Test
     public void getMAValuesReturnCorrectResult() {
-        this.ema.updateMovingAverage(super.mockDateTime);
+        this.ema.updateIndicator(super.mockDateTime);
         BigDecimal lastCandlestickPrice = getLastCandlestickPrice();
         assertEquals(0, lastCandlestickPrice.compareTo(EXPECTED_CANDLESTICK_PRICE));
     }
@@ -40,16 +41,16 @@ public class ExponentialMovingAverageTest extends BaseMATest {
     @Override
     @Test
     public void testSuccessfulUpdate() {
-        this.ema.updateMovingAverage(this.mockDateTime);
+        this.ema.updateIndicator(this.mockDateTime);
         updateCandlestickListInSuper();
-        this.ema.updateMovingAverage(mock(DateTime.class));
+        this.ema.updateIndicator(mock(DateTime.class));
         assertEquals(0, getLastCandlestickPrice().compareTo(EXPECTED_CANDLESTICK_PRICE));
     }
 
     @Override
     @Test
     public void getPointsReturnCorrectResult(){
-        this.ema.updateMovingAverage(this.mockDateTime);
+        this.ema.updateIndicator(this.mockDateTime);
         List<Point> points = this.ema.getPoints();
         List<BigDecimal> values = this.ema.getValues();
 
@@ -62,7 +63,7 @@ public class ExponentialMovingAverageTest extends BaseMATest {
     public void TestToString(){
         String result = this.ema.toString();
         String expected = String.format("ExponentialMovingAverage{candlesticksQuantity=%d, " +
-                        "candlestickPriceType=%s, maValues=[], points=[], isTradeGenerated=false}",
+                        "candlestickPriceType=%s, indicatorValues=[], points=[], isTradeGenerated=false}",
                          candlesticksQuantity, this.mockCandlestickPriceType.toString());
         assertEquals(expected, result);
     }

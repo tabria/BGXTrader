@@ -49,7 +49,7 @@ public final class CandlesUpdater {
 
     /**
      * Sometimes new candles came with time like old ones. Which cause multiple updates
-     * This loop will check last candle time before and after updateMovingAverage to assure that new candle have different time
+     * This loop will check last candle time before and after updateIndicator to assure that new candle have different time
      * @param lastCandleDateTimeBeforeUpdate last candle's datetime before updating
      * @see DateTime
      */

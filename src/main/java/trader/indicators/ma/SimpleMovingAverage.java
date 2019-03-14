@@ -12,13 +12,12 @@ import java.util.List;
 public final class SimpleMovingAverage extends BaseIndicator {
 
     SimpleMovingAverage(long candlesticksQuantity, CandlestickPriceType candlestickPriceType, CandlesUpdater updater) {
-        super(candlestickPriceType, candlesticksQuantity, updater);
+        super(candlesticksQuantity, candlestickPriceType, updater);
         setDivisor();
     }
 
     @Override
-    public void updateMovingAverage(DateTime dateTime) {
-
+    public void updateIndicator(DateTime dateTime) {
        if (candlesUpdated(dateTime)){
            setSMAValues();
            fillPoints();
@@ -51,7 +50,7 @@ public final class SimpleMovingAverage extends BaseIndicator {
         return "SimpleMovingAverage{" +
                 "candlesticksQuantity=" + candlesticksQuantity +
                 ", candlestickPriceType=" + candlestickPriceType.toString() +
-                ", maValues=" + maValues.toString() +
+                ", indicatorValues=" + indicatorValues.toString() +
                 ", points=" + points.toString() +
                 ", isTradeGenerated=" + isTradeGenerated +
                 '}';
@@ -64,7 +63,7 @@ public final class SimpleMovingAverage extends BaseIndicator {
 
     private void setSMAValues(){
         List<Candlestick> candlestickList = candlesUpdater.getCandles();
-        maValues.clear();
+        indicatorValues.clear();
         calculateSMAValue(candlestickList);
     }
 
@@ -88,7 +87,7 @@ public final class SimpleMovingAverage extends BaseIndicator {
     }
 
     private void addSMAValue(BigDecimal result) {
-        maValues.add(0,result.divide(divisor, SCALE, BigDecimal.ROUND_HALF_UP));
+        indicatorValues.add(0,result.divide(divisor, SCALE, BigDecimal.ROUND_HALF_UP));
     }
 
     private int index(int count, int i) {

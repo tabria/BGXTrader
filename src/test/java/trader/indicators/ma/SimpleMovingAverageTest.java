@@ -3,6 +3,7 @@ package trader.indicators.ma;
 import com.oanda.v20.primitives.DateTime;
 import org.junit.Before;
 import org.junit.Test;
+import trader.indicators.BaseIndicatorTest;
 import trader.trades.entities.Point;
 
 import java.math.BigDecimal;
@@ -11,7 +12,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 
-public class SimpleMovingAverageTest extends BaseMATest {
+public class SimpleMovingAverageTest extends BaseIndicatorTest {
 
     private static final BigDecimal EXPECTED_CANDLESTICK_PRICE = BigDecimal.valueOf(1.16281);
 
@@ -26,7 +27,7 @@ public class SimpleMovingAverageTest extends BaseMATest {
     @Override
     @Test
     public void getMAValuesReturnCorrectResult() {
-        this.sma.updateMovingAverage(super.mockDateTime);
+        this.sma.updateIndicator(super.mockDateTime);
         BigDecimal lastCandlestickPrice = getLastCandlestickPrice();
         assertEquals(0, lastCandlestickPrice.compareTo(EXPECTED_CANDLESTICK_PRICE));
     }
@@ -41,16 +42,16 @@ public class SimpleMovingAverageTest extends BaseMATest {
     @Override
     @Test
     public void testSuccessfulUpdate() {
-        this.sma.updateMovingAverage(this.mockDateTime);
+        this.sma.updateIndicator(this.mockDateTime);
         updateCandlestickListInSuper();
-        this.sma.updateMovingAverage(mock(DateTime.class));
+        this.sma.updateIndicator(mock(DateTime.class));
         assertEquals(0, getLastCandlestickPrice().compareTo(EXPECTED_CANDLESTICK_PRICE));
     }
 
     @Override
     @Test
     public void getPointsReturnCorrectResult(){
-        this.sma.updateMovingAverage(this.mockDateTime);
+        this.sma.updateIndicator(this.mockDateTime);
         List<Point> points = this.sma.getPoints();
         List<BigDecimal> values = this.sma.getValues();
 
@@ -63,7 +64,7 @@ public class SimpleMovingAverageTest extends BaseMATest {
     public void TestToString(){
         String result = this.sma.toString();
         String expected = String.format("SimpleMovingAverage{candlesticksQuantity=%d, " +
-                        "candlestickPriceType=%s, maValues=[], points=[], isTradeGenerated=false}",
+                        "candlestickPriceType=%s, indicatorValues=[], points=[], isTradeGenerated=false}",
                          candlesticksQuantity, this.mockCandlestickPriceType.toString());
         assertEquals(expected, result);
     }

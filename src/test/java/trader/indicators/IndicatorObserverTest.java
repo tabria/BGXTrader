@@ -52,7 +52,7 @@ public class IndicatorObserverTest {
         exception.expectMessage("Update OK");
 
         DateTime lastCandleTime = new DateTime("2018-07-29T18:46:19Z");
-        doThrow(new RuntimeException("Update OK")).when(mockMA).updateMovingAverage(lastCandleTime);
+        doThrow(new RuntimeException("Update OK")).when(mockMA).updateIndicator(lastCandleTime);
         mockObserver.updateObserver(lastCandleTime, ASK, BID);
     }
 

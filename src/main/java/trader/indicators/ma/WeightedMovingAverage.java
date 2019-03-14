@@ -11,12 +11,12 @@ import java.util.List;
 public final class WeightedMovingAverage extends BaseIndicator {
 
     WeightedMovingAverage(long candlesticksQuantity, CandlestickPriceType candlestickPriceType, CandlesUpdater updater) {
-        super(candlestickPriceType, candlesticksQuantity, updater);
+        super(candlesticksQuantity, candlestickPriceType, updater);
         setDivisor();
     }
 
     @Override
-    public void updateMovingAverage(DateTime dateTime) {
+    public void updateIndicator(DateTime dateTime) {
         if (candlesUpdated(dateTime)){
             setWMAValues();
             fillPoints();
@@ -48,7 +48,7 @@ public final class WeightedMovingAverage extends BaseIndicator {
         return "WeightedMovingAverage{" +
                 "candlesticksQuantity=" + candlesticksQuantity +
                 ", candlestickPriceType=" + candlestickPriceType.toString() +
-                ", maValues=" + maValues.toString() +
+                ", indicatorValues=" + indicatorValues.toString() +
                 ", points=" + points.toString() +
                 ", isTradeGenerated=" + isTradeGenerated +
                 '}';
@@ -61,11 +61,11 @@ public final class WeightedMovingAverage extends BaseIndicator {
 
     private void setWMAValues(){
         List<Candlestick> candlestickList = candlesUpdater.getCandles();
-        maValues.clear();
+        indicatorValues.clear();
 
         for (int candleIndex = candlestickList.size()-1; candleIndex >= lastCandlestickIndex() ; candleIndex--) {
             BigDecimal result = calculateWMAValue(candlestickList, candleIndex);
-            maValues.add(0, result);
+            indicatorValues.add(0, result);
         }
     }
 

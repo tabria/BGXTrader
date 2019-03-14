@@ -24,6 +24,6 @@ public final class IndicatorObserver implements Observer {
     public void updateObserver(DateTime lastCandleTime, BigDecimal ask, BigDecimal bid) {
         if (lastCandleTime == null)
             throw new NullPointerException("DateTime is null");
-        this.indicator.updateMovingAverage(lastCandleTime);
+        this.indicator.updateIndicator(lastCandleTime);
     }
 }

@@ -5,7 +5,6 @@ import com.oanda.v20.instrument.Candlestick;
 import com.oanda.v20.instrument.CandlestickData;
 import com.oanda.v20.primitives.DateTime;
 import trader.candles.CandlesUpdater;
-import trader.indicators.Indicator;
 import trader.indicators.enums.CandlestickPriceType;
 import trader.trades.entities.Point;
 
@@ -20,16 +19,16 @@ public abstract class BaseIndicator implements Indicator {
     protected final long candlesticksQuantity;
     protected final CandlestickPriceType candlestickPriceType;
     protected final CandlesUpdater candlesUpdater;
-    protected List<BigDecimal> maValues;
+    protected List<BigDecimal> indicatorValues;
     protected List<Point> points;
     protected boolean isTradeGenerated;
     protected BigDecimal divisor;
 
-    protected BaseIndicator(CandlestickPriceType candlestickPriceType, long candlesticksQuantity, CandlesUpdater candlesUpdater) {
+    protected BaseIndicator(long candlesticksQuantity, CandlestickPriceType candlestickPriceType, CandlesUpdater candlesUpdater) {
         this.candlestickPriceType = candlestickPriceType;
         this.candlesticksQuantity = candlesticksQuantity;
         this.candlesUpdater = candlesUpdater;
-        this.maValues = new ArrayList<>();
+        this.indicatorValues = new ArrayList<>();
         this.points = new ArrayList<>();
         this.isTradeGenerated = false;
     }
@@ -39,23 +38,23 @@ public abstract class BaseIndicator implements Indicator {
     }
 
     public List<BigDecimal> getValues() {
-        return Collections.unmodifiableList(maValues);
+        return Collections.unmodifiableList(indicatorValues);
     }
 
-    public abstract void updateMovingAverage(DateTime dateTime);
+    public abstract void updateIndicator(DateTime dateTime);
 
     protected abstract void setDivisor();
 
     protected boolean candlesUpdated(DateTime dateTime) {
         boolean isUpdated =  this.candlesUpdater.updateCandles(dateTime);
-        return !isUpdated && this.maValues.size() == 0 ? true : isUpdated;
+        return !isUpdated && this.indicatorValues.size() == 0 ? true : isUpdated;
     }
 
     protected void fillPoints() {
         this.points.clear();
         int time = 1;
-        for (int i = this.maValues.size()-4; i < this.maValues.size() -1 ; i++) {
-            Point point = new Point.PointBuilder(this.maValues.get(i))
+        for (int i = this.indicatorValues.size()-4; i < this.indicatorValues.size() -1 ; i++) {
+            Point point = new Point.PointBuilder(this.indicatorValues.get(i))
                     .setTime(BigDecimal.valueOf(time++))
                     .build();
 

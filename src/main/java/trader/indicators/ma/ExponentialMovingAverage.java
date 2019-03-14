@@ -17,7 +17,7 @@ public final class ExponentialMovingAverage extends BaseIndicator {
     private BigDecimal multiplierCorrected;
 
     ExponentialMovingAverage(long candlesticksQuantity, CandlestickPriceType candlestickPriceType, CandlesUpdater updater) {
-        super(candlestickPriceType, candlesticksQuantity, updater);
+        super(candlesticksQuantity, candlestickPriceType, updater);
         setDivisor();
         setMultiplier();
         setMultiplierCorrected();
@@ -25,7 +25,7 @@ public final class ExponentialMovingAverage extends BaseIndicator {
     }
 
     @Override
-    public void updateMovingAverage(DateTime dateTime) {
+    public void updateIndicator(DateTime dateTime) {
         if (candlesUpdated(dateTime)){
             setEMAValues();
             fillPoints();
@@ -57,7 +57,7 @@ public final class ExponentialMovingAverage extends BaseIndicator {
         return "ExponentialMovingAverage{" +
                 "candlesticksQuantity=" + candlesticksQuantity +
                 ", candlestickPriceType=" + candlestickPriceType.toString() +
-                ", maValues=" + maValues.toString() +
+                ", indicatorValues=" + indicatorValues.toString() +
                 ", points=" + points.toString() +
                 ", isTradeGenerated=" + isTradeGenerated +
                 '}';
@@ -80,7 +80,7 @@ public final class ExponentialMovingAverage extends BaseIndicator {
 
     private void setEMAValues(){
         List<Candlestick> candlestickList = candlesUpdater.getCandles();
-        maValues.clear();
+        indicatorValues.clear();
         calculateEMAValue(candlestickList);
     }
 
@@ -103,7 +103,7 @@ public final class ExponentialMovingAverage extends BaseIndicator {
     }
 
     private void addStartValue(List<Candlestick> candlestickList) {
-        this.maValues.add(calculateSMAValue(candlestickList));
+        this.indicatorValues.add(calculateSMAValue(candlestickList));
     }
 
         private BigDecimal calculateSMAValue(List<Candlestick> candlestickList){
@@ -123,9 +123,9 @@ public final class ExponentialMovingAverage extends BaseIndicator {
                     .extractPrice(candlestickPriceData(candlestickList, index))
                     .multiply(multiplier)
                     .setScale(SCALE, BigDecimal.ROUND_HALF_UP);
-            BigDecimal previousEMA = maValues.get(maValuesIndex++);
+            BigDecimal previousEMA = indicatorValues.get(maValuesIndex++);
             BigDecimal emaValue = calculateFinalEMAValue(correctedPrice, previousEMA);
-            maValues.add(emaValue);
+            indicatorValues.add(emaValue);
         }
     }
 

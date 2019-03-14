@@ -12,7 +12,7 @@ public interface Indicator {
     BigDecimal ZERO = BigDecimal.ZERO;
 
     List<BigDecimal> getValues();
-    void updateMovingAverage(DateTime dateTime);
+    void updateIndicator(DateTime dateTime);
     List<Point> getPoints();
     boolean isTradeGenerated();
     void setIsTradeGenerated(boolean isGenerated);

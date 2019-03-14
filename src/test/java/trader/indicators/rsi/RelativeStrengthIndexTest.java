@@ -3,13 +3,13 @@ package trader.indicators.rsi;
 import com.oanda.v20.Context;
 import com.oanda.v20.instrument.Candlestick;
 import com.oanda.v20.instrument.CandlestickData;
-import com.oanda.v20.instrument.CandlestickGranularity;
 import com.oanda.v20.instrument.InstrumentCandlesRequest;
 import com.oanda.v20.pricing_common.PriceValue;
 import com.oanda.v20.primitives.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import trader.candles.CandlesUpdater;
+import trader.indicators.enums.CandleGranularity;
 import trader.indicators.enums.CandlestickPriceType;
 
 import java.lang.reflect.Constructor;
@@ -28,21 +28,21 @@ public class RelativeStrengthIndexTest {
 
 
     private static final long DEFAULT_PERIOD = 14L;
-    private static final CandlestickGranularity DEFAULT_TIME_FRAME = CandlestickGranularity.H4;
+    private static final CandleGranularity DEFAULT_TIME_FRAME = CandleGranularity.H4;
 
     private List<String> candlesClosePrices = new ArrayList<>(Arrays.asList(
-        "1.44359", "1.44383", "1.4444", "1.44516", "1.44348", "1.44248", "1.44251", "1.44277", "1.44277", "1.44133", "1.44026",             "1.43954", "1.44066", "1.43901","1.44107", "1.43992", "1.44075", "1.44193", "1.44016", "1.43726", "1.43696", "1.43699",             "1.43421"
+        "1.44359", "1.44383", "1.4444", "1.44516", "1.44348", "1.44248", "1.44251", "1.44277", "1.44277", "1.44133", "1.44026",  "1.43954", "1.44066", "1.43901","1.44107", "1.43992", "1.44075", "1.44193", "1.44016", "1.43726", "1.43696", "1.43699", "1.43421"
 
         ));
 
     private RelativeStrengthIndex rsi;
     private Context mockContext;
-    private long period;
-    private CandlestickPriceType mockCandlestickPriceType;
-    private CandlestickGranularity timeFrame;
+    private long candlesQuantity; //
+    private CandlestickPriceType mockCandlestickPriceType; //
+    private CandleGranularity timeFrame;
     private InstrumentCandlesRequest mockRequest;
     private List<Candlestick> candlestickList;
-    private CandlesUpdater mockUpdater;
+    private CandlesUpdater mockUpdater;//
     private BigDecimal ask;
     private BigDecimal bid;
     private DateTime mockDateTime;
@@ -75,7 +75,7 @@ public class RelativeStrengthIndexTest {
 
     @Test
     public void WhenGetValuesThenReturnCorrectResult(){
-        this.rsi.updateMovingAverage(this.mockDateTime);
+        this.rsi.updateIndicator(this.mockDateTime);
 
         List<BigDecimal> values = this.rsi.getValues();
         assertEquals(9, values.size());
@@ -91,7 +91,7 @@ public class RelativeStrengthIndexTest {
         this.fillCandlestickList();
         assertEquals(22, this.candlestickList.size());
 
-        this.rsi.updateMovingAverage(this.mockDateTime);
+        this.rsi.updateIndicator(this.mockDateTime);
 
         List<BigDecimal> preUpdateValues = this.rsi.getValues();
         BigDecimal rsiPreUpdateLastValue = preUpdateValues.get(preUpdateValues.size()-1);
@@ -100,7 +100,7 @@ public class RelativeStrengthIndexTest {
         fillCandlestickList();
 
         when(this.mockUpdater.getCandles()).thenReturn(this.candlestickList);
-        this.rsi.updateMovingAverage(mockDateTime);
+        this.rsi.updateIndicator(mockDateTime);
 
         List<BigDecimal> afterUpdateValues = this.rsi.getValues();
         BigDecimal rsiAfterUpdateValue = afterUpdateValues .get(afterUpdateValues .size()-1);
@@ -118,7 +118,7 @@ public class RelativeStrengthIndexTest {
     @Test
     public void TestToString(){
         String result = this.rsi.toString();
-        String expected = String.format("RelativeStrengthIndex{candlesticksQuantity=%d, candlestickPriceType=%s, rsiValues=[], points=[], isTradeGenerated=false}", this.period, this.mockCandlestickPriceType.toString());
+        String expected = String.format("RelativeStrengthIndex{candlesticksQuantity=%d, candlestickPriceType=%s, rsiValues=[], points=[], isTradeGenerated=false}", this.candlesQuantity, this.mockCandlestickPriceType.toString());
 
         assertEquals(expected, result);
     }
@@ -126,7 +126,7 @@ public class RelativeStrengthIndexTest {
     private RelativeStrengthIndex createRSI() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         Class<?> objClass = RelativeStrengthIndex.class;
         Constructor<?> cons = objClass.getDeclaredConstructor(long.class, CandlestickPriceType.class, CandlesUpdater.class);
-        return (RelativeStrengthIndex) cons.newInstance(this.period, this.mockCandlestickPriceType, this.mockUpdater);
+        return (RelativeStrengthIndex) cons.newInstance(this.candlesQuantity, this.mockCandlestickPriceType, this.mockUpdater);
 
     }
 
@@ -157,7 +157,7 @@ public class RelativeStrengthIndexTest {
     }
     //total candles count for the given periods are calculated with this formula:
     private void setPeriod(){
-        this.period = RelativeStrengthIndexTest.DEFAULT_PERIOD;
+        this.candlesQuantity = RelativeStrengthIndexTest.DEFAULT_PERIOD;
     }
 
 }
