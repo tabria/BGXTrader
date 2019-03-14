@@ -160,15 +160,4 @@ public final class ExponentialMovingAverage extends BaseMovingAverage {
             return result;
         }
 
-    private void fillPoints() {
-        this.points.clear();
-        int time = 1;
-        for (int i = this.maValues.size()-4; i < this.maValues.size() -1 ; i++) {
-            Point point = new Point.PointBuilder(this.maValues.get(i))
-                    .setTime(BigDecimal.valueOf(time++))
-                    .build();
-
-            this.points.add(point);
-        }
-    }
 }

@@ -13,74 +13,35 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Simple Moving Average (SMA)
- */
+public final class SimpleMovingAverage extends BaseMovingAverage {
 
-public final class SimpleMovingAverage implements Indicator {
-
-    private final long period;
-    private final CandlestickPriceType candlestickPriceType;
-    private final CandlesUpdater updater;
-    private List<BigDecimal> maValues;
     private BigDecimal divisor;
-    private List<Point> points;
-    private boolean isTradeGenerated;
 
-
-    /**
-     * Constructor
-     *
-     * @param period sma period
-     * @param candlestickPriceType what price to get from the candlestick to calculate sma
-     * @param updater updateMovingAverage candlestick collection
-     * @see CandlestickPriceType
-     * @see CandlesUpdater
-     */
-    SimpleMovingAverage(long period, CandlestickPriceType candlestickPriceType, CandlesUpdater updater) {
-        this.period = period;
-        this.candlestickPriceType = candlestickPriceType;
-        this.updater = updater;
-        this.setDivisor(this.period);
-        this.maValues = new ArrayList<>();
-        this.points = new ArrayList<>();
-        this.isTradeGenerated = false;
+    SimpleMovingAverage(long candlesticksQuantity, CandlestickPriceType candlestickPriceType, CandlesUpdater updater) {
+        super(candlestickPriceType, candlesticksQuantity, updater);
+        this.setDivisor(candlesticksQuantity);
     }
-    /**
-     * Get the current SMA values
-     * @return {@link List} calculated value for the Simple Moving Average
-     */
+
+    @Override
+    public List<Point> getPoints() {
+        return Collections.unmodifiableList(this.points);
+    }
+
     @Override
     public List<BigDecimal> getValues() {
         return Collections.unmodifiableList(this.maValues);
     }
 
-    /**
-     * Update sma values
-     * @param dateTime the dateTime from the last price poll request
-     * @see DateTime
-     * @see CandlesUpdater
-     */
     @Override
     public void updateMovingAverage(DateTime dateTime, BigDecimal ask, BigDecimal bid) {
 
-       boolean isUpdated =  this.updater.updateCandles(dateTime);
-        isUpdated = !isUpdated && this.maValues.size() == 0 ? true : isUpdated;
+       boolean isUpdated =  this.candlesUpdater.updateCandles(dateTime);
+       isUpdated = !isUpdated && this.maValues.size() == 0 ? true : isUpdated;
        if (isUpdated){
            this.setSMAValues();
            fillPoints();
            this.isTradeGenerated = false;
        }
-    }
-
-    /**
-     * Get point for calculating intersections
-     * @return {@link List<Point>}
-     * @see Point
-     */
-    @Override
-    public List<Point> getPoints() {
-        return Collections.unmodifiableList(this.points);
     }
 
     /**
@@ -102,10 +63,11 @@ public final class SimpleMovingAverage implements Indicator {
         this.isTradeGenerated = isGenerated;
     }
 
+
     @Override
     public String toString() {
         return "SimpleMovingAverage{" +
-                "candlesticksQuantity=" + period +
+                "candlesticksQuantity=" + candlesticksQuantity +
                 ", candlestickPriceType=" + candlestickPriceType.toString() +
                 ", maValues=" + maValues.toString() +
                 ", points=" + points.toString() +
@@ -113,65 +75,38 @@ public final class SimpleMovingAverage implements Indicator {
                 '}';
     }
 
-    /**
-     * Set calculated values
-     */
     private void setSMAValues(){
 
-        List<Candlestick> candlestickList = this.updater.getCandles();
+        List<Candlestick> candlestickList = this.candlesUpdater.getCandles();
         this.maValues.clear();
         calculateSMAValue(candlestickList);
     }
 
-    /**
-     * Calculate Simple Moving Average values
-     * @param candlestickList list of available candlesticks
-     */
     private void calculateSMAValue(List<Candlestick> candlestickList) {
 
         int count = 0;
-
         BigDecimal result = BigDecimal.ZERO;
 
         for (int i = candlestickList.size()-1; i >= 0 ; i--) {
-
-            //getting Open, Close, High, Low prices for each candle
-            CandlestickData candleMid = candlestickList.get(i).getMid();
-
-            //add the price based on the candlestickPriceType enum
-            result = result.add(this.candlestickPriceType.extractPrice(candleMid)).setScale(5, BigDecimal.ROUND_HALF_UP);
+            CandlestickData candle = candlestickList.get(i).getMid();
+            result = result.add(getCandlePrice(candle)).setScale(5, BigDecimal.ROUND_HALF_UP);
 
             count++;
-            if (count == this.period){
-
-                //the values are calculated from the newest to oldest, so the add is always at 0 index
-                this.maValues.add(0,result.divide(this.divisor, 5, BigDecimal.ROUND_HALF_UP));
-
-                //getting the oldest candle participating in current result
-                candleMid = candlestickList.get(i + count -1).getMid();
-
-                //removing oldest candle's price from the result
-                result = result.subtract(this.candlestickPriceType.extractPrice(candleMid))
-                        .setScale(5,BigDecimal.ROUND_HALF_UP);
+            if (count == this.candlesticksQuantity){
+                addSMAValue(result);
+                CandlestickData oldestCandle = candlestickList.get(i + count -1).getMid();
+                result = result.subtract(getCandlePrice(oldestCandle)).setScale(5,BigDecimal.ROUND_HALF_UP);
                 count--;
             }
         }
     }
 
-    /**
-     * Fill points for signal checking
-     */
-    private void fillPoints() {
-        this.points.clear();
-        int time = 1;
-        for (int i = this.maValues.size()-4; i < this.maValues.size() -1 ; i++) {
-            Point point = new Point.PointBuilder(this.maValues.get(i))
-                    .setTime(BigDecimal.valueOf(time++))
-                    .build();
+    private void addSMAValue(BigDecimal result) {
+        this.maValues.add(0,result.divide(this.divisor, 5, BigDecimal.ROUND_HALF_UP));
+    }
 
-            this.points.add(point);
-        }
-
+    private BigDecimal getCandlePrice(CandlestickData candleMid) {
+        return this.candlestickPriceType.extractPrice(candleMid);
     }
 
     private void setDivisor(long period){

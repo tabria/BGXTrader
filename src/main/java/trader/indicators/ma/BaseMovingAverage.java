@@ -33,4 +33,16 @@ public abstract class BaseMovingAverage implements Indicator {
     public abstract List<Point> getPoints();
     public abstract List<BigDecimal> getValues();
     public abstract void updateMovingAverage(DateTime dateTime, BigDecimal ask, BigDecimal bid);
+
+    protected void fillPoints() {
+        this.points.clear();
+        int time = 1;
+        for (int i = this.maValues.size()-4; i < this.maValues.size() -1 ; i++) {
+            Point point = new Point.PointBuilder(this.maValues.get(i))
+                    .setTime(BigDecimal.valueOf(time++))
+                    .build();
+
+            this.points.add(point);
+        }
+    }
 }
