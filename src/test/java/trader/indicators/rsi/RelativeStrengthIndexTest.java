@@ -75,7 +75,7 @@ public class RelativeStrengthIndexTest {
 
     @Test
     public void WhenGetValuesThenReturnCorrectResult(){
-        this.rsi.updateMovingAverage(this.mockDateTime, this.ask, this.bid);
+        this.rsi.updateMovingAverage(this.mockDateTime);
 
         List<BigDecimal> values = this.rsi.getValues();
         assertEquals(9, values.size());
@@ -91,7 +91,7 @@ public class RelativeStrengthIndexTest {
         this.fillCandlestickList();
         assertEquals(22, this.candlestickList.size());
 
-        this.rsi.updateMovingAverage(this.mockDateTime, this.ask, this.bid);
+        this.rsi.updateMovingAverage(this.mockDateTime);
 
         List<BigDecimal> preUpdateValues = this.rsi.getValues();
         BigDecimal rsiPreUpdateLastValue = preUpdateValues.get(preUpdateValues.size()-1);
@@ -100,7 +100,7 @@ public class RelativeStrengthIndexTest {
         fillCandlestickList();
 
         when(this.mockUpdater.getCandles()).thenReturn(this.candlestickList);
-        this.rsi.updateMovingAverage(mockDateTime, this.ask, this.bid);
+        this.rsi.updateMovingAverage(mockDateTime);
 
         List<BigDecimal> afterUpdateValues = this.rsi.getValues();
         BigDecimal rsiAfterUpdateValue = afterUpdateValues .get(afterUpdateValues .size()-1);

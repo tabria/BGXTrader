@@ -53,7 +53,7 @@ public final class RelativeStrengthIndex implements Indicator {
      * @see PriceObservable
      */
     @Override
-    public void updateMovingAverage(DateTime dateTime, BigDecimal ask, BigDecimal bid) {
+    public void updateMovingAverage(DateTime dateTime) {
 
         boolean isUpdated =  this.updater.updateCandles(dateTime);
         isUpdated = !isUpdated && this.rsiValues.size() == 0 ? true : isUpdated;

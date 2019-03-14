@@ -8,8 +8,11 @@ import java.util.List;
 
 public interface Indicator {
 
+    int SCALE = 5;
+    BigDecimal ZERO = BigDecimal.ZERO;
+
     List<BigDecimal> getValues();
-    void updateMovingAverage(DateTime dateTime, BigDecimal ask, BigDecimal bid);
+    void updateMovingAverage(DateTime dateTime);
     List<Point> getPoints();
     boolean isTradeGenerated();
     void setIsTradeGenerated(boolean isGenerated);

@@ -34,7 +34,7 @@ public class ExponentialMovingAverageTest extends BaseMATest {
     @Override
     @Test
     public void getMAValuesReturnCorrectResult() {
-        this.ema.updateMovingAverage(super.mockDateTime, ASK, BID);
+        this.ema.updateMovingAverage(super.mockDateTime);
         BigDecimal lastCandlestickPrice = getLastCandlestickPrice();
         assertEquals(0, lastCandlestickPrice.compareTo(EXPECTED_CANDLESTICK_PRICE));
     }
@@ -42,16 +42,16 @@ public class ExponentialMovingAverageTest extends BaseMATest {
     @Override
     @Test
     public void testSuccessfulUpdate() {
-        this.ema.updateMovingAverage(this.mockDateTime, ASK, BID);
+        this.ema.updateMovingAverage(this.mockDateTime);
         updateCandlestickListInSuper();
-        this.ema.updateMovingAverage(mock(DateTime.class),  ASK, BID);
+        this.ema.updateMovingAverage(mock(DateTime.class));
         assertEquals(0, getLastCandlestickPrice().compareTo(EXPECTED_CANDLESTICK_PRICE));
     }
 
     @Override
     @Test
     public void getPointsReturnCorrectResult(){
-        this.ema.updateMovingAverage(this.mockDateTime,  ASK, BID);
+        this.ema.updateMovingAverage(this.mockDateTime);
         List<Point> points = this.ema.getPoints();
         List<BigDecimal> values = this.ema.getValues();
 

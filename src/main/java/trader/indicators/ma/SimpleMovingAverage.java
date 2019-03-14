@@ -15,32 +15,18 @@ import java.util.List;
 
 public final class SimpleMovingAverage extends BaseMovingAverage {
 
-    private BigDecimal divisor;
-
     SimpleMovingAverage(long candlesticksQuantity, CandlestickPriceType candlestickPriceType, CandlesUpdater updater) {
         super(candlestickPriceType, candlesticksQuantity, updater);
-        this.setDivisor(candlesticksQuantity);
+        setDivisor();
     }
 
     @Override
-    public List<Point> getPoints() {
-        return Collections.unmodifiableList(this.points);
-    }
+    public void updateMovingAverage(DateTime dateTime) {
 
-    @Override
-    public List<BigDecimal> getValues() {
-        return Collections.unmodifiableList(this.maValues);
-    }
-
-    @Override
-    public void updateMovingAverage(DateTime dateTime, BigDecimal ask, BigDecimal bid) {
-
-       boolean isUpdated =  this.candlesUpdater.updateCandles(dateTime);
-       isUpdated = !isUpdated && this.maValues.size() == 0 ? true : isUpdated;
-       if (isUpdated){
-           this.setSMAValues();
+       if (candlesUpdated(dateTime)){
+           setSMAValues();
            fillPoints();
-           this.isTradeGenerated = false;
+           isTradeGenerated = false;
        }
     }
 
@@ -51,7 +37,7 @@ public final class SimpleMovingAverage extends BaseMovingAverage {
      */
     @Override
     public boolean isTradeGenerated() {
-        return this.isTradeGenerated;
+        return isTradeGenerated;
     }
 
     /**
@@ -60,7 +46,7 @@ public final class SimpleMovingAverage extends BaseMovingAverage {
      */
     @Override
     public void setIsTradeGenerated(boolean isGenerated) {
-        this.isTradeGenerated = isGenerated;
+        isTradeGenerated = isGenerated;
     }
 
 
@@ -75,42 +61,42 @@ public final class SimpleMovingAverage extends BaseMovingAverage {
                 '}';
     }
 
-    private void setSMAValues(){
+    @Override
+    protected void setDivisor(){
+        divisor = BigDecimal.valueOf(candlesticksQuantity);
+    }
 
-        List<Candlestick> candlestickList = this.candlesUpdater.getCandles();
-        this.maValues.clear();
+    private void setSMAValues(){
+        List<Candlestick> candlestickList = candlesUpdater.getCandles();
+        maValues.clear();
         calculateSMAValue(candlestickList);
     }
 
     private void calculateSMAValue(List<Candlestick> candlestickList) {
+        int countCandlesticks   = 0;
+        BigDecimal smaValue = ZERO;
+        for (int candleIndex = candlestickList.size()-1; candleIndex >= 0 ; candleIndex--) {
+            smaValue = smaValue.add(candlestickPriceType
+                    .extractPrice(candlestickPriceData(candlestickList, candleIndex)))
+                    .setScale(SCALE, BigDecimal.ROUND_HALF_UP);
 
-        int count = 0;
-        BigDecimal result = BigDecimal.ZERO;
-
-        for (int i = candlestickList.size()-1; i >= 0 ; i--) {
-            CandlestickData candle = candlestickList.get(i).getMid();
-            result = result.add(getCandlePrice(candle)).setScale(5, BigDecimal.ROUND_HALF_UP);
-
-            count++;
-            if (count == this.candlesticksQuantity){
-                addSMAValue(result);
-                CandlestickData oldestCandle = candlestickList.get(i + count -1).getMid();
-                result = result.subtract(getCandlePrice(oldestCandle)).setScale(5,BigDecimal.ROUND_HALF_UP);
-                count--;
+            countCandlesticks++;
+            if (countCandlesticks == candlesticksQuantity){
+                addSMAValue(smaValue);
+                smaValue = smaValue.subtract(candlestickPriceType
+                        .extractPrice(candlestickPriceData(candlestickList, index(countCandlesticks, candleIndex))))
+                        .setScale(SCALE,BigDecimal.ROUND_HALF_UP);
+                countCandlesticks--;
             }
         }
     }
 
     private void addSMAValue(BigDecimal result) {
-        this.maValues.add(0,result.divide(this.divisor, 5, BigDecimal.ROUND_HALF_UP));
+        maValues.add(0,result.divide(divisor, SCALE, BigDecimal.ROUND_HALF_UP));
     }
 
-    private BigDecimal getCandlePrice(CandlestickData candleMid) {
-        return this.candlestickPriceType.extractPrice(candleMid);
-    }
-
-    private void setDivisor(long period){
-        this.divisor = BigDecimal.valueOf(period);
+    private int index(int count, int i) {
+        return i+count -1;
     }
 
 }

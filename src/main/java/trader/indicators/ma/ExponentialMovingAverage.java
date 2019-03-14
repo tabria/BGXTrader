@@ -16,35 +16,21 @@ public final class ExponentialMovingAverage extends BaseMovingAverage {
 
     private BigDecimal multiplier;
     private BigDecimal multiplierCorrected;
-    private BigDecimal divisor;
 
     ExponentialMovingAverage(long candlesticksQuantity, CandlestickPriceType candlestickPriceType, CandlesUpdater updater) {
         super(candlestickPriceType, candlesticksQuantity, updater);
-        this.setDivisor(this.candlesticksQuantity);
-        this.setMultiplier();
-        this.setMultiplierCorrected();
+        setDivisor();
+        setMultiplier();
+        setMultiplierCorrected();
 
     }
 
     @Override
-    public List<Point> getPoints() {
-        return Collections.unmodifiableList(points);
-    }
-
-    @Override
-    public List<BigDecimal> getValues() {
-        return Collections.unmodifiableList(maValues);
-    }
-
-    @Override
-    public void updateMovingAverage(DateTime dateTime, BigDecimal ask, BigDecimal bid) {
-
-        boolean isUpdated =  this.candlesUpdater.updateCandles(dateTime);
-        isUpdated = !isUpdated && this.maValues.size() == 0 ? true : isUpdated;
-        if (isUpdated){
-            this.setEMAValues();
+    public void updateMovingAverage(DateTime dateTime) {
+        if (candlesUpdated(dateTime)){
+            setEMAValues();
             fillPoints();
-            this.isTradeGenerated = false;
+            isTradeGenerated = false;
         }
     }
 
@@ -55,7 +41,7 @@ public final class ExponentialMovingAverage extends BaseMovingAverage {
      */
     @Override
     public boolean isTradeGenerated() {
-        return this.isTradeGenerated;
+        return isTradeGenerated;
     }
 
     /**
@@ -64,7 +50,7 @@ public final class ExponentialMovingAverage extends BaseMovingAverage {
      */
     @Override
     public void setIsTradeGenerated(boolean isGenerated) {
-        this.isTradeGenerated = isGenerated;
+        isTradeGenerated = isGenerated;
     }
 
     @Override
@@ -79,25 +65,23 @@ public final class ExponentialMovingAverage extends BaseMovingAverage {
     }
 
     private void setMultiplier(){
-        this.multiplier = MULTIPLIER_CONSTANT.divide(
-                BigDecimal.valueOf(this.candlesticksQuantity + 1),
-                5,
-                BigDecimal.ROUND_HALF_UP);
+        multiplier = MULTIPLIER_CONSTANT.divide(
+                BigDecimal.valueOf(candlesticksQuantity + 1), SCALE, BigDecimal.ROUND_HALF_UP);
     }
 
     private void setMultiplierCorrected(){
-        this.multiplierCorrected = BigDecimal.ONE
-                .subtract(this.multiplier)
-                .setScale(5, BigDecimal.ROUND_HALF_UP);
+        multiplierCorrected = BigDecimal.ONE.subtract(multiplier)
+                .setScale(SCALE, BigDecimal.ROUND_HALF_UP);
     }
 
-    private void setDivisor(long period){
-        this.divisor = BigDecimal.valueOf(period);
+    @Override
+    protected void setDivisor(){
+        divisor = BigDecimal.valueOf(candlesticksQuantity);
     }
 
     private void setEMAValues(){
-        List<Candlestick> candlestickList = this.candlesUpdater.getCandles();
-        this.maValues.clear();
+        List<Candlestick> candlestickList = candlesUpdater.getCandles();
+        maValues.clear();
         calculateEMAValue(candlestickList);
     }
 
@@ -124,40 +108,35 @@ public final class ExponentialMovingAverage extends BaseMovingAverage {
     }
 
         private BigDecimal calculateSMAValue(List<Candlestick> candlestickList){
-            BigDecimal result = BigDecimal.ZERO;
-            for (int i = 0; i <= this.candlesticksQuantity -1 ; i++) {
-                CandlestickData candleMid = candlestickList.get(i).getMid();
-                result = result.add(getCandlePrice(candleMid)).setScale(5, BigDecimal.ROUND_HALF_UP);
+            BigDecimal smaValue = ZERO;
+            for (int candleIndex = 0; candleIndex <= candlesticksQuantity -1 ; candleIndex++) {
+                smaValue = smaValue.add(candlestickPriceType
+                        .extractPrice(candlestickPriceData(candlestickList, candleIndex)))
+                        .setScale(SCALE, BigDecimal.ROUND_HALF_UP);
             }
-            return result.divide(this.divisor, 5, BigDecimal.ROUND_HALF_UP);
+            return smaValue.divide(divisor, SCALE, BigDecimal.ROUND_HALF_UP);
         }
-
-            private BigDecimal getCandlePrice(CandlestickData candleMid) {
-                return this.candlestickPriceType.extractPrice(candleMid);
-            }
 
     private void addOtherValues(List<Candlestick> candlestickList) {
         int maValuesIndex = 0;
-        for (int index = (int) this.candlesticksQuantity; index < candlestickList.size() ; index++) {
-            BigDecimal correctedPrice = calculateCorrectedPrice(candlestickList.get(index));
-            BigDecimal previousEMA = this.maValues.get(maValuesIndex++);
-            BigDecimal result = calculateFinalEMAValue(correctedPrice, previousEMA);
-            this.maValues.add(result);
+        for (int index = (int) candlesticksQuantity; index < candlestickList.size() ; index++) {
+            BigDecimal correctedPrice = candlestickPriceType
+                    .extractPrice(candlestickPriceData(candlestickList, index))
+                    .multiply(multiplier)
+                    .setScale(SCALE, BigDecimal.ROUND_HALF_UP);
+            BigDecimal previousEMA = maValues.get(maValuesIndex++);
+            BigDecimal emaValue = calculateFinalEMAValue(correctedPrice, previousEMA);
+            maValues.add(emaValue);
         }
     }
 
-        private BigDecimal calculateCorrectedPrice(Candlestick candlestick) {
-            return this.candlestickPriceType.extractPrice(candlestick.getMid())
-                    .multiply(this.multiplier)
-                    .setScale(5, BigDecimal.ROUND_HALF_UP);
-        }
-
         private BigDecimal calculateFinalEMAValue(BigDecimal correctedPrice, BigDecimal previousEMA) {
-            BigDecimal result = previousEMA.multiply(this.multiplierCorrected)
-                    .setScale(5, BigDecimal.ROUND_HALF_UP);
-            result = correctedPrice.add(result)
-                    .setScale(5, BigDecimal.ROUND_HALF_UP);
-            return result;
+            BigDecimal result = previousEMA
+                    .multiply(multiplierCorrected)
+                    .setScale(SCALE, BigDecimal.ROUND_HALF_UP);
+            return correctedPrice
+                    .add(result)
+                    .setScale(SCALE, BigDecimal.ROUND_HALF_UP);
         }
 
 }
