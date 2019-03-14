@@ -9,8 +9,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
-import static trader.CommonConstants.ASK;
-import static trader.CommonConstants.BID;
 
 public class WeightedMovingAverageTest extends BaseMATest {
 

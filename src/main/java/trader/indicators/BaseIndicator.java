@@ -1,4 +1,4 @@
-package trader.indicators.ma;
+package trader.indicators;
 
 import com.oanda.v20.Context;
 import com.oanda.v20.instrument.Candlestick;
@@ -14,18 +14,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class BaseMovingAverage implements Indicator {
+public abstract class BaseIndicator implements Indicator {
 
     protected Context context;
     protected final long candlesticksQuantity;
     protected final CandlestickPriceType candlestickPriceType;
     protected final CandlesUpdater candlesUpdater;
-    List<BigDecimal> maValues;
+    protected List<BigDecimal> maValues;
     protected List<Point> points;
     protected boolean isTradeGenerated;
-    BigDecimal divisor;
+    protected BigDecimal divisor;
 
-    BaseMovingAverage(CandlestickPriceType candlestickPriceType, long candlesticksQuantity, CandlesUpdater candlesUpdater) {
+    protected BaseIndicator(CandlestickPriceType candlestickPriceType, long candlesticksQuantity, CandlesUpdater candlesUpdater) {
         this.candlestickPriceType = candlestickPriceType;
         this.candlesticksQuantity = candlesticksQuantity;
         this.candlesUpdater = candlesUpdater;
@@ -46,12 +46,12 @@ public abstract class BaseMovingAverage implements Indicator {
 
     protected abstract void setDivisor();
 
-    boolean candlesUpdated(DateTime dateTime) {
+    protected boolean candlesUpdated(DateTime dateTime) {
         boolean isUpdated =  this.candlesUpdater.updateCandles(dateTime);
         return !isUpdated && this.maValues.size() == 0 ? true : isUpdated;
     }
 
-    void fillPoints() {
+    protected void fillPoints() {
         this.points.clear();
         int time = 1;
         for (int i = this.maValues.size()-4; i < this.maValues.size() -1 ; i++) {
@@ -63,7 +63,7 @@ public abstract class BaseMovingAverage implements Indicator {
         }
     }
 
-    CandlestickData candlestickPriceData(List<Candlestick> candlestickList, int index) {
+    protected CandlestickData candlestickPriceData(List<Candlestick> candlestickList, int index) {
         return candlestickList.get(index).getMid();
     }
 }

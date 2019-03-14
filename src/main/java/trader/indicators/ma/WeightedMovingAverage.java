@@ -1,14 +1,14 @@
 package trader.indicators.ma;
 
 import com.oanda.v20.instrument.Candlestick;
-import com.oanda.v20.instrument.CandlestickData;
 import com.oanda.v20.primitives.DateTime;
 import trader.candles.CandlesUpdater;
+import trader.indicators.BaseIndicator;
 import trader.indicators.enums.CandlestickPriceType;
 import java.math.BigDecimal;
 import java.util.List;
 
-public final class WeightedMovingAverage extends BaseMovingAverage {
+public final class WeightedMovingAverage extends BaseIndicator {
 
     WeightedMovingAverage(long candlesticksQuantity, CandlestickPriceType candlestickPriceType, CandlesUpdater updater) {
         super(candlestickPriceType, candlesticksQuantity, updater);

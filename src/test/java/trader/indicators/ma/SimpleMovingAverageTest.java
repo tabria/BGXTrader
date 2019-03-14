@@ -1,27 +1,15 @@
 package trader.indicators.ma;
 
-import com.oanda.v20.instrument.*;
-import com.oanda.v20.pricing_common.PriceValue;
 import com.oanda.v20.primitives.DateTime;
 import org.junit.Before;
 import org.junit.Test;
-import trader.candles.CandlesUpdater;
-import trader.indicators.enums.CandlestickPriceType;
 import trader.trades.entities.Point;
 
 import java.math.BigDecimal;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static trader.CommonConstants.ASK;
-import static trader.CommonConstants.BID;
 
 public class SimpleMovingAverageTest extends BaseMATest {
 

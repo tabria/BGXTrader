@@ -1,16 +1,15 @@
 package trader.indicators.ma;
 
 import com.oanda.v20.instrument.Candlestick;
-import com.oanda.v20.instrument.CandlestickData;
 import com.oanda.v20.primitives.DateTime;
 import trader.candles.CandlesUpdater;
+import trader.indicators.BaseIndicator;
 import trader.indicators.enums.CandlestickPriceType;
-import trader.trades.entities.Point;
+
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.List;
 
-public final class ExponentialMovingAverage extends BaseMovingAverage {
+public final class ExponentialMovingAverage extends BaseIndicator {
 
     private static final BigDecimal MULTIPLIER_CONSTANT = BigDecimal.valueOf(2);
 
