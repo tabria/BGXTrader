@@ -1,16 +1,15 @@
 package trader.indicators.rsi;
 
-import com.oanda.v20.Context;
 import com.oanda.v20.instrument.*;
 import org.junit.Before;
 import org.junit.Test;
+import trader.OandaAPI.OandaAPIMock;
 import trader.indicators.enums.CandleGranularity;
 import trader.indicators.enums.CandlestickPriceType;
 import trader.indicators.Indicator;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -19,156 +18,138 @@ import static org.mockito.Mockito.when;
 
 public class RSIBuilderTest {
 
-    private RSIBuilder builder;
-    private Context context;
-    private InstrumentCandlesResponse response;
-    private List<Candlestick> candlestickList;
+    private static final String DEFAULT_CANDLESTICK_QUANTITY_FIELD_NAME = "DEFAULT_CANDLESTICKS_QUANTITY";
+    private static final String CANDLESTICKS_QUANTITY_FIELD_NAME = "candlesticksQuantity";
+    private static final String DEFAULT_CANDLESTICK_PRICE_TYPE_FIELD_NAME = "DEFAULT_CANDLESTICK_PRICE_TYPE";
+    private static final String CANDLESTICK_PRICE_TYPE_FIELD_NAME = "candlestickPriceType";
+    private static final String DEFAULT_CANDLE_GRANULARITY_FIELD_NAME = "DEFAULT_CANDLE_GRANULARITY";
+    private static final String CANDLE_GRANULARITY_FIELD_NAME = "candleGranularity";
+    private static final String MIN_CANDLESTICKS_QUANTITY_FIELD_NAME = "MIN_CANDLESTICKS_QUANTITY";
+    private static final String MAX_CANDLESTICKS_QUANTITY_FIELD_NAME = "MAX_CANDLESTICKS_QUANTITY";
+    private static final long NEW_CANDLESTICKS_QUANTITY = 17L;
 
+    private RSIBuilder builder;
     @Before
     public void before() throws Exception {
+        OandaAPIMock oandaAPIMock = new OandaAPIMock();
+        when(oandaAPIMock.getMockResponse().getCandles()).thenReturn(new ArrayList<>());
+        when(oandaAPIMock.getContext().instrument.candles(any(InstrumentCandlesRequest.class)))
+                .thenReturn(oandaAPIMock.getMockResponse());
 
-        this.candlestickList = new ArrayList<>();
-        this.response = mock(InstrumentCandlesResponse.class);
-        when(this.response.getCandles()).thenReturn(this.candlestickList);
-        this.context = mock(Context.class);
-        this.context.instrument = mock(InstrumentContext.class);
-        when(this.context.instrument.candles(any(InstrumentCandlesRequest.class))).thenReturn(this.response);
-
-        this.builder = new RSIBuilder(context);
+        builder = new RSIBuilder(oandaAPIMock.getContext());
 
     }
 
     @Test(expected = NullPointerException.class)
-    public void WhenCreateRSIBuilderWithNullContextThenException(){
+    public void WhenCreateRSIBuilderWithNullContext_Exception(){
         new RSIBuilder(null);
     }
 
     @Test
-    public void WhenCreateNewBuilderThenPeriodValueIsDefaultValue() throws NoSuchFieldException, IllegalAccessException {
+    public void testCreateNewBuilderWithDefaultCandlesticksQuantity() throws NoSuchFieldException, IllegalAccessException {
+        Field defaultCandlesticksQuantityField = getFieldValue(builder, DEFAULT_CANDLESTICK_QUANTITY_FIELD_NAME);
+        long expected =(long) defaultCandlesticksQuantityField.get(builder);
+        Field candlesticksQuantityField = getFieldValue(builder, CANDLESTICKS_QUANTITY_FIELD_NAME);
+        long actual =(long) candlesticksQuantityField.get(builder);
 
-        Field field = getFieldValue(this.builder, "DEFAULT_PERIOD");
-        long expectedPeriod =(long) field.get(this.builder);
-
-        RSIBuilder rsiBuilder = new RSIBuilder(this.context);
-
-        Field field2 = getFieldValue(rsiBuilder, "candlesticksQuantity");
-        long resultPeriod =(long) field.get(this.builder);
-
-        assertEquals(expectedPeriod, resultPeriod);
+        assertEquals(expected, actual);
     }
 
     @Test
-    public void WhenCreateNewBuilderThenAppliedPriceMustBeDefaultValue() throws NoSuchFieldException, IllegalAccessException {
-        RSIBuilder rsiBuilder = new RSIBuilder(this.context);
+    public void testCreateNewBuilderWithDefaultCandlestickPriceType() throws NoSuchFieldException, IllegalAccessException {
+        Field defaultCandlestickPriceTypeField = getFieldValue(builder, DEFAULT_CANDLESTICK_PRICE_TYPE_FIELD_NAME);
+        CandlestickPriceType expected = (CandlestickPriceType) defaultCandlestickPriceTypeField.get(builder);
+        Field candlestickPriceTypeField = getFieldValue(builder, CANDLESTICK_PRICE_TYPE_FIELD_NAME);
+        CandlestickPriceType actual = (CandlestickPriceType) candlestickPriceTypeField.get(builder);
 
-        Field field = getFieldValue(rsiBuilder, "DEFAULT_APPLIED_PRICE");
-        CandlestickPriceType expected = (CandlestickPriceType) field.get(rsiBuilder);
-
-        Field field2 = getFieldValue(rsiBuilder, "candlestickPriceType");
-        CandlestickPriceType candlestickPriceType = (CandlestickPriceType) field2.get(rsiBuilder);
-
-        assertEquals(expected, candlestickPriceType);
+        assertEquals(expected, actual);
     }
 
     @Test
-    public void WhenCreateNewBuilderThenCandlesTimeFrameMustBeDefaultValue() throws NoSuchFieldException, IllegalAccessException {
-        RSIBuilder rsiBuilder = new RSIBuilder(this.context);
+    public void testCreateNewBuilderWithDefaultCandleGranularity() throws NoSuchFieldException, IllegalAccessException {
+        Field defaultCandleGranularityField = getFieldValue(builder, DEFAULT_CANDLE_GRANULARITY_FIELD_NAME);
+        CandleGranularity expected = (CandleGranularity) defaultCandleGranularityField.get(builder);
+        Field candleGranularityField = getFieldValue(builder, CANDLE_GRANULARITY_FIELD_NAME);
+        CandleGranularity actual = ( CandleGranularity) candleGranularityField.get(builder);
 
-        Field field = getFieldValue(rsiBuilder,"DEFAULT_CANDLE_TIME_FRAME");
-        CandleGranularity expected = (CandleGranularity) field.get(rsiBuilder);
-
-        Field field2 = getFieldValue(rsiBuilder,"candlesTimeFrame");
-        CandleGranularity result = ( CandleGranularity) field2.get(rsiBuilder);
-
-        assertEquals(expected, result);
+        assertEquals(expected, actual);
     }
 
     @Test
-    public void WhenCallSetPeriodThenReturnCurrentObject(){
-        RSIBuilder rsiBuilder = this.builder.setCandlesticksQuantity(17L);
-        assertEquals(this.builder, rsiBuilder);
+    public void WhenCallSetCandlesticksQuantity_ReturnCurrentObject(){
+        assertEquals(builder, builder.setCandlesticksQuantity(NEW_CANDLESTICKS_QUANTITY));
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void WhenCallSetPeriodWithLessThanMINValueThenException() throws NoSuchFieldException, IllegalAccessException {
-
-        Field field = getFieldValue(this.builder, "MIN_PERIOD");
-        long minValue =(long) field.get(this.builder) ;
-        this.builder.setCandlesticksQuantity(minValue - 1);
+    public void WhenCallSetCandlesticksQuantityWithLessThanMINCandlesticksQuantity_Exception() throws NoSuchFieldException, IllegalAccessException {
+        Field minCandlesticksQuantityField = getFieldValue(builder, MIN_CANDLESTICKS_QUANTITY_FIELD_NAME);
+        long expected =(long) minCandlesticksQuantityField.get(this.builder) ;
+        builder.setCandlesticksQuantity(expected - 1);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void WhenSetPeriodWithMoreThanMaxPeriodThenException() throws NoSuchFieldException, IllegalAccessException {
-
-        Field field = getFieldValue(this.builder, "MAX_PERIOD");
-        long maxValue =(long) field.get(this.builder);
-
-                this.builder.setCandlesticksQuantity(maxValue + 1);
+    public void WhenCallSetCandlesticksQuantityWithMoreThanMAXCandlesticksQuantity_Exception() throws NoSuchFieldException, IllegalAccessException {
+        Field maxCandlesticksQuantityField = getFieldValue(builder, MAX_CANDLESTICKS_QUANTITY_FIELD_NAME);
+        long expected =(long) maxCandlesticksQuantityField.get(builder);
+        builder.setCandlesticksQuantity(expected + 1);
     }
 
     @Test
-    public void WhenSetPeriodWithCorrectValueThenCorrectResult() throws NoSuchFieldException, IllegalAccessException {
+    public void callSetCandlesticksQuantityWithCorrectValue_SuccessfulUpdate() throws NoSuchFieldException, IllegalAccessException {
+        builder.setCandlesticksQuantity(NEW_CANDLESTICKS_QUANTITY);
+        Field candlestickQuantityField =  getFieldValue(builder, CANDLESTICKS_QUANTITY_FIELD_NAME);
+        long actual = (long) candlestickQuantityField.get(builder);
 
-        this.builder.setCandlesticksQuantity(17L);
-        Field field =  getFieldValue(this.builder, "candlesticksQuantity");
-        long period = (long) field.get(this.builder);
-
-        assertEquals(17L, period);
-
+        assertEquals(NEW_CANDLESTICKS_QUANTITY, actual);
     }
 
     @Test
-    public void WhenSetAppliedPriceThenReturnCurrentObject(){
-        RSIBuilder rsiBuilder = this.builder.setCandlestickPriceType(CandlestickPriceType.CLOSE);
-        assertEquals(this.builder, rsiBuilder);
+    public void WhenCallSetCandlestickPriceType_ReturnCurrentObject(){
+        assertEquals(builder, builder.setCandlestickPriceType(CandlestickPriceType.CLOSE));
     }
 
     @Test(expected = NullPointerException.class)
-    public void WhenSetAppliedPriceWithNullThenException(){
-        this.builder.setCandlestickPriceType(null);
+    public void WhenCallSetCandlestickPriceTypeWithNull_Exception(){
+        builder.setCandlestickPriceType(null);
     }
 
     @Test
-    public void WhenSetAppliedPriceWithCorrectValueThenReturnCorrectValue() throws NoSuchFieldException, IllegalAccessException {
-
+    public void WhenCallSetCandlestickPriceTypeWithCorrectValue_SuccessfulUpdate() throws NoSuchFieldException, IllegalAccessException {
         CandlestickPriceType expected = CandlestickPriceType.MEDIAN;
-        this.builder.setCandlestickPriceType(expected);
+        builder.setCandlestickPriceType(expected);
+        Field candlestickPriceTypeField = getFieldValue(builder,CANDLESTICK_PRICE_TYPE_FIELD_NAME);
+        CandlestickPriceType actual = (CandlestickPriceType) candlestickPriceTypeField.get(this.builder);
 
-        Field field = getFieldValue(this.builder,"candlestickPriceType");
-        CandlestickPriceType result = (CandlestickPriceType) field.get(this.builder);
-
-        assertEquals(expected, result);
+        assertEquals(expected, actual);
     }
 
     @Test
-    public void WhenSetCandlesTimeFrameThenReturnSameObject(){
-        RSIBuilder builder = this.builder.setCandlesTimeFrame(CandleGranularity.M1);
-        assertEquals(this.builder, builder);
+    public void WhenCallSetCandleGranularity_ReturnSameObject(){
+        RSIBuilder rsiBuilder = builder.setCandleGranularity(CandleGranularity.M1);
+        assertEquals(builder, rsiBuilder);
     }
 
     @Test(expected = NullPointerException.class)
-    public void WhenSetCandlesTimeFrameWithNullThenException(){
-        this.builder.setCandlesTimeFrame(null);
+    public void WhenCallSetCandleGranularityWithNull_Exception(){
+        builder.setCandleGranularity(null);
     }
 
     @Test
-    public void WhenSetCandlesTimeFrameWithCorrectValueThenCorrectResult() throws NoSuchFieldException, IllegalAccessException {
-
+    public void WhenCallSetCandleGranularityWithCorrectValue_SuccessfulUpdate() throws NoSuchFieldException, IllegalAccessException {
         CandleGranularity expected = CandleGranularity.D;
-        this.builder.setCandlesTimeFrame(expected);
+        builder.setCandleGranularity(expected);
+        Field candleGranularityField = getFieldValue(builder, CANDLE_GRANULARITY_FIELD_NAME);
+        CandleGranularity actual = ( CandleGranularity) candleGranularityField.get(this.builder);
 
-        Field field = getFieldValue(this.builder, "candlesTimeFrame");
-        CandleGranularity result = ( CandleGranularity) field.get(this.builder);
-
-        assertEquals(expected, result);
+        assertEquals(expected, actual);
     }
 
     @Test
-    public void WhenBuildThenReturnCorrectObject(){
-        Indicator rsi = this.builder.build();
+    public void WhenCallBuild_SuccessfulBuild(){
+        Indicator rsi = builder.build();
         String rsiName = rsi.getClass().getSimpleName();
-        assertEquals("The object is not RSI","RelativeStrengthIndex", rsiName);
 
+        assertEquals("The object is not RSI Indicator","RelativeStrengthIndex", rsiName);
     }
 
     private Field getFieldValue(RSIBuilder currentBuilder, String fieldName) throws NoSuchFieldException{

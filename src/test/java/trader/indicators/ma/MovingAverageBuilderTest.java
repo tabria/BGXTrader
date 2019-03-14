@@ -106,7 +106,7 @@ public class MovingAverageBuilderTest {
 
     @Test
     public void buildMovingAverage()  {
-        Indicator sma = this.builder.setMAType(MAType.SIMPLE).build();
+        Indicator sma = this.builder.setMAType(SIMPLE).build();
         Indicator ema = this.builder.setMAType(EXPONENTIAL).build();
         Indicator wma = this.builder.setMAType(WEIGHTED).build();
 

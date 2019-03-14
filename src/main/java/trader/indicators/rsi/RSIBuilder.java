@@ -11,16 +11,16 @@ import trader.indicators.enums.CandlestickPriceType;
 
 public final class RSIBuilder {
 
-    private static final long DEFAULT_PERIOD = 14L;
-    private static final long MIN_PERIOD = 1L;
-    private static final long MAX_PERIOD = 4000L;
-    private static final CandlestickPriceType DEFAULT_APPLIED_PRICE = CandlestickPriceType.CLOSE;
-    private static final CandleGranularity DEFAULT_CANDLE_TIME_FRAME = CandleGranularity.H4;
+    private static final long DEFAULT_CANDLESTICKS_QUANTITY = 14L;
+    private static final long MIN_CANDLESTICKS_QUANTITY = 1L;
+    private static final long MAX_CANDLESTICKS_QUANTITY = 4000L;
+    private static final CandlestickPriceType DEFAULT_CANDLESTICK_PRICE_TYPE = CandlestickPriceType.CLOSE;
+    private static final CandleGranularity DEFAULT_CANDLE_GRANULARITY = CandleGranularity.H4;
 
     private Context context;
     private long candlesticksQuantity;
     private CandlestickPriceType candlestickPriceType;
-    private CandleGranularity candlesTimeFrame;
+    private CandleGranularity candleGranularity;
 
     /**
      * Constructor for RSIBuileder
@@ -29,20 +29,20 @@ public final class RSIBuilder {
      */
     public RSIBuilder(Context context){
             setContext(context);
-            setCandlesticksQuantity(DEFAULT_PERIOD);
-            setCandlestickPriceType(DEFAULT_APPLIED_PRICE);
-            setCandlesTimeFrame(DEFAULT_CANDLE_TIME_FRAME);
+            setCandlesticksQuantity(DEFAULT_CANDLESTICKS_QUANTITY);
+            setCandlestickPriceType(DEFAULT_CANDLESTICK_PRICE_TYPE);
+            setCandleGranularity(DEFAULT_CANDLE_GRANULARITY);
     }
 
     /**
      * Set candlesticksQuantity
      * @param candlesticksQuantity candlesticksQuantity for the RSI
-     * @throws IllegalArgumentException when candlesticksQuantity is: {@code candlesticksQuantity < MIN_PERIOD || candlesticksQuantity > MAX_PERIOD}
+     * @throws IllegalArgumentException when candlesticksQuantity is: {@code candlesticksQuantity < MIN_PERIOD || candlesticksQuantity > MAX_CANDLESTICKS_QUANTITY}
      * @return {@link RSIBuilder} current builder object
      */
     public RSIBuilder setCandlesticksQuantity(long candlesticksQuantity) {
-        if (candlesticksQuantity < MIN_PERIOD || candlesticksQuantity > MAX_PERIOD){
-            throw  new IllegalArgumentException("Period must be between " + MIN_PERIOD + " and " + MAX_PERIOD);
+        if (candlesticksQuantity < MIN_CANDLESTICKS_QUANTITY || candlesticksQuantity > MAX_CANDLESTICKS_QUANTITY){
+            throw  new IllegalArgumentException("Period must be between " + MIN_CANDLESTICKS_QUANTITY + " and " + MAX_CANDLESTICKS_QUANTITY);
         }
         this.candlesticksQuantity = candlesticksQuantity;
         return this;
@@ -65,22 +65,22 @@ public final class RSIBuilder {
 
     /**
      * Set candles time frame
-     * @param candlesTimeFrame candles time frame
+     * @param candleGranularity candles time frame
      * @return {@link RSIBuilder} current builder object
-     * @throws NullPointerException when candlesTimeFrame is null
+     * @throws NullPointerException when candleGranularity is null
      */
-    public RSIBuilder setCandlesTimeFrame(CandleGranularity candlesTimeFrame) {
-        if (candlesTimeFrame == null){
+    public RSIBuilder setCandleGranularity(CandleGranularity candleGranularity) {
+        if (candleGranularity == null){
             throw new NullPointerException("Candles time frame must not be null");
         }
-        this.candlesTimeFrame = candlesTimeFrame;
+        this.candleGranularity = candleGranularity;
         return this;
     }
 
 
     public Indicator build(){
-        InstrumentCandlesRequest request = createCandlesRequest(this.candlesticksQuantity, this.candlesTimeFrame);
-        CandlesUpdater updater = new CandlesUpdater(this.context, request, this.candlesTimeFrame);
+        InstrumentCandlesRequest request = createCandlesRequest(this.candlesticksQuantity, this.candleGranularity);
+        CandlesUpdater updater = new CandlesUpdater(this.context, request, this.candleGranularity);
         return new RelativeStrengthIndex(this.candlesticksQuantity, this.candlestickPriceType, updater);
     }
 
