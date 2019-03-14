@@ -162,11 +162,9 @@ public final class RelativeStrengthIndex extends BaseIndicator {
         BigDecimal getAverageGains(){
             return gains.divide(BigDecimal.valueOf(candlesticksQuantity), SCALE, BigDecimal.ROUND_HALF_UP);
         }
-
         BigDecimal getAverageLosses(){
             return losses.divide(BigDecimal.valueOf(candlesticksQuantity), SCALE, BigDecimal.ROUND_HALF_UP);
         }
-
         FirstRelativeStrength invoke() {
             for (int candleIndex = 1; candleIndex <= candlesticksQuantity; candleIndex++) {
                 BigDecimal priceDifference = calculatePriceDifference(candlesticks, candleIndex);

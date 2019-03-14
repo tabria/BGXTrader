@@ -10,10 +10,12 @@ import java.math.BigDecimal;
 import java.util.List;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class WeightedMovingAverageTest extends BaseIndicatorTest {
 
     private static final BigDecimal EXPECTED_CANDLESTICK_PRICE = BigDecimal.valueOf(1.16162);
+    private static final BigDecimal UPDATED_CANDLESTICK_PRICE = BigDecimal.valueOf(1.16314);
 
     private WeightedMovingAverage wma;
 
@@ -45,8 +47,10 @@ public class WeightedMovingAverageTest extends BaseIndicatorTest {
     public void testSuccessfulUpdate() {
         this.wma.updateIndicator(this.mockDateTime);
         updateCandlestickListInSuper();
-        this.wma.updateIndicator(mock(DateTime.class));
-        assertEquals(0, getLastCandlestickPrice().compareTo(EXPECTED_CANDLESTICK_PRICE));
+        DateTime currentDateTime = mock(DateTime.class);
+        when(currentDateTime.toString()).thenReturn("2018-08-01T10:25:00Z");
+        this.wma.updateIndicator(currentDateTime);
+        assertEquals(0, getLastCandlestickPrice().compareTo(UPDATED_CANDLESTICK_PRICE));
     }
 
     @Override

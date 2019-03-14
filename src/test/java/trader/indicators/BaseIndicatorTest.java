@@ -1,13 +1,17 @@
 package trader.indicators;
 
+import com.oanda.v20.ExecuteException;
+import com.oanda.v20.RequestException;
 import com.oanda.v20.instrument.Candlestick;
 import com.oanda.v20.instrument.CandlestickData;
 import com.oanda.v20.pricing_common.PriceValue;
 import com.oanda.v20.primitives.DateTime;
 import org.junit.Before;
 import org.junit.Test;
+import trader.OandaAPI.OandaAPIMock;
 import trader.candles.CandlesUpdater;
 import trader.indicators.IndicatorUpdateHelper;
+import trader.indicators.enums.CandleGranularity;
 import trader.indicators.enums.CandlestickPriceType;
 import trader.trades.entities.Point;
 
@@ -17,8 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public abstract class BaseIndicatorTest {
 
@@ -36,12 +39,18 @@ public abstract class BaseIndicatorTest {
     private IndicatorUpdateHelper indicatorUpdateHelper;
     protected long candlesticksQuantity;
     protected DateTime mockDateTime;
+    private OandaAPIMock oandaAPIMock;
 
     @Before
     public void before() {
+
         this.mockDateTime = mock(DateTime.class);
+        when(this.mockDateTime.toString()).thenReturn("2018-07-01T09:53:00Z");
         this.mockCandlestickPriceType = mock(CandlestickPriceType.class);
         this.indicatorUpdateHelper = new IndicatorUpdateHelper(this.mockCandlestickPriceType);
+
+        initializeOandaAPIMock();
+
         this.candlesClosePrices = indicatorUpdateHelper.getCandlesClosePrices();
         this.candlesDateTime = indicatorUpdateHelper.getCandlesDateTime();
         this.indicatorUpdateHelper.fillCandlestickList();
@@ -88,7 +97,7 @@ public abstract class BaseIndicatorTest {
 
     protected void testPointPrice(List<Point> points, List<BigDecimal> values) {
         int pointPosition = 0;
-        for (int candlePosition = 5  ; candlePosition < values.size()-1 ; candlePosition++) {
+        for (int candlePosition = values.size()-4  ; candlePosition < values.size()-1 ; candlePosition++) {
             BigDecimal pointExpectedPrice = values.get(candlePosition);
             BigDecimal pointResultPrice = points.get(pointPosition++).getPrice();
 
@@ -105,9 +114,21 @@ public abstract class BaseIndicatorTest {
     }
 
     private void setCandlesUpdater() {
-        this.candlesUpdater = mock(CandlesUpdater.class);
+        this.candlesUpdater = spy(new CandlesUpdater(oandaAPIMock.getContext(),
+                oandaAPIMock.getMockRequest(),  CandleGranularity.M30));
+
         List<Candlestick> candlestickList = this.indicatorUpdateHelper.getCandlestickList();
-        when(this.candlesUpdater.getCandles()).thenReturn(candlestickList);
-        when(this.candlesUpdater.updateCandles(this.mockDateTime)).thenReturn(true);
+        doReturn(candlestickList).when(this.candlesUpdater).getCandles();
+    }
+
+    private void initializeOandaAPIMock()  {
+        try {
+            oandaAPIMock = new OandaAPIMock();
+            oandaAPIMock.setMockRequestToCandles();
+            oandaAPIMock.setMockResponseToGetCandles(this.indicatorUpdateHelper.getCandlestickList());
+        } catch (RequestException | ExecuteException e) {
+            e.printStackTrace();
+        }
+
     }
 }

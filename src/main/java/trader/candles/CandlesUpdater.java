@@ -26,9 +26,9 @@ public final class CandlesUpdater {
     private final CandleGranularity candleTimeFrame;
     private InstrumentCandlesRequest request;
 
-    public CandlesUpdater(Context context, InstrumentCandlesRequest request, CandleGranularity candleTimeFrame){
+    public CandlesUpdater(Context context, InstrumentCandlesRequest request, CandleGranularity candleGranularity){
         this.context = context;
-        this.candleTimeFrame = candleTimeFrame;
+        this.candleTimeFrame = candleGranularity;
         this.request = request;
         this.candlestickList = new ArrayList<>();
 
@@ -69,7 +69,7 @@ public final class CandlesUpdater {
     }
 
         private boolean haveCandlesticks() {
-            return this.candlestickList.size() > 0;
+            return this.candlestickList != null && this.candlestickList.size() > 0;
         }
 
         private Candlestick lastCandle() {

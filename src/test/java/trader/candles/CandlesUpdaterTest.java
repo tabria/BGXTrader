@@ -36,7 +36,6 @@ public class CandlesUpdaterTest {
                                 oandaAPIMock.getMockRequest(), CandleGranularity.M30);
     }
 
-
     @Test
     public void testGetCandlesForEquality(){
         assertThat(candlesUpdater.getCandles(), is(indicatorUpdateHelper.getCandlestickList()));
