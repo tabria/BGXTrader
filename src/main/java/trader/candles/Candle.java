@@ -1,0 +1,194 @@
+package trader.candles;
+
+import java.math.BigDecimal;
+import java.time.ZonedDateTime;
+
+public final class Candle {
+
+    private final CandlePriceType priceType;
+    private final long timeFrame;
+    private final boolean complete;
+    private final long volume;
+    private final BigDecimal openPrice;
+    private final BigDecimal highPrice;
+    private final BigDecimal lowPrice;
+    private final BigDecimal closePrice;
+    private final ZonedDateTime dateTime;
+
+
+    private Candle(CandleBuilder candleBuilder) {
+        priceType = candleBuilder.priceType;
+        timeFrame = candleBuilder.timeFrame;
+        complete = candleBuilder.complete;
+        volume = candleBuilder.volume;
+        openPrice = candleBuilder.openPrice;
+        highPrice = candleBuilder.highPrice;
+        lowPrice = candleBuilder.lowPrice;
+        closePrice = candleBuilder.closePrice;
+        dateTime = candleBuilder.dateTime;
+    }
+
+    public CandlePriceType getPriceType() {
+        return priceType;
+    }
+
+    public long getTimeFrame() {
+        return timeFrame;
+    }
+
+    public boolean isComplete() {
+        return complete;
+    }
+
+    public long getVolume() {
+        return volume;
+    }
+
+    public BigDecimal getOpenPrice() {
+        return openPrice;
+    }
+
+    public BigDecimal getHighPrice() {
+        return highPrice;
+    }
+
+    public BigDecimal getLowPrice() {
+        return lowPrice;
+    }
+
+    public BigDecimal getClosePrice() {
+        return closePrice;
+    }
+
+    public ZonedDateTime getDateTime() {
+        return dateTime;
+    }
+
+    public static class CandleBuilder {
+
+        private static final long MIN_CANDLE_TIME_FRAME_IN_SECONDS = 5L;
+        private static final long MAX_CANDLE_TIME_FRAME_IN_SECONDS = 2629800L;
+        private static final long DEFAULT_CANDLE_TIME_FRAME_IN_SECONDS = 1_800L;
+        private static final long DEFAULT_VOLUME = 1L;
+        private static final BigDecimal DEFAULT_PRICE = new BigDecimal(0.00001).setScale(5, BigDecimal.ROUND_HALF_UP);
+        private static final ZonedDateTime DEFAULT_ZONED_DATE_TIME = ZonedDateTime.parse("2012-06-30T12:30:40Z[UTC]");
+
+        private CandlePriceType priceType;
+        private long timeFrame;
+        private boolean complete;
+        private long volume;
+        private BigDecimal openPrice;
+        private BigDecimal highPrice;
+        private BigDecimal lowPrice;
+        private BigDecimal closePrice;
+        private ZonedDateTime dateTime;
+
+        public CandleBuilder(){
+            priceType = new CloseCandlePriceType();
+            timeFrame = DEFAULT_CANDLE_TIME_FRAME_IN_SECONDS;
+            complete = true;
+            volume = DEFAULT_VOLUME;
+            openPrice = DEFAULT_PRICE;
+            highPrice = DEFAULT_PRICE;
+            lowPrice = DEFAULT_PRICE;
+            closePrice = DEFAULT_PRICE;
+            dateTime = DEFAULT_ZONED_DATE_TIME;
+        }
+
+        public Candle build(){
+            return new Candle(this);
+        }
+
+        public CandleBuilder setPriceType(CandlePriceType type){
+            checkNull(type);
+            priceType = type;
+            return this;
+        }
+
+        public CandleBuilder setTimeFrame(long timeFrameInSeconds){
+            checkTimeFrameBoundaries(timeFrameInSeconds);
+            timeFrame = timeFrameInSeconds;
+            return this;
+        }
+
+        public CandleBuilder setComplete(boolean isCompleted){
+            complete = isCompleted;
+            return this;
+        }
+
+        public CandleBuilder setVolume(long newVolume){
+            checkNegativeNumber(newVolume);
+            volume = newVolume;
+            return this;
+        }
+
+        public CandleBuilder setOpenPrice(BigDecimal price){
+            checkNull(price);
+            checkNegativeNumber(price);
+            openPrice = price;
+            return this;
+        }
+
+        public CandleBuilder setHighPrice(BigDecimal price){
+            checkNull(price);
+            checkNegativeNumber(price);
+            highPrice = price;
+            return this;
+        }
+
+        public CandleBuilder setLowPrice(BigDecimal price){
+            checkNull(price);
+            checkNegativeNumber(price);
+            lowPrice = price;
+            return this;
+        }
+
+        public CandleBuilder setClosePrice(BigDecimal price){
+            checkNull(price);
+            checkNegativeNumber(price);
+            closePrice = price;
+            return this;
+        }
+
+        public CandleBuilder setDateTime(ZonedDateTime dateTime){
+            checkNull(dateTime);
+            this.dateTime = dateTime;
+            return this;
+        }
+
+        private void checkNegativeNumber(BigDecimal number) {
+            if(number.compareTo(BigDecimal.ZERO)<0){
+                throw new NegativeNumberException();
+            }
+        }
+
+        private void checkNegativeNumber(long number) {
+            if(number<0L){
+                throw new NegativeNumberException();
+            }
+        }
+
+        private void checkTimeFrameBoundaries(long timeFrameInSeconds) {
+            if(timeFrameInSeconds < MIN_CANDLE_TIME_FRAME_IN_SECONDS){
+                throw new UnderflowException();
+            }
+            if(timeFrameInSeconds > MAX_CANDLE_TIME_FRAME_IN_SECONDS){
+                throw new OverflowException();
+            }
+        }
+
+        private void checkNull(Object argument) {
+            if(argument == null){
+                throw new NullArgumentException();
+            }
+        }
+
+    }
+
+    static class NullArgumentException extends RuntimeException{};
+    static class UnderflowException extends RuntimeException{};
+    static class OverflowException extends RuntimeException{};
+    static class NegativeNumberException extends RuntimeException{};
+
+
+}
