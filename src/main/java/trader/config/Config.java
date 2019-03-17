@@ -41,6 +41,10 @@ public final class Config {
      */
     public static final InstrumentName INSTRUMENT  = new InstrumentName("EUR_USD");
 
+
+    ////// above will be remove //////////
+    public static final String INSTRUMEN_T = "EUR_USD";
+
     /**
      * Risk Per Trade - Default Value is 0.01 or 1% of the account
      */
@@ -55,5 +59,7 @@ public final class Config {
      * System default timeFrame (@code CandleStickGranularity)
      */
     public static final CandleGranularity TIME_FRAME = CandleGranularity.M30;
+
+    public static final double MIN_BALANCE = 1.0D;
 
 }

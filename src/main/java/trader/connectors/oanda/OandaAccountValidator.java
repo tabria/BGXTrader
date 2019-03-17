@@ -1,44 +1,38 @@
 package trader.connectors.oanda;
 
+import com.oanda.v20.Context;
 import com.oanda.v20.ExecuteException;
 import com.oanda.v20.RequestException;
 import com.oanda.v20.account.*;
+import com.oanda.v20.primitives.AccountUnits;
+import trader.config.Config;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.List;
 
 public class OandaAccountValidator {
 
-    private double MIN_BALANCE = 1.0D;
-
     private OandaConnector oandaConnector;
-    private AccountContext accountContext;
-    private AccountID accountID;
 
     public OandaAccountValidator(OandaConnector connector) {
         oandaConnector = connector;
-        accountContext = new AccountContext(oandaConnector.getContext());
-        accountID = oandaConnector.getAccountID();
     }
 
     public void validateAccount() {
         for (AccountProperties account : extractAccounts()) {
-            if (account.getId().equals(accountID))
+            if (account.getId().equals(oandaConnector.getAccountID()))
                 return;
         }
         throw new AccountDoNotExistException();
     }
 
     public void validateAccountBalance() {
-        if (getAccount().getBalance().doubleValue() <= MIN_BALANCE) {
+        if (isBalanceBelowMinimum())
             throw new AccountBalanceBelowMinimum();
-        }
     }
 
     private List<AccountProperties> extractAccounts() {
         try {
-            AccountListResponse list = accountContext.list();
+            AccountListResponse list = getAccountContext().list();
             return list.getAccounts();
         } catch (NullPointerException | RequestException | ExecuteException e) {
             throw new UnableToExecuteRequest();
@@ -47,7 +41,7 @@ public class OandaAccountValidator {
 
     private Account getAccount() {
         try {
-            return accountContext.get(accountID).getAccount();
+            return  getAccountContext().get(oandaConnector.getAccountID()).getAccount();
         } catch (NullPointerException | RequestException | ExecuteException e) {
             throw new UnableToExecuteRequest();
         }
@@ -57,6 +51,14 @@ public class OandaAccountValidator {
     public class AccountBalanceBelowMinimum extends RuntimeException{};
     public class UnableToExecuteRequest extends RuntimeException{};
 
+
+    private AccountContext getAccountContext() {
+        return oandaConnector.getContext().account;
+    }
+
+    private boolean isBalanceBelowMinimum() {
+        return getAccount().getBalance().doubleValue() <= Config.MIN_BALANCE;
+    }
 
 //    private void serverDown(RequestException re) {
 //        if (re.getStatus() == 504 || re.getStatus() == 503){

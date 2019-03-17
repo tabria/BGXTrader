@@ -8,6 +8,9 @@ import com.oanda.v20.instrument.Candlestick;
 import com.oanda.v20.instrument.InstrumentCandlesRequest;
 import com.oanda.v20.instrument.InstrumentCandlesResponse;
 import com.oanda.v20.instrument.InstrumentContext;
+import com.oanda.v20.pricing.PricingContext;
+import com.oanda.v20.pricing.PricingGetRequest;
+import com.oanda.v20.pricing.PricingGetResponse;
 import com.oanda.v20.primitives.AccountUnits;
 import com.oanda.v20.primitives.DateTime;
 
@@ -20,24 +23,25 @@ public class OandaAPIMock {
     private Context mockContext;
     private InstrumentCandlesRequest mockRequest;
     private InstrumentCandlesResponse mockResponse;
-    private AccountContext mockAccountContext;
-    private AccountGetResponse mockAccountGetResponse;
-    private Account mockAccount ;
-    private AccountUnits mockAccountUnits;
-    private AccountID mockAccountID;
+//    private AccountContext mockAccountContext;
+//    private AccountGetResponse mockAccountGetResponse;
+//    private Account mockAccount ;
+//    private AccountUnits mockAccountUnits;
+//    private AccountID mockAccountID;
     private DateTime mockDateTime;
+    private PricingGetRequest mockPricingGetRequest;
+    private PricingGetResponse mockPricingGetResponse;
 
     public OandaAPIMock() {
         mockContext = mock(Context.class);
         mockContext.instrument = mock(InstrumentContext.class);
+        mockContext.pricing = mock(PricingContext.class);
         mockRequest = mock(InstrumentCandlesRequest.class);
         mockResponse = mock(InstrumentCandlesResponse.class);
-        mockAccountContext = mock(AccountContext.class);
-        mockAccountGetResponse = mock(AccountGetResponse.class);
-        mockAccount = mock(Account.class);
-        mockAccountUnits = mock(AccountUnits.class);
-        mockAccountID = mock(AccountID.class);
+
         mockDateTime = mock(DateTime.class);
+        mockPricingGetRequest = mock(PricingGetRequest.class);
+        mockPricingGetResponse = mock(PricingGetResponse.class);
 
     }
 
@@ -53,26 +57,6 @@ public class OandaAPIMock {
         return mockResponse;
     }
 
-    public AccountContext getMockAccountContext() {
-        return mockAccountContext;
-    }
-
-    public AccountGetResponse getMockAccountGetResponse() {
-        return mockAccountGetResponse;
-    }
-
-    public Account getMockAccount() {
-        return mockAccount;
-    }
-
-    public AccountUnits getMockAccountUnits() {
-        return mockAccountUnits;
-    }
-
-    public AccountID getMockAccountID(){
-        return mockAccountID;
-    }
-
     public DateTime getMockDateTime(){
         return mockDateTime;
     }
@@ -85,27 +69,9 @@ public class OandaAPIMock {
         when(mockResponse.getCandles()).thenReturn(candlestickList);
     }
 
-    public void setMockAccountUnitsDoubleValue(double newValue){
-        when(mockAccountUnits.doubleValue()).thenReturn(newValue);
+    public void setMockPricingGetResponse() throws ExecuteException, RequestException {
+        when(mockContext.pricing.get(mockPricingGetRequest)).thenReturn(mockPricingGetResponse);
     }
-
-    public void setMockAccountGetBalance(){
-        when(mockAccount.getBalance()).thenReturn(mockAccountUnits);
-    }
-
-    public void setMockAccountContextGet(AccountID accountID){
-        try {
-            when(mockAccountContext.get(accountID)).thenReturn(mockAccountGetResponse);
-        } catch (RequestException | ExecuteException e) {
-            throw new RuntimeException();
-        }
-    }
-
-    public void setMockAccountGetResponse(){
-        when(mockAccountGetResponse.getAccount()).thenReturn(mockAccount);
-    }
-
-
 
 
 }
