@@ -8,7 +8,7 @@ import com.oanda.v20.pricing.PricingGetRequest;
 import com.oanda.v20.pricing.PricingGetResponse;
 import com.oanda.v20.primitives.DateTime;
 import trader.config.Config;
-import trader.connectors.Connection;
+import trader.connection.Connection;
 import trader.core.Observable;
 import trader.core.Observer;
 import trader.indicators.IndicatorObserver;

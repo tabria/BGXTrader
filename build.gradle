@@ -26,7 +26,9 @@ repositories {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
-    testCompile group: 'org.mockito', name: 'mockito-core', version: '2.21.+'
+    testCompile group: 'org.mockito', name: 'mockito-core', version: '2.23.+'
+    testCompile group: 'org.powermock', name: 'powermock-module-junit4', version: '1.7.4'
+    testCompile group: 'org.powermock', name: 'powermock-api-mockito2', version:'1.7.4'
     compile group: 'com.oanda.v20', name: 'v20', version: '3.0.24'
     compile group: 'org.apache.httpcomponents', name: 'httpcore', version: '4.4.6'
     compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.3'

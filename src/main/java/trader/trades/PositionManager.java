@@ -6,7 +6,7 @@ import com.oanda.v20.RequestException;
 import com.oanda.v20.account.Account;
 import com.oanda.v20.primitives.DateTime;
 import trader.config.Config;
-import trader.connectors.Connection;
+import trader.connection.Connection;
 import trader.core.Observer;
 import trader.trades.services.NewTradeService;
 import trader.trades.services.OrderService;

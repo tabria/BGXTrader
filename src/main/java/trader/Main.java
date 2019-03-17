@@ -10,7 +10,7 @@ import com.oanda.v20.account.AccountListResponse;
 import com.oanda.v20.account.AccountProperties;
 import com.oanda.v20.primitives.InstrumentName;
 import trader.config.Config;
-import trader.connectors.Connection;
+import trader.connection.Connection;
 import trader.core.Observable;
 import trader.core.Observer;
 import trader.indicators.Indicator;
