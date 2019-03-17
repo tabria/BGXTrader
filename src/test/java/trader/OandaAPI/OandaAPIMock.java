@@ -9,6 +9,7 @@ import com.oanda.v20.instrument.InstrumentCandlesRequest;
 import com.oanda.v20.instrument.InstrumentCandlesResponse;
 import com.oanda.v20.instrument.InstrumentContext;
 import com.oanda.v20.primitives.AccountUnits;
+import com.oanda.v20.primitives.DateTime;
 
 import java.util.List;
 
@@ -24,8 +25,9 @@ public class OandaAPIMock {
     private Account mockAccount ;
     private AccountUnits mockAccountUnits;
     private AccountID mockAccountID;
+    private DateTime mockDateTime;
 
-    public OandaAPIMock() throws RequestException, ExecuteException {
+    public OandaAPIMock() {
         mockContext = mock(Context.class);
         mockContext.instrument = mock(InstrumentContext.class);
         mockRequest = mock(InstrumentCandlesRequest.class);
@@ -35,6 +37,7 @@ public class OandaAPIMock {
         mockAccount = mock(Account.class);
         mockAccountUnits = mock(AccountUnits.class);
         mockAccountID = mock(AccountID.class);
+        mockDateTime = mock(DateTime.class);
 
     }
 
@@ -68,6 +71,10 @@ public class OandaAPIMock {
 
     public AccountID getMockAccountID(){
         return mockAccountID;
+    }
+
+    public DateTime getMockDateTime(){
+        return mockDateTime;
     }
 
     public void setMockRequestToCandles() throws ExecuteException, RequestException {

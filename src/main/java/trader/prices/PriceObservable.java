@@ -20,10 +20,6 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 
-/**
- * This class is requesting new prices every second
- */
-
 public final class PriceObservable implements Observable {
 
     private static final int THREAD_SLEEP_INTERVAL = 1000;
@@ -31,74 +27,38 @@ public final class PriceObservable implements Observable {
     private final Context context;
     private volatile boolean running = true;
     private CopyOnWriteArrayList<Observer> observers;
-//    private final Set<Observer> observers;
     private PricingGetRequest request;
 
-    /**
-     * Constructor
-     * @param context oanda contex
-     * @see Context
-     */
     private PriceObservable(Context context){
         this.context = context;
         this.observers = new CopyOnWriteArrayList<>();
         this.request = createRequest();
     }
 
-    /**
-     *
-     * @param context oanda context
-     * @return {@link PriceObservable}
-     */
     public static PriceObservable create(Context context){
         return new PriceObservable(context);
 
     }
 
-    /**
-     * Register observers
-     *
-     * @param observer current observer
-     * @see Observer
-     * @see IndicatorObserver
-     */
     @Override
     public void registerObserver(Observer observer) {
-        if (observer == null){
-            return;
-        }
+        if (observer == null)
+            throw new NullArgumentException();
         this.observers.add(observer);
     }
 
-    /**
-     * Unregister observer
-     * @param observer current observer
-     * @see Observer
-     * @see IndicatorObserver
-     */
     @Override
     public void unregisterObserver(Observer observer) {
-        if (observer != null){
+        if (observer != null)
             this.observers.remove(observer);
-        }
     }
-
-    /**
-     * Notify observers
-     * @param dateTime dateTime of the last fetched candle
-     * @see DateTime
-     */
 
     @Override
     public void notifyObservers(DateTime dateTime, BigDecimal ask, BigDecimal bid) {
-        for (Observer observer : this.observers) {
+        for (Observer observer : this.observers)
             observer.updateObserver(dateTime, ask, bid);
-        }
     }
 
-    /**
-     * This method compare old prices to new prices and notify observers if needed
-     */
     @Override
     public void execute() {
 
@@ -174,5 +134,7 @@ public final class PriceObservable implements Observable {
 
         return  new PricingGetRequest(Config.ACCOUNTID, instruments);
     }
+
+    public class NullArgumentException extends RuntimeException{};
 
 }

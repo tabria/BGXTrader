@@ -1,4 +1,4 @@
-package trader.connectors;
+package trader.connectors.oanda;
 
 import com.oanda.v20.ExecuteException;
 import com.oanda.v20.RequestException;
@@ -7,6 +7,8 @@ import org.junit.Before;
 import org.junit.Test;
 import trader.CommonTestClassMembers;
 import trader.OandaAPI.OandaAPIMock;
+import trader.connectors.ApiConnector;
+import trader.connectors.ApiConnectors;
 import trader.connectors.oanda.OandaAccountValidator;
 import trader.connectors.oanda.OandaAccountValidator.*;
 import trader.connectors.oanda.OandaConnector;
@@ -70,7 +72,7 @@ public class OandaAccountValidatorTest {
     }
 
     @Test(expected = AccountBalanceBelowMinimum.class)
-    public void accountWithBalanceLowerThanMinimum_Exception() throws ExecuteException, RequestException {
+    public void accountWithBalanceLowerThanMinimum_Exception() {
         ApiConnector oandaConnector = ApiConnectors.create("Oanda");
         validator = new OandaAccountValidator((OandaConnector) oandaConnector);
         commonMembers.changeFieldObject(validator,"MIN_BALANCE", MINIMUM_ACCOUNT_BALANCE );

@@ -4,29 +4,40 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.stubbing.OngoingStubbing;
+import trader.CommonTestClassMembers;
 import trader.core.Observable;
 
 import java.lang.reflect.Field;
 
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 public class PricePullTest {
 
-    Observable observable;
+    private String expected = "puller";
+    private Observable observable;
+    private PricePull pricePull;
+    private CommonTestClassMembers commonMembers;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         observable = mock(PriceObservable.class);
+        pricePull = new PricePull(expected, observable);
+        commonMembers = new CommonTestClassMembers();
     }
 
     @Test
-    public void testPricePullThreadName() throws NoSuchFieldException {
-        String expected = "puller";
-        PricePull newPricePull = new PricePull(expected, observable);
-        Field thread = newPricePull.getClass().getDeclaredField("thread");
+    public void testPricePullThreadName() {
+        Thread thread = (Thread) commonMembers.extractFieldObject(pricePull, "thread");
 
-        Assert.assertEquals(expected, thread.getName());
+        assertEquals(expected, thread.getName());
+    }
 
+    @Test
+    public void testIfObservableIsSameObject(){
+        Observable pricePullObservable = (Observable) commonMembers.extractFieldObject(pricePull, "observable");
+
+        assertSame(observable, pricePullObservable);
     }
 
 }

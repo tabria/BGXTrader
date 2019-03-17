@@ -1,9 +1,10 @@
-package trader.connectors;
+package trader.connectors.oanda;
 
 import org.junit.Before;
 import org.junit.Test;
 import trader.CommonTestClassMembers;
 import trader.OandaAPI.OandaAPIMock;
+import trader.connectors.ApiConnectors;
 import trader.connectors.oanda.OandaConnector;
 import static org.junit.Assert.*;
 
