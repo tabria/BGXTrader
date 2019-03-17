@@ -2,38 +2,25 @@ package trader.connectors.oanda;
 
 import com.oanda.v20.ExecuteException;
 import com.oanda.v20.RequestException;
-import com.oanda.v20.account.AccountID;
-import com.oanda.v20.pricing.PricingGetRequest;
-import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
 import trader.CommonTestClassMembers;
-import trader.OandaAPI.OandaAPIMock;
-import trader.config.Config;
-import trader.connectors.ApiConnector;
-import trader.prices.Price;
-
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import trader.OandaAPI.OandaAPIMockPricing;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 
 public class OandaPriceResponseTest {
 
-    OandaAPIMock oandaAPIMock;
+    OandaAPIMockPricing oandaAPIMockPricing;
     OandaPriceResponse priceResponse;
     CommonTestClassMembers commonMembers;
     OandaConnector mockOandaConnector;
 
     @Before
     public void setUp() throws RequestException, ExecuteException {
-        oandaAPIMock = new OandaAPIMock();
+        oandaAPIMockPricing = new OandaAPIMockPricing();
         mockOandaConnector = mock(OandaConnector.class);
-        oandaAPIMock.setMockPricingGetResponse();
+        oandaAPIMockPricing.setMockPricingGetResponse();
         priceResponse = new OandaPriceResponse(mockOandaConnector);
         commonMembers = new CommonTestClassMembers();
     }

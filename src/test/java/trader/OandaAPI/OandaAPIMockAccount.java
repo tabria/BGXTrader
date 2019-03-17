@@ -5,8 +5,6 @@ import com.oanda.v20.ExecuteException;
 import com.oanda.v20.RequestException;
 import com.oanda.v20.account.*;
 import com.oanda.v20.primitives.AccountUnits;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.Mockito.mock;
