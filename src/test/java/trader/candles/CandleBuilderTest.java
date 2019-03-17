@@ -284,7 +284,6 @@ public class CandleBuilderTest {
         } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
-
     }
 
 }

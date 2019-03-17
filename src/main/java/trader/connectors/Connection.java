@@ -1,31 +1,28 @@
-package trader.core;
-import trader.config.Config;
+package trader.connectors;
+
+import com.oanda.v20.RequestException;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-/**
- * Provide methods for connectivity
- */
-public final class Connection {
-
-//TODO make method to check for exceptions 503 and 504 - no service for account
+public class Connection {
 
     private Connection() {
     }
 
-    /**
-     * Waiting till reconnect
-     */
-    public static void waitToConnect() {
-        String host = Config.URL.substring(8);
-       while (true){
+    public static void waitToConnect(String url) {
+        String host = url.substring(8);
+        String message ="";
+        while (true){
            try {
                InetAddress[] allByName = InetAddress.getAllByName(host);
                break;
            } catch (UnknownHostException e) {
                try {
-                   System.out.println("Connection lost. Reconnect in 30 sec ...");
+                   if (message.equals("")){
+                       message = "Connection lost. Reconnecting .......";
+                       System.out.println(message);
+                   }
                    Thread.sleep(30000);
                } catch (InterruptedException e1) {
                    e1.printStackTrace();
@@ -33,6 +30,4 @@ public final class Connection {
            }
        }
     }
-
-
 }

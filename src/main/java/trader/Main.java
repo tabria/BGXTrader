@@ -3,22 +3,16 @@ package trader;
 
 import com.oanda.v20.Context;
 import com.oanda.v20.ContextBuilder;
-import com.oanda.v20.ExecuteException;
 import com.oanda.v20.RequestException;
 import com.oanda.v20.account.Account;
 import com.oanda.v20.account.AccountGetResponse;
 import com.oanda.v20.account.AccountListResponse;
 import com.oanda.v20.account.AccountProperties;
-import com.oanda.v20.instrument.CandlestickGranularity;
-import com.oanda.v20.instrument.InstrumentCandlesRequest;
-import com.oanda.v20.instrument.InstrumentCandlesResponse;
 import com.oanda.v20.primitives.InstrumentName;
 import trader.config.Config;
-import trader.core.Connection;
+import trader.connectors.Connection;
 import trader.core.Observable;
 import trader.core.Observer;
-import trader.indicators.CandleGranularityOperations;
-import trader.indicators.CandlestickPriceOperations;
 import trader.indicators.Indicator;
 import trader.indicators.IndicatorObserver;
 import trader.indicators.enums.CandleGranularity;
@@ -63,7 +57,6 @@ import java.util.List;
 public class Main {
 
     public static void main(String[] args){
-
 
         Context context = new ContextBuilder(Config.URL)
                 .setToken(Config.TOKEN)
@@ -151,7 +144,7 @@ public class Main {
     //Check for valid account
     private static void validateAccount(Context context){
 
-        Connection.waitToConnect();
+        Connection.waitToConnect(Config.URL);
 
         try {
 

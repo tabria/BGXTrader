@@ -8,14 +8,13 @@ import com.oanda.v20.pricing.PricingGetRequest;
 import com.oanda.v20.pricing.PricingGetResponse;
 import com.oanda.v20.primitives.DateTime;
 import trader.config.Config;
-import trader.core.Connection;
+import trader.connectors.Connection;
 import trader.core.Observable;
 import trader.core.Observer;
 import trader.indicators.IndicatorObserver;
 
 
 import java.math.BigDecimal;
-import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -127,7 +126,7 @@ public final class PriceObservable implements Observable {
                 Thread.sleep(THREAD_SLEEP_INTERVAL);
 
             } catch(ExecuteException ee){
-                Connection.waitToConnect();
+                Connection.waitToConnect(Config.URL);
             } catch (RequestException  | InterruptedException e ) {
                 String message = e.getMessage();
                 //message is null
@@ -136,7 +135,7 @@ public final class PriceObservable implements Observable {
                     this.sleepThread(THREAD_SLEEP_INTERVAL);
 
                 }else if (message.equalsIgnoreCase("Service unavailable, please try again later.")){
-                    Connection.waitToConnect();
+                    Connection.waitToConnect(Config.URL);
 
                 }else{
                     throw new RuntimeException(e);
