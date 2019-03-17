@@ -6,8 +6,6 @@ import com.oanda.v20.account.*;
 import com.oanda.v20.primitives.InstrumentName;
 import trader.connectors.ApiConnectors;
 
-import java.util.List;
-
 public class OandaConnector extends ApiConnectors {
 
     private final String url = "https://api-fxtrade.oanda.com";
@@ -22,6 +20,7 @@ public class OandaConnector extends ApiConnectors {
     private OandaConnector(){
         setContext();
         setOandaValidator();
+        validateAccount();
     }
 
     public Context getContext(){
@@ -45,7 +44,11 @@ public class OandaConnector extends ApiConnectors {
 
     private void setOandaValidator() {
         oandaAccountValidator = new OandaAccountValidator(this);
-        oandaAccountValidator.runValidator();
+    }
+
+    private void validateAccount(){
+        oandaAccountValidator.validateAccount();
+        oandaAccountValidator.validateAccountBalance();
     }
 
 }

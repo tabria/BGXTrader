@@ -15,7 +15,6 @@ public final class Candle {
     private final BigDecimal closePrice;
     private final ZonedDateTime dateTime;
 
-
     private Candle(CandleBuilder candleBuilder) {
         priceType = candleBuilder.priceType;
         timeFrame = candleBuilder.timeFrame;

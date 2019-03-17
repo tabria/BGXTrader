@@ -22,12 +22,7 @@ public class OandaAccountValidator {
         accountID = oandaConnector.getAccountID();
     }
 
-    public void runValidator(){
-            validateAccount();
-            validateAccountBalance();
-    }
-
-    private void validateAccount() {
+    public void validateAccount() {
         for (AccountProperties account : extractAccounts()) {
             if (account.getId().equals(accountID))
                 return;
@@ -35,7 +30,7 @@ public class OandaAccountValidator {
         throw new AccountDoNotExistException();
     }
 
-    private void validateAccountBalance() {
+    public void validateAccountBalance() {
         if (getAccount().getBalance().doubleValue() <= MIN_BALANCE) {
             throw new AccountBalanceBelowMinimum();
         }

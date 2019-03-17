@@ -2,6 +2,7 @@ package trader.candles;
 
 import org.junit.Before;
 import org.junit.Test;
+import trader.CommonTestClassMembers;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -28,12 +29,14 @@ public class CandleBuilderTest {
     CandleBuilder candleBuilder;
     CandlePriceType closeCandlePriceType;
     Candle candle;
+    CommonTestClassMembers commonMembers;
 
     @Before
     public void setUp() throws Exception {
         candle = new CandleBuilder().build();
         candleBuilder = new CandleBuilder();
         closeCandlePriceType = mock(CloseCandlePriceType.class);
+        commonMembers = new CommonTestClassMembers();
 
     }
 
@@ -53,8 +56,9 @@ public class CandleBuilderTest {
     @Test
     public void setCorrectPriceType(){
         candleBuilder.setPriceType(closeCandlePriceType);
-        CandlePriceType candlePriceType = (CandlePriceType) extractFieldObject("priceType");
         when(closeCandlePriceType.getType()).thenReturn(PRICE_TYPE);
+        CandlePriceType candlePriceType = (CandlePriceType) commonMembers.extractFieldObject(candleBuilder, "priceType");
+
         assertEquals(candlePriceType.getType(), PRICE_TYPE);
     }
 
@@ -76,7 +80,7 @@ public class CandleBuilderTest {
     @Test
     public void setTimeFrame(){
         candleBuilder.setTimeFrame(TIME_FRAME_IN_SECONDS);
-        long actual = (long) extractFieldObject("timeFrame");
+        long actual = (long) commonMembers.extractFieldObject(candleBuilder,"timeFrame");
 
         assertEquals(TIME_FRAME_IN_SECONDS, actual);
     }
@@ -89,7 +93,7 @@ public class CandleBuilderTest {
     @Test
     public void callSetComplete(){
         candleBuilder.setComplete(false);
-        boolean actual = (boolean) extractFieldObject("complete");
+        boolean actual = (boolean) commonMembers.extractFieldObject(candleBuilder,"complete");
 
         assertFalse(actual);
     }
@@ -107,7 +111,7 @@ public class CandleBuilderTest {
     @Test
     public void callSetVolume(){
         candleBuilder.setVolume(VOLUME);
-        long actual = (long) extractFieldObject("volume");
+        long actual = (long) commonMembers.extractFieldObject(candleBuilder,"volume");
 
         assertEquals(actual, VOLUME);
     }
@@ -130,7 +134,7 @@ public class CandleBuilderTest {
     @Test
     public void callSetOpenPrice(){
         candleBuilder.setOpenPrice(POSITIVE_PRICE);
-        BigDecimal candleOpenPrice = (BigDecimal) extractFieldObject("openPrice");
+        BigDecimal candleOpenPrice = (BigDecimal) commonMembers.extractFieldObject(candleBuilder,"openPrice");
 
         assertEquals(0, candleOpenPrice.compareTo(POSITIVE_PRICE));
     }
@@ -153,7 +157,7 @@ public class CandleBuilderTest {
     @Test
     public void callSetHighPrice(){
         candleBuilder.setHighPrice(POSITIVE_PRICE);
-        BigDecimal candleHighPrice = (BigDecimal) extractFieldObject("highPrice");
+        BigDecimal candleHighPrice = (BigDecimal) commonMembers.extractFieldObject(candleBuilder,"highPrice");
 
         assertEquals(0, candleHighPrice.compareTo(POSITIVE_PRICE));
     }
@@ -176,7 +180,7 @@ public class CandleBuilderTest {
     @Test
     public void callSetLowPrice(){
         candleBuilder.setLowPrice(POSITIVE_PRICE);
-        BigDecimal candleLowPrice = (BigDecimal) extractFieldObject("lowPrice");
+        BigDecimal candleLowPrice = (BigDecimal) commonMembers.extractFieldObject(candleBuilder,"lowPrice");
 
         assertEquals(0, candleLowPrice.compareTo(POSITIVE_PRICE));
     }
@@ -199,7 +203,7 @@ public class CandleBuilderTest {
     @Test
     public void callSetClosePrice(){
         candleBuilder.setClosePrice(POSITIVE_PRICE);
-        BigDecimal candleClosePrice = (BigDecimal) extractFieldObject("closePrice");
+        BigDecimal candleClosePrice = (BigDecimal) commonMembers.extractFieldObject(candleBuilder,"closePrice");
 
         assertEquals(0, candleClosePrice.compareTo(POSITIVE_PRICE));
     }
@@ -218,7 +222,7 @@ public class CandleBuilderTest {
     public void callSetDateTime(){
         ZonedDateTime expected = ZonedDateTime.now();
         candleBuilder.setDateTime(expected);
-        ZonedDateTime actual = (ZonedDateTime) extractFieldObject("dateTime");
+        ZonedDateTime actual = (ZonedDateTime) commonMembers.extractFieldObject(candleBuilder,"dateTime");
 
         assertEquals(0, actual.compareTo(expected) );
     }
@@ -275,15 +279,4 @@ public class CandleBuilderTest {
     public void createCandleBuilderWithDateTime_Default(){
         assertEquals(0, DEFAULT_ZONED_DATE_TIME.compareTo(candle.getDateTime()));
     }
-
-    private Object extractFieldObject(String fieldName) {
-        try {
-            Field field = candleBuilder.getClass().getDeclaredField(fieldName);
-            field.setAccessible(true);
-            return field.get(candleBuilder);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
 }

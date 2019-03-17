@@ -9,8 +9,8 @@ import trader.core.Observer;
 import java.lang.reflect.Field;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
-import static trader.CommonConstants.ASK;
-import static trader.CommonConstants.BID;
+import static trader.CommonTestClassMembers.ASK;
+import static trader.CommonTestClassMembers.BID;
 
 public class IndicatorObserverTest {
 
