@@ -1,6 +1,7 @@
 package trader;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 
@@ -31,17 +32,29 @@ public class CommonTestClassMembers {
     }
 
     public void changePrivateFinalField(Object object, String fieldName, Object newValue) throws NoSuchFieldException, IllegalAccessException {
-        Field accountIDField = getField(object, fieldName);
+        Field field = getField(object, fieldName);
         Field modifiersField = Field.class.getDeclaredField("modifiers");
         modifiersField.setAccessible(true);
-        modifiersField.setInt(accountIDField, accountIDField.getModifiers() & ~Modifier.FINAL);
-        accountIDField.set(object, newValue);
+        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+        field.set(object, newValue);
     }
 
     private Field getField(Object object, String fieldName) throws NoSuchFieldException {
         Field field = object.getClass().getDeclaredField(fieldName);
         field.setAccessible(true);
         return field;
+    }
+
+    public Method getPrivateMethodForTest(Object object, String methodName, Class<?>...params) throws NoSuchMethodException {
+        Method declaredMethod = object.getClass().getDeclaredMethod(methodName, params);
+        declaredMethod.setAccessible(true);
+        return declaredMethod;
+    }
+
+    public Method getPrivateMethodForTest(Class<?> objectClass, String methodName, Class<?>...params) throws NoSuchMethodException {
+        Method declaredMethod = objectClass.getDeclaredMethod(methodName, params);
+        declaredMethod.setAccessible(true);
+        return declaredMethod;
     }
 
 }

@@ -1,39 +1,47 @@
 package trader.connection;
-
-import com.sun.javafx.binding.StringFormatter;
-
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 public class Connection {
 
+    private static final long DEFAULT_SLEEP_TIME_MILLIS = 30000;
+    private static final int BEGIN_INDEX = 8;
     private static String message = "";
 
     private Connection() {
     }
 
     public static void waitToConnect(String url) {
-        String host = url.substring(8);
-        message ="";
         while (true){
-           try {
-               getAddresses(host);
-               break;
-           } catch (UnknownHostException e) {
-               activateSleep();
-           }
-       }
+            if (verifyHostIpExistence(url, DEFAULT_SLEEP_TIME_MILLIS))
+                break;
+        }
         MessagePrinter.printMessage("Connected");
+    }
+
+    private static boolean verifyHostIpExistence (String url, long sleepInterval) {
+        message ="";
+        try {
+            getAddresses(extractHost(url));
+            return true;
+        } catch (UnknownHostException e) {
+            activateSleep(sleepInterval);
+        }
+        return false;
+    }
+
+    private static String extractHost(String url) {
+        return url.substring(BEGIN_INDEX);
     }
 
     private static void getAddresses(String host) throws UnknownHostException {
         InetAddress[] allByName = InetAddress.getAllByName(host);
     }
 
-    private static void activateSleep() {
+    private static void activateSleep(long sleepInterval) {
         try {
             message = MessagePrinter.printReconnecting(message);
-            Thread.sleep(30000);
+            Thread.sleep(sleepInterval);
         } catch (InterruptedException e1) {
             e1.printStackTrace();
         }

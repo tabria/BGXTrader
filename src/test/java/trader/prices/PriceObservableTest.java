@@ -4,15 +4,11 @@ import org.junit.*;
 import trader.CommonTestClassMembers;
 import trader.OandaAPIMock.OandaAPIMock;
 import trader.core.Observer;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.time.ZonedDateTime;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 public class PriceObservableTest {
@@ -28,18 +24,36 @@ public class PriceObservableTest {
 
         oandaAPIMock = new OandaAPIMock();
         observer = mock(Observer.class);
-        priceObservable = PriceObservable.create(oandaAPIMock.getContext());
+        priceObservable = PriceObservable.create("Oanda");
         commonMembers = new CommonTestClassMembers();
+    }
+
+    @Test
+    public void WhenCreateThenNewPriceObservable_DifferentObjectcs() {
+        PriceObservable priceObservable2 = PriceObservable.create("Oanda");
+
+        assertNotSame(priceObservable, priceObservable2);
+    }
+
+    @Test
+    public void WhenCreateThenNotNullFieldMembers(){
+        Object apiConnector = commonMembers.extractFieldObject(priceObservable, "apiConnector");
+        Object oldPrice = commonMembers.extractFieldObject(priceObservable, "oldPrice");
+        Object observers = commonMembers.extractFieldObject(priceObservable, "observers");
+
+        assertNotNull(apiConnector);
+        assertNotNull(oldPrice);
+        assertNotNull(observers);
     }
 
     @Test(expected = PriceObservable.NullArgumentException.class)
     public void WhenTryToRegisterNullObserver_Exception() {
-        this.priceObservable.registerObserver(null);
+        priceObservable.registerObserver(null);
     }
 
     @Test
     public void testRegisteringCorrectObserver() {
-        this.priceObservable.registerObserver(this.observer);
+        priceObservable.registerObserver(observer);
         CopyOnWriteArrayList<Observer> observers = getObservers();
 
         assertEquals( 1, observers.size());
@@ -47,8 +61,8 @@ public class PriceObservableTest {
 
     @Test
     public void WhenTryToUnregisterNullObserverThenRemoveNothing() {
-        this.priceObservable.registerObserver(this.observer);
-        this.priceObservable.unregisterObserver(null);
+        priceObservable.registerObserver(this.observer);
+        priceObservable.unregisterObserver(null);
         CopyOnWriteArrayList<Observer> observers = getObservers();
 
          assertEquals( 1, observers.size());
@@ -56,8 +70,8 @@ public class PriceObservableTest {
 
     @Test
     public void WhenTryToUnregisterCorrectObserverThenRemoveObserver(){
-        this.priceObservable.registerObserver(this.observer);
-        this.priceObservable.unregisterObserver(this.observer);
+        priceObservable.registerObserver(this.observer);
+        priceObservable.unregisterObserver(this.observer);
         CopyOnWriteArrayList<Observer> observers = getObservers();
 
         assertEquals( 0, observers.size());
@@ -65,26 +79,19 @@ public class PriceObservableTest {
 
     @Test
     public void WhenTryToUnregisterFromEmptyCollectionThenRemoveNothing(){
-        this.priceObservable.unregisterObserver(this.observer);
+        priceObservable.unregisterObserver(this.observer);
         CopyOnWriteArrayList<Observer> observers = getObservers();
 
         assertEquals(0, observers.size());
     }
 
-    @Test
-    public void WhenCreateThenNewPriceObservable_DifferentObjectcs() {
-        PriceObservable priceObservable2 = PriceObservable.create(oandaAPIMock.getContext());
-
-        assertNotSame(priceObservable, priceObservable2);
-    }
-
     @Test(expected = MockedObserverException.class)
     public void WhenCallNotifyObserversThenObserversAreUpdated() {
+        Pricing mockPrice = mock(Pricing.class);
         doThrow(new MockedObserverException())
-                .when(observer)
-                .updateObserver(oandaAPIMock.getMockDateTime(), CommonTestClassMembers.ASK, CommonTestClassMembers.BID);
+                .when(observer).updateObserver(mockPrice);
         priceObservable.registerObserver(observer);
-        priceObservable.notifyObservers(oandaAPIMock.getMockDateTime(), CommonTestClassMembers.ASK, CommonTestClassMembers.BID);
+        priceObservable.notifyObservers(mockPrice);
     }
 
 
@@ -93,7 +100,7 @@ public class PriceObservableTest {
 
         Pricing mockPrice = mock(Pricing.class);
         when(mockPrice.isTradable()).thenReturn(false);
-        Method notifyEveryone = getPrivateMethodForTest(priceObservable,"notifyEveryone", Pricing.class);
+        Method notifyEveryone = commonMembers.getPrivateMethodForTest(priceObservable,"notifyEveryone", Pricing.class);
         notifyEveryone.invoke(priceObservable, mockPrice);
         Pricing oldPrice = (Pricing) commonMembers.extractFieldObject(priceObservable, "oldPrice");
 
@@ -104,7 +111,7 @@ public class PriceObservableTest {
     public void testNotifyEveryoneWithTradableEqualNewPrice() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 
         Pricing expected = (Pricing) commonMembers.extractFieldObject(priceObservable, "oldPrice");
-        Method notifyEveryone = getPrivateMethodForTest(priceObservable,"notifyEveryone", Pricing.class);
+        Method notifyEveryone = commonMembers.getPrivateMethodForTest(priceObservable,"notifyEveryone", Pricing.class);
         notifyEveryone.invoke(priceObservable, expected);
         Pricing oldPrice = (Pricing) commonMembers.extractFieldObject(priceObservable, "oldPrice");
 
@@ -116,7 +123,7 @@ public class PriceObservableTest {
 
         Pricing expected = mock(Pricing.class);
         when(expected.isTradable()).thenReturn(true);
-        Method notifyEveryone = getPrivateMethodForTest(priceObservable,"notifyEveryone", Pricing.class);
+        Method notifyEveryone = commonMembers.getPrivateMethodForTest(priceObservable,"notifyEveryone", Pricing.class);
         Pricing oldPrice = (Pricing) commonMembers.extractFieldObject(priceObservable, "oldPrice");
         notifyEveryone.invoke(priceObservable, expected);
         Pricing changedOldPrice = (Pricing) commonMembers.extractFieldObject(priceObservable, "oldPrice");
@@ -125,30 +132,21 @@ public class PriceObservableTest {
         assertEquals(expected, changedOldPrice);
     }
 
+    @Test
+    public void testSleepThreadForCorrectSleepInterval() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        long expected = 1234L;
+        Method sleepThread = commonMembers.getPrivateMethodForTest(priceObservable, "sleepThread", long.class);
+        long startTime = System.currentTimeMillis();
+        sleepThread.invoke(priceObservable, expected);
+        long endTime = System.currentTimeMillis();
 
-//    @Test
-//    public void testNotifyEveryone() throws NoSuchMethodException {
-//        PriceObservable spyObservable = spy(PriceObservable.class);
-//        Pricing mockPrice = mock(Pricing.class);
-//        when(mockPrice.isTradable()).thenReturn(true);
-//
-//        Method notifyEveryone = PriceObservable.class.getDeclaredMethod("notifyEveryone", Pricing.class);
-//        notifyEveryone.setAccessible(true);
-//        notifyEveryone.invoke(spyObservable,)
-//
-//    }
+        assertTrue(expected <= endTime - startTime);
+    }
 
-//    @Test
-//    public void testExecute(){
-//
-//        priceObservable.execute();
-//    }
-
-
-    private Method getPrivateMethodForTest(Object object, String methodName, Class<?>...params) throws NoSuchMethodException {
-        Method notifyEveryone = object.getClass().getDeclaredMethod(methodName, params);
-        notifyEveryone.setAccessible(true);
-        return notifyEveryone;
+    @Test(expected = IllegalArgumentException.class)
+    public void testExecute() {
+        commonMembers.changeFieldObject(priceObservable,"threadSleepInterval",-1L);
+        priceObservable.execute();
     }
 
     private CopyOnWriteArrayList<Observer> getObservers() {

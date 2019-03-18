@@ -2,89 +2,66 @@ package trader.connection;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import trader.CommonTestClassMembers;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.spy;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(fullyQualifiedNames = "trader.connection.*")
+import static org.junit.Assert.*;
+
+
 public class ConnectionTest {
 
     private final String goodUrl = "https://api-fxtrade.oanda.com";
-    private final String badUrl = "https://api-fxtrade.oanda.com";
+    private final String badUrl = "https://no.com";
 
     private ByteArrayOutputStream outContent;
+    private CommonTestClassMembers commonMembers;
 
     @Before
     public void setUp() throws Exception {
+        commonMembers = new CommonTestClassMembers();
         outContent = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outContent));
     }
 
-    @Test
-    public void testWithCorrectURL(){
-        String expected = "Connected";
-        Connection.waitToConnect(goodUrl);
-
-        Assert.assertEquals(expected,outContent.toString().trim());
-    }
-
 
     @Test
-    public void testPrintReConnected() throws Exception {
+    public void testActivateSleep() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        long expected = 1234L;
+        Method activateSleep = commonMembers.getPrivateMethodForTest(Connection.class, "activateSleep", long.class);
+        long startTime = System.currentTimeMillis();
+        activateSleep.invoke(null, expected);
+        long endTime = System.currentTimeMillis();
 
-
-//        PowerMockito.mockStatic(ConnectionWrapper.class);
-//
-//        String a ="";
-//        PowerMockito.doNothing().when(Connection.class, "getAddresses");
-//        Connection.waitToConnect(badUrl);
-
-//                PowerMockito.spy(Util.class);
-//                PowerMockito.doReturn("abc").when(Util.class, "anotherMethod");
-
-//                String retrieved = Util.method();
-//
-//                Assert.assertNotNull(retrieved);
-//                Assert.assertEquals(retrieved, "abc");
-
-
-//
-//        Method getAddresses = Connection.class.getDeclaredMethod("getAddresses", String.class);
-//        getAddresses.setAccessible(true);
-//        PowerMockito.when(getAddresses.invoke(null, badUrl)).thenReturn(1);
-//
-//        doNothing().when(getAddresses).invoke(null);
-//        doNothing().when(mockConnection).getClass().getDeclaredMethod("getAddresses", String.class).invoke(null);
-//        //getAddresses.invoke(null);
-//        Connection.waitToConnect(badUrl);
-
-        //invokeVoidMethod("printReconnecting");
-
-//        assertEquals(expected, outContent.toString().trim());
-//        assertEquals(expected, actual);
+        assertTrue(expected <= endTime - startTime);
     }
 
-    //    private void invokeVoidMethod(String methodName) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-//        Method printConnected = Connection.class.getDeclaredMethod(methodName);
-//        printConnected.setAccessible(true);
-//        printConnected.invoke(null);
-//    }
-//
-//    private void changeMessage(String newMessage) throws NoSuchFieldException, IllegalAccessException {
-//        Field message = Connection.class.getDeclaredField("message");
-//        message.setAccessible(true);
-//        message.set(null, newMessage);
-//    }
+    @Test(expected = InvocationTargetException.class)
+    public void testActivateSleepWithNegativeSleep() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        long expected = -1L;
+        Method activateSleep = commonMembers.getPrivateMethodForTest(Connection.class, "activateSleep", long.class);
+        activateSleep.invoke(null, expected);
+    }
 
+    @Test
+    public void testVerifyHostIpExistence() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        Method verifyIp = commonMembers.getPrivateMethodForTest(Connection.class, "verifyHostIpExistence", String.class, long.class);
+        boolean expectedGoodURL = (boolean) verifyIp.invoke(null, goodUrl, 1L);
+        boolean expectedBadURL = (boolean) verifyIp.invoke(null, badUrl, 1L);
+
+        assertTrue(expectedGoodURL);
+        assertFalse(expectedBadURL);
+    }
+
+    @Test
+    public void testExtractHost() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        Method extractHost = commonMembers.getPrivateMethodForTest(Connection.class, "extractHost", String.class);
+        String actual = (String) extractHost.invoke(null, badUrl);
+
+        assertEquals("no.com", actual);
+    }
 }
