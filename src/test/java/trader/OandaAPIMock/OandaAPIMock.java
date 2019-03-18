@@ -1,17 +1,12 @@
-package trader.OandaAPI;
+package trader.OandaAPIMock;
 
 import com.oanda.v20.Context;
 import com.oanda.v20.ExecuteException;
 import com.oanda.v20.RequestException;
-import com.oanda.v20.account.*;
 import com.oanda.v20.instrument.Candlestick;
 import com.oanda.v20.instrument.InstrumentCandlesRequest;
 import com.oanda.v20.instrument.InstrumentCandlesResponse;
 import com.oanda.v20.instrument.InstrumentContext;
-import com.oanda.v20.pricing.PricingContext;
-import com.oanda.v20.pricing.PricingGetRequest;
-import com.oanda.v20.pricing.PricingGetResponse;
-import com.oanda.v20.primitives.AccountUnits;
 import com.oanda.v20.primitives.DateTime;
 
 import java.util.List;

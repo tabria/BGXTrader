@@ -3,21 +3,16 @@ package trader.indicators;
 import com.oanda.v20.ExecuteException;
 import com.oanda.v20.RequestException;
 import com.oanda.v20.instrument.Candlestick;
-import com.oanda.v20.instrument.CandlestickData;
-import com.oanda.v20.pricing_common.PriceValue;
 import com.oanda.v20.primitives.DateTime;
 import org.junit.Before;
 import org.junit.Test;
-import trader.OandaAPI.OandaAPIMock;
+import trader.OandaAPIMock.OandaAPIMock;
 import trader.candles.CandlesUpdater;
-import trader.indicators.IndicatorUpdateHelper;
 import trader.indicators.enums.CandleGranularity;
 import trader.indicators.enums.CandlestickPriceType;
 import trader.trades.entities.Point;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;

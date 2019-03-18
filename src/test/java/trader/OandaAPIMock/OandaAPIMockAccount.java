@@ -1,4 +1,4 @@
-package trader.OandaAPI;
+package trader.OandaAPIMock;
 
 import com.oanda.v20.Context;
 import com.oanda.v20.ExecuteException;

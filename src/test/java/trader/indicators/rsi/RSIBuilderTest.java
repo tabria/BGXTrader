@@ -3,7 +3,7 @@ package trader.indicators.rsi;
 import com.oanda.v20.instrument.*;
 import org.junit.Before;
 import org.junit.Test;
-import trader.OandaAPI.OandaAPIMock;
+import trader.OandaAPIMock.OandaAPIMock;
 import trader.indicators.enums.CandleGranularity;
 import trader.indicators.enums.CandlestickPriceType;
 import trader.indicators.Indicator;

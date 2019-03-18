@@ -1,18 +1,16 @@
 package trader.prices;
 
 import org.junit.*;
-import org.mockito.Mockito;
 import trader.CommonTestClassMembers;
-import trader.OandaAPI.OandaAPIMock;
+import trader.OandaAPIMock.OandaAPIMock;
 import trader.core.Observer;
 
-import java.lang.reflect.Field;
+import java.time.ZonedDateTime;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 
 public class PriceObservableTest {
 
@@ -85,6 +83,14 @@ public class PriceObservableTest {
         priceObservable.registerObserver(observer);
         priceObservable.notifyObservers(oandaAPIMock.getMockDateTime(), CommonTestClassMembers.ASK, CommonTestClassMembers.BID);
     }
+
+    @Test
+    public void testExecute(){
+        PriceObservable spy = spy(priceObservable);
+        doNothing().when(spy).notifyObservers(any());
+        priceObservable.execute();
+    }
+
 
     private CopyOnWriteArrayList<Observer> getObservers() {
         return (CopyOnWriteArrayList<Observer>) commonMembers.extractFieldObject(this.priceObservable, "observers");

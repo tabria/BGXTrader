@@ -60,13 +60,20 @@ public final class PriceObservable implements Observable {
     }
 
     @Override
+    public void notifyObservers(Pricing price) {
+        for (Observer observer : this.observers)
+            observer.updateObserver(price);
+    }
+
+    @Override
     public void execute() {
 
-        //old values of the ask and bid prices
         BigDecimal oldAsk = BigDecimal.ZERO;
         BigDecimal oldBid = BigDecimal.ZERO;
 
         while(this.running){
+
+
 
             try {
                 //response from the OANDA servers based on the request object

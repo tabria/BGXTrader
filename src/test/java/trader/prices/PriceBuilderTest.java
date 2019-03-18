@@ -63,6 +63,12 @@ public class PriceBuilderTest {
         assertTrue(tradable);
     }
 
+    @Test
+    public void createBuilderWithDefaultAvailableUnits(){
+        BigDecimal availableUnits = (BigDecimal) commonMembers.extractFieldObject(priceBuilder, "availableUnits");
+        assertEquals(0, availableUnits.compareTo(BigDecimal.ZERO));
+    }
+
     @Test(expected = NullArgumentException.class)
     public void WhenCallSetAskWithNull_Exception(){
         priceBuilder.setAsk(null);
@@ -140,6 +146,24 @@ public class PriceBuilderTest {
     @Test
     public void WhenCallSetIsTradable_ReturnCurrentObject(){
         assertEquals(priceBuilder, priceBuilder.setIsTradable(false));
+    }
+
+    @Test(expected = NegativeNumberException.class)
+    public void WhenCallSetAvailableUnitsWithNegativeNumber_Exception(){
+        priceBuilder.setAvailableUnits(NEGATIVE_PRICE);
+    }
+
+    @Test
+    public void callAvailableUnits(){
+        priceBuilder.setAvailableUnits(POSITIVE_PRICE);
+        BigDecimal availableUnits = (BigDecimal) commonMembers.extractFieldObject(priceBuilder,"availableUnits");
+
+        assertEquals(availableUnits, POSITIVE_PRICE);
+    }
+
+    @Test
+    public void WhenCallSetAvailableUnits_ReturnCurrentObject(){
+        assertEquals(priceBuilder, priceBuilder.setAvailableUnits(POSITIVE_PRICE));
     }
 
 

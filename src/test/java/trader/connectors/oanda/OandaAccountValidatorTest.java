@@ -1,16 +1,11 @@
 package trader.connectors.oanda;
 
-import com.oanda.v20.Context;
 import com.oanda.v20.ExecuteException;
 import com.oanda.v20.RequestException;
-import com.oanda.v20.account.AccountID;
 import com.oanda.v20.account.AccountProperties;
 import org.junit.Before;
 import org.junit.Test;
-import trader.CommonTestClassMembers;
-import trader.OandaAPI.OandaAPIMock;
-import trader.OandaAPI.OandaAPIMockAccount;
-import trader.connectors.ApiConnector;
+import trader.OandaAPIMock.OandaAPIMockAccount;
 import trader.connectors.oanda.OandaAccountValidator.*;
 
 import java.util.ArrayList;
@@ -27,16 +22,12 @@ public class OandaAccountValidatorTest {
     private OandaAccountValidator validator;
     private OandaAPIMockAccount oandaAPIMockAccount;
     private OandaConnector oandaMockConnector;
-    private OandaConfig oandaMockConfig;
-    private CommonTestClassMembers commonMembers;
 
     @Before
     public void setUp() throws Exception {
         oandaAPIMockAccount = new OandaAPIMockAccount();
         oandaMockConnector = mock(OandaConnector.class);
-        oandaMockConfig = mock(OandaConfig.class);
         validator = new OandaAccountValidator(oandaMockConnector);
-        commonMembers = new CommonTestClassMembers();
     }
 
     @Test(expected = UnableToExecuteRequest.class)

@@ -3,11 +3,10 @@ package trader.indicators.ma;
 import com.oanda.v20.instrument.*;
 import org.junit.Before;
 import org.junit.Test;
-import trader.OandaAPI.OandaAPIMock;
+import trader.OandaAPIMock.OandaAPIMock;
 import trader.indicators.Indicator;
 import trader.indicators.enums.CandleGranularity;
 import trader.indicators.enums.CandlestickPriceType;
-import trader.indicators.ma.enums.MAType;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;

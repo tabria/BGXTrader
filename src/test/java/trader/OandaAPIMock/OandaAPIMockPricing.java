@@ -1,4 +1,4 @@
-package trader.OandaAPI;
+package trader.OandaAPIMock;
 
 import com.oanda.v20.Context;
 import com.oanda.v20.ExecuteException;
@@ -19,13 +19,30 @@ public class OandaAPIMockPricing {
     private PricingGetResponse mockPricingGetResponse;
 
     public OandaAPIMockPricing() {
+        mockContext = mock(Context.class);
         mockContext.pricing = mock(PricingContext.class);
         mockDateTime = mock(DateTime.class);
         mockPricingGetRequest = mock(PricingGetRequest.class);
         mockPricingGetResponse = mock(PricingGetResponse.class);
     }
 
-    public void setMockPricingGetResponse() throws ExecuteException, RequestException {
+    public Context getMockContext() {
+        return mockContext;
+    }
+
+    public PricingGetRequest getMockPricingGetRequest() {
+        return mockPricingGetRequest;
+    }
+
+    public PricingGetResponse getMockPricingGetResponse() {
+        return mockPricingGetResponse;
+    }
+
+    public void setMockPricingGetRequest() throws ExecuteException, RequestException {
         when(mockContext.pricing.get(mockPricingGetRequest)).thenReturn(mockPricingGetResponse);
+    }
+
+    public void setMockPricingGetResponse(PricingGetResponse response) throws ExecuteException, RequestException {
+        when(mockContext.pricing.get(mockPricingGetRequest)).thenReturn(response);
     }
 }

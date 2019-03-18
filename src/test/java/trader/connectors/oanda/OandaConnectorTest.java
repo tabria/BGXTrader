@@ -3,7 +3,7 @@ package trader.connectors.oanda;
 import org.junit.Before;
 import org.junit.Test;
 import trader.CommonTestClassMembers;
-import trader.OandaAPI.OandaAPIMockAccount;
+import trader.OandaAPIMock.OandaAPIMockAccount;
 import trader.connectors.ApiConnector;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
