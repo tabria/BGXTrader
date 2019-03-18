@@ -26,7 +26,6 @@ public class OandaPriceResponse {
     private OandaConnector oandaConnector;
     private PricingGetRequest pricingGetRequest;
 
-
     public OandaPriceResponse(OandaConnector connector){
         oandaConnector = connector;
         createPricingRequest();

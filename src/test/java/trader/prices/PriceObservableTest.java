@@ -5,10 +5,13 @@ import trader.CommonTestClassMembers;
 import trader.OandaAPIMock.OandaAPIMock;
 import trader.core.Observer;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.time.ZonedDateTime;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.mockito.Mockito.*;
 
@@ -84,13 +87,69 @@ public class PriceObservableTest {
         priceObservable.notifyObservers(oandaAPIMock.getMockDateTime(), CommonTestClassMembers.ASK, CommonTestClassMembers.BID);
     }
 
+
     @Test
-    public void testExecute(){
-        PriceObservable spy = spy(priceObservable);
-        doNothing().when(spy).notifyObservers(any());
-        priceObservable.execute();
+    public void testNotifyEveryoneWithNotTradableNotEqualNewPrice() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+
+        Pricing mockPrice = mock(Pricing.class);
+        when(mockPrice.isTradable()).thenReturn(false);
+        Method notifyEveryone = getPrivateMethodForTest(priceObservable,"notifyEveryone", Pricing.class);
+        notifyEveryone.invoke(priceObservable, mockPrice);
+        Pricing oldPrice = (Pricing) commonMembers.extractFieldObject(priceObservable, "oldPrice");
+
+        assertNotEquals(oldPrice, mockPrice);
     }
 
+    @Test
+    public void testNotifyEveryoneWithTradableEqualNewPrice() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+
+        Pricing expected = (Pricing) commonMembers.extractFieldObject(priceObservable, "oldPrice");
+        Method notifyEveryone = getPrivateMethodForTest(priceObservable,"notifyEveryone", Pricing.class);
+        notifyEveryone.invoke(priceObservable, expected);
+        Pricing oldPrice = (Pricing) commonMembers.extractFieldObject(priceObservable, "oldPrice");
+
+        assertEquals(expected, oldPrice);
+    }
+
+    @Test
+    public void testNotifyEveryoneWithTradableNotEqualNewPrice() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+
+        Pricing expected = mock(Pricing.class);
+        when(expected.isTradable()).thenReturn(true);
+        Method notifyEveryone = getPrivateMethodForTest(priceObservable,"notifyEveryone", Pricing.class);
+        Pricing oldPrice = (Pricing) commonMembers.extractFieldObject(priceObservable, "oldPrice");
+        notifyEveryone.invoke(priceObservable, expected);
+        Pricing changedOldPrice = (Pricing) commonMembers.extractFieldObject(priceObservable, "oldPrice");
+
+        assertNotEquals(oldPrice, changedOldPrice);
+        assertEquals(expected, changedOldPrice);
+    }
+
+
+//    @Test
+//    public void testNotifyEveryone() throws NoSuchMethodException {
+//        PriceObservable spyObservable = spy(PriceObservable.class);
+//        Pricing mockPrice = mock(Pricing.class);
+//        when(mockPrice.isTradable()).thenReturn(true);
+//
+//        Method notifyEveryone = PriceObservable.class.getDeclaredMethod("notifyEveryone", Pricing.class);
+//        notifyEveryone.setAccessible(true);
+//        notifyEveryone.invoke(spyObservable,)
+//
+//    }
+
+//    @Test
+//    public void testExecute(){
+//
+//        priceObservable.execute();
+//    }
+
+
+    private Method getPrivateMethodForTest(Object object, String methodName, Class<?>...params) throws NoSuchMethodException {
+        Method notifyEveryone = object.getClass().getDeclaredMethod(methodName, params);
+        notifyEveryone.setAccessible(true);
+        return notifyEveryone;
+    }
 
     private CopyOnWriteArrayList<Observer> getObservers() {
         return (CopyOnWriteArrayList<Observer>) commonMembers.extractFieldObject(this.priceObservable, "observers");

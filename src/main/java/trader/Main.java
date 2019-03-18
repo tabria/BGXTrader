@@ -3,12 +3,14 @@ package trader;
 
 import com.oanda.v20.Context;
 import com.oanda.v20.ContextBuilder;
+import com.oanda.v20.ExecuteException;
 import com.oanda.v20.RequestException;
-import com.oanda.v20.account.Account;
-import com.oanda.v20.account.AccountGetResponse;
-import com.oanda.v20.account.AccountListResponse;
-import com.oanda.v20.account.AccountProperties;
+import com.oanda.v20.account.*;
 import com.oanda.v20.primitives.InstrumentName;
+import com.oanda.v20.transaction.TransactionGetResponse;
+import com.oanda.v20.transaction.TransactionID;
+import com.oanda.v20.transaction.TransactionListResponse;
+import com.oanda.v20.transaction.TransactionSinceResponse;
 import trader.config.Config;
 import trader.connection.Connection;
 import trader.core.Observable;
@@ -56,12 +58,15 @@ import java.util.List;
 
 public class Main {
 
-    public static void main(String[] args){
+    public static void main(String[] args) throws ExecuteException, RequestException {
 
         Context context = new ContextBuilder(Config.URL)
                 .setToken(Config.TOKEN)
                 .setApplication("Context")
                 .build();
+
+//Start transaction for bgxtrader
+//        TransactionSinceResponse since = context.transaction.since(Config.ACCOUNTID, new TransactionID("156"));
 
         validateAccount(context);
 

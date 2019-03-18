@@ -3,6 +3,7 @@ package trader.prices;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.ZonedDateTime;
+import java.util.Objects;
 
 public class Price implements Pricing {
 
@@ -43,6 +44,35 @@ public class Price implements Pricing {
     @Override
     public BigDecimal getAvailableUnits(){
         return availableUnits;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Price price = (Price) o;
+        return isTradable == price.isTradable &&
+                Objects.equals(ask, price.ask) &&
+                Objects.equals(bid, price.bid) &&
+                Objects.equals(dateTime, price.dateTime) &&
+                Objects.equals(availableUnits, price.availableUnits);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(ask, bid, dateTime, isTradable, availableUnits);
+    }
+
+    @Override
+    public String toString() {
+        return "Price{" +
+                "ask=" + ask +
+                ", bid=" + bid +
+                ", dateTime=" + dateTime +
+                ", isTradable=" + isTradable +
+                ", availableUnits=" + availableUnits +
+                '}';
     }
 
     public static class PriceBuilder{

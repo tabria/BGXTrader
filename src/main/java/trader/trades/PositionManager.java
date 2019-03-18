@@ -8,6 +8,7 @@ import com.oanda.v20.primitives.DateTime;
 import trader.config.Config;
 import trader.connection.Connection;
 import trader.core.Observer;
+import trader.prices.Pricing;
 import trader.trades.services.NewTradeService;
 import trader.trades.services.OrderService;
 import trader.trades.services.exit_strategies.ExitStrategy;
@@ -81,6 +82,36 @@ public final class PositionManager implements Observer {
                 throw new RuntimeException(re);
             }
         }
+    }
+
+
+    @Override
+    public void updateObserver(Pricing price) {
+
+//        try {
+//            Account account = this.context.account.get(Config.ACCOUNTID).getAccount();
+//            if (account.getTrades().size() > 0){
+//                // Exit Strategy
+//                this.exitStrategy.execute(account, ask, bid, dateTime);
+//
+//            } else if (account.getOrders().size() > 0) {
+//                // Manage waiting order
+//                this.orderService.closeUnfilledOrder(account, ask, bid);
+//
+//            } else {
+//                // Send new trade
+//                this.newTradeService.sendNewTradeOrder(account, bid);
+//            }
+//
+//        } catch(ExecuteException ee){
+//            Connection.waitToConnect(Config.URL);
+//        } catch (RequestException re ) {
+//            if (re.getMessage().equalsIgnoreCase("Service unavailable, please try again later.")){
+//                Connection.waitToConnect(Config.URL);
+//            } else {
+//                throw new RuntimeException(re);
+//            }
+//        }
     }
 
     /**

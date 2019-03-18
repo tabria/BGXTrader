@@ -2,6 +2,7 @@ package trader.indicators;
 
 import com.oanda.v20.primitives.DateTime;
 import trader.core.Observer;
+import trader.prices.Pricing;
 
 
 import java.math.BigDecimal;
@@ -22,6 +23,14 @@ public final class IndicatorObserver implements Observer {
 
     @Override
     public void updateObserver(DateTime lastCandleTime, BigDecimal ask, BigDecimal bid) {
+        if (lastCandleTime == null)
+            throw new NullPointerException("DateTime is null");
+        this.indicator.updateIndicator(lastCandleTime);
+    }
+
+    @Override
+    public void updateObserver(Pricing price) {
+        DateTime lastCandleTime = null; // for compiling
         if (lastCandleTime == null)
             throw new NullPointerException("DateTime is null");
         this.indicator.updateIndicator(lastCandleTime);

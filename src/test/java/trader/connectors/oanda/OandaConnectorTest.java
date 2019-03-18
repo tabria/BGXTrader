@@ -5,6 +5,9 @@ import org.junit.Test;
 import trader.CommonTestClassMembers;
 import trader.OandaAPIMock.OandaAPIMockAccount;
 import trader.connectors.ApiConnector;
+import trader.prices.Price;
+import trader.prices.Pricing;
+
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -15,6 +18,8 @@ public class OandaConnectorTest {
     private OandaConnector oandaConnector;
     private OandaAPIMockAccount oandaAPIMockAccount;
     private OandaConfig mockOandaConfig;
+    private OandaPriceResponse mockResponse;
+    private Pricing mockPrice;
 
     @Before
     public void setUp() {
@@ -22,6 +27,8 @@ public class OandaConnectorTest {
         commonMembers = new CommonTestClassMembers();
         oandaAPIMockAccount = new OandaAPIMockAccount();
         mockOandaConfig = mock(OandaConfig.class);
+        mockResponse = mock(OandaPriceResponse.class);
+        mockPrice = mock(Price.class);
 
     }
 
@@ -53,4 +60,12 @@ public class OandaConnectorTest {
         commonMembers.changeFieldObject(oandaConnector, "oandaConfig", mockOandaConfig);
         assertEquals(expected, oandaConnector.getToken());
     }
+
+    @Test
+    public void testGetPrice(){
+        commonMembers.changeFieldObject(oandaConnector, "oandaPriceResponse", mockResponse);
+        when(oandaConnector.getPrice()).thenReturn(mockPrice);
+        assertEquals(mockPrice, oandaConnector.getPrice());
+    }
+
 }

@@ -4,11 +4,13 @@ import com.oanda.v20.Context;
 import com.oanda.v20.ContextBuilder;
 import com.oanda.v20.account.*;
 import trader.connectors.ApiConnector;
+import trader.prices.Pricing;
 
 public class OandaConnector extends ApiConnector {
 
     private OandaConfig oandaConfig;
     private OandaAccountValidator oandaAccountValidator ;
+    private OandaPriceResponse oandaPriceResponse;
     private Context context;
 
     private OandaConnector(){
@@ -16,6 +18,13 @@ public class OandaConnector extends ApiConnector {
         setContext();
         setOandaValidator();
         validateAccount();
+        setOandaPriceResponse();
+
+    }
+
+    @Override
+    public Pricing getPrice() {
+        return oandaPriceResponse.getPrice();
     }
 
     public Context getContext(){
@@ -34,6 +43,8 @@ public class OandaConnector extends ApiConnector {
         return oandaConfig.getUrl();
     }
 
+
+
     private void setContext(){
         context = new ContextBuilder(oandaConfig.getUrl())
                 .setToken(oandaConfig.getToken())
@@ -45,9 +56,12 @@ public class OandaConnector extends ApiConnector {
         oandaAccountValidator = new OandaAccountValidator(this);
     }
 
+    private void setOandaPriceResponse() {
+        oandaPriceResponse = new OandaPriceResponse(this);
+    }
+
     private void validateAccount(){
         oandaAccountValidator.validateAccount();
         oandaAccountValidator.validateAccountBalance();
     }
-
 }
