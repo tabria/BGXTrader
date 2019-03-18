@@ -5,8 +5,8 @@ import org.junit.Before;
 import org.junit.Test;
 import trader.OandaAPIMock.OandaAPIMock;
 import trader.indicators.Indicator;
-import trader.indicators.enums.CandleGranularity;
-import trader.indicators.enums.CandlestickPriceType;
+import trader.candle.CandleGranularity;
+import trader.candle.CandlestickPriceType;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;

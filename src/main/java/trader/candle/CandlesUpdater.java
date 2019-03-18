@@ -1,4 +1,4 @@
-package trader.candles;
+package trader.candle;
 
 import com.oanda.v20.Context;
 import com.oanda.v20.ExecuteException;
@@ -7,7 +7,6 @@ import com.oanda.v20.instrument.Candlestick;
 import com.oanda.v20.instrument.InstrumentCandlesRequest;
 import com.oanda.v20.instrument.InstrumentCandlesResponse;
 import com.oanda.v20.primitives.DateTime;
-import trader.indicators.enums.CandleGranularity;
 
 import java.time.Instant;
 import java.time.ZoneId;
@@ -48,7 +47,7 @@ public final class CandlesUpdater {
     }
 
     /**
-     * Sometimes new candles came with time like old ones. Which cause multiple updates
+     * Sometimes new candle came with time like old ones. Which cause multiple updates
      * This loop will check last candle time before and after updateIndicator to assure that new candle have different time
      * @param lastCandleDateTimeBeforeUpdate last candle's datetime before updating
      * @see DateTime
@@ -108,7 +107,7 @@ public final class CandlesUpdater {
     }
 
     /**
-     * Get candles from OANDA
+     * Get candle from OANDA
      * @see InstrumentCandlesRequest
      */
     private void requestCandles(){

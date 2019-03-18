@@ -2,7 +2,7 @@ package trader.config;
 
 import com.oanda.v20.account.AccountID;
 import com.oanda.v20.primitives.InstrumentName;
-import trader.indicators.enums.CandleGranularity;
+import trader.candle.CandleGranularity;
 
 import java.math.BigDecimal;
 

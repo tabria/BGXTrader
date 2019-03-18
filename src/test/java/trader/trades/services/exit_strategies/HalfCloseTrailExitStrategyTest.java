@@ -12,13 +12,12 @@ import com.oanda.v20.primitives.DecimalNumber;
 import com.oanda.v20.trade.*;
 import org.junit.Before;
 import org.junit.Test;
-import trader.candles.CandlesUpdater;
-import trader.indicators.enums.CandleGranularity;
+import trader.candle.CandlesUpdater;
+import trader.candle.CandleGranularity;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;

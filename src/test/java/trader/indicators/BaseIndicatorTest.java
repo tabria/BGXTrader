@@ -7,9 +7,9 @@ import com.oanda.v20.primitives.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import trader.OandaAPIMock.OandaAPIMock;
-import trader.candles.CandlesUpdater;
-import trader.indicators.enums.CandleGranularity;
-import trader.indicators.enums.CandlestickPriceType;
+import trader.candle.CandlesUpdater;
+import trader.candle.CandleGranularity;
+import trader.candle.CandlestickPriceType;
 import trader.trades.entities.Point;
 
 import java.math.BigDecimal;

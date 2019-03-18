@@ -13,7 +13,7 @@ import com.oanda.v20.trade.*;
 import org.junit.Before;
 import org.junit.Test;
 import trader.config.Config;
-import trader.indicators.enums.CandleGranularity;
+import trader.candle.CandleGranularity;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -169,7 +169,7 @@ public class TrailExitAfterSignificantExtremeStrategyTest {
 
     }
 
-    //Simulating 3 candles:
+    //Simulating 3 candle:
     // 1st is higher than open price,
     // 2nd is lower than 1st and high than firstStopPrice
     // 3-rd is higher than first.
@@ -279,7 +279,7 @@ public class TrailExitAfterSignificantExtremeStrategyTest {
     }
 
 
-    //Simulating 3 candles:
+    //Simulating 3 candle:
     // 1st is lower than open price,
     // 2nd is higher than 1st and lower than firstStopPrice
     // 3-rd is lower than first.

@@ -1,4 +1,4 @@
-package trader.candles;
+package trader.candle;
 
 import com.oanda.v20.ExecuteException;
 import com.oanda.v20.RequestException;
@@ -8,8 +8,6 @@ import org.junit.Before;
 import org.junit.Test;
 import trader.OandaAPIMock.OandaAPIMock;
 import trader.indicators.IndicatorUpdateHelper;
-import trader.indicators.enums.CandleGranularity;
-import trader.indicators.enums.CandlestickPriceType;
 
 import java.util.ArrayList;
 import java.util.List;

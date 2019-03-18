@@ -4,6 +4,8 @@ import org.junit.*;
 import trader.CommonTestClassMembers;
 import trader.OandaAPIMock.OandaAPIMock;
 import trader.core.Observer;
+import trader.exceptions.NullArgumentException;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -46,7 +48,7 @@ public class PriceObservableTest {
         assertNotNull(observers);
     }
 
-    @Test(expected = PriceObservable.NullArgumentException.class)
+    @Test(expected = NullArgumentException.class)
     public void WhenTryToRegisterNullObserver_Exception() {
         priceObservable.registerObserver(null);
     }

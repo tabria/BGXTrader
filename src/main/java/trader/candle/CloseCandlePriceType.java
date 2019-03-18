@@ -1,10 +1,9 @@
-package trader.candles;
+package trader.candle;
 
 public class CloseCandlePriceType implements CandlePriceType {
 
 
     private final String priceType = "CLOSE";
-
 
     @Override
     public String getType() {

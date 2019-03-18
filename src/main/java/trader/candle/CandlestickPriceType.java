@@ -1,8 +1,7 @@
-package trader.indicators.enums;
+package trader.candle;
 
 
 import com.oanda.v20.instrument.CandlestickData;
-import trader.indicators.CandlestickPriceOperations;
 
 import java.math.BigDecimal;
 

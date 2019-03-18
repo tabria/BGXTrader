@@ -10,9 +10,9 @@ import com.oanda.v20.order.*;
 import com.oanda.v20.primitives.DateTime;
 import com.oanda.v20.trade.*;
 import com.oanda.v20.transaction.StopLossDetails;
-import trader.candles.CandlesUpdater;
+import trader.candle.CandlesUpdater;
 import trader.config.Config;
-import trader.indicators.enums.CandleGranularity;
+import trader.candle.CandleGranularity;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -43,7 +43,7 @@ final class BaseExitStrategy{
      * Get last completed candle High.
      * Index for the candle is calculated with this formula: listSize - numberOfCandles
      * @return {@link BigDecimal} high value
-     * @throws IndexOutOfBoundsException if candles count is not equal to required
+     * @throws IndexOutOfBoundsException if candle count is not equal to required
      */
     BigDecimal getLastFullCandleHigh(){
 

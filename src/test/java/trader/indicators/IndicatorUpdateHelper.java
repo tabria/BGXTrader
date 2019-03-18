@@ -4,7 +4,7 @@ import com.oanda.v20.instrument.Candlestick;
 import com.oanda.v20.instrument.CandlestickData;
 import com.oanda.v20.pricing_common.PriceValue;
 import com.oanda.v20.primitives.DateTime;
-import trader.indicators.enums.CandlestickPriceType;
+import trader.candle.CandlestickPriceType;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

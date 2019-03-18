@@ -2,11 +2,11 @@ package trader.indicators.rsi;
 
 import com.oanda.v20.Context;
 import com.oanda.v20.instrument.InstrumentCandlesRequest;
-import trader.candles.CandlesUpdater;
+import trader.candle.CandlesUpdater;
 import trader.config.Config;
 import trader.indicators.Indicator;
-import trader.indicators.enums.CandleGranularity;
-import trader.indicators.enums.CandlestickPriceType;
+import trader.candle.CandleGranularity;
+import trader.candle.CandlestickPriceType;
 
 public final class RSIBuilder {
 

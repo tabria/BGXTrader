@@ -1,11 +1,11 @@
 package trader.indicators;
 
-import com.oanda.v20.Context;
+//import com.oanda.v20.Context;
 import com.oanda.v20.instrument.Candlestick;
 import com.oanda.v20.instrument.CandlestickData;
 import com.oanda.v20.primitives.DateTime;
-import trader.candles.CandlesUpdater;
-import trader.indicators.enums.CandlestickPriceType;
+import trader.candle.CandlesUpdater;
+import trader.candle.CandlestickPriceType;
 import trader.trades.entities.Point;
 
 import java.math.BigDecimal;
@@ -15,7 +15,7 @@ import java.util.List;
 
 public abstract class BaseIndicator implements Indicator {
 
-    protected Context context;
+    //protected Context context;
     protected final long candlesticksQuantity;
     protected final CandlestickPriceType candlestickPriceType;
     protected final CandlesUpdater candlesUpdater;
@@ -32,6 +32,8 @@ public abstract class BaseIndicator implements Indicator {
         this.points = new ArrayList<>();
         this.isTradeGenerated = false;
     }
+
+
 
     public List<Point> getPoints() {
         return Collections.unmodifiableList(points);

@@ -1,10 +1,10 @@
-package trader.indicators;
+package trader.candle;
 
 import com.oanda.v20.instrument.CandlestickData;
 import com.oanda.v20.pricing_common.PriceValue;
 import org.junit.Before;
 import org.junit.Test;
-import trader.indicators.enums.CandlestickPriceType;
+import trader.candle.CandlestickPriceType;
 
 import java.math.BigDecimal;
 

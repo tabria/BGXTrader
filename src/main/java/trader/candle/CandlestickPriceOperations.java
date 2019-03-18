@@ -1,4 +1,4 @@
-package trader.indicators;
+package trader.candle;
 
 import com.oanda.v20.instrument.CandlestickData;
 

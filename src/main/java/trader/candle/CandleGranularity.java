@@ -1,7 +1,6 @@
-package trader.indicators.enums;
+package trader.candle;
 
 import com.oanda.v20.instrument.CandlestickGranularity;
-import trader.indicators.CandleGranularityOperations;
 
 public enum CandleGranularity implements CandleGranularityOperations {
 

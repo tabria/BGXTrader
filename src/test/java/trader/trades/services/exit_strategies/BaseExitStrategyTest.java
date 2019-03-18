@@ -9,8 +9,8 @@ import com.oanda.v20.primitives.DateTime;
 import com.oanda.v20.trade.*;
 import org.junit.Before;
 import org.junit.Test;
-import trader.candles.CandlesUpdater;
-import trader.indicators.enums.CandleGranularity;
+import trader.candle.CandlesUpdater;
+import trader.candle.CandleGranularity;
 
 
 import java.lang.reflect.Field;
@@ -122,7 +122,7 @@ public class BaseExitStrategyTest {
 
     @Test(expected = IndexOutOfBoundsException.class)
     public void WhenGetLastFullCandleHighWithDifferentNumberOfRequiredCandlesThenException(){
-        //candlestickList is empty and required number of candles is 2
+        //candlestickList is empty and required number of candle is 2
         BigDecimal result = this.baseExitStrategy.getLastFullCandleHigh();
     }
     
@@ -151,7 +151,7 @@ public class BaseExitStrategyTest {
 
     @Test(expected = IndexOutOfBoundsException.class)
     public void WhenGetLastFullCandleLowWithDifferentNumberOfRequiredCandlesThenException(){
-        //candlestickList is empty and required number of candles is 2
+        //candlestickList is empty and required number of candle is 2
         BigDecimal result = this.baseExitStrategy.getLastFullCandleLow();
     }
 
@@ -179,7 +179,7 @@ public class BaseExitStrategyTest {
 
     @Test(expected = IndexOutOfBoundsException.class)
     public void WhenGetLastFullCandleCloseWithDifferentNumberOfRequiredCandlesThenException(){
-        //candlestickList is empty and required number of candles is 2
+        //candlestickList is empty and required number of candle is 2
         BigDecimal result = this.baseExitStrategy.getLastFullCandleLow();
     }
 
@@ -315,7 +315,7 @@ public class BaseExitStrategyTest {
         updater.set(this.baseExitStrategy, this.mockCandlesUpdater);
     }
 
-    //fill candlestick list with candles. Candles have only time and close price
+    //fill candlestick list with candle. Candles have only time and close price
     private void fillCandlestickList() {
 
         this.candlestickList = new ArrayList<>();

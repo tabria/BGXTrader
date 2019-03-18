@@ -2,9 +2,9 @@ package trader.indicators.rsi;
 
 import com.oanda.v20.instrument.Candlestick;
 import com.oanda.v20.primitives.DateTime;
-import trader.candles.CandlesUpdater;
+import trader.candle.CandlesUpdater;
 import trader.indicators.BaseIndicator;
-import trader.indicators.enums.CandlestickPriceType;
+import trader.candle.CandlestickPriceType;
 import trader.trades.entities.Point;
 import java.math.BigDecimal;
 import java.util.ArrayList;

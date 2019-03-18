@@ -1,9 +1,11 @@
-package trader.candles;
+package trader.candle;
+
+import trader.exceptions.NullArgumentException;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
-public final class Candle {
+public final class Candle implements CandleStick {
 
     private final CandlePriceType priceType;
     private final long timeFrame;
@@ -184,7 +186,6 @@ public final class Candle {
 
     }
 
-    static class NullArgumentException extends RuntimeException{};
     static class UnderflowException extends RuntimeException{};
     static class OverflowException extends RuntimeException{};
     static class NegativeNumberException extends RuntimeException{};

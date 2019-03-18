@@ -3,13 +3,12 @@ package trader.trades.services.exit_strategies;
 
 import com.oanda.v20.Context;
 import com.oanda.v20.account.Account;
-import com.oanda.v20.order.OrderID;
 import com.oanda.v20.primitives.DateTime;
 import com.oanda.v20.trade.*;
 import com.oanda.v20.transaction.TransactionID;
-import trader.candles.CandlesUpdater;
+import trader.candle.CandlesUpdater;
 import trader.config.Config;
-import trader.indicators.enums.CandleGranularity;
+import trader.candle.CandleGranularity;
 
 
 import java.math.BigDecimal;

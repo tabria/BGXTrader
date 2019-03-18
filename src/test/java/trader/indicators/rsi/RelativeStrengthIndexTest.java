@@ -1,24 +1,18 @@
 package trader.indicators.rsi;
 
-import com.oanda.v20.Context;
 import com.oanda.v20.instrument.Candlestick;
-import com.oanda.v20.instrument.CandlestickData;
-import com.oanda.v20.instrument.InstrumentCandlesRequest;
-import com.oanda.v20.pricing_common.PriceValue;
 import com.oanda.v20.primitives.DateTime;
 import org.junit.Before;
 import org.junit.Test;
-import trader.candles.CandlesUpdater;
+import trader.candle.CandlesUpdater;
 import trader.indicators.BaseIndicatorTest;
-import trader.indicators.enums.CandleGranularity;
-import trader.indicators.enums.CandlestickPriceType;
+import trader.candle.CandleGranularity;
+import trader.candle.CandlestickPriceType;
 import trader.trades.entities.Point;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -167,7 +161,7 @@ public class RelativeStrengthIndexTest extends BaseIndicatorTest {
 
     }
 
-//    //fill candlestick list with candles. Candles have only time and close price
+//    //fill candlestick list with candle. Candles have only time and close price
 //    private void fillCandlestickList(){
 //
 //        this.candlestickList = new ArrayList<>();
@@ -192,7 +186,7 @@ public class RelativeStrengthIndexTest extends BaseIndicatorTest {
 //            this.candlestickList.add(candle1);
 //        }
 //    }
-    //total candles count for the given periods are calculated with this formula:
+    //total candle count for the given periods are calculated with this formula:
     private void setPeriod(){
         candlesticksQuantity = RelativeStrengthIndexTest.DEFAULT_PERIOD;
     }

@@ -1,4 +1,4 @@
-package trader.candles;
+package trader.candle;
 
 import org.junit.Before;
 import org.junit.Test;

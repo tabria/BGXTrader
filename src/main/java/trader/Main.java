@@ -7,18 +7,14 @@ import com.oanda.v20.ExecuteException;
 import com.oanda.v20.RequestException;
 import com.oanda.v20.account.*;
 import com.oanda.v20.primitives.InstrumentName;
-import com.oanda.v20.transaction.TransactionGetResponse;
-import com.oanda.v20.transaction.TransactionID;
-import com.oanda.v20.transaction.TransactionListResponse;
-import com.oanda.v20.transaction.TransactionSinceResponse;
 import trader.config.Config;
 import trader.connection.Connection;
 import trader.core.Observable;
 import trader.core.Observer;
 import trader.indicators.Indicator;
 import trader.indicators.IndicatorObserver;
-import trader.indicators.enums.CandleGranularity;
-import trader.indicators.enums.CandlestickPriceType;
+import trader.candle.CandleGranularity;
+import trader.candle.CandlestickPriceType;
 import trader.indicators.ma.MovingAverageBuilder;
 import trader.indicators.ma.enums.MAType;
 import trader.indicators.rsi.RSIBuilder;
@@ -64,6 +60,8 @@ public class Main {
                 .setToken(Config.TOKEN)
                 .setApplication("Context")
                 .build();
+
+
 
 //Start transaction for bgxtrader
 //        TransactionSinceResponse since = context.transaction.since(Config.ACCOUNTID, new TransactionID("156"));

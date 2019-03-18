@@ -5,6 +5,8 @@ import com.oanda.v20.primitives.DateTime;
 import trader.connectors.ApiConnector;
 import trader.core.Observable;
 import trader.core.Observer;
+import trader.exceptions.NullArgumentException;
+
 import java.math.BigDecimal;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -90,7 +92,5 @@ public final class PriceObservable implements Observable {
             e.printStackTrace();
         }
     }
-
-    public class NullArgumentException extends RuntimeException{};
 
 }

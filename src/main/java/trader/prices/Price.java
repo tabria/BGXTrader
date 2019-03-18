@@ -1,5 +1,8 @@
 package trader.prices;
 
+import trader.exceptions.NegativeNumberException;
+import trader.exceptions.NullArgumentException;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.ZonedDateTime;
@@ -147,7 +150,7 @@ public class Price implements Pricing {
         }
     }
 
-    static class NullArgumentException extends RuntimeException{};
-    static class NegativeNumberException extends RuntimeException{};
+
 
 }
+;

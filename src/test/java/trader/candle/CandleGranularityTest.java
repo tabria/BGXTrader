@@ -1,8 +1,8 @@
-package trader.indicators;
+package trader.candle;
 
 import com.oanda.v20.instrument.CandlestickGranularity;
 import org.junit.Test;
-import trader.indicators.enums.CandleGranularity;
+import trader.candle.CandleGranularity;
 
 import static org.junit.Assert.*;
 

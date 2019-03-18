@@ -1,9 +1,10 @@
 package trader.prices;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import trader.CommonTestClassMembers;
+import trader.exceptions.NegativeNumberException;
+import trader.exceptions.NullArgumentException;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
