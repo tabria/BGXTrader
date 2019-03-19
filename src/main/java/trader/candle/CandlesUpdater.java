@@ -3,7 +3,7 @@ import com.oanda.v20.Context;
 import com.oanda.v20.instrument.Candlestick;
 import com.oanda.v20.instrument.InstrumentCandlesRequest;
 import com.oanda.v20.primitives.DateTime;
-import trader.strategies.BGXStrategy.StrategyConfig;
+import trader.connectors.ApiConnector;
 
 import java.util.Collections;
 import java.util.List;
@@ -31,15 +31,19 @@ public final class CandlesUpdater {
 
     ///////////////////////////////////////////////
 
-
+    private ApiConnector apiConnector;
     private List<Candlestick> candlestickList;
 
 
-    public CandlesUpdater( ){
-        this.candlestickList = initialize(INITIAL_CANDLES_QUANTITY);
+    public CandlesUpdater(ApiConnector apiConnector){
+        candlestickList = initialize(INITIAL_CANDLES_QUANTITY);
+        this.apiConnector = apiConnector;
     }
 
     private List<Candlestick> initialize(long candlesQuantity) {
+       // apiConnector.
+
+
         //    private void requestCandles(){
 //        try {
 //            InstrumentCandlesResponse response = this.context.instrument.candles(this.request);

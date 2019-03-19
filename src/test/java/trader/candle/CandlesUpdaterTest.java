@@ -38,7 +38,7 @@ public class CandlesUpdaterTest {
 
     @Test
     public void testInitializeToReturnCorrectQuantity() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        long expected = 100L;
+        long expected = 10L;
         Method initialize = commonMembers.getPrivateMethodForTest(CandlesUpdater.class, "initialize", long.class);
         List<trader.candle.Candlestick> resultList = (List<trader.candle.Candlestick>) initialize.invoke(candlesUpdater, expected);
         assertEquals(expected, resultList.size());

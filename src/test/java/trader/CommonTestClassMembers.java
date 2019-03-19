@@ -1,5 +1,7 @@
 package trader;
 
+import trader.connectors.oanda.OandaCandlesResponse;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -15,6 +17,16 @@ public class CommonTestClassMembers {
     public Object changeFieldObject(Object object, String fieldName, Object value) {
         try {
             Field field = getField(object, fieldName);
+            field.set(object, value);
+            return field.get(object);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Object changeFieldInSuperObject(Object object, String fieldName, Object value) {
+        try {
+            Field field = getSuperField(object, fieldName);
             field.set(object, value);
             return field.get(object);
         } catch (NoSuchFieldException | IllegalAccessException e) {
@@ -40,7 +52,19 @@ public class CommonTestClassMembers {
     }
 
     private Field getField(Object object, String fieldName) throws NoSuchFieldException {
-        Field field = object.getClass().getDeclaredField(fieldName);
+        Field field = null;
+        try {
+            field = object.getClass().getDeclaredField(fieldName);
+            field.setAccessible(true);
+        } catch (Exception e){
+            field = object.getClass().getSuperclass().getDeclaredField(fieldName);
+            field.setAccessible(true);
+        }
+        return field;
+    }
+
+    private Field getSuperField(Object object, String fieldName) throws NoSuchFieldException {
+        Field field = object.getClass().getSuperclass().getDeclaredField(fieldName);
         field.setAccessible(true);
         return field;
     }

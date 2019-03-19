@@ -36,17 +36,18 @@ public class OandaCandlesResponseTest {
 
     private CommonTestClassMembers commonMembers;
     private OandaCandlesResponse candlesResponse;
-    private OandaConnector mockConnector;
     private OandaAPIMockInstrument oandaInstrument;
+    private OandaConnector oandaConnector;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp()  {
         commonMembers = new CommonTestClassMembers();
         oandaInstrument = new OandaAPIMockInstrument();
-        mockConnector = mock(OandaConnector.class);
-        setMockConnectorGetContext();
-        candlesResponse = new OandaCandlesResponse(mockConnector);
+        oandaConnector = mock(OandaConnector.class);
+        candlesResponse = new OandaCandlesResponse(oandaConnector);
         oandaInstrument.init(3);
+        setMockContextToOandaConnector();
+
 
     }
 
@@ -210,7 +211,8 @@ public class OandaCandlesResponseTest {
         return ZonedDateTime.parse(dateTime).withZoneSameInstant(ZoneId.of("UTC"));
     }
 
-    private void setMockConnectorGetContext() {
-        when(mockConnector.getContext()).thenReturn(oandaInstrument.getContext());
+    private void setMockContextToOandaConnector() {
+        commonMembers.changeFieldObject(candlesResponse, "oandaConnector",oandaConnector);
+        when(oandaConnector.getContext()).thenReturn(oandaInstrument.getContext());
     }
 }

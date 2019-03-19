@@ -3,43 +3,51 @@ package trader.connectors.oanda;
 import com.oanda.v20.Context;
 import com.oanda.v20.ContextBuilder;
 import com.oanda.v20.account.*;
+import trader.candle.Candlestick;
 import trader.connectors.ApiConnector;
 import trader.prices.Pricing;
+
+import java.util.List;
 
 public class OandaConnector extends ApiConnector {
 
     private OandaConfig oandaConfig;
     private OandaAccountValidator oandaAccountValidator ;
     private OandaPriceResponse oandaPriceResponse;
+    private OandaCandlesResponse oandaCandlesResponse;
     private Context context;
 
-    private OandaConnector(){
+    public OandaConnector(){
         oandaConfig = new OandaConfig();
-        setContext();
-        setOandaValidator();
-        validateAccount();
-        setOandaPriceResponse();
+        initialize();
 
     }
 
-    @Override
     public Pricing getPrice() {
         return oandaPriceResponse.getPrice();
     }
 
-    public Context getContext(){
+    public List<Candlestick> getInitialCandles() {
+        return oandaCandlesResponse.getInitialCandles();
+    }
+
+    public Candlestick getUpdateCandle(){
+        return oandaCandlesResponse.getUpdateCandle();
+    }
+
+    Context getContext(){
         return context;
     }
 
-    public AccountID getAccountID(){
+    AccountID getAccountID(){
         return oandaConfig.getAccountID();
     }
 
-    public String getToken(){
+    String getToken(){
         return oandaConfig.getToken();
     }
 
-    public String getUrl(){
+    String getUrl(){
         return oandaConfig.getUrl();
     }
 
@@ -60,8 +68,21 @@ public class OandaConnector extends ApiConnector {
         oandaPriceResponse = new OandaPriceResponse(this);
     }
 
+    private void setOandaCandlesResponse() {
+        oandaCandlesResponse = new OandaCandlesResponse(this);
+    }
+
     private void validateAccount(){
         oandaAccountValidator.validateAccount();
         oandaAccountValidator.validateAccountBalance();
     }
+
+    private void initialize() {
+        setContext();
+        setOandaValidator();
+        validateAccount();
+        setOandaPriceResponse();
+        setOandaCandlesResponse();
+    }
+
 }

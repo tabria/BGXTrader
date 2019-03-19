@@ -7,8 +7,10 @@ import com.oanda.v20.ExecuteException;
 import com.oanda.v20.RequestException;
 import com.oanda.v20.account.*;
 import com.oanda.v20.primitives.InstrumentName;
+import trader.candle.Candlestick;
 import trader.config.Config;
 import trader.connection.Connection;
+import trader.connectors.ApiConnector;
 import trader.core.Observable;
 import trader.core.Observer;
 import trader.indicators.Indicator;
@@ -60,8 +62,6 @@ public class Main {
                 .setToken(Config.TOKEN)
                 .setApplication("Context")
                 .build();
-
-
 
 //Start transaction for bgxtrader
 //        TransactionSinceResponse since = context.transaction.since(Config.ACCOUNTID, new TransactionID("156"));

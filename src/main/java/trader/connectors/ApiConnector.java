@@ -1,10 +1,14 @@
 package trader.connectors;
 
 
+import trader.candle.Candlestick;
+import trader.exceptions.NoSuchConnectorException;
+import trader.exceptions.NullArgumentException;
 import trader.prices.Pricing;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 
 public abstract class ApiConnector {
 
@@ -19,6 +23,10 @@ public abstract class ApiConnector {
     }
 
     public abstract Pricing getPrice();
+
+    public abstract List<Candlestick> getInitialCandles();
+
+    public abstract Candlestick getUpdateCandle();
 
     private static ApiConnector createInstance(String apiName) {
         try {
@@ -38,7 +46,4 @@ public abstract class ApiConnector {
                 + apiName.substring(1) + CONNECTOR_SUFFIX;
         return apiName;
     }
-
-    static class NullArgumentException extends RuntimeException{};
-    static class NoSuchConnectorException extends RuntimeException{};
 }

@@ -4,11 +4,19 @@ import org.junit.Before;
 import org.junit.Test;
 import trader.CommonTestClassMembers;
 import trader.OandaAPIMock.OandaAPIMockAccount;
+import trader.OandaAPIMock.OandaAPIMockInstrument;
+import trader.candle.Candlestick;
 import trader.connectors.ApiConnector;
 import trader.prices.Price;
 import trader.prices.Pricing;
 
-import static org.junit.Assert.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -20,6 +28,9 @@ public class OandaConnectorTest {
     private OandaConfig mockOandaConfig;
     private OandaPriceResponse mockResponse;
     private Pricing mockPrice;
+    private Candlestick mockCandle;
+    private List<Candlestick> candlesticks;
+
 
     @Before
     public void setUp() {
@@ -29,7 +40,8 @@ public class OandaConnectorTest {
         mockOandaConfig = mock(OandaConfig.class);
         mockResponse = mock(OandaPriceResponse.class);
         mockPrice = mock(Price.class);
-
+        mockCandle = mock(Candlestick.class);
+        candlesticks = new ArrayList<>();
     }
 
     @Test
@@ -66,6 +78,35 @@ public class OandaConnectorTest {
         commonMembers.changeFieldObject(oandaConnector, "oandaPriceResponse", mockResponse);
         when(oandaConnector.getPrice()).thenReturn(mockPrice);
         assertEquals(mockPrice, oandaConnector.getPrice());
+    }
+
+    @SuppressWarnings(value = "unchecked")
+    @Test
+    public void getCorrectInitialCandlesQuantiy() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        setCandlesResponseField();
+        List<Candlestick> initialCandlesList = (List<Candlestick>) invokeTestMethod("getInitialCandles");
+
+        assertSame(candlesticks, initialCandlesList);
+    }
+
+    @Test
+    public void getCorrectCandlesQuantityWhenUpdating() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        setCandlesResponseField();
+        Candlestick candlestick = (Candlestick) invokeTestMethod("getUpdateCandle");
+
+        assertSame(mockCandle, candlestick);
+    }
+
+    private void setCandlesResponseField() {
+        OandaCandlesResponse oandaCandlesResponse = mock(OandaCandlesResponse.class);
+        when(oandaCandlesResponse.getUpdateCandle()).thenReturn(mockCandle);
+        when(oandaCandlesResponse.getInitialCandles()).thenReturn(candlesticks);
+        commonMembers.changeFieldObject(oandaConnector, "oandaCandlesResponse", oandaCandlesResponse);
+    }
+
+    private Object invokeTestMethod(String methodName) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        Method getUpdateCandles = commonMembers.getPrivateMethodForTest(oandaConnector, methodName);
+        return getUpdateCandles.invoke(oandaConnector);
     }
 
 }

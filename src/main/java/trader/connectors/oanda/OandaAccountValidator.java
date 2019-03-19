@@ -1,10 +1,8 @@
 package trader.connectors.oanda;
 
-import com.oanda.v20.Context;
 import com.oanda.v20.ExecuteException;
 import com.oanda.v20.RequestException;
 import com.oanda.v20.account.*;
-import com.oanda.v20.primitives.AccountUnits;
 import trader.config.Config;
 
 import java.util.List;

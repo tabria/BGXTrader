@@ -8,7 +8,7 @@ public class StrategyConfig {
 
     public static final CandleGranularity CANDLE_GRANULARITY = CandleGranularity.M30;
     public static final String INSTRUMENT_NAME = "EUR_USD";
-    public static long INITIAL_CANDLES_QUANTITY = 1000L;
-    public static long UPDATE_CANDLES_QUANTITY = 1L;
+    public static long INITIAL_CANDLES_QUANTITY = 5000L;
+    public static long UPDATE_CANDLES_QUANTITY = 2L;
 
 }

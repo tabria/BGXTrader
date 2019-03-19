@@ -2,8 +2,8 @@ package trader.connectors;
 
 import org.junit.Assert;
 import org.junit.Test;
-
-import static trader.connectors.ApiConnector.*;
+import trader.exceptions.NoSuchConnectorException;
+import trader.exceptions.NullArgumentException;
 
 public class ApiConnectorTest {
 

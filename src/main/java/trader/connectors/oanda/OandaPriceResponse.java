@@ -26,7 +26,7 @@ public class OandaPriceResponse {
     private OandaConnector oandaConnector;
     private PricingGetRequest pricingGetRequest;
 
-    public OandaPriceResponse(OandaConnector connector){
+    OandaPriceResponse(OandaConnector connector){
         oandaConnector = connector;
         createPricingRequest();
     }
@@ -60,7 +60,6 @@ public class OandaPriceResponse {
     private PricingGetResponse createPricingGetResponse() {
         try {
             Context context = oandaConnector.getContext();
-            PricingGetResponse pricingGetResponse = context.pricing.get(pricingGetRequest);
             return context.pricing.get(pricingGetRequest);
         } catch (ExecuteException | RequestException e) {
             Connection.waitToConnect(Config.URL);

@@ -21,7 +21,7 @@ public final class PriceObservable implements Observable {
 
     ////////////////// to be removed /////////////////////////
     private PriceObservable(Context context){
-        apiConnector = ApiConnector.create("Oanda");
+        apiConnector =  ApiConnector.create("Oanda");
         oldPrice = new Price.PriceBuilder().build();
         observers = new CopyOnWriteArrayList<>();
     }

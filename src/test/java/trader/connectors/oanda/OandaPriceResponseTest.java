@@ -5,15 +5,11 @@ import com.oanda.v20.RequestException;
 import com.oanda.v20.pricing.PricingGetRequest;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import trader.CommonTestClassMembers;
 import trader.OandaAPIMock.OandaAPIMockAccount;
 import trader.OandaAPIMock.OandaAPIMockPricing;
-import trader.prices.Price;
 import trader.prices.Pricing;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.ZonedDateTime;
@@ -40,7 +36,7 @@ public class OandaPriceResponseTest {
     public void setUp() throws RequestException, ExecuteException {
         oandaAPIMockPricing = new OandaAPIMockPricing();
         oandaAPIMockAccount = new OandaAPIMockAccount();
-        oandaConnector = (OandaConnector) OandaConnector.create("Oanda");
+        oandaConnector = (OandaConnector) oandaConnector.create("Oanda");
         mockOandaConnector = mock(OandaConnector.class);
         oandaAPIMockPricing.setMockPricingGetResponse(oandaAPIMockPricing.getMockPricingGetResponse());
         priceResponse = new OandaPriceResponse(oandaConnector);

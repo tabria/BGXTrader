@@ -3,13 +3,11 @@ package trader.connectors.oanda;
 import com.oanda.v20.ExecuteException;
 import com.oanda.v20.RequestException;
 import com.oanda.v20.instrument.*;
-import com.oanda.v20.pricing_common.PriceValue;
 import com.oanda.v20.primitives.DateTime;
 import com.oanda.v20.primitives.InstrumentName;
 import trader.candle.Candle;
 import trader.candle.Candlestick;
 import trader.exceptions.BadRequestException;
-import trader.strategies.BGXStrategy.StrategyConfig;
 
 import java.time.Instant;
 import java.time.ZoneId;
@@ -25,22 +23,22 @@ public class OandaCandlesResponse {
     private InstrumentCandlesRequest initialCandlesRequest;
     private InstrumentCandlesRequest updateCandlesRequest;
 
-    public OandaCandlesResponse(OandaConnector connector){
+    OandaCandlesResponse(OandaConnector connector){
         oandaConnector = connector;
         initialCandlesRequest = createCandlesRequest(INITIAL_CANDLES_QUANTITY);
         updateCandlesRequest = createCandlesRequest(UPDATE_CANDLES_QUANTITY);
     }
 
-    public List<Candlestick> getInitialCandles(){
-        List<com.oanda.v20.instrument.Candlestick> oandaCadles =
+    List<Candlestick> getInitialCandles(){
+        List<com.oanda.v20.instrument.Candlestick> oandaCandles =
                 getOandaCandles(initialCandlesRequest);
-        return transformToTradeCandlestickList(oandaCadles);
+        return transformToTradeCandlestickList(oandaCandles);
     }
 
-    public Candlestick getUpdateCandle(){
-        List<com.oanda.v20.instrument.Candlestick> oandaCadles =
+    Candlestick getUpdateCandle(){
+        List<com.oanda.v20.instrument.Candlestick> oandaCandles =
                 getOandaCandles(updateCandlesRequest);
-        return transformToTradeCandlestickList(oandaCadles).get(0);
+        return transformToTradeCandlestickList(oandaCandles).get(0);
     }
 
     private List<Candlestick> transformToTradeCandlestickList(List<com.oanda.v20.instrument.Candlestick> oandaCadles) {
