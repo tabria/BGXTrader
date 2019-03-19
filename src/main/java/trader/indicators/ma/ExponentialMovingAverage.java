@@ -79,7 +79,8 @@ public final class ExponentialMovingAverage extends BaseIndicator {
     }
 
     private void setEMAValues(){
-        List<Candlestick> candlestickList = candlesUpdater.getCandles();
+        //List<Candlestick> candlestickList = candlesUpdater.getCandles();
+        List<Candlestick> candlestickList = null;
         indicatorValues.clear();
         calculateEMAValue(candlestickList);
     }

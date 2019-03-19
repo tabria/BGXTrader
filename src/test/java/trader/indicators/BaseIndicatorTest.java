@@ -75,7 +75,7 @@ public abstract class BaseIndicatorTest {
         this.candlesDateTime.add(NEW_DATETIME_ENTRY);
         this.indicatorUpdateHelper.fillCandlestickList();
         List<Candlestick> candlestickList = this.indicatorUpdateHelper.getCandlestickList();
-        when(this.candlesUpdater.getCandles()).thenReturn(candlestickList);
+ //       when(this.candlesUpdater.getCandles()).thenReturn(candlestickList);
     }
 
     protected void testPointTime(List<Point> points, List<BigDecimal> values) {

@@ -49,7 +49,8 @@ final class BaseExitStrategy{
 
         int index = this.getLastFinishedCandleIndex();
 
-        return this.candlesUpdater.getCandles().get(index).getMid().getH().bigDecimalValue();
+        //return this.candlesUpdater.getCandles().get(index).getMid().getH().bigDecimalValue();
+        return null;
     }
 
     /**
@@ -61,7 +62,8 @@ final class BaseExitStrategy{
 
         int index = this.getLastFinishedCandleIndex();
 
-        return this.candlesUpdater.getCandles().get(index).getMid().getL().bigDecimalValue();
+       // return this.candlesUpdater.getCandles().get(index).getMid().getL().bigDecimalValue();
+        return null;
     }
 
     /**
@@ -71,7 +73,8 @@ final class BaseExitStrategy{
     BigDecimal getLastFullCandleClose(){
 
         int index = this.getLastFinishedCandleIndex();
-        return this.candlesUpdater.getCandles().get(index).getMid().getC().bigDecimalValue();
+       // return this.candlesUpdater.getCandles().get(index).getMid().getC().bigDecimalValue();
+        return null;
     }
 
     /**
@@ -176,7 +179,8 @@ final class BaseExitStrategy{
     }
 
     private int getLastFinishedCandleIndex(){
-        List<Candlestick> candles = this.candlesUpdater.getCandles();
+      //  List<Candlestick> candles = this.candlesUpdater.getCandles();
+        List<Candlestick> candles = null;
         if (candles.size()!= NUMBER_OF_CANDLES){
             throw new IndexOutOfBoundsException("Candles count is: " +candles.size()+" required count: "+NUMBER_OF_CANDLES);
         }

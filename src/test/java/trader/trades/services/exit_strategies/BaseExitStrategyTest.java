@@ -105,7 +105,7 @@ public class BaseExitStrategyTest {
         //mock candlesUpdater
         this.mockCandlesUpdater = mock(CandlesUpdater.class);
         when(this.mockCandlesUpdater.updateCandles(this.mockDateTime)).thenReturn(true);
-        when(this.mockCandlesUpdater.getCandles()).thenReturn(this.candlestickList);
+     //   when(this.mockCandlesUpdater.getCandles()).thenReturn(this.candlestickList);
 
         this.baseExitStrategy = new BaseExitStrategy(this.mockContext, this.candlestickGranularity);
     }
@@ -142,7 +142,7 @@ public class BaseExitStrategyTest {
         this.setCandlesUpdaterToMock();
         fillCandlestickList();
 
-        when(this.mockCandlesUpdater.getCandles()).thenReturn(this.candlestickList);
+     //   when(this.mockCandlesUpdater.getCandles()).thenReturn(this.candlestickList);
 
         BigDecimal result = this.baseExitStrategy.getLastFullCandleHigh();
 
@@ -170,7 +170,7 @@ public class BaseExitStrategyTest {
         this.setCandlesUpdaterToMock();
         fillCandlestickList();
 
-        when(this.mockCandlesUpdater.getCandles()).thenReturn(this.candlestickList);
+//        when(this.mockCandlesUpdater.getCandles()).thenReturn(this.candlestickList);
 
         BigDecimal result = this.baseExitStrategy.getLastFullCandleLow();
 
@@ -198,7 +198,7 @@ public class BaseExitStrategyTest {
         this.setCandlesUpdaterToMock();
         fillCandlestickList();
 
-        when(this.mockCandlesUpdater.getCandles()).thenReturn(this.candlestickList);
+ //       when(this.mockCandlesUpdater.getCandles()).thenReturn(this.candlestickList);
 
         BigDecimal result = this.baseExitStrategy.getLastFullCandleClose();
 

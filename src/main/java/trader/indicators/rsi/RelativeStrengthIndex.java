@@ -78,7 +78,8 @@ public final class RelativeStrengthIndex extends BaseIndicator {
     }
 
     private void setRSIValues() {
-        List<Candlestick> candlestickList = candlesUpdater.getCandles();
+      //  List<Candlestick> candlestickList = candlesUpdater.getCandles();
+        List<Candlestick> candlestickList = null;
         indicatorValues = new ArrayList<>();
         fillIndicatorValues(candlestickList);
     }

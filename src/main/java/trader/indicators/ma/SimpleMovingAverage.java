@@ -62,7 +62,8 @@ public final class SimpleMovingAverage extends BaseIndicator {
     }
 
     private void setSMAValues(){
-        List<Candlestick> candlestickList = candlesUpdater.getCandles();
+     //   List<Candlestick> candlestickList = candlesUpdater.getCandles();
+        List<Candlestick> candlestickList = null;
         indicatorValues.clear();
         calculateSMAValue(candlestickList);
     }

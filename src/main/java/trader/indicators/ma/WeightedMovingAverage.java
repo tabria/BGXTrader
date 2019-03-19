@@ -60,7 +60,8 @@ public final class WeightedMovingAverage extends BaseIndicator {
     }
 
     private void setWMAValues(){
-        List<Candlestick> candlestickList = candlesUpdater.getCandles();
+        //List<Candlestick> candlestickList = candlesUpdater.getCandles();
+        List<Candlestick> candlestickList = null;
         indicatorValues.clear();
 
         for (int candleIndex = candlestickList.size()-1; candleIndex >= lastCandlestickIndex() ; candleIndex--) {
