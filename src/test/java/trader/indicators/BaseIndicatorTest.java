@@ -6,7 +6,7 @@ import com.oanda.v20.instrument.Candlestick;
 import com.oanda.v20.primitives.DateTime;
 import org.junit.Before;
 import org.junit.Test;
-import trader.OandaAPIMock.OandaAPIMock;
+import trader.OandaAPIMock.OandaAPIMockInstrument;
 import trader.candle.CandlesUpdater;
 import trader.candle.CandleGranularity;
 import trader.candle.CandlestickPriceType;
@@ -34,7 +34,7 @@ public abstract class BaseIndicatorTest {
     private IndicatorUpdateHelper indicatorUpdateHelper;
     protected long candlesticksQuantity;
     protected DateTime mockDateTime;
-    private OandaAPIMock oandaAPIMock;
+    private OandaAPIMockInstrument oandaInstrument;
 
     @Before
     public void before() {
@@ -109,8 +109,8 @@ public abstract class BaseIndicatorTest {
     }
 
     private void setCandlesUpdater() {
-        this.candlesUpdater = spy(new CandlesUpdater(oandaAPIMock.getContext(),
-                oandaAPIMock.getMockRequest(),  CandleGranularity.M30));
+        this.candlesUpdater = spy(new CandlesUpdater(oandaInstrument.getContext(),
+                oandaInstrument.getMockRequest(),  CandleGranularity.M30));
 
         List<Candlestick> candlestickList = this.indicatorUpdateHelper.getCandlestickList();
         doReturn(candlestickList).when(this.candlesUpdater).getCandles();
@@ -118,9 +118,9 @@ public abstract class BaseIndicatorTest {
 
     private void initializeOandaAPIMock()  {
         try {
-            oandaAPIMock = new OandaAPIMock();
-            oandaAPIMock.setMockRequestToCandles();
-            oandaAPIMock.setMockResponseToGetCandles(this.indicatorUpdateHelper.getCandlestickList());
+            oandaInstrument = new OandaAPIMockInstrument();
+            oandaInstrument.setMockRequestToCandles();
+            oandaInstrument.setMockResponseToGetCandles(this.indicatorUpdateHelper.getCandlestickList());
         } catch (RequestException | ExecuteException e) {
             e.printStackTrace();
         }

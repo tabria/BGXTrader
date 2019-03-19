@@ -4,6 +4,7 @@ import com.oanda.v20.instrument.*;
 import org.junit.Before;
 import org.junit.Test;
 import trader.OandaAPIMock.OandaAPIMock;
+import trader.OandaAPIMock.OandaAPIMockInstrument;
 import trader.candle.CandleGranularity;
 import trader.candle.CandlestickPriceType;
 import trader.indicators.Indicator;
@@ -31,12 +32,12 @@ public class RSIBuilderTest {
     private RSIBuilder builder;
     @Before
     public void before() throws Exception {
-        OandaAPIMock oandaAPIMock = new OandaAPIMock();
-        when(oandaAPIMock.getMockResponse().getCandles()).thenReturn(new ArrayList<>());
-        when(oandaAPIMock.getContext().instrument.candles(any(InstrumentCandlesRequest.class)))
-                .thenReturn(oandaAPIMock.getMockResponse());
+        OandaAPIMockInstrument oandaInstrument = new OandaAPIMockInstrument();
+        when(oandaInstrument.getMockResponse().getCandles()).thenReturn(new ArrayList<>());
+        when(oandaInstrument.getContext().instrument.candles(any(InstrumentCandlesRequest.class)))
+                .thenReturn(oandaInstrument.getMockResponse());
 
-        builder = new RSIBuilder(oandaAPIMock.getContext());
+        builder = new RSIBuilder(oandaInstrument.getContext());
 
     }
 

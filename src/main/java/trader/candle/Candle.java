@@ -5,7 +5,7 @@ import trader.exceptions.NullArgumentException;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
-public final class Candle implements CandleStick {
+public final class Candle implements Candlestick {
 
     private final CandlePriceType priceType;
     private final long timeFrame;
@@ -29,38 +29,47 @@ public final class Candle implements CandleStick {
         dateTime = candleBuilder.dateTime;
     }
 
+    @Override
     public CandlePriceType getPriceType() {
         return priceType;
     }
 
+    @Override
     public long getTimeFrame() {
         return timeFrame;
     }
 
+    @Override
     public boolean isComplete() {
         return complete;
     }
 
+    @Override
     public long getVolume() {
         return volume;
     }
 
+    @Override
     public BigDecimal getOpenPrice() {
         return openPrice;
     }
 
+    @Override
     public BigDecimal getHighPrice() {
         return highPrice;
     }
 
+    @Override
     public BigDecimal getLowPrice() {
         return lowPrice;
     }
 
+    @Override
     public BigDecimal getClosePrice() {
         return closePrice;
     }
 
+    @Override
     public ZonedDateTime getDateTime() {
         return dateTime;
     }

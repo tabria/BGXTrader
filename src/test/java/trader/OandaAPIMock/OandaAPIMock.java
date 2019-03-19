@@ -8,7 +8,10 @@ import com.oanda.v20.instrument.InstrumentCandlesRequest;
 import com.oanda.v20.instrument.InstrumentCandlesResponse;
 import com.oanda.v20.instrument.InstrumentContext;
 import com.oanda.v20.primitives.DateTime;
+import trader.CommonTestClassMembers;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import static org.mockito.Mockito.mock;
@@ -16,16 +19,11 @@ import static org.mockito.Mockito.when;
 
 public class OandaAPIMock {
 
-    private Context mockContext;
-    private InstrumentCandlesRequest mockRequest;
-    private InstrumentCandlesResponse mockResponse;
-    private DateTime mockDateTime;
+    Context mockContext;
+    DateTime mockDateTime;
 
     public OandaAPIMock() {
         mockContext = mock(Context.class);
-        mockContext.instrument = mock(InstrumentContext.class);
-        mockRequest = mock(InstrumentCandlesRequest.class);
-        mockResponse = mock(InstrumentCandlesResponse.class);
         mockDateTime = mock(DateTime.class);
 
     }
@@ -34,23 +32,13 @@ public class OandaAPIMock {
         return mockContext;
     }
 
-    public InstrumentCandlesRequest getMockRequest() {
-        return mockRequest;
-    }
-
-    public InstrumentCandlesResponse getMockResponse() {
-        return mockResponse;
-    }
-
     public DateTime getMockDateTime(){
         return mockDateTime;
     }
 
-    public void setMockRequestToCandles() throws ExecuteException, RequestException {
-        when(mockContext.instrument.candles(mockRequest)).thenReturn(mockResponse);
-    }
 
-    public void setMockResponseToGetCandles(List<Candlestick> candlestickList){
-        when(mockResponse.getCandles()).thenReturn(candlestickList);
-    }
+
+
+
+
 }

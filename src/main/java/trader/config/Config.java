@@ -37,7 +37,7 @@ public final class Config {
     //public static final AccountID ACCOUNTID = new AccountID("101-004-8077015-004");
 
     /**
-     * INSTRUMENT - object storing the main trading pair. This can be only a pair supported by OANDA
+     * INSTRUMENT_NAME - object storing the main trading pair. This can be only a pair supported by OANDA
      */
     public static final InstrumentName INSTRUMENT  = new InstrumentName("EUR_USD");
 
