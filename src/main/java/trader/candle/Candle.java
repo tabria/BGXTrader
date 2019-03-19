@@ -7,7 +7,7 @@ import java.time.ZonedDateTime;
 
 public final class Candle implements Candlestick {
 
-    private final CandlePriceType priceType;
+//    private final CandlePriceType priceType;
     private final long timeFrame;
     private final boolean complete;
     private final long volume;
@@ -18,7 +18,7 @@ public final class Candle implements Candlestick {
     private final ZonedDateTime dateTime;
 
     private Candle(CandleBuilder candleBuilder) {
-        priceType = candleBuilder.priceType;
+//        priceType = candleBuilder.priceType;
         timeFrame = candleBuilder.timeFrame;
         complete = candleBuilder.complete;
         volume = candleBuilder.volume;
@@ -29,10 +29,10 @@ public final class Candle implements Candlestick {
         dateTime = candleBuilder.dateTime;
     }
 
-    @Override
-    public CandlePriceType getPriceType() {
-        return priceType;
-    }
+//    @Override
+//    public CandlePriceType getPriceType() {
+//        return priceType;
+//    }
 
     @Override
     public long getTimeFrame() {
@@ -83,7 +83,7 @@ public final class Candle implements Candlestick {
         private static final BigDecimal DEFAULT_PRICE = new BigDecimal(0.00001).setScale(5, BigDecimal.ROUND_HALF_UP);
         private static final ZonedDateTime DEFAULT_ZONED_DATE_TIME = ZonedDateTime.parse("2012-06-30T12:30:40Z[UTC]");
 
-        private CandlePriceType priceType;
+ //       private CandlePriceType priceType;
         private long timeFrame;
         private boolean complete;
         private long volume;
@@ -94,7 +94,7 @@ public final class Candle implements Candlestick {
         private ZonedDateTime dateTime;
 
         public CandleBuilder(){
-            priceType = new CloseCandlePriceType();
+ //           priceType = new CloseCandlePriceType();
             timeFrame = DEFAULT_CANDLE_TIME_FRAME_IN_SECONDS;
             complete = true;
             volume = DEFAULT_VOLUME;
@@ -111,7 +111,7 @@ public final class Candle implements Candlestick {
 
         public CandleBuilder setPriceType(CandlePriceType type){
             checkNull(type);
-            priceType = type;
+//            priceType = type;
             return this;
         }
 

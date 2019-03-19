@@ -32,7 +32,7 @@ public abstract class BaseIndicatorTest {
     protected CandlesUpdater candlesUpdater;
     protected CandlestickPriceType mockCandlestickPriceType;
     private IndicatorUpdateHelper indicatorUpdateHelper;
-    protected long candlesticksQuantity;
+    protected long period;
     protected DateTime mockDateTime;
     private OandaAPIMockInstrument oandaInstrument;
 
@@ -49,7 +49,7 @@ public abstract class BaseIndicatorTest {
         this.candlesClosePrices = indicatorUpdateHelper.getCandlesClosePrices();
         this.candlesDateTime = indicatorUpdateHelper.getCandlesDateTime();
         this.indicatorUpdateHelper.fillCandlestickList();
-        setCandlesticksQuantity();
+        setPeriod();
         setCandlesUpdater();
     }
 
@@ -100,12 +100,13 @@ public abstract class BaseIndicatorTest {
         }
     }
 
-    private void setCandlesticksQuantity(){
-        long candlesQuantity = (candlesClosePrices.size() - IGNORED_CANDLES)/ DIVIDER;
-        if (candlesQuantity < MINIMUM_CANDLES_COUNT){
+    private void setPeriod(){
+        long period = candlesClosePrices.size()/ DIVIDER;
+ //       long period = (candlesClosePrices.size() - IGNORED_CANDLES)/ DIVIDER;
+        if (period < MINIMUM_CANDLES_COUNT){
             throw new IllegalArgumentException("Prices in CANDLES_CLOSE_PRICES must be at least 3");
         }
-        this.candlesticksQuantity = candlesQuantity;
+        this.period = period;
     }
 
     private void setCandlesUpdater() {

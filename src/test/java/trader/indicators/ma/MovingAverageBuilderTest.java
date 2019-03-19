@@ -3,10 +3,12 @@ package trader.indicators.ma;
 import com.oanda.v20.instrument.*;
 import org.junit.Before;
 import org.junit.Test;
-import trader.OandaAPIMock.OandaAPIMock;
 import trader.OandaAPIMock.OandaAPIMockInstrument;
+import trader.connectors.ApiConnector;
+import trader.exceptions.NoSuchConnectorException;
+import trader.exceptions.NullArgumentException;
+import trader.exceptions.OutOfBoundaryException;
 import trader.indicators.Indicator;
-import trader.candle.CandleGranularity;
 import trader.candle.CandlestickPriceType;
 
 import java.lang.reflect.Field;
@@ -23,64 +25,51 @@ public class MovingAverageBuilderTest {
 
     private static final String CANDLESTICK_PRICE_TYPE = "candlestickPriceType";
     private static final String MOVING_AVERAGE_TYPE = "maType";
-    private static final String CANDLESTICK_QUANTITY = "candlestickQuantity";
-    private static final String CANDLE_TIME_FRAME = "candleTimeFrame";
-    private static final String MAX_CANDLESTICK_QUANTITY = "MAX_CANDLESTICK_QUANTITY";
-    private static final String MIN_CANDLESTICK_QUANTITY = "MIN_CANDLESTICK_QUANTITY";
+    private static final String PERIOD = "indicatorPeriod";
+    private static final String MAX_PERIOD = "MAX_INDICATOR_PERIOD";
+    private static final String MIN_PERIOD = "MIN_INDICATOR_PERIOD";
 
     private MovingAverageBuilder builder;
+    private ApiConnector mockApiConnectior;
 
-
-    
     @Before
     public void setUp() throws Exception {
 
         OandaAPIMockInstrument oandaInstrument = new OandaAPIMockInstrument();
-        when(oandaInstrument.getMockResponse().getCandles()).thenReturn(new ArrayList<>());
+        when(oandaInstrument.getMockResponse().getCandles())
+                .thenReturn(new ArrayList<>());
         when(oandaInstrument.getContext().instrument.candles(any(InstrumentCandlesRequest.class)))
                 .thenReturn(oandaInstrument.getMockResponse());
-
-        this.builder = new MovingAverageBuilder(oandaInstrument.getContext());
+        mockApiConnectior = mock(ApiConnector.class);
+        this.builder = new MovingAverageBuilder(mockApiConnectior);
     }
 
-    @Test(expected = NullPointerException.class)
-    public void whenCreateMABuilderWithNullContext_Exception(){
+    @Test(expected = NoSuchConnectorException.class)
+    public void whenCreateMABuilderWithNullApiConnector_Exception(){
         new MovingAverageBuilder(null);
     }
 
-    @Test(expected = NullPointerException.class)
-    public void whenCallSetCandleTimeFrameWithNull_Exception() {
-        this.builder = this.builder.setCandleTimeFrame(null);
+    @Test(expected = OutOfBoundaryException.class)
+    public void whenCallSetPeriodWithLessThanMinimumPeriod_Exception() throws NoSuchFieldException, IllegalAccessException {
+        long minPeriod = (long) extractFieldObject(MIN_PERIOD);
+        this.builder.setPeriod(minPeriod - 1);
+    }
+
+    @Test(expected = OutOfBoundaryException.class)
+    public void whenCallSetPeriodWithMoreThanMaxPeriod_Exception() throws NoSuchFieldException, IllegalAccessException {
+        long maxPeriod = (long) extractFieldObject(MAX_PERIOD);
+        this.builder.setPeriod(maxPeriod + 1);
     }
 
     @Test
-    public void testForCorrectCandleTimeFrame() throws NoSuchFieldException, IllegalAccessException {
-        this.builder.setCandleTimeFrame(CandleGranularity.M15);
-
-        assertEquals(CandlestickGranularity.M15.toString(), extractFieldObject(CANDLE_TIME_FRAME).toString());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void whenCallSetCandlesQuantityWithLessThanMinimumCandlesQuantity_Exception() throws NoSuchFieldException, IllegalAccessException {
-        long minCandlesQuantity = (long) extractFieldObject(MIN_CANDLESTICK_QUANTITY);
-        this.builder.setCandlesQuantity(minCandlesQuantity - 1);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void whenCallSetCandlesQuantityWithMoreThanMaxCandleQuantity_Exception() throws NoSuchFieldException, IllegalAccessException {
-        long maxCandlesQuantity = (long) extractFieldObject(MAX_CANDLESTICK_QUANTITY);
-        this.builder.setCandlesQuantity(maxCandlesQuantity + 1);
-    }
-
-    @Test
-    public void testForCorrectCandlesQuantity() throws NoSuchFieldException, IllegalAccessException {
+    public void testForCorrectPeriod() throws NoSuchFieldException, IllegalAccessException {
         long expected = 11L;
-        this.builder.setCandlesQuantity(expected);
+        this.builder.setPeriod(expected);
 
-        assertEquals(expected, extractFieldObject(CANDLESTICK_QUANTITY));
+        assertEquals(expected, extractFieldObject(PERIOD));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = NullArgumentException.class)
     public void whenCallSetCandlestickPriceTypeWithNull_Exception() {
         this.builder.setCandlestickPriceType(null);
     }
@@ -92,7 +81,7 @@ public class MovingAverageBuilderTest {
         assertSame(CandlestickPriceType.MEDIAN, extractFieldObject(CANDLESTICK_PRICE_TYPE));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = NullArgumentException.class)
     public void callSetMATypeWithNull_Exception() {
         this.builder.setMAType(null);
     }

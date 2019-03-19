@@ -47,8 +47,6 @@ public class OandaCandlesResponseTest {
         candlesResponse = new OandaCandlesResponse(oandaConnector);
         oandaInstrument.init(3);
         setMockContextToOandaConnector();
-
-
     }
 
     @Test
@@ -163,6 +161,33 @@ public class OandaCandlesResponseTest {
         assertCandlestick(actualCandlestick);
     }
 
+    @SuppressWarnings(value = "unchecked")
+    @Test
+    public void whenCreateCandlestickList_AddOnlyTradableCandles() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        int amount = 7;
+        oandaInstrument
+                .addNonTradableCandlesticksToOandaCandlestickList(amount);
+
+        Method transformToTradeCandlestickList = commonMembers
+                .getPrivateMethodForTest(candlesResponse, "transformToTradeCandlestickList", List.class);
+        List<Candlestick> actualList = (List<Candlestick>) transformToTradeCandlestickList
+                .invoke(candlesResponse, oandaInstrument.getMockCandlestickList());
+
+        int initialSize = oandaInstrument.getMockCandlestickList().size();
+        assertEquals(initialSize - amount, actualList.size());
+        assertTrue(isAllCandlesTradable(actualList));
+    }
+
+    private boolean isAllCandlesTradable(List<Candlestick> actualList) {
+        for (Candlestick candlestick:actualList) {
+            if(!candlestick.isComplete()){
+                return false;
+            }
+        }
+        return true;
+    }
+
+
     private void verifyList(int initialRequestCandlesQuantity, List<Candlestick> actualList) {
         assertEquals(initialRequestCandlesQuantity, actualList.size());
         for (Candlestick candlestick:actualList)
@@ -201,11 +226,11 @@ public class OandaCandlesResponseTest {
         assertEquals(EXPECTED_PRICE, invoke.getClosePrice());
     }
 
-    private void setOandaCandlestick(){
-        oandaInstrument.setOandaMockPriceValueActions(EXPECTED_PRICE);
-        oandaInstrument.setOandaMockDateTimeActions(DEFAULT_DATE_TIME);
-        oandaInstrument.setOandaCandlestickActions(EXPECTED_VOLUME, true);
-    }
+//    private void setOandaCandlestick(){
+//        oandaInstrument.setOandaMockPriceValueActions(EXPECTED_PRICE);
+//        oandaInstrument.setOandaMockDateTimeActions(DEFAULT_DATE_TIME);
+//        oandaInstrument.setOandaCandlestickActions(EXPECTED_VOLUME, true);
+//    }
 
     private ZonedDateTime createZonedDateTime(String dateTime){
         return ZonedDateTime.parse(dateTime).withZoneSameInstant(ZoneId.of("UTC"));

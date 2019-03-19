@@ -3,10 +3,7 @@ package trader.candle;
 import org.junit.Before;
 import org.junit.Test;
 import trader.CommonTestClassMembers;
-import trader.OandaAPIMock.OandaAPIMockInstrument;
 import trader.connectors.ApiConnector;
-import trader.indicators.IndicatorUpdateHelper;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.ZoneId;
@@ -47,7 +44,8 @@ public class CandlesUpdaterTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testInitializeToReturnCorrectQuantity() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        Method initialize = commonMembers.getPrivateMethodForTest(CandlesUpdater.class, "initialize");
+        Method initialize = commonMembers
+                .getPrivateMethodForTest(CandlesUpdater.class, "initialize");
         List<Candlestick> resultList = (List<Candlestick>) initialize.invoke(candlesUpdater);
 
         assertSame(candlesticks, resultList);
@@ -56,14 +54,14 @@ public class CandlesUpdaterTest {
 
     @Test
     public void tesGetCandlesToReturnCorrectObject(){
-        commonMembers.changeFieldObject(candlesUpdater, "candlestickList", candlesticks);
-        List<Candlestick> candleList = candlesUpdater.getCandles();
-        assertEquals(candlesticks, candleList);
+        changeCandlestickListFieldValue();
+
+        assertEquals(candlesticks, candlesUpdater.getCandles());
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void tesGetCandlesToReturnUnmodifiable(){
-        commonMembers.changeFieldObject(candlesUpdater, "candlestickList", candlesticks);
+        changeCandlestickListFieldValue();
         List<Candlestick> candleList = candlesUpdater.getCandles();
         candleList.add(mockCandle);
     }
@@ -103,7 +101,8 @@ public class CandlesUpdaterTest {
 
     @Test
     public void whenCallGetLastCandlestick_CorrectCandlestick() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        Method getLastCandlestick = commonMembers.getPrivateMethodForTest(candlesUpdater, "getLastCandlestick");
+        Method getLastCandlestick = commonMembers
+                .getPrivateMethodForTest(candlesUpdater, "getLastCandlestick");
         Candlestick actual = (Candlestick) getLastCandlestick.invoke(candlesUpdater);
         Candlestick expected = candlesticks.get(candlesticks.size()-1);
 
@@ -115,18 +114,23 @@ public class CandlesUpdaterTest {
         Method isDateTimeTradeable = commonMembers
                 .getPrivateMethodForTest(candlesUpdater, "isDateTimeTradeable", Candlestick.class, Candlestick.class);
         Candlestick lastCandle = candlesticks.get(candlesticks.size()-1);
+
         assertTrue( (boolean) isDateTimeTradeable.invoke(candlesUpdater, mockCandle, lastCandle));
     }
 
     @Test(expected = InvocationTargetException.class)
     public void testIfUpdateCandleIsCompletedAndDateTimeIsLowerThanDateTimeOfTheOldCandle_LoopTillUpdate() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         setMockCandleTime(timeNow=timeNow.plusSeconds(-300));
-        commonMembers.changeFieldObject(candlesUpdater,"sleepTimeMilliseconds", -1);
-
+        commonMembers
+                .changeFieldObject(candlesUpdater,"sleepTimeMilliseconds", -1);
         Method isDateTimeTradeable = commonMembers
                 .getPrivateMethodForTest(candlesUpdater, "isDateTimeTradeable", Candlestick.class, Candlestick.class);
         Candlestick lastCandle = candlesticks.get(candlesticks.size()-1);
         isDateTimeTradeable.invoke(candlesUpdater, mockCandle, lastCandle);
+    }
+
+    private void changeCandlestickListFieldValue() {
+        commonMembers.changeFieldObject(candlesUpdater, "candlestickList", candlesticks);
     }
 
     private void setMockApiConnector() {
@@ -137,12 +141,15 @@ public class CandlesUpdaterTest {
     private void fillCandlestickList(){
         for (int i = 0; i < CANDLESTICK_LIST_SIZE; i++) {
             timeNow = timeNow.plusSeconds(30);
-            Candlestick newCandlestick = mock(Candlestick.class);
-            when(newCandlestick.getDateTime()).thenReturn(timeNow);
-            candlesticks.add(newCandlestick);
+            candlesticks.add(createCandlestickMockWithDateTime());
             setMockCandleTime(timeNow = timeNow.plusSeconds(30));
         }
+    }
 
+    private Candlestick createCandlestickMockWithDateTime() {
+        Candlestick newCandlestick = mock(Candlestick.class);
+        when(newCandlestick.getDateTime()).thenReturn(timeNow);
+        return newCandlestick;
     }
 
     private void setMockCandleTime(ZonedDateTime time) {

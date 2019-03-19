@@ -48,7 +48,7 @@ public class RelativeStrengthIndexTest extends BaseIndicatorTest {
     public void before() {
 
         super.before();
-        this.rsi = new RelativeStrengthIndex(this.candlesticksQuantity, this.mockCandlestickPriceType, this.candlesUpdater);
+        this.rsi = new RelativeStrengthIndex(this.period, this.mockCandlestickPriceType, this.candlesUpdater);
 
 //        this.mockDateTime = mock(DateTime.class);
 //
@@ -141,9 +141,9 @@ public class RelativeStrengthIndexTest extends BaseIndicatorTest {
     @Test
     public void TestToString(){
         String result = this.rsi.toString();
-        String expected = String.format("RelativeStrengthIndex{candlesticksQuantity=%d, " +
+        String expected = String.format("RelativeStrengthIndex{period=%d, " +
                 "candlestickPriceType=%s, rsiValues=[], points=[], " +
-                "isTradeGenerated=false}", candlesticksQuantity, this.mockCandlestickPriceType.toString());
+                "isTradeGenerated=false}", period, this.mockCandlestickPriceType.toString());
 
         assertEquals(expected, result);
     }
@@ -157,7 +157,7 @@ public class RelativeStrengthIndexTest extends BaseIndicatorTest {
     private RelativeStrengthIndex createRSI() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         Class<?> objClass = RelativeStrengthIndex.class;
         Constructor<?> cons = objClass.getDeclaredConstructor(long.class, CandlestickPriceType.class, CandlesUpdater.class);
-        return (RelativeStrengthIndex) cons.newInstance(candlesticksQuantity, this.mockCandlestickPriceType, candlesUpdater);
+        return (RelativeStrengthIndex) cons.newInstance(period, this.mockCandlestickPriceType, candlesUpdater);
 
     }
 
@@ -188,7 +188,7 @@ public class RelativeStrengthIndexTest extends BaseIndicatorTest {
 //    }
     //total candle count for the given periods are calculated with this formula:
     private void setPeriod(){
-        candlesticksQuantity = RelativeStrengthIndexTest.DEFAULT_PERIOD;
+        period = RelativeStrengthIndexTest.DEFAULT_PERIOD;
     }
 
 }

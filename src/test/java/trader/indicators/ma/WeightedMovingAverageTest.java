@@ -22,7 +22,7 @@ public class WeightedMovingAverageTest extends BaseIndicatorTest {
     @Before
     public void before()  {
         super.before();
-        this.wma = new WeightedMovingAverage(candlesticksQuantity, mockCandlestickPriceType, candlesUpdater) ;
+        this.wma = new WeightedMovingAverage(period, mockCandlestickPriceType, candlesUpdater) ;
 
 
     }
@@ -68,9 +68,9 @@ public class WeightedMovingAverageTest extends BaseIndicatorTest {
     @Test
     public void TestToString(){
         String result = this.wma.toString();
-        String expected = String.format("WeightedMovingAverage{candlesticksQuantity=%d, " +
+        String expected = String.format("WeightedMovingAverage{period=%d, " +
                         "candlestickPriceType=%s, indicatorValues=[], points=[], isTradeGenerated=false}",
-                candlesticksQuantity, this.mockCandlestickPriceType.toString());
+                period, this.mockCandlestickPriceType.toString());
         assertEquals(expected, result);
     }
 

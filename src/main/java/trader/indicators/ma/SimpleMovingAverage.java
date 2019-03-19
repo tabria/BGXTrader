@@ -11,8 +11,8 @@ import java.util.List;
 
 public final class SimpleMovingAverage extends BaseIndicator {
 
-    SimpleMovingAverage(long candlesticksQuantity, CandlestickPriceType candlestickPriceType, CandlesUpdater updater) {
-        super(candlesticksQuantity, candlestickPriceType, updater);
+    SimpleMovingAverage(long indicatorPeriod, CandlestickPriceType candlestickPriceType, CandlesUpdater updater) {
+        super(indicatorPeriod, candlestickPriceType, updater);
         setDivisor();
     }
 

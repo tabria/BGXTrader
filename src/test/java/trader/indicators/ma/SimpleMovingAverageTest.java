@@ -23,7 +23,7 @@ public class SimpleMovingAverageTest extends BaseIndicatorTest {
     @Before
     public void before() {
         super.before();
-        this.sma = new SimpleMovingAverage(this.candlesticksQuantity, this.mockCandlestickPriceType, this.candlesUpdater);
+        this.sma = new SimpleMovingAverage(this.period, this.mockCandlestickPriceType, this.candlesUpdater);
     }
 
     @Override
@@ -67,9 +67,9 @@ public class SimpleMovingAverageTest extends BaseIndicatorTest {
     @Test
     public void TestToString(){
         String result = this.sma.toString();
-        String expected = String.format("SimpleMovingAverage{candlesticksQuantity=%d, " +
+        String expected = String.format("SimpleMovingAverage{period=%d, " +
                         "candlestickPriceType=%s, indicatorValues=[], points=[], isTradeGenerated=false}",
-                         candlesticksQuantity, this.mockCandlestickPriceType.toString());
+                         period, this.mockCandlestickPriceType.toString());
         assertEquals(expected, result);
     }
 

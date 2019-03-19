@@ -43,8 +43,12 @@ public class OandaCandlesResponse {
 
     private List<Candlestick> transformToTradeCandlestickList(List<com.oanda.v20.instrument.Candlestick> oandaCadles) {
         List<Candlestick> traderCandlestickList = new ArrayList<>(oandaCadles.size());
-        for (com.oanda.v20.instrument.Candlestick oandaCandlestick : oandaCadles)
-            traderCandlestickList.add(convertToTradeCandlestick(oandaCandlestick));
+        for (com.oanda.v20.instrument.Candlestick oandaCandlestick : oandaCadles) {
+            if (oandaCandlestick.getComplete()){
+                traderCandlestickList.add(convertToTradeCandlestick(oandaCandlestick));
+            }
+        }
+
         return traderCandlestickList;
     }
 

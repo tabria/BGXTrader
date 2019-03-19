@@ -21,7 +21,7 @@ public class ExponentialMovingAverageTest extends BaseIndicatorTest {
     @Before
     public void before() {
         super.before();
-        this.ema = new ExponentialMovingAverage(this.candlesticksQuantity,
+        this.ema = new ExponentialMovingAverage(this.period,
                 this.mockCandlestickPriceType, this.candlesUpdater);
     }
 
@@ -66,9 +66,9 @@ public class ExponentialMovingAverageTest extends BaseIndicatorTest {
     @Test
     public void TestToString(){
         String result = this.ema.toString();
-        String expected = String.format("ExponentialMovingAverage{candlesticksQuantity=%d, " +
+        String expected = String.format("ExponentialMovingAverage{period=%d, " +
                         "candlestickPriceType=%s, indicatorValues=[], points=[], isTradeGenerated=false}",
-                         candlesticksQuantity, this.mockCandlestickPriceType.toString());
+                         period, this.mockCandlestickPriceType.toString());
         assertEquals(expected, result);
     }
 

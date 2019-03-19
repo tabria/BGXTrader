@@ -16,23 +16,36 @@ import java.util.List;
 public abstract class BaseIndicator implements Indicator {
 
     //protected Context context;
-    protected final long candlesticksQuantity;
+    protected long candlesticksQuantity = 0L;
+    protected boolean isTradeGenerated;
+
+
+//    protected BaseIndicator(long candlesticksQuantity, CandlestickPriceType candlestickPriceType, CandlesUpdater candlesUpdater) {
+//        this.candlestickPriceType = candlestickPriceType;
+//        this.candlesticksQuantity = candlesticksQuantity;
+//        this.candlesUpdater = candlesUpdater;
+//        this.indicatorValues = new ArrayList<>();
+//        this.points = new ArrayList<>();
+//        this.isTradeGenerated = false;
+//    }
+//////////////////////////////////////////////////////////////
+    protected long indicatorPeriod;
     protected final CandlestickPriceType candlestickPriceType;
     protected final CandlesUpdater candlesUpdater;
     protected List<BigDecimal> indicatorValues;
     protected List<Point> points;
-    protected boolean isTradeGenerated;
     protected BigDecimal divisor;
 
-    protected BaseIndicator(long candlesticksQuantity, CandlestickPriceType candlestickPriceType, CandlesUpdater candlesUpdater) {
+    protected BaseIndicator(long indicatorPeriod, CandlestickPriceType candlestickPriceType, CandlesUpdater candlesUpdater) {
+        this.indicatorPeriod = indicatorPeriod;
         this.candlestickPriceType = candlestickPriceType;
-        this.candlesticksQuantity = candlesticksQuantity;
         this.candlesUpdater = candlesUpdater;
         this.indicatorValues = new ArrayList<>();
         this.points = new ArrayList<>();
-        this.isTradeGenerated = false;
     }
 
+
+    //////////////////////////////////////////////////////////////////////////////////////////
 
 
     public List<Point> getPoints() {

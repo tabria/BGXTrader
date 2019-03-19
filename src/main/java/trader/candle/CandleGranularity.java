@@ -2,6 +2,8 @@ package trader.candle;
 
 import com.oanda.v20.instrument.CandlestickGranularity;
 
+//Remove oanda stuffs
+
 public enum CandleGranularity implements CandleGranularityOperations {
 
     S5(5L, CandlestickGranularity.S5),

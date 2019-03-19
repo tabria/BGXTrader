@@ -68,39 +68,41 @@ public class Main {
 
         validateAccount(context);
 
+        ApiConnector apiConnector = ApiConnector.create("Oanda");
+
         //simple ma with period of 1 representing the price
-        Indicator smaPrice = new MovingAverageBuilder(context)
-                .setCandlesQuantity(1)
+        Indicator smaPrice = new MovingAverageBuilder(apiConnector)
+                .setPeriod(1)
                 .setCandlestickPriceType(CandlestickPriceType.CLOSE)
-                .setCandleTimeFrame(Config.TIME_FRAME)
+//                .setCandleTimeFrame(Config.TIME_FRAME)
                 .setMAType(MAType.SIMPLE)
                 .build();
 
-        Indicator dailyPrice = new MovingAverageBuilder(context)
-                .setCandlesQuantity(1)
+        Indicator dailyPrice = new MovingAverageBuilder(apiConnector)
+                .setPeriod(1)
                 .setCandlestickPriceType(CandlestickPriceType.OPEN)
-                .setCandleTimeFrame(CandleGranularity.D)
+ //               .setCandleTimeFrame(CandleGranularity.D)
                 .setMAType(MAType.SIMPLE)
                 .build();
 
-        Indicator wmaFast = new MovingAverageBuilder(context)
-                .setCandlesQuantity(5)
+        Indicator wmaFast = new MovingAverageBuilder(apiConnector)
+                .setPeriod(5)
                 .setCandlestickPriceType(CandlestickPriceType.CLOSE)
-                .setCandleTimeFrame(Config.TIME_FRAME)
+ //               .setCandleTimeFrame(Config.TIME_FRAME)
                 .setMAType(MAType.WEIGHTED)
                 .build();
 
-        Indicator wmaMiddle = new MovingAverageBuilder(context)
-                .setCandlesQuantity(20)
+        Indicator wmaMiddle = new MovingAverageBuilder(apiConnector)
+                .setPeriod(20)
                 .setCandlestickPriceType(CandlestickPriceType.CLOSE)
-                .setCandleTimeFrame(Config.TIME_FRAME)
+ //               .setCandleTimeFrame(Config.TIME_FRAME)
                 .setMAType(MAType.WEIGHTED)
                 .build();
 
-        Indicator wmaSlow = new MovingAverageBuilder(context)
-                .setCandlesQuantity(100)
+        Indicator wmaSlow = new MovingAverageBuilder(apiConnector)
+                .setPeriod(100)
                 .setCandlestickPriceType(CandlestickPriceType.CLOSE)
-                .setCandleTimeFrame(Config.TIME_FRAME)
+ //               .setCandleTimeFrame(Config.TIME_FRAME)
                 .setMAType(MAType.WEIGHTED)
                 .build();
 

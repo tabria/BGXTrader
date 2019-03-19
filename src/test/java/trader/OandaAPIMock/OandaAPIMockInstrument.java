@@ -26,6 +26,7 @@ public class OandaAPIMockInstrument extends OandaAPIMock {
     private InstrumentContext mockInstrumentContext;
     private CandlestickData mockCandlestickData;
     private Candlestick mockCandlestick;
+    private Candlestick mockNonTradableCandlestick;
     private PriceValue mockPriceValue;
     private List<Candlestick> candlestickList;
 
@@ -35,7 +36,9 @@ public class OandaAPIMockInstrument extends OandaAPIMock {
         mockContext.instrument = mockInstrumentContext;
         mockRequest = mock(InstrumentCandlesRequest.class);
         mockResponse = mock(InstrumentCandlesResponse.class);
-        mockCandlestick = mock(com.oanda.v20.instrument.Candlestick.class);
+        mockCandlestick = mock(Candlestick.class);
+        mockNonTradableCandlestick = mock(Candlestick.class);
+        setMockNonTradableCandlestick();
         mockCandlestickData = mock(CandlestickData.class);
         mockPriceValue = mock(PriceValue.class);
     }
@@ -126,6 +129,20 @@ public class OandaAPIMockInstrument extends OandaAPIMock {
         for (int i = 0; i <listCapacity; i++)
             candlesList.add(mockCandlestick);
         return candlesList;
+    }
+
+    public void setMockNonTradableCandlestick(){
+        when(mockNonTradableCandlestick.getComplete()).thenReturn(false);
+    }
+
+    public void addNonTradableCandlesticksToOandaCandlestickList(int amount) {
+        for (int i = 0; i < amount; i++) {
+            addCandleToOandaCandlestickList(mockNonTradableCandlestick);
+        }
+    }
+
+    public void addCandleToOandaCandlestickList(Candlestick candle) {
+            candlestickList.add(candle);
     }
 
     public void setOandaMockDateTimeActions(String dateTime){

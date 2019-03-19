@@ -4,7 +4,10 @@ import com.oanda.v20.Context;
 import com.oanda.v20.instrument.InstrumentCandlesRequest;
 import com.oanda.v20.primitives.DateTime;
 import trader.connectors.ApiConnector;
+import trader.core.Observer;
+import trader.prices.Pricing;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,7 +31,7 @@ public final class CandlesUpdater {
 //
 //        this.requestCandles();
     }
-
+//to check while for refactor
     /////////////////////////////////////////////////////////////////////
     public boolean updateCandles(DateTime candleDateTime){
 

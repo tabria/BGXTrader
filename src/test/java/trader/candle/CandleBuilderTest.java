@@ -16,7 +16,7 @@ import static trader.candle.Candle.*;
 public class CandleBuilderTest {
 
 
-    private static final String PRICE_TYPE = "LOW";
+//    private static final String PRICE_TYPE = "LOW";
     private static final long MIN_TIME_FRAME_IN_SECONDS = 5L;
     private static final long MAX_TIME_FRAME_IN_SECONDS = 2629800L;
     private static final long TIME_FRAME_IN_SECONDS = 60L;
@@ -53,14 +53,14 @@ public class CandleBuilderTest {
         candleBuilder.setPriceType(null);
     }
 
-    @Test
-    public void setCorrectPriceType(){
-        candleBuilder.setPriceType(closeCandlePriceType);
-        when(closeCandlePriceType.getType()).thenReturn(PRICE_TYPE);
-        CandlePriceType candlePriceType = (CandlePriceType) commonMembers.extractFieldObject(candleBuilder, "priceType");
-
-        assertEquals(candlePriceType.getType(), PRICE_TYPE);
-    }
+//    @Test
+//    public void setCorrectPriceType(){
+//        candleBuilder.setPriceType(closeCandlePriceType);
+//        when(closeCandlePriceType.getType()).thenReturn(PRICE_TYPE);
+//        CandlePriceType candlePriceType = (CandlePriceType) commonMembers.extractFieldObject(candleBuilder, "priceType");
+//
+//        assertEquals(candlePriceType.getType(), PRICE_TYPE);
+//    }
 
     @Test
     public void WhenCallSetCandlePriceType_ReturnCurrentObject(){
@@ -233,12 +233,12 @@ public class CandleBuilderTest {
         assertEquals(candleBuilder, candleBuilder.setDateTime(expected));
     }
 
-    @Test
-    public void createCandleBuilderWitPriceType_Default(){
-        when(closeCandlePriceType.getType()).thenReturn("CLOSE");
-        String expected = candle.getPriceType().getType();
-        assertEquals("CLOSE", expected);
-    }
+//    @Test
+//    public void createCandleBuilderWitPriceType_Default(){
+//        when(closeCandlePriceType.getType()).thenReturn("CLOSE");
+//        String expected = candle.getPriceType().getType();
+//        assertEquals("CLOSE", expected);
+//    }
 
     @Test
     public void createCandleBuilderWithCandleTimeFrame_Default(){
