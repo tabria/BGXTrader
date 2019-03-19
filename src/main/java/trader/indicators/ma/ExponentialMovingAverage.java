@@ -25,12 +25,12 @@ public final class ExponentialMovingAverage extends BaseIndicator {
     }
 
     @Override
-    public void updateIndicator(DateTime dateTime) {
-        if (candlesUpdated(dateTime)){
-            setEMAValues();
-            fillPoints();
-            isTradeGenerated = false;
-        }
+    public void updateIndicator() {
+//        if (candlesUpdated(dateTime)){
+//            setEMAValues();
+//            fillPoints();
+//            isTradeGenerated = false;
+//        }
     }
 
     /**
@@ -38,7 +38,7 @@ public final class ExponentialMovingAverage extends BaseIndicator {
      * @return {@link boolean} {@code true} if trade is generated
      *                         {@code false} otherwise
      */
-    @Override
+
     public boolean isTradeGenerated() {
         return isTradeGenerated;
     }
@@ -47,7 +47,7 @@ public final class ExponentialMovingAverage extends BaseIndicator {
      * Setter for isTradeGenerated field
      * @param isGenerated boolean value for current trade
      */
-    @Override
+
     public void setIsTradeGenerated(boolean isGenerated) {
         isTradeGenerated = isGenerated;
     }
@@ -109,25 +109,25 @@ public final class ExponentialMovingAverage extends BaseIndicator {
 
         private BigDecimal calculateSMAValue(List<Candlestick> candlestickList){
             BigDecimal smaValue = ZERO;
-            for (int candleIndex = 0; candleIndex <= candlesticksQuantity -1 ; candleIndex++) {
-                smaValue = smaValue.add(candlestickPriceType
-                        .extractPrice(candlestickPriceData(candlestickList, candleIndex)))
-                        .setScale(SCALE, BigDecimal.ROUND_HALF_UP);
-            }
+//            for (int candleIndex = 0; candleIndex <= candlesticksQuantity -1 ; candleIndex++) {
+//                smaValue = smaValue.add(candlestickPriceType
+//                        .extractPrice(candlestickPriceData(candlestickList, candleIndex)))
+//                        .setScale(SCALE, BigDecimal.ROUND_HALF_UP);
+//            }
             return smaValue.divide(divisor, SCALE, BigDecimal.ROUND_HALF_UP);
         }
 
     private void addOtherValues(List<Candlestick> candlestickList) {
         int maValuesIndex = 0;
-        for (int index = (int) candlesticksQuantity; index < candlestickList.size() ; index++) {
-            BigDecimal correctedPrice = candlestickPriceType
-                    .extractPrice(candlestickPriceData(candlestickList, index))
-                    .multiply(multiplier)
-                    .setScale(SCALE, BigDecimal.ROUND_HALF_UP);
-            BigDecimal previousEMA = indicatorValues.get(maValuesIndex++);
-            BigDecimal emaValue = calculateFinalEMAValue(correctedPrice, previousEMA);
-            indicatorValues.add(emaValue);
-        }
+//        for (int index = (int) candlesticksQuantity; index < candlestickList.size() ; index++) {
+//            BigDecimal correctedPrice = candlestickPriceType
+//                    .extractPrice(candlestickPriceData(candlestickList, index))
+//                    .multiply(multiplier)
+//                    .setScale(SCALE, BigDecimal.ROUND_HALF_UP);
+//            BigDecimal previousEMA = indicatorValues.get(maValuesIndex++);
+//            BigDecimal emaValue = calculateFinalEMAValue(correctedPrice, previousEMA);
+//            indicatorValues.add(emaValue);
+//        }
     }
 
         private BigDecimal calculateFinalEMAValue(BigDecimal correctedPrice, BigDecimal previousEMA) {

@@ -60,8 +60,9 @@ public final class BGXTradeGenerator {
                 this.slowWMA.getValues().size() == 0 && this.rsi.getValues().size() == 0){
             return false;
         }
-        return this.fastWMA.isTradeGenerated() && this.middleWMA.isTradeGenerated()
-                && this.slowWMA.isTradeGenerated() && this.rsi.isTradeGenerated();
+//        return this.fastWMA.isTradeGenerated() && this.middleWMA.isTradeGenerated()
+//                && this.slowWMA.isTradeGenerated() && this.rsi.isTradeGenerated();
+        return true;
     }
 
     /**
@@ -117,12 +118,12 @@ public final class BGXTradeGenerator {
      * Set indicators tradeGenerated field to true
      */
     private void setIsTradeGenerated() {
-        this.fastWMA.setIsTradeGenerated(true);
-        this.middleWMA.setIsTradeGenerated(true);
-        this.slowWMA.setIsTradeGenerated(true);
-        this.dailySMA.setIsTradeGenerated(true);
-        this.priceSma.setIsTradeGenerated(true);
-        this.rsi.setIsTradeGenerated(true);
+//        this.fastWMA.setIsTradeGenerated(true);
+//        this.middleWMA.setIsTradeGenerated(true);
+//        this.slowWMA.setIsTradeGenerated(true);
+//        this.dailySMA.setIsTradeGenerated(true);
+//        this.priceSma.setIsTradeGenerated(true);
+//        this.rsi.setIsTradeGenerated(true);
     }
 
     /**

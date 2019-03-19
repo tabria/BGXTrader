@@ -56,7 +56,7 @@ public abstract class BaseIndicator implements Indicator {
         return Collections.unmodifiableList(indicatorValues);
     }
 
-    public abstract void updateIndicator(DateTime dateTime);
+    public abstract void updateIndicator();
 
     protected abstract void setDivisor();
 
@@ -77,7 +77,7 @@ public abstract class BaseIndicator implements Indicator {
         }
     }
 
-    protected CandlestickData candlestickPriceData(List<Candlestick> candlestickList, int index) {
-        return candlestickList.get(index).getMid();
-    }
+//    protected CandlestickData candlestickPriceData(List<Candlestick> candlestickList, int index) {
+//        return candlestickList.get(index).getMid();
+//    }
 }

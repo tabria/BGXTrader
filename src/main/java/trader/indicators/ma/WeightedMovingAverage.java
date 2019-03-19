@@ -16,12 +16,12 @@ public final class WeightedMovingAverage extends BaseIndicator {
     }
 
     @Override
-    public void updateIndicator(DateTime dateTime) {
-        if (candlesUpdated(dateTime)){
-            setWMAValues();
-            fillPoints();
-            isTradeGenerated = false;
-        }
+    public void updateIndicator() {
+//        if (candlesUpdated(dateTime)){
+//            setWMAValues();
+//            fillPoints();
+//            isTradeGenerated = false;
+//        }
     }
 
     /**
@@ -29,7 +29,7 @@ public final class WeightedMovingAverage extends BaseIndicator {
      * @return {@link boolean} {@code true} if trade is generated
      *                         {@code false} otherwise
      */
-    @Override
+
     public boolean isTradeGenerated() {
         return isTradeGenerated;
     }
@@ -38,7 +38,7 @@ public final class WeightedMovingAverage extends BaseIndicator {
      * Setter for isTradeGenerated field
      * @param isGenerated boolean value for current trade
      */
-    @Override
+
     public void setIsTradeGenerated(boolean isGenerated) {
         isTradeGenerated = isGenerated;
     }
@@ -84,22 +84,23 @@ public final class WeightedMovingAverage extends BaseIndicator {
      */
     private BigDecimal calculateWMAValue(List<Candlestick> candlestickList, int candleIndex){
 
-        long period = candlesticksQuantity;
-        BigDecimal wmaValue = ZERO;
-        for (int i = candleIndex; i >= candleIndex - lastCandlestickIndex(); i--) {
-
-            BigDecimal lastCandlePrice = candlestickPriceType
-                    .extractPrice(candlestickPriceData(candlestickList, i));
-            lastCandlePrice = lastCandlePrice
-                    .multiply(BigDecimal.valueOf(period--))
-                    .setScale(SCALE, BigDecimal.ROUND_HALF_UP);
-            wmaValue = wmaValue
-                    .add(lastCandlePrice)
-                    .setScale(SCALE, BigDecimal.ROUND_HALF_UP);
-        }
-        if (candlestickList.size() > 0 && divisor.compareTo(ZERO) != 0)
-            return wmaValue.divide(divisor, SCALE, BigDecimal.ROUND_HALF_UP);
-        return wmaValue;
+//        long period = candlesticksQuantity;
+//        BigDecimal wmaValue = ZERO;
+//        for (int i = candleIndex; i >= candleIndex - lastCandlestickIndex(); i--) {
+//
+//            BigDecimal lastCandlePrice = candlestickPriceType
+//                    .extractPrice(candlestickPriceData(candlestickList, i));
+//            lastCandlePrice = lastCandlePrice
+//                    .multiply(BigDecimal.valueOf(period--))
+//                    .setScale(SCALE, BigDecimal.ROUND_HALF_UP);
+//            wmaValue = wmaValue
+//                    .add(lastCandlePrice)
+//                    .setScale(SCALE, BigDecimal.ROUND_HALF_UP);
+//        }
+//        if (candlestickList.size() > 0 && divisor.compareTo(ZERO) != 0)
+//            return wmaValue.divide(divisor, SCALE, BigDecimal.ROUND_HALF_UP);
+//        return wmaValue;
+        return null;
     }
 
     private BigDecimal calculateDivisor(){

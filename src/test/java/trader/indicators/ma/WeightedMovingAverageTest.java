@@ -30,7 +30,7 @@ public class WeightedMovingAverageTest extends BaseIndicatorTest {
     @Override
     @Test
     public void getMAValuesReturnCorrectResult() {
-        this.wma.updateIndicator(super.mockDateTime);
+        this.wma.updateIndicator();
         BigDecimal lastCandlestickPrice = getLastCandlestickPrice();
         assertEquals(0, lastCandlestickPrice.compareTo(EXPECTED_CANDLESTICK_PRICE));
     }
@@ -45,18 +45,18 @@ public class WeightedMovingAverageTest extends BaseIndicatorTest {
     @Override
     @Test
     public void testSuccessfulUpdate() {
-        this.wma.updateIndicator(this.mockDateTime);
+        this.wma.updateIndicator();
         updateCandlestickListInSuper();
         DateTime currentDateTime = mock(DateTime.class);
         when(currentDateTime.toString()).thenReturn("2018-08-01T10:25:00Z");
-        this.wma.updateIndicator(currentDateTime);
+        this.wma.updateIndicator();
         assertEquals(0, getLastCandlestickPrice().compareTo(UPDATED_CANDLESTICK_PRICE));
     }
 
     @Override
     @Test
     public void getPointsReturnCorrectResult(){
-        this.wma.updateIndicator(this.mockDateTime);
+        this.wma.updateIndicator();
         List<Point> points = this.wma.getPoints();
         List<BigDecimal> values = this.wma.getValues();
 

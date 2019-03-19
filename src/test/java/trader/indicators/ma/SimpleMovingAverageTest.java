@@ -29,7 +29,7 @@ public class SimpleMovingAverageTest extends BaseIndicatorTest {
     @Override
     @Test
     public void getMAValuesReturnCorrectResult() {
-        this.sma.updateIndicator(super.mockDateTime);
+        this.sma.updateIndicator();
         BigDecimal lastCandlestickPrice = getLastCandlestickPrice();
         assertEquals(0, lastCandlestickPrice.compareTo(EXPECTED_CANDLESTICK_PRICE));
     }
@@ -44,18 +44,18 @@ public class SimpleMovingAverageTest extends BaseIndicatorTest {
     @Override
     @Test
     public void testSuccessfulUpdate() {
-        this.sma.updateIndicator(this.mockDateTime);
+        this.sma.updateIndicator();
         updateCandlestickListInSuper();
         DateTime currentDateTime = mock(DateTime.class);
         when(currentDateTime.toString()).thenReturn("2018-08-01T10:25:00Z");
-        this.sma.updateIndicator(currentDateTime);
+        this.sma.updateIndicator();
         assertEquals(0, getLastCandlestickPrice().compareTo(UPDATED_CANDLESTICK_PRICE));
     }
 
     @Override
     @Test
     public void getPointsReturnCorrectResult(){
-        this.sma.updateIndicator(this.mockDateTime);
+        this.sma.updateIndicator();
         List<Point> points = this.sma.getPoints();
         List<BigDecimal> values = this.sma.getValues();
 

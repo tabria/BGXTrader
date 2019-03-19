@@ -33,12 +33,12 @@ public final class RelativeStrengthIndex extends BaseIndicator {
     }
 
     @Override
-    public void updateIndicator(DateTime dateTime) {
-        if (candlesUpdated(dateTime)){
-            setRSIValues();
-            fillPoints();
-            isTradeGenerated = false;
-        }
+    public void updateIndicator() {
+//        if (candlesUpdated(dateTime)){
+//            setRSIValues();
+//            fillPoints();
+//            isTradeGenerated = false;
+//        }
     }
 
     @Override
@@ -51,7 +51,7 @@ public final class RelativeStrengthIndex extends BaseIndicator {
      * @return {@link boolean} {@code true} if trade is generated
      *                         {@code false} otherwise
      */
-    @Override
+
     public boolean isTradeGenerated() {
         return isTradeGenerated;
     }
@@ -60,7 +60,7 @@ public final class RelativeStrengthIndex extends BaseIndicator {
      * Setter for isTradeGenerated field
      * @param isGenerated boolean value for current trade
      */
-    @Override
+
     public void setIsTradeGenerated(boolean isGenerated) {
         isTradeGenerated = isGenerated;
     }
@@ -109,7 +109,8 @@ public final class RelativeStrengthIndex extends BaseIndicator {
     }
 
     private BigDecimal candlePrice(List<Candlestick> candlestickList, int candleIndex) {
-        return candlestickPriceType.extractPrice(candlestickPriceData(candlestickList, candleIndex));
+ //       return candlestickPriceType.extractPrice(candlestickPriceData(candlestickList, candleIndex));
+        return null;
     }
 
     private BigDecimal calculateAverage(BigDecimal currentAverage, BigDecimal change){

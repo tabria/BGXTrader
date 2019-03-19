@@ -81,7 +81,7 @@ public class RelativeStrengthIndexTest extends BaseIndicatorTest {
     @Override
     @Test
     public void getMAValuesReturnCorrectResult() {
-        this.rsi.updateIndicator(mockDateTime);
+        this.rsi.updateIndicator();
         BigDecimal lastCandlestickPrice = getLastCandlestickPrice();
         assertEquals(0, lastCandlestickPrice.compareTo(EXPECTED_CANDLESTICK_PRICE));
     }
@@ -89,18 +89,18 @@ public class RelativeStrengthIndexTest extends BaseIndicatorTest {
     @Override
     @Test
     public void testSuccessfulUpdate() {
-        this.rsi.updateIndicator(this.mockDateTime);
+        this.rsi.updateIndicator();
         updateCandlestickListInSuper();
         DateTime currentDateTime = mock(DateTime.class);
         when(currentDateTime.toString()).thenReturn("2018-08-01T10:25:00Z");
-        this.rsi.updateIndicator(currentDateTime);
+        this.rsi.updateIndicator();
         assertEquals(0, getLastCandlestickPrice().compareTo(UPDATED_CANDLESTICK_PRICE));
     }
 
     @Override
     @Test
     public void getPointsReturnCorrectResult() {
-        this.rsi.updateIndicator(this.mockDateTime);
+        this.rsi.updateIndicator();
         List<Point> points = this.rsi.getPoints();
         List<BigDecimal> values = this.rsi.getValues();
 

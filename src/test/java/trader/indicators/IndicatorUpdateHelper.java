@@ -79,8 +79,7 @@ public class IndicatorUpdateHelper {
     private void setCandlestickPrice(Candlestick candlestick, int candlestickNumber) {
         CandlestickData candlestickPriceData = createCandlestickPriceData(candlestickNumber);
         when(candlestick.getMid()).thenReturn(candlestickPriceData);
-        when(this.mockCandlestickPriceType.extractPrice(candlestickPriceData))
-                .thenReturn(new BigDecimal(candlesClosePrices.get(candlestickNumber)));
+ //       when(this.mockCandlestickPriceType.extractPrice(candlestickPriceData)).thenReturn(new BigDecimal(candlesClosePrices.get(candlestickNumber)));
     }
 
     private CandlestickData createCandlestickPriceData(int candlestickNumber) {

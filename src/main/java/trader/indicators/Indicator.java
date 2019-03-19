@@ -12,9 +12,9 @@ public interface Indicator {
     BigDecimal ZERO = BigDecimal.ZERO;
 
     List<BigDecimal> getValues();
-    void updateIndicator(DateTime dateTime);
+    void updateIndicator();
     List<Point> getPoints();
-    boolean isTradeGenerated();
-    void setIsTradeGenerated(boolean isGenerated);
+//    boolean isTradeGenerated();
+//    void setIsTradeGenerated(boolean isGenerated);
 
 }

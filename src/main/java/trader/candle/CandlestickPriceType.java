@@ -1,49 +1,50 @@
 package trader.candle;
 
 
-import com.oanda.v20.instrument.CandlestickData;
-
 import java.math.BigDecimal;
+
+import static trader.strategies.BGXStrategy.StrategyConfig.BIG_DECIMAL_SCALE;
 
 
 public enum CandlestickPriceType implements CandlestickPriceOperations {
 
     OPEN {
         @Override
-        public BigDecimal extractPrice(CandlestickData candle) {
-            return candle.getO().bigDecimalValue();
+        public BigDecimal extractPrice(Candlestick candle) {
+            return candle.getOpenPrice();
         }
     },
 
     CLOSE {
         @Override
-        public BigDecimal extractPrice(CandlestickData candle){
-            return candle.getC().bigDecimalValue();
+        public BigDecimal extractPrice(Candlestick candle){
+            return candle.getClosePrice();
         }
     },
 
     HIGH {
         @Override
-        public BigDecimal extractPrice(CandlestickData candle){
-            return candle.getH().bigDecimalValue();
+        public BigDecimal extractPrice(Candlestick candle){
+            return candle.getHighPrice();
         }
     },
 
     LOW {
         @Override
-        public BigDecimal extractPrice(CandlestickData candle) {
-            return candle.getL().bigDecimalValue();
+        public BigDecimal extractPrice(Candlestick candle) {
+            return candle.getLowPrice();
         }
     },
 
     MEDIAN {
         @Override
-        public BigDecimal extractPrice(CandlestickData candle) {
-            return medianPrice(candle.getH().bigDecimalValue(), candle.getL().bigDecimalValue());
+        public BigDecimal extractPrice(Candlestick candle) {
+            return medianPrice(candle.getHighPrice(), candle.getLowPrice());
         }
 
         private BigDecimal medianPrice(BigDecimal high, BigDecimal low) {
-            return high.add(low).divide(BigDecimal.valueOf(2), BigDecimal.ROUND_HALF_UP);
+            return high.add(low)
+                    .divide(BigDecimal.valueOf(2), BIG_DECIMAL_SCALE ,BigDecimal.ROUND_HALF_UP);
         }
     }
 }
