@@ -8,12 +8,12 @@ import java.util.List;
 
 public interface Indicator {
 
-    int SCALE = 5;
+ //   int SCALE = 5;
     BigDecimal ZERO = BigDecimal.ZERO;
 
     List<BigDecimal> getValues();
     void updateIndicator();
-    List<Point> getPoints();
+  //  List<Point> getPoints();
 //    boolean isTradeGenerated();
 //    void setIsTradeGenerated(boolean isGenerated);
 

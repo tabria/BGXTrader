@@ -4,7 +4,6 @@ import org.junit.Before;
 import org.junit.Test;
 import trader.candle.Candlestick;
 import trader.indicators.BaseIndicatorTest;
-import trader.trades.entities.Point;
 import java.math.BigDecimal;
 import java.util.List;
 import static org.junit.Assert.*;
@@ -52,31 +51,21 @@ public class SimpleMovingAverageTest extends BaseIndicatorTest {
 
     @Override
     @Test
-    public void getPointsReturnCorrectResult(){
-        updateCandlestickListInSuper();
-        this.sma.updateIndicator();
-        List<Point> points = this.sma.getPoints();
-        List<BigDecimal> values = this.sma.getValues();
-
-        testPointPrice(points, values);
-        testPointTime(points, values);
-    }
-
-    @Override
-    @Test
     public void TestToString(){
         String result = this.sma.toString();
         String expected = String.format("SimpleMovingAverage{period=%d, " +
-                        "candlestickPriceType=%s, indicatorValues=%s, points=%s}",
-                         period, mockCandlestickPriceType.toString(), sma.getValues().toString(), sma.getPoints().toString());
+                        "candlestickPriceType=%s, indicatorValues=%s}",
+                period, mockCandlestickPriceType.toString(), sma.getValues().toString()
+        );
+
         assertEquals(expected, result);
     }
 
     @Test
     public void testInitializingSMAValues(){
         List<BigDecimal> values = this.sma.getValues();
-        assertTrue(values.size()> 0);
 
+        assertTrue(values.size()> 0);
     }
 
     @Override

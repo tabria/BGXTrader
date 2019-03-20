@@ -3,7 +3,7 @@ package trader.candle;
 
 import java.math.BigDecimal;
 
-import static trader.strategies.BGXStrategy.StrategyConfig.BIG_DECIMAL_SCALE;
+import static trader.strategies.BGXStrategy.StrategyConfig.SCALE;
 
 
 public enum CandlestickPriceType implements CandlestickPriceOperations {
@@ -44,7 +44,7 @@ public enum CandlestickPriceType implements CandlestickPriceOperations {
 
         private BigDecimal medianPrice(BigDecimal high, BigDecimal low) {
             return high.add(low)
-                    .divide(BigDecimal.valueOf(2), BIG_DECIMAL_SCALE ,BigDecimal.ROUND_HALF_UP);
+                    .divide(BigDecimal.valueOf(2), SCALE,BigDecimal.ROUND_HALF_UP);
         }
     }
 }

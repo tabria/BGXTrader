@@ -53,16 +53,16 @@ public class WeightedMovingAverageTest extends BaseIndicatorTest {
         assertEquals(0, getLastCandlestickPrice().compareTo(UPDATED_CANDLESTICK_PRICE));
     }
 
-    @Override
-    @Test
-    public void getPointsReturnCorrectResult(){
-        this.wma.updateIndicator();
-        List<Point> points = this.wma.getPoints();
-        List<BigDecimal> values = this.wma.getValues();
-
-        testPointPrice(points, values);
-        testPointTime(points, values);
-    }
+//    @Override
+//    @Test
+//    public void getPointsReturnCorrectResult(){
+//        this.wma.updateIndicator();
+//        List<Point> points = this.wma.getPoints();
+//        List<BigDecimal> values = this.wma.getValues();
+//
+//        testPointPrice(points, values);
+//        testPointTime(points, values);
+//    }
 
     @Override
     @Test

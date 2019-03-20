@@ -5,11 +5,14 @@ import com.oanda.v20.primitives.DateTime;
 import trader.candle.CandlesUpdater;
 import trader.indicators.BaseIndicator;
 import trader.candle.CandlestickPriceType;
+import trader.strategies.BGXStrategy.StrategyConfig;
 import trader.trades.entities.Point;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static trader.strategies.BGXStrategy.StrategyConfig.*;
 
 public final class RelativeStrengthIndex extends BaseIndicator {
 
@@ -27,10 +30,10 @@ public final class RelativeStrengthIndex extends BaseIndicator {
         return Collections.unmodifiableList(indicatorValues);
     }
 
-    @Override
-    public List<Point> getPoints() {
-        return Collections.unmodifiableList(this.points);
-    }
+//    @Override
+//    public List<Point> getPoints() {
+//        return Collections.unmodifiableList(this.points);
+//    }
 
     @Override
     public void updateIndicator() {
@@ -72,7 +75,7 @@ public final class RelativeStrengthIndex extends BaseIndicator {
                 "candlesticksQuantity=" + candlesticksQuantity +
                 ", candlestickPriceType=" + candlestickPriceType.toString() +
                 ", rsiValues=" + indicatorValues.toString() +
-                ", points=" + points.toString() +
+ //               ", points=" + points.toString() +
                 ", isTradeGenerated=" + isTradeGenerated +
                 '}';
     }

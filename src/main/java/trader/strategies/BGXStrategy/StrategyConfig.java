@@ -10,6 +10,6 @@ public class StrategyConfig {
     public static final String INSTRUMENT_NAME = "EUR_USD";
     public static long INITIAL_CANDLES_QUANTITY = 5000L;
     public static long UPDATE_CANDLES_QUANTITY = 2L;
-    public static int BIG_DECIMAL_SCALE = 5;
+    public static int SCALE = 5;
 
 }

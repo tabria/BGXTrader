@@ -8,6 +8,8 @@ import trader.candle.CandlestickPriceType;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static trader.strategies.BGXStrategy.StrategyConfig.SCALE;
+
 public final class WeightedMovingAverage extends BaseIndicator {
 
     WeightedMovingAverage(long candlesticksQuantity, CandlestickPriceType candlestickPriceType, CandlesUpdater updater) {
@@ -49,7 +51,7 @@ public final class WeightedMovingAverage extends BaseIndicator {
                 "candlesticksQuantity=" + candlesticksQuantity +
                 ", candlestickPriceType=" + candlestickPriceType.toString() +
                 ", indicatorValues=" + indicatorValues.toString() +
-                ", points=" + points.toString() +
+//                ", points=" + points.toString() +
                 ", isTradeGenerated=" + isTradeGenerated +
                 '}';
     }

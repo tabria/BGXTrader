@@ -68,8 +68,8 @@ public abstract class BaseIndicatorTest {
     @Test
     public abstract void testSuccessfulUpdate();
 
-    @Test
-    public abstract void getPointsReturnCorrectResult();
+//    @Test
+//    public abstract void getPointsReturnCorrectResult();
 
     @Test
     public abstract void TestToString();

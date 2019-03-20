@@ -4,10 +4,12 @@ import trader.candle.CandlesUpdater;
 import trader.candle.Candlestick;
 import trader.indicators.BaseIndicator;
 import trader.candle.CandlestickPriceType;
+import trader.strategies.BGXStrategy.StrategyConfig;
+
 import java.math.BigDecimal;
 import java.util.List;
 
-import static trader.strategies.BGXStrategy.StrategyConfig.BIG_DECIMAL_SCALE;
+import static trader.strategies.BGXStrategy.StrategyConfig.*;
 
 public final class SimpleMovingAverage extends BaseIndicator {
 
@@ -25,8 +27,7 @@ public final class SimpleMovingAverage extends BaseIndicator {
         for (int i = candles.size()-1; i >indicatorPeriod ; i--) {
             smaValue = smaValue.add(obtainPrice(candles.get(i)));
         }
-        indicatorValues.add(smaValue.divide(divisor, BIG_DECIMAL_SCALE, BigDecimal.ROUND_HALF_UP));
-        fillPoints();
+        indicatorValues.add(smaValue.divide(divisor, SCALE, BigDecimal.ROUND_HALF_UP));
     }
     
     @Override
@@ -35,7 +36,6 @@ public final class SimpleMovingAverage extends BaseIndicator {
                 "period=" + indicatorPeriod +
                 ", candlestickPriceType=" + candlestickPriceType.toString() +
                 ", indicatorValues=" + indicatorValues.toString() +
-                ", points=" + points.toString()+
                 '}';
     }
 
@@ -63,16 +63,15 @@ public final class SimpleMovingAverage extends BaseIndicator {
     private void initiateSMAValues() {
         List<Candlestick> candles = candlesUpdater.getCandles();
         calculateSMAValue(candles);
-        fillPoints();
     }
 
     private BigDecimal calculatedSMAValue(BigDecimal commonPrice) {
-        return commonPrice.divide(divisor, BIG_DECIMAL_SCALE, BigDecimal.ROUND_HALF_UP);
+        return commonPrice.divide(divisor, SCALE, BigDecimal.ROUND_HALF_UP);
     }
 
     private BigDecimal obtainPrice(Candlestick candle) {
         return candlestickPriceType.extractPrice(candle)
-                        .setScale(BIG_DECIMAL_SCALE, BigDecimal.ROUND_HALF_UP);
+                        .setScale(SCALE, BigDecimal.ROUND_HALF_UP);
     }
 
 }

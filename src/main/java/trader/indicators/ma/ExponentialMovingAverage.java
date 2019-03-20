@@ -1,142 +1,112 @@
 package trader.indicators.ma;
 
-import com.oanda.v20.instrument.Candlestick;
-import com.oanda.v20.primitives.DateTime;
+
 import trader.candle.CandlesUpdater;
+import trader.candle.Candlestick;
 import trader.indicators.BaseIndicator;
 import trader.candle.CandlestickPriceType;
-
 import java.math.BigDecimal;
 import java.util.List;
+import static trader.strategies.BGXStrategy.StrategyConfig.*;
 
 public final class ExponentialMovingAverage extends BaseIndicator {
 
-    private static final BigDecimal MULTIPLIER_CONSTANT = BigDecimal.valueOf(2);
+    private static final BigDecimal SMOOTH_FACTOR_CONSTANT = BigDecimal.valueOf(2);
 
-    private BigDecimal multiplier;
-    private BigDecimal multiplierCorrected;
+    private BigDecimal smoothFactor;
+    private BigDecimal smoothMultiplier;
 
     ExponentialMovingAverage(long candlesticksQuantity, CandlestickPriceType candlestickPriceType, CandlesUpdater updater) {
         super(candlesticksQuantity, candlestickPriceType, updater);
         setDivisor();
-        setMultiplier();
-        setMultiplierCorrected();
-
+        setSmoothFactor();
+        setSmoothMultiplier();
+        initiateEMAValues();
     }
 
     @Override
     public void updateIndicator() {
-//        if (candlesUpdated(dateTime)){
-//            setEMAValues();
-//            fillPoints();
-//            isTradeGenerated = false;
-//        }
-    }
-
-    /**
-     * Getter for generated trade check
-     * @return {@link boolean} {@code true} if trade is generated
-     *                         {@code false} otherwise
-     */
-
-    public boolean isTradeGenerated() {
-        return isTradeGenerated;
-    }
-
-    /**
-     * Setter for isTradeGenerated field
-     * @param isGenerated boolean value for current trade
-     */
-
-    public void setIsTradeGenerated(boolean isGenerated) {
-        isTradeGenerated = isGenerated;
+        Candlestick candlestick = candlesUpdater.getUpdateCandle();
+        indicatorValues.add(currentPriceSmoothed(candlestick).add(previousEMASmoothed()));
     }
 
     @Override
     public String toString() {
         return "ExponentialMovingAverage{" +
-                "candlesticksQuantity=" + candlesticksQuantity +
+                "period=" + indicatorPeriod +
                 ", candlestickPriceType=" + candlestickPriceType.toString() +
                 ", indicatorValues=" + indicatorValues.toString() +
-                ", points=" + points.toString() +
-                ", isTradeGenerated=" + isTradeGenerated +
                 '}';
-    }
-
-    private void setMultiplier(){
-        multiplier = MULTIPLIER_CONSTANT.divide(
-                BigDecimal.valueOf(candlesticksQuantity + 1), SCALE, BigDecimal.ROUND_HALF_UP);
-    }
-
-    private void setMultiplierCorrected(){
-        multiplierCorrected = BigDecimal.ONE.subtract(multiplier)
-                .setScale(SCALE, BigDecimal.ROUND_HALF_UP);
     }
 
     @Override
     protected void setDivisor(){
-        divisor = BigDecimal.valueOf(candlesticksQuantity);
+        divisor = BigDecimal.valueOf(indicatorPeriod);
     }
 
-    private void setEMAValues(){
-        //List<Candlestick> candlestickList = candlesUpdater.getCandles();
-        List<Candlestick> candlestickList = null;
-        indicatorValues.clear();
-        calculateEMAValue(candlestickList);
+    private void setSmoothFactor(){
+        smoothFactor = SMOOTH_FACTOR_CONSTANT.divide(
+                BigDecimal.valueOf(indicatorPeriod + 1L), SCALE, BigDecimal.ROUND_HALF_UP);
+    }
+
+    private void setSmoothMultiplier(){
+        smoothMultiplier = BigDecimal.ONE.subtract(smoothFactor)
+                .setScale(SCALE, BigDecimal.ROUND_HALF_UP);
+    }
+
+    private void initiateEMAValues() {
+        List<Candlestick> candles = candlesUpdater.getCandles();
+        setEMAValue(candles);
     }
 
     /**
-     * This method calculate Exponential Moving Average(EMA) based on the formula:
+     * Calculation Formula:
      * {@code
-     * If we have 10 candlesticksQuantity EMA, the quantity of available prices must be 20 -> 10 for the Initial SMA and 10 for EMA
-     * Initial SMA: sum(Price) / candlesticksQuantity  -> this is the start point of the EMA
      *
-     * Multiplier: (2 / (Time periods + 1) )
-     * EMA: (Price * Multiplier) + (Previous EMA * (1 - Multiplier))
+     * Initial SMA: sum(Price) / indicatorPeriod  -> this is the start point of the EMA
+     * EMA = Price(t) * k + EMA(y) * (1 – k)
+     * t = current, y = yesterday, N = indicator period , k = 2/(N+1) smoothFactor
+     *
      * }
-     *
-     * @param candlestickList available candlesticks
-     * @see Candlestick
      */
-    private void calculateEMAValue(List<Candlestick> candlestickList){
-        addStartValue(candlestickList);
-        addOtherValues(candlestickList);
+    private void setEMAValue(List<Candlestick> candlestickList){
+        setSMAValue(candlestickList);
+        setRemainingValues(candlestickList);
     }
 
-    private void addStartValue(List<Candlestick> candlestickList) {
-        this.indicatorValues.add(calculateSMAValue(candlestickList));
-    }
-
-        private BigDecimal calculateSMAValue(List<Candlestick> candlestickList){
-            BigDecimal smaValue = ZERO;
-//            for (int candleIndex = 0; candleIndex <= candlesticksQuantity -1 ; candleIndex++) {
-//                smaValue = smaValue.add(candlestickPriceType
-//                        .extractPrice(candlestickPriceData(candlestickList, candleIndex)))
-//                        .setScale(SCALE, BigDecimal.ROUND_HALF_UP);
-//            }
-            return smaValue.divide(divisor, SCALE, BigDecimal.ROUND_HALF_UP);
+    private void setSMAValue(List<Candlestick> candlestickList) {
+        BigDecimal smaValue = ZERO;
+        for (int candleIndex = 0; candleIndex <= indicatorPeriod -1 ; candleIndex++) {
+            smaValue = smaValue.add(obtainPrice(candlestickList.get(candleIndex)));
         }
-
-    private void addOtherValues(List<Candlestick> candlestickList) {
-        int maValuesIndex = 0;
-//        for (int index = (int) candlesticksQuantity; index < candlestickList.size() ; index++) {
-//            BigDecimal correctedPrice = candlestickPriceType
-//                    .extractPrice(candlestickPriceData(candlestickList, index))
-//                    .multiply(multiplier)
-//                    .setScale(SCALE, BigDecimal.ROUND_HALF_UP);
-//            BigDecimal previousEMA = indicatorValues.get(maValuesIndex++);
-//            BigDecimal emaValue = calculateFinalEMAValue(correctedPrice, previousEMA);
-//            indicatorValues.add(emaValue);
-//        }
+        this.indicatorValues.add(smaValue.divide(divisor, SCALE, BigDecimal.ROUND_HALF_UP));
     }
 
-        private BigDecimal calculateFinalEMAValue(BigDecimal correctedPrice, BigDecimal previousEMA) {
-            BigDecimal result = previousEMA
-                    .multiply(multiplierCorrected)
-                    .setScale(SCALE, BigDecimal.ROUND_HALF_UP);
-            return correctedPrice
-                    .add(result)
-                    .setScale(SCALE, BigDecimal.ROUND_HALF_UP);
+    private void setRemainingValues(List<Candlestick> candlestickList) {
+        for (int index = (int) indicatorPeriod; index < candlestickList.size() ; index++) {
+            Candlestick candlestick = candlestickList.get(index);
+            indicatorValues.add(currentPriceSmoothed(candlestick).add(previousEMASmoothed()));
         }
+    }
+
+    private BigDecimal currentPriceSmoothed(Candlestick candlestick) {
+        return obtainPrice(candlestick)
+                .multiply(smoothFactor)
+                .setScale(SCALE, BigDecimal.ROUND_HALF_UP);
+    }
+
+    private BigDecimal previousEMASmoothed() {
+        int lastIndex = indicatorValues.size()-1;
+        return indicatorValues.get(lastIndex)
+                .multiply(smoothMultiplier)
+                .setScale(SCALE, BigDecimal.ROUND_HALF_UP);
+    }
+
+    private BigDecimal obtainPrice(Candlestick candle) {
+        return candlestickPriceType.extractPrice(candle)
+                .setScale(SCALE, BigDecimal.ROUND_HALF_UP);
+    }
+
+
 
 }
