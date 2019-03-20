@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static trader.strategies.BGXStrategy.StrategyConfig.SCALE;
+
 public abstract class BaseIndicator implements Indicator {
 
     //protected Context context;
@@ -67,6 +69,11 @@ public abstract class BaseIndicator implements Indicator {
             throw new BadRequestException();
         if(candlestickList.size() < indicatorPeriod)
             throw new IndicatorPeriodTooBigException();
+    }
+
+    protected BigDecimal obtainPrice(trader.candle.Candlestick candle) {
+        return candlestickPriceType.extractPrice(candle)
+                        .setScale(SCALE, BigDecimal.ROUND_HALF_UP);
     }
 
 //    protected boolean candlesUpdated(DateTime dateTime) {

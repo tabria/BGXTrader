@@ -101,7 +101,7 @@ public class ExponentialMovingAverageTest extends BaseIndicatorTest {
 
     @Test(expected = BadRequestException.class)
     public void testCreatingEMAWithZeroCandles(){
-        when(candlesUpdater.getCandles()).thenReturn(new ArrayList<Candlestick>());
+        when(candlesUpdater.getCandles()).thenReturn(new ArrayList<>());
         new ExponentialMovingAverage(this.period,
                 this.candlestickPriceType, this.candlesUpdater);
     }

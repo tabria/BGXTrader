@@ -74,7 +74,7 @@ public class SimpleMovingAverageTest extends BaseIndicatorTest {
 
     @Test(expected = BadRequestException.class)
     public void testCreatingEMAWithZeroCandles(){
-        when(candlesUpdater.getCandles()).thenReturn(new ArrayList<Candlestick>());
+        when(candlesUpdater.getCandles()).thenReturn(new ArrayList<>());
         new SimpleMovingAverage(this.period,
                 this.candlestickPriceType, this.candlesUpdater);
     }

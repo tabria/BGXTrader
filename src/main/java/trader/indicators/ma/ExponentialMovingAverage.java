@@ -18,8 +18,8 @@ public final class ExponentialMovingAverage extends BaseIndicator {
     private BigDecimal smoothFactor;
     private BigDecimal smoothMultiplier;
 
-    ExponentialMovingAverage(long candlesticksQuantity, CandlestickPriceType candlestickPriceType, CandlesUpdater updater) {
-        super(candlesticksQuantity, candlestickPriceType, updater);
+    ExponentialMovingAverage(long indicatorPeriod, CandlestickPriceType candlestickPriceType, CandlesUpdater updater) {
+        super(indicatorPeriod, candlestickPriceType, updater);
         setDivisor();
         setSmoothFactor();
         setSmoothMultiplier();
@@ -58,7 +58,7 @@ public final class ExponentialMovingAverage extends BaseIndicator {
 
     private void initiateEMAValues() {
         List<Candlestick> candles = candlesUpdater.getCandles();
-        setEMAValue(candles);
+        setEMAValues(candles);
     }
 
     /**
@@ -71,7 +71,7 @@ public final class ExponentialMovingAverage extends BaseIndicator {
      *
      * }
      */
-    private void setEMAValue(List<Candlestick> candlestickList){
+    private void setEMAValues(List<Candlestick> candlestickList){
         verifyCalculationInput(candlestickList);
         setSMAValue(candlestickList);
         setRemainingValues(candlestickList);
@@ -104,12 +104,4 @@ public final class ExponentialMovingAverage extends BaseIndicator {
                 .multiply(smoothMultiplier)
                 .setScale(SCALE, BigDecimal.ROUND_HALF_UP);
     }
-
-    private BigDecimal obtainPrice(Candlestick candle) {
-        return candlestickPriceType.extractPrice(candle)
-                .setScale(SCALE, BigDecimal.ROUND_HALF_UP);
-    }
-
-
-
 }

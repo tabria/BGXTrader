@@ -72,10 +72,4 @@ public final class SimpleMovingAverage extends BaseIndicator {
     private BigDecimal calculatedSMAValue(BigDecimal commonPrice) {
         return commonPrice.divide(divisor, SCALE, BigDecimal.ROUND_HALF_UP);
     }
-
-    private BigDecimal obtainPrice(Candlestick candle) {
-        return candlestickPriceType.extractPrice(candle)
-                        .setScale(SCALE, BigDecimal.ROUND_HALF_UP);
-    }
-
 }
