@@ -36,7 +36,7 @@ public abstract class BaseIndicator implements Indicator {
     protected List<Point> points;
     protected BigDecimal divisor;
 
-    protected BaseIndicator(long indicatorPeriod, CandlestickPriceType candlestickPriceType, CandlesUpdater candlesUpdater) {
+    public BaseIndicator(long indicatorPeriod, CandlestickPriceType candlestickPriceType, CandlesUpdater candlesUpdater) {
         this.indicatorPeriod = indicatorPeriod;
         this.candlestickPriceType = candlestickPriceType;
         this.candlesUpdater = candlesUpdater;
@@ -68,13 +68,24 @@ public abstract class BaseIndicator implements Indicator {
     protected void fillPoints() {
         this.points.clear();
         int time = 1;
-        for (int i = indicatorValues.size()-3; i < this.indicatorValues.size() ; i++) {
-            Point point = new Point.PointBuilder(this.indicatorValues.get(i))
+        int index = this.indicatorValues.size()-3;
+        for (BigDecimal value :this.indicatorValues) {
+            Point point = new Point.PointBuilder(this.indicatorValues.get(index))
                     .setTime(BigDecimal.valueOf(time++))
                     .build();
-
             this.points.add(point);
+            if (++index >= this.indicatorValues.size()){
+                break;
+            }
         }
+//        int index = indicatorValues.size()-3 >0 ? indicatorValues.size()-3 : 0;
+//        for (int i = indicatorValues.size()-3; i < this.indicatorValues.size() ; i++) {
+//            Point point = new Point.PointBuilder(this.indicatorValues.get(i))
+//                    .setTime(BigDecimal.valueOf(time++))
+//                    .build();
+//
+//            this.points.add(point);
+//        }
     }
 
 //    protected CandlestickData candlestickPriceData(List<Candlestick> candlestickList, int index) {
