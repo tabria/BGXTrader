@@ -3,10 +3,14 @@ package trader.indicators.ma;
 import org.junit.Before;
 import org.junit.Test;
 import trader.candle.Candlestick;
+import trader.exceptions.BadRequestException;
+import trader.exceptions.IndicatorPeriodTooBigException;
 import trader.indicators.BaseIndicatorTest;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.when;
 
 
 public class SimpleMovingAverageTest extends BaseIndicatorTest {
@@ -16,7 +20,7 @@ public class SimpleMovingAverageTest extends BaseIndicatorTest {
     @Before
     public void before() {
         super.before();
-        this.sma = new SimpleMovingAverage(this.period, this.mockCandlestickPriceType, this.candlesUpdater);
+        this.sma = new SimpleMovingAverage(this.period, this.candlestickPriceType, this.candlesUpdater);
     }
 
     @Override
@@ -55,7 +59,7 @@ public class SimpleMovingAverageTest extends BaseIndicatorTest {
         String result = this.sma.toString();
         String expected = String.format("SimpleMovingAverage{period=%d, " +
                         "candlestickPriceType=%s, indicatorValues=%s}",
-                period, mockCandlestickPriceType.toString(), sma.getValues().toString()
+                period, candlestickPriceType.toString(), sma.getValues().toString()
         );
 
         assertEquals(expected, result);
@@ -66,6 +70,20 @@ public class SimpleMovingAverageTest extends BaseIndicatorTest {
         List<BigDecimal> values = this.sma.getValues();
 
         assertTrue(values.size()> 0);
+    }
+
+    @Test(expected = BadRequestException.class)
+    public void testCreatingEMAWithZeroCandles(){
+        when(candlesUpdater.getCandles()).thenReturn(new ArrayList<Candlestick>());
+        new SimpleMovingAverage(this.period,
+                this.candlestickPriceType, this.candlesUpdater);
+    }
+
+    @Test(expected = IndicatorPeriodTooBigException.class)
+    public void testPeriodBiggerThanCandlesCount(){
+        this.period = 200;
+        new SimpleMovingAverage(this.period,
+                this.candlestickPriceType, this.candlesUpdater);
     }
 
     @Override

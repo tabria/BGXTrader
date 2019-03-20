@@ -2,6 +2,8 @@ package trader.indicators.ma;
 
 import trader.candle.CandlesUpdater;
 import trader.candle.Candlestick;
+import trader.exceptions.BadRequestException;
+import trader.exceptions.IndicatorPeriodTooBigException;
 import trader.indicators.BaseIndicator;
 import trader.candle.CandlestickPriceType;
 import trader.strategies.BGXStrategy.StrategyConfig;
@@ -44,7 +46,13 @@ public final class SimpleMovingAverage extends BaseIndicator {
         super.divisor = BigDecimal.valueOf(indicatorPeriod);
     }
 
+    private void initiateSMAValues() {
+        List<Candlestick> candles = candlesUpdater.getCandles();
+        calculateSMAValue(candles);
+    }
+
     private void calculateSMAValue(List<Candlestick> candlestickList) {
+        verifyCalculationInput(candlestickList);
         int removePriceIndex =0;
         int periodIndex = 0;
         BigDecimal commonPrice = BigDecimal.ZERO;
@@ -60,10 +68,6 @@ public final class SimpleMovingAverage extends BaseIndicator {
         }
     }
 
-    private void initiateSMAValues() {
-        List<Candlestick> candles = candlesUpdater.getCandles();
-        calculateSMAValue(candles);
-    }
 
     private BigDecimal calculatedSMAValue(BigDecimal commonPrice) {
         return commonPrice.divide(divisor, SCALE, BigDecimal.ROUND_HALF_UP);

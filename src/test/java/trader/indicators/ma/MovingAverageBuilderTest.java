@@ -4,20 +4,22 @@ import com.oanda.v20.instrument.*;
 import org.junit.Before;
 import org.junit.Test;
 import trader.OandaAPIMock.OandaAPIMockInstrument;
+import trader.candle.CandlesUpdater;
+import trader.candle.Candlestick;
 import trader.connectors.ApiConnector;
 import trader.exceptions.NoSuchConnectorException;
 import trader.exceptions.NullArgumentException;
 import trader.exceptions.OutOfBoundaryException;
 import trader.indicators.Indicator;
 import trader.candle.CandlestickPriceType;
+import trader.indicators.IndicatorUpdateHelper;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static trader.indicators.ma.enums.MAType.*;
 
 public class MovingAverageBuilderTest {
@@ -31,6 +33,8 @@ public class MovingAverageBuilderTest {
 
     private MovingAverageBuilder builder;
     private ApiConnector mockApiConnectior;
+    protected CandlestickPriceType candlestickPriceType = CandlestickPriceType.CLOSE;
+    private IndicatorUpdateHelper indicatorUpdateHelper;
 
     @Before
     public void setUp() throws Exception {
@@ -41,7 +45,10 @@ public class MovingAverageBuilderTest {
         when(oandaInstrument.getContext().instrument.candles(any(InstrumentCandlesRequest.class)))
                 .thenReturn(oandaInstrument.getMockResponse());
         mockApiConnectior = mock(ApiConnector.class);
+        this.indicatorUpdateHelper = new IndicatorUpdateHelper(this.candlestickPriceType);
+        this.indicatorUpdateHelper.fillCandlestickList();
         this.builder = new MovingAverageBuilder(mockApiConnectior);
+
     }
 
     @Test(expected = NoSuchConnectorException.class)
@@ -95,9 +102,10 @@ public class MovingAverageBuilderTest {
 
     @Test
     public void buildMovingAverage()  {
-        Indicator sma = this.builder.setMAType(SIMPLE).build();
-        Indicator ema = this.builder.setMAType(EXPONENTIAL).build();
-        Indicator wma = this.builder.setMAType(WEIGHTED).build();
+        when(mockApiConnectior.getInitialCandles()).thenReturn(indicatorUpdateHelper.getCandlestickList());
+        Indicator sma = this.builder.setMAType(SIMPLE).setPeriod(7).build();
+        Indicator ema = this.builder.setMAType(EXPONENTIAL).setPeriod(7).build();
+        Indicator wma = this.builder.setMAType(WEIGHTED).setPeriod(7).build();
 
         assertEquals("The object is not SMA","SimpleMovingAverage", sma.getClass().getSimpleName());
         assertEquals("The object is not EMA","ExponentialMovingAverage", ema.getClass().getSimpleName());

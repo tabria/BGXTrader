@@ -6,6 +6,8 @@ import com.oanda.v20.instrument.CandlestickData;
 import com.oanda.v20.primitives.DateTime;
 import trader.candle.CandlesUpdater;
 import trader.candle.CandlestickPriceType;
+import trader.exceptions.BadRequestException;
+import trader.exceptions.IndicatorPeriodTooBigException;
 import trader.trades.entities.Point;
 
 import java.math.BigDecimal;
@@ -59,6 +61,13 @@ public abstract class BaseIndicator implements Indicator {
     public abstract void updateIndicator();
 
     protected abstract void setDivisor();
+
+    protected void verifyCalculationInput(List<trader.candle.Candlestick> candlestickList) {
+        if(candlestickList.size() == 0)
+            throw new BadRequestException();
+        if(candlestickList.size() < indicatorPeriod)
+            throw new IndicatorPeriodTooBigException();
+    }
 
 //    protected boolean candlesUpdated(DateTime dateTime) {
 //        boolean isUpdated =  this.candlesUpdater.updateCandles(dateTime);

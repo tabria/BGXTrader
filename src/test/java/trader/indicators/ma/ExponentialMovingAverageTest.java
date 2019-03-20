@@ -4,13 +4,18 @@ import org.junit.Before;
 import org.junit.Test;
 import trader.CommonTestClassMembers;
 import trader.candle.Candlestick;
+import trader.exceptions.BadRequestException;
+import trader.exceptions.IndicatorPeriodTooBigException;
 import trader.indicators.BaseIndicatorTest;
+import trader.indicators.Indicator;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.when;
 import static trader.strategies.BGXStrategy.StrategyConfig.SCALE;
 
 public class ExponentialMovingAverageTest extends BaseIndicatorTest {
@@ -25,7 +30,7 @@ public class ExponentialMovingAverageTest extends BaseIndicatorTest {
         super.before();
         commonMembers = new CommonTestClassMembers();
         this.ema = new ExponentialMovingAverage(this.period,
-                this.mockCandlestickPriceType, this.candlesUpdater);
+                this.candlestickPriceType, this.candlesUpdater);
     }
 
     @Test
@@ -74,27 +79,8 @@ public class ExponentialMovingAverageTest extends BaseIndicatorTest {
 
         assertEquals(oldSize + 1, newSize);
         assertEquals(oldLastValue, newNextToLastValue);
-
-
-
-//        this.ema.updateIndicator();
-//        updateCandlestickListInSuper();
-//        DateTime currentDateTime = mock(DateTime.class);
-//        when(currentDateTime.toString()).thenReturn("2018-08-01T10:25:00Z");
-//        this.ema.updateIndicator();
-//        assertEquals(0, getLastCandlestickPrice().compareTo(UPDATED_CANDLESTICK_PRICE));
     }
 
-//    @Override
-//    @Test
-//    public void getPointsReturnCorrectResult(){
-//        this.ema.updateIndicator();
-//        List<Point> points = this.ema.getPoints();
-//        List<BigDecimal> values = this.ema.getValues();
-//
-//        testPointPrice(points, values);
-//        testPointTime(points, values);
-//    }
 
     @Override
     @Test
@@ -102,8 +88,22 @@ public class ExponentialMovingAverageTest extends BaseIndicatorTest {
         String result = this.ema.toString();
         String expected = String.format("ExponentialMovingAverage{period=%d, " +
                         "candlestickPriceType=%s, indicatorValues=%s}",
-                         period, this.mockCandlestickPriceType.toString(), ema.getValues().toString());
+                         period, this.candlestickPriceType.toString(), ema.getValues().toString());
         assertEquals(expected, result);
+    }
+
+    @Test(expected = IndicatorPeriodTooBigException.class)
+    public void testPeriodBiggerThanCandlesCount(){
+        this.period = 200;
+        new ExponentialMovingAverage(this.period,
+                this.candlestickPriceType, this.candlesUpdater);
+    }
+
+    @Test(expected = BadRequestException.class)
+    public void testCreatingEMAWithZeroCandles(){
+        when(candlesUpdater.getCandles()).thenReturn(new ArrayList<Candlestick>());
+        new ExponentialMovingAverage(this.period,
+                this.candlestickPriceType, this.candlesUpdater);
     }
 
     @Override

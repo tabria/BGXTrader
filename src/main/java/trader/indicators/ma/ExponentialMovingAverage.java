@@ -3,6 +3,8 @@ package trader.indicators.ma;
 
 import trader.candle.CandlesUpdater;
 import trader.candle.Candlestick;
+import trader.exceptions.BadRequestException;
+import trader.exceptions.IndicatorPeriodTooBigException;
 import trader.indicators.BaseIndicator;
 import trader.candle.CandlestickPriceType;
 import java.math.BigDecimal;
@@ -70,6 +72,7 @@ public final class ExponentialMovingAverage extends BaseIndicator {
      * }
      */
     private void setEMAValue(List<Candlestick> candlestickList){
+        verifyCalculationInput(candlestickList);
         setSMAValue(candlestickList);
         setRemainingValues(candlestickList);
     }
