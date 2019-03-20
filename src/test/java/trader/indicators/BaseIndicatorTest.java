@@ -87,12 +87,12 @@ public abstract class BaseIndicatorTest {
 
 
     protected void updateCandlestickListInSuper() {
-        this.candlesUpdater = mock(CandlesUpdater.class);
+  //      this.candlesUpdater = mock(CandlesUpdater.class);
         this.candlesClosePrices.add(NEW_PRICE_ENTRY);
         this.candlesDateTime.add(NEW_DATETIME_ENTRY);
         this.indicatorUpdateHelper.fillCandlestickList();
         List<Candlestick> candlestickList = this.indicatorUpdateHelper.getCandlestickList();
- //       when(this.candlesUpdater.getCandles()).thenReturn(candlestickList);
+        when(this.candlesUpdater.getCandles()).thenReturn(candlestickList);
     }
 
     protected void testPointTime(List<Point> points, List<BigDecimal> values) {
@@ -108,10 +108,11 @@ public abstract class BaseIndicatorTest {
     }
 
     protected void testPointPrice(List<Point> points, List<BigDecimal> values) {
-        int pointPosition = 0;
-        for (int candlePosition = values.size()-3  ; candlePosition < values.size() ; candlePosition++) {
-            BigDecimal pointExpectedPrice = values.get(candlePosition);
-            BigDecimal pointResultPrice = points.get(pointPosition++).getPrice();
+        int difference = values.size()-points.size();
+        int index = points.size();
+        while(--index >=0){
+            BigDecimal pointExpectedPrice = values.get(index + difference);
+            BigDecimal pointResultPrice = points.get(index).getPrice();
 
             assertEquals( 0, pointResultPrice.compareTo(pointExpectedPrice));
         }

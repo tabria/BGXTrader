@@ -53,29 +53,24 @@ public final class CandlesUpdater {
     }
 
     public Candlestick getUpdateCandle(){
-        Candlestick updateCandle = apiConnector.getUpdateCandle();
-        updateCandles(updateCandle);
-        return updateCandle;
+        updateCandles();
+        return candlestickList.get(candlestickList.size()-1);
     }
-
-//    private void insertCandlestick(Candlestick candle){
-//        candlestickList.add(candle);
-//    }
 
     private List<Candlestick> initialize() {
             return apiConnector.getInitialCandles();
     }
 
-    private void updateCandles(Candlestick updateCandle){
+    private void updateCandles(){
+        Candlestick updateCandle = apiConnector.getUpdateCandle();
         Candlestick lastCandlestick = getLastCandlestick();
-        if(updateCandle.isComplete() && isDateTimeTradeable(updateCandle, lastCandlestick)) {
+        if(updateCandle.isComplete() && isDateTimeTradeable(updateCandle, lastCandlestick))
             candlestickList.add(updateCandle);
-        }
     }
 
     private boolean isDateTimeTradeable(Candlestick updateCandle, Candlestick lastCandlestick) {
         while(compareDateTimes(updateCandle, lastCandlestick)){
-            updateCandle = getUpdateCandle();
+            updateCandle = apiConnector.getUpdateCandle();
             sleep(sleepTimeMilliseconds);
         }
         return true;

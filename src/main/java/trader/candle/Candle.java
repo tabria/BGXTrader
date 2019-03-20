@@ -1,5 +1,6 @@
 package trader.candle;
 
+import com.sun.istack.internal.NotNull;
 import trader.exceptions.NullArgumentException;
 
 import java.math.BigDecimal;
@@ -109,7 +110,7 @@ public final class Candle implements Candlestick {
             return new Candle(this);
         }
 
-        public CandleBuilder setPriceType(CandlePriceType type){
+        public CandleBuilder setPriceType( CandlePriceType type){
             checkNull(type);
 //            priceType = type;
             return this;

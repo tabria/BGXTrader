@@ -1,45 +1,32 @@
 package trader.indicators.ma;
 
-import com.oanda.v20.primitives.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import trader.candle.Candlestick;
-import trader.connectors.ApiConnector;
 import trader.indicators.BaseIndicatorTest;
-import trader.indicators.Indicator;
 import trader.trades.entities.Point;
-
 import java.math.BigDecimal;
 import java.util.List;
-
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+
 
 public class SimpleMovingAverageTest extends BaseIndicatorTest {
 
-    private static final BigDecimal EXPECTED_CANDLESTICK_PRICE = BigDecimal.valueOf(1.16281);
-    private static final BigDecimal UPDATED_CANDLESTICK_PRICE = BigDecimal.valueOf(1.16264);
-
     private SimpleMovingAverage sma;
-    private ApiConnector apiConnector;
 
     @Before
     public void before() {
         super.before();
-        apiConnector = mock(ApiConnector.class);
         this.sma = new SimpleMovingAverage(this.period, this.mockCandlestickPriceType, this.candlesUpdater);
     }
 
     @Override
     @Test
     public void getMAValuesReturnCorrectResult() {
-        int size = candlesUpdater.getCandles().size();
-        Candlestick candlestickMock = super.indicatorUpdateHelper.createCandlestickMock();
-        when(candlesUpdater.getUpdateCandle()).thenReturn(candlestickMock);
-        this.sma.updateIndicator();
+        BigDecimal expectedValue = calculateExpectedSMAValue();
+        List<BigDecimal> values = this.sma.getValues();
 
-        assertEquals(size + 1, candlesUpdater.getCandles().size());
+        assertEquals(expectedValue, values.get(values.size()-1));
     }
 
     @Override
@@ -52,17 +39,21 @@ public class SimpleMovingAverageTest extends BaseIndicatorTest {
     @Override
     @Test
     public void testSuccessfulUpdate() {
-        this.sma.updateIndicator();
+        int oldSize = this.sma.getValues().size();
+        BigDecimal oldLastValue = this.sma.getValues().get(oldSize-1);
         updateCandlestickListInSuper();
-        DateTime currentDateTime = mock(DateTime.class);
-        when(currentDateTime.toString()).thenReturn("2018-08-01T10:25:00Z");
         this.sma.updateIndicator();
-        assertEquals(0, getLastCandlestickPrice().compareTo(UPDATED_CANDLESTICK_PRICE));
+        int newSize = this.sma.getValues().size();
+        BigDecimal newNextToLastValue = this.sma.getValues().get(newSize-2);
+
+        assertEquals(oldSize + 1, newSize);
+        assertEquals(oldLastValue, newNextToLastValue);
     }
 
     @Override
     @Test
     public void getPointsReturnCorrectResult(){
+        updateCandlestickListInSuper();
         this.sma.updateIndicator();
         List<Point> points = this.sma.getPoints();
         List<BigDecimal> values = this.sma.getValues();
@@ -88,25 +79,17 @@ public class SimpleMovingAverageTest extends BaseIndicatorTest {
 
     }
 
-    @Test
-    public void testUpdatingSMA_CorrectResults(){
-        List<BigDecimal> values = this.sma.getValues();
-        this.sma.updateIndicator();
-        List<BigDecimal> values1 = this.sma.getValues();
-
-        assertEquals(values.size()+1, values1.size());
-        assertEquals(values.get(values.size()-1), values1.get(values1.size()-2));
-    }
-
-
     @Override
     protected BigDecimal getLastCandlestickPrice() {
         List<BigDecimal> maValues = this.sma.getValues();
         return maValues.get(maValues.size() - 1);
     }
 
-    private void createMockCandle(){
-        Candlestick mockCandle = mock(Candlestick.class);
-
+    private BigDecimal calculateExpectedSMAValue() {
+        List<Candlestick> candles = candlesUpdater.getCandles();
+        BigDecimal expectedValue = BigDecimal.ZERO;
+        for (int i = candles.size()-1; i > candles.size()-1-period ; i--)
+            expectedValue = expectedValue.add(candles.get(i).getClosePrice());
+        return expectedValue.divide(new BigDecimal(period), 5, BigDecimal.ROUND_HALF_UP);
     }
 }

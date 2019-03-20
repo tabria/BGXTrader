@@ -23,6 +23,8 @@ public class OandaConnector extends ApiConnector {
 
     }
 
+
+
     public Pricing getPrice() {
         return oandaPriceResponse.getPrice();
     }

@@ -7,7 +7,6 @@ import com.oanda.v20.ExecuteException;
 import com.oanda.v20.RequestException;
 import com.oanda.v20.account.*;
 import com.oanda.v20.primitives.InstrumentName;
-import trader.candle.Candlestick;
 import trader.config.Config;
 import trader.connection.Connection;
 import trader.connectors.ApiConnector;
@@ -15,7 +14,6 @@ import trader.core.Observable;
 import trader.core.Observer;
 import trader.indicators.Indicator;
 import trader.indicators.IndicatorObserver;
-import trader.candle.CandleGranularity;
 import trader.candle.CandlestickPriceType;
 import trader.indicators.ma.MovingAverageBuilder;
 import trader.indicators.ma.enums.MAType;
@@ -56,6 +54,7 @@ import java.util.List;
 
 public class Main {
 
+    
     public static void main(String[] args) throws ExecuteException, RequestException {
 
         Context context = new ContextBuilder(Config.URL)
