@@ -28,7 +28,7 @@ public abstract class BaseIndicator implements Indicator {
 //        this.points = new ArrayList<>();
 //        this.isTradeGenerated = false;
 //    }
-//////////////////////////////////////////////////////////////
+/////////////////////////////////////////
     protected long indicatorPeriod;
     protected final CandlestickPriceType candlestickPriceType;
     protected final CandlesUpdater candlesUpdater;
