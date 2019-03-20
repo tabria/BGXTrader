@@ -60,15 +60,15 @@ public abstract class BaseIndicator implements Indicator {
 
     protected abstract void setDivisor();
 
-    protected boolean candlesUpdated(DateTime dateTime) {
-        boolean isUpdated =  this.candlesUpdater.updateCandles(dateTime);
-        return !isUpdated && this.indicatorValues.size() == 0 ? true : isUpdated;
-    }
+//    protected boolean candlesUpdated(DateTime dateTime) {
+//        boolean isUpdated =  this.candlesUpdater.updateCandles(dateTime);
+//        return !isUpdated && this.indicatorValues.size() == 0 ? true : isUpdated;
+//    }
 
     protected void fillPoints() {
         this.points.clear();
         int time = 1;
-        for (int i = this.indicatorValues.size()-4; i < this.indicatorValues.size() -1 ; i++) {
+        for (int i = indicatorValues.size()-3; i < this.indicatorValues.size() ; i++) {
             Point point = new Point.PointBuilder(this.indicatorValues.get(i))
                     .setTime(BigDecimal.valueOf(time++))
                     .build();

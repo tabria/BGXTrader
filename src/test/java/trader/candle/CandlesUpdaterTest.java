@@ -74,29 +74,21 @@ public class CandlesUpdaterTest {
     }
 
     @Test
-    public void whenCallUpdateCandlesWithNonUpdatableCandle_UpdateFalse(){
+    public void whenCallGetUpdateCandleWithNonUpdatableCandle_UpdateFalse(){
         when(mockCandle.isComplete()).thenReturn(false);
-        boolean result = candlesUpdater.updateCandles();
-
-        assertFalse(result);
+        int expected = candlesUpdater.getCandles().size();
+        candlesUpdater.getUpdateCandle();
+        int actual = candlesUpdater.getCandles().size();
+        assertEquals(expected, actual);
     }
 
     @Test
-    public void whenCallUpdateCandlesWithUpdatableCandleWithBiggerTime_UpdateTrue(){
-        boolean result = candlesUpdater.updateCandles();
-
-        assertTrue(result);
-    }
-
-    @Test
-    public void whenCallUpdateCandles_AddNewCandleToList(){
-        List<Candlestick> candleList = candlesUpdater.getCandles();
-        int oldSize = candleList.size();
-        boolean result = candlesUpdater.updateCandles();
-        candleList = candlesUpdater.getCandles();
-
-        assertTrue(result);
-        assertEquals(oldSize + 1, candleList.size());
+    public void whenCallGetUpdateCandleWithUpdatableCandleWithBiggerTime_UpdateTrue(){
+        int expected = candlesUpdater.getCandles().size();
+        candlesUpdater.getUpdateCandle();
+        int actual = candlesUpdater.getCandles().size();
+        assertEquals(expected+1, actual);
+   //     assertTrue(result);
     }
 
     @Test
