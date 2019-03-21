@@ -3,7 +3,7 @@ package trader.candle;
 import org.junit.Before;
 import org.junit.Test;
 import trader.CommonTestClassMembers;
-import trader.connectors.ApiConnector;
+import trader.connector.ApiConnector;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.ZoneId;

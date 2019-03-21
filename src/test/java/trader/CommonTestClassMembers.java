@@ -1,7 +1,5 @@
 package trader;
 
-import trader.connectors.oanda.OandaCandlesResponse;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;

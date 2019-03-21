@@ -3,14 +3,13 @@ package trader.candle;
 import org.junit.Before;
 import org.junit.Test;
 import trader.CommonTestClassMembers;
-import trader.exceptions.NullArgumentException;
+import trader.exception.NullArgumentException;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static trader.candle.Candle.*;
 
 public class CandleBuilderTest {

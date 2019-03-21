@@ -1,7 +1,6 @@
 package trader.candle;
 
-import com.sun.istack.internal.NotNull;
-import trader.exceptions.NullArgumentException;
+import trader.exception.NullArgumentException;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;

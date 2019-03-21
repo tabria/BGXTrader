@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static trader.strategies.BGXStrategy.StrategyConfig.SCALE;
+import static trader.strategie.BGXStrategy.StrategyConfig.SCALE;
 
 public class CandlestickPriceTypeTest {
 
@@ -33,31 +33,31 @@ public class CandlestickPriceTypeTest {
     @Test
     public void testExtractPriceForOpen(){
         BigDecimal openPrice = CandlestickPriceType.OPEN.extractPrice(this.mockCandlestick);
-        assertEquals("Open prices are not equal", 0, comparePrices(openPrice, CANDLE_OPEN_PRICE));
+        assertEquals("Open price are not equal", 0, comparePrices(openPrice, CANDLE_OPEN_PRICE));
     }
 
     @Test
     public void testExtractPriceForClose(){
         BigDecimal closePrice = CandlestickPriceType.CLOSE.extractPrice(this.mockCandlestick);
-        assertEquals("Close prices are not equal", 0, comparePrices(closePrice, CANDLE_CLOSE_PRICE));
+        assertEquals("Close price are not equal", 0, comparePrices(closePrice, CANDLE_CLOSE_PRICE));
     }
 
     @Test
     public void testExtractPriceForHigh(){
         BigDecimal highPrice = CandlestickPriceType.HIGH.extractPrice(this.mockCandlestick);
-        assertEquals("High prices are not equal", 0, comparePrices(highPrice, CANDLE_HIGH_PRICE));
+        assertEquals("High price are not equal", 0, comparePrices(highPrice, CANDLE_HIGH_PRICE));
     }
 
     @Test
     public void testExtractPriceForLow(){
         BigDecimal lowPrice = CandlestickPriceType.LOW.extractPrice(this.mockCandlestick);
-        assertEquals("Low prices are not equal", 0, comparePrices(lowPrice, CANDLE_LOW_PRICE));
+        assertEquals("Low price are not equal", 0, comparePrices(lowPrice, CANDLE_LOW_PRICE));
     }
 
     @Test
     public void testExtractPriceForMedian(){
         BigDecimal medianPrice = CandlestickPriceType.MEDIAN.extractPrice(this.mockCandlestick);
-        assertEquals("Median prices are not equal", 0, comparePrices(medianPrice, averagePrice()));
+        assertEquals("Median price are not equal", 0, comparePrices(medianPrice, averagePrice()));
     }
 
     private BigDecimal averagePrice() {
