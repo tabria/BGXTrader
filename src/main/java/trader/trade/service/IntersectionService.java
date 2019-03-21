@@ -1,7 +1,5 @@
 package trader.trade.service;
 
-
-import trader.trade.entitie.BoundaryBox;
 import trader.trade.entitie.LineSegment;
 import trader.trade.entitie.Point;
 
@@ -13,57 +11,8 @@ import java.math.BigDecimal;
  */
 public final class IntersectionService {
 
-    /**
-     * Non instantiable
-     *
-     */
     private IntersectionService(){
 
-    }
-
-    /**
-     *
-     * Check if boundary boxes do intersect. If one boundary box
-     * touches the other, they do intersect.
-     * Boundary box is the box around lineSegment.
-     * @param a first boundary box
-     * @param b second boundary box
-     * @return <code>true</code> if they intersect,
-     *         <code>false</code> otherwise.
-     */
-    public static boolean doBoundaryBoxesIntersect(BoundaryBox a, BoundaryBox b) {
-
-        //Time intervals are irrelevant for the moment.They are left future use
-        BigDecimal startPriceA = a.getPointA().getPrice();
-    //    BigDecimal startTimeA = a.getPointA().getTime();
-        BigDecimal endPriceA = a.getPointB().getPrice();
-    //    BigDecimal endTimeA = a.getPointB().getTime();
-
-        BigDecimal startPriceB = b.getPointA().getPrice();
-    //    BigDecimal startTimeB = b.getPointA().getTime();
-        BigDecimal endPriceB = b.getPointB().getPrice();
-    //    BigDecimal endTimeB = b.getPointB().getTime();
-
-    //    int compareStartTimeAEndTimeB = startTimeA.compareTo(endTimeB);
-     //   int compareEndTimeAStartTimeB = endTimeA.compareTo(startTimeB);
-
-        //change start and end point it that way that start point is always smaller than end point
-        if (startPriceA.compareTo(endPriceA) > 0){
-            startPriceA = endPriceB;
-            endPriceA = a.getPointA().getPrice();
-        }
-        if (startPriceB.compareTo(endPriceB) > 0){
-            startPriceB = endPriceB;
-            endPriceB = b.getPointA().getPrice();
-        }
-
-        int compareStartPriceAEndPriceB = startPriceA.compareTo(endPriceB);
-        int compareEndPriceAStartPriceB = endPriceA.compareTo(startPriceB);
-
-        return compareStartPriceAEndPriceB <= 0 && compareEndPriceAStartPriceB >= 0;
-
-       // return compareStartTimeAEndTimeB <= 0 && compareEndTimeAStartTimeB >= 0 &&
-        //        compareStartPriceAEndPriceB <= 0 && compareEndPriceAStartPriceB >= 0;
     }
 
     /**

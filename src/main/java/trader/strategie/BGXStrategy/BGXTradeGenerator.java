@@ -1,4 +1,4 @@
-package trader.trade.generator;
+package trader.strategie.BGXStrategy;
 
 
 import trader.indicator.Indicator;
@@ -23,10 +23,10 @@ import java.util.List;
 
 public final class BGXTradeGenerator {
 
-    private static final BigDecimal OFFSET_FAST_WMA = BigDecimal.valueOf(0.0005);
-    private static final BigDecimal OFFSET_MIDDLE_WMA = BigDecimal.valueOf(0.0005);
-    private static final BigDecimal OFFSET_SLOW_WMA = BigDecimal.valueOf(0.0005);
-    private static final BigDecimal OFFSET_PRICE_SMA = BigDecimal.valueOf(0.0005);
+//    private static final BigDecimal OFFSET_FAST_WMA = BigDecimal.valueOf(0.0005);
+//    private static final BigDecimal OFFSET_MIDDLE_WMA = BigDecimal.valueOf(0.0005);
+//    private static final BigDecimal OFFSET_SLOW_WMA = BigDecimal.valueOf(0.0005);
+//    private static final BigDecimal OFFSET_PRICE_SMA = BigDecimal.valueOf(0.0005);
     private static final BigDecimal RSI_FILTER = BigDecimal.valueOf(50);
 
 
@@ -71,8 +71,16 @@ public final class BGXTradeGenerator {
      * @see Trade
      */
     public Trade generateTrade(){
-
+//////setISTradeGenerated
         setIsTradeGenerated();
+        //        this.fastWMA.setIsTradeGenerated(true);
+//        this.middleWMA.setIsTradeGenerated(true);
+//        this.slowWMA.setIsTradeGenerated(true);
+//        this.dailySMA.setIsTradeGenerated(true);
+//        this.priceSma.setIsTradeGenerated(true);
+//        this.rsi.setIsTradeGenerated(true);
+/////////////////////////////////////////////////////////////
+
         LineSegment fastWMALineSegment = getLineSegment(this.fastWMA);
         LineSegment middleWMALineSegment = getLineSegment(this.middleWMA);
         LineSegment slowWMALineSegment = getLineSegment(this.slowWMA);

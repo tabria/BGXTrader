@@ -11,7 +11,7 @@ import com.oanda.v20.transaction.TransactionID;
 import trader.config.Config;
 import trader.trade.entitie.Trade;
 import trader.trade.enums.Direction;
-import trader.trade.generator.BGXTradeGenerator;
+import trader.strategie.BGXStrategy.BGXTradeGenerator;
 
 import java.math.BigDecimal;
 

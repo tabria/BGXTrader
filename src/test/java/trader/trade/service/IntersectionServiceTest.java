@@ -2,12 +2,9 @@ package trader.trade.service;
 
 import org.junit.Before;
 import org.junit.Test;
-import trader.trade.entitie.BoundaryBox;
 import trader.trade.entitie.LineSegment;
 import trader.trade.entitie.Point;
-
 import java.math.BigDecimal;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -16,9 +13,6 @@ import static org.mockito.Mockito.when;
 
 public class IntersectionServiceTest {
 
-
-    private BoundaryBox mockBoundaryBoxA;
-    private BoundaryBox mockBoundaryBoxB;
     private Point mockAPointA;
     private Point mockAPointB;
     private Point mockBPointA;
@@ -27,113 +21,14 @@ public class IntersectionServiceTest {
     private LineSegment mockSegmentB;
 
     @Before
-    public void before() throws Exception {
+    public void before(){
 
         this.mockSegmentA = mock(LineSegment.class);
         this.mockSegmentB = mock(LineSegment.class);
-
         this.mockAPointA = mock(Point.class);
         this.mockAPointB = mock(Point.class);
         this.mockBPointA = mock(Point.class);
         this.mockBPointB = mock(Point.class);
-
-
-        this.mockBoundaryBoxA = mock(BoundaryBox.class);
-
-
-        this.mockBoundaryBoxB = mock(BoundaryBox.class);
-
-
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void WhenCallDoBoundaryBoxesIntersectWithNullSegmentAThenException() {
-        IntersectionService.doBoundaryBoxesIntersect(null, this.mockBoundaryBoxB);
-
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void WhenCallDoBoundaryBoxesIntersectWithNullSegmentBThenException() {
-        IntersectionService.doBoundaryBoxesIntersect(this.mockBoundaryBoxA, null);
-
-    }
-
-    @Test
-    public void WhenBoundaryBoxesAAboveBoundaryBoxBAndDoNotIntersectThenDoBoundaryBoxesIntersectReturnFalse(){
-
-        setBoundaryBoxA(BigDecimal.valueOf(1.1122), BigDecimal.valueOf(1),BigDecimal.valueOf(1.1222), BigDecimal.valueOf(2));
-        setBoundaryBoxB(BigDecimal.valueOf(1.1000), BigDecimal.valueOf(1),BigDecimal.valueOf(1.1100), BigDecimal.valueOf(2));
-
-
-        boolean result = IntersectionService.doBoundaryBoxesIntersect(this.mockBoundaryBoxA, this.mockBoundaryBoxB);
-
-        assertFalse("Boundary boxes must not intersect",result);
-
-    }
-
-    @Test
-    public void WhenBoundaryBoxesABelowBoundaryBoxBAndDoNotIntersectThenDoBoundaryBoxesIntersectReturnFalse(){
-
-        setBoundaryBoxB(BigDecimal.valueOf(1.1122), BigDecimal.valueOf(1),BigDecimal.valueOf(1.1222), BigDecimal.valueOf(2));
-        setBoundaryBoxA(BigDecimal.valueOf(1.1000), BigDecimal.valueOf(1),BigDecimal.valueOf(1.1100), BigDecimal.valueOf(2));
-
-
-        boolean result = IntersectionService.doBoundaryBoxesIntersect(this.mockBoundaryBoxA, this.mockBoundaryBoxB);
-
-        assertFalse("Boundary boxes must not intersect",result);
-
-    }
-
-    @Test
-    public void WhenBoundaryBoxesBInsideBOundaryBoxAThenDoBoundaryBoxesIntersectReturnTrue(){
-
-        setBoundaryBoxA(BigDecimal.valueOf(1.1022), BigDecimal.valueOf(1),BigDecimal.valueOf(1.1222), BigDecimal.valueOf(2));
-        setBoundaryBoxB(BigDecimal.valueOf(1.1100), BigDecimal.valueOf(1),BigDecimal.valueOf(1.1130), BigDecimal.valueOf(2));
-
-
-        boolean result = IntersectionService.doBoundaryBoxesIntersect(this.mockBoundaryBoxA, this.mockBoundaryBoxB);
-
-        assertTrue("BoundaryBoxA must contain BoundaryBoxB ",result);
-
-    }
-
-    @Test
-    public void WhenBoundaryBoxesAInsideBoundaryBoxBThenDoBoundaryBoxesIntersectReturnTrue(){
-
-        setBoundaryBoxB(BigDecimal.valueOf(1.1022), BigDecimal.valueOf(1),BigDecimal.valueOf(1.1222), BigDecimal.valueOf(2));
-        setBoundaryBoxA(BigDecimal.valueOf(1.1100), BigDecimal.valueOf(1),BigDecimal.valueOf(1.1130), BigDecimal.valueOf(2));
-
-
-        boolean result = IntersectionService.doBoundaryBoxesIntersect(this.mockBoundaryBoxA, this.mockBoundaryBoxB);
-
-        assertTrue("BoundaryBoxB must contain BoundaryBoxA ",result);
-
-    }
-
-    @Test
-    public void WhenBoundaryBoxesABelowAndTouchBoundaryBoxBThenDoBoundaryBoxesIntersectReturnTrue(){
-
-        setBoundaryBoxA(BigDecimal.valueOf(1), BigDecimal.valueOf(1),BigDecimal.valueOf(2), BigDecimal.valueOf(2));
-        setBoundaryBoxB(BigDecimal.valueOf(2), BigDecimal.valueOf(1),BigDecimal.valueOf(3), BigDecimal.valueOf(2));
-
-
-        boolean result = IntersectionService.doBoundaryBoxesIntersect(this.mockBoundaryBoxA, this.mockBoundaryBoxB);
-
-        assertTrue("BoundaryBoxA must touch BoundaryBoxB from below",result);
-
-    }
-
-    @Test
-    public void WhenBoundaryBoxesAAboveAndTouchBoundaryBoxBThenDoBoundaryBoxesIntersectReturnTrue(){
-
-        setBoundaryBoxA(BigDecimal.valueOf(2), BigDecimal.valueOf(1),BigDecimal.valueOf(3), BigDecimal.valueOf(2));
-        setBoundaryBoxB(BigDecimal.valueOf(1), BigDecimal.valueOf(1),BigDecimal.valueOf(2), BigDecimal.valueOf(2));
-
-
-        boolean result = IntersectionService.doBoundaryBoxesIntersect(this.mockBoundaryBoxA, this.mockBoundaryBoxB);
-
-        assertTrue("BoundaryBoxA must touch BoundaryBoxB from above ",result);
-
     }
 
     @Test(expected = NullPointerException.class)
@@ -226,6 +121,7 @@ public class IntersectionServiceTest {
         assertTrue(result);
 
     }
+
     @Test
     public void WhenLastPointOfFastWMALiesOnTopOfLastPointOFMiddleWMADoLineSegmentsIntersectReturnsFalse(){
 
@@ -236,7 +132,6 @@ public class IntersectionServiceTest {
         boolean result = IntersectionService.doLineSegmentsIntersect(this.mockSegmentA, this.mockSegmentB);
 
         assertFalse(result);
-
     }
 
     @Test(expected = NullPointerException.class)
@@ -269,70 +164,6 @@ public class IntersectionServiceTest {
 
     }
 
-//    @Test
-//    public void WhenLineSegmentDoNotTouchBoundaryBoxThenDoLineSegmentTouchBoundaryBoxReturnsFalse(){
-//
-//
-//        setSegmentA(BigDecimal.valueOf(1.22709), BigDecimal.valueOf(1), BigDecimal.valueOf(1.22927), BigDecimal.valueOf(2));
-//        setBoundaryBoxB(BigDecimal.valueOf(1.22600), BigDecimal.valueOf(1), BigDecimal.valueOf(1.22700), BigDecimal.valueOf(2));
-//
-//        boolean result = IntersectionService.doLineSegmentTouchBoundaryBox(this.mockSegmentA, this.mockBoundaryBoxB);
-//
-//        assertFalse(result);
-//    }
-//    @Test
-//    public void WhenLineSegmentEndPointDoTouchBoundaryBoxStartPointThenDoLineSegmentTouchBoundaryBoxReturnsTrue(){
-//
-//
-//        setSegmentA(BigDecimal.valueOf(1.22709), BigDecimal.valueOf(1), BigDecimal.valueOf(1.22927), BigDecimal.valueOf(2));
-//        setBoundaryBoxB(BigDecimal.valueOf(1.22600), BigDecimal.valueOf(1), BigDecimal.valueOf(1.22709), BigDecimal.valueOf(2));
-//
-//
-//        boolean result = IntersectionService.doLineSegmentTouchBoundaryBox(this.mockSegmentA, this.mockBoundaryBoxB);
-//
-//        assertTrue(result);
-//    }
-//
-//    @Test
-//    public void WhenLineSegmentInsideBoundaryBoxThenDoLineSegmentTouchBoundaryBoxReturnsTrue(){
-//
-//
-//        setSegmentA(BigDecimal.valueOf(1.22709), BigDecimal.valueOf(1), BigDecimal.valueOf(1.22927), BigDecimal.valueOf(2));
-//        setBoundaryBoxB(BigDecimal.valueOf(1.22600), BigDecimal.valueOf(1), BigDecimal.valueOf(1.22990), BigDecimal.valueOf(2));
-//
-//
-//        boolean result = IntersectionService.doLineSegmentTouchBoundaryBox(this.mockSegmentA, this.mockBoundaryBoxB);
-//
-//        assertTrue(result);
-//    }
-//
-//    @Test
-//    public void WhenLineSegmentStartPointNotInButEndPointInBoundaryBoxThenDoLineSegmentTouchBoundaryBoxReturnsTrue(){
-//
-//
-//        setSegmentA(BigDecimal.valueOf(1.22709), BigDecimal.valueOf(1), BigDecimal.valueOf(1.22927), BigDecimal.valueOf(2));
-//        setBoundaryBoxB(BigDecimal.valueOf(1.22800), BigDecimal.valueOf(1), BigDecimal.valueOf(1.22990), BigDecimal.valueOf(2));
-//
-//
-//        boolean result = IntersectionService.doLineSegmentTouchBoundaryBox(this.mockSegmentA, this.mockBoundaryBoxB);
-//
-//        assertTrue(result);
-//    }
-//
-//    @Test
-//    public void WhenLineSegmentStartPointInButEndPointNotInBoundaryBoxThenDoLineSegmentTouchBoundaryBoxReturnsFalse(){
-//
-//
-//        setSegmentA(BigDecimal.valueOf(1.22709), BigDecimal.valueOf(1), BigDecimal.valueOf(1.22927), BigDecimal.valueOf(2));
-//        setBoundaryBoxB(BigDecimal.valueOf(1.22600), BigDecimal.valueOf(1), BigDecimal.valueOf(1.22890), BigDecimal.valueOf(2));
-//
-//
-//        boolean result = IntersectionService.doLineSegmentTouchBoundaryBox(this.mockSegmentA, this.mockBoundaryBoxB);
-//
-//        assertFalse(result);
-//    }
-
-
     @Test
     public void WhenCalculateIntersection(){
 
@@ -347,26 +178,6 @@ public class IntersectionServiceTest {
         boolean result2 = IntersectionService.doLineSegmentsIntersect(this.mockSegmentA, this.mockSegmentB);
 
         assertFalse(result);
-    }
-
-
-    private void setBoundaryBoxA(BigDecimal boundaryBoxAPriceA, BigDecimal boundaryBoxATimeA,
-                                  BigDecimal boundaryBoxAPriceB, BigDecimal boundaryBoxATimeB){
-
-        setMockAPoints(boundaryBoxAPriceA,  boundaryBoxATimeA, boundaryBoxAPriceB, boundaryBoxATimeB);
-
-        when(this.mockBoundaryBoxA.getPointA()).thenReturn(this.mockAPointA);
-        when(this.mockBoundaryBoxA.getPointB()).thenReturn(this.mockAPointB);
-
-    }
-    private void setBoundaryBoxB(BigDecimal boundaryBoxBPriceA, BigDecimal boundaryBoxBTimeA,
-                                  BigDecimal boundaryBoxBPriceB, BigDecimal boundaryBoxBTimeB){
-
-        setMockBPoints(boundaryBoxBPriceA, boundaryBoxBTimeA, boundaryBoxBPriceB, boundaryBoxBTimeB);
-
-        when(this.mockBoundaryBoxB.getPointA()).thenReturn(this.mockBPointA);
-        when(this.mockBoundaryBoxB.getPointB()).thenReturn(this.mockBPointB);
-
     }
 
     private void setMockAPoints(BigDecimal APriceA, BigDecimal ATimeA,

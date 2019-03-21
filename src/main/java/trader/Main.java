@@ -21,7 +21,7 @@ import trader.indicator.rsi.RSIBuilder;
 import trader.price.PriceObservable;
 import trader.price.PricePull;
 import trader.trade.PositionManager;
-import trader.trade.generator.BGXTradeGenerator;
+import trader.strategie.BGXStrategy.BGXTradeGenerator;
 import trader.trade.service.NewTradeService;
 import trader.trade.service.OrderService;
 import trader.trade.service.exit_strategie.ExitStrategy;

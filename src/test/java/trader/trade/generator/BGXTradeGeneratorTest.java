@@ -6,6 +6,7 @@ import trader.indicator.Indicator;
 import trader.indicator.ma.SimpleMovingAverage;
 import trader.indicator.ma.WeightedMovingAverage;
 import trader.indicator.rsi.RelativeStrengthIndex;
+import trader.strategie.BGXStrategy.BGXTradeGenerator;
 import trader.trade.entitie.Trade;
 
 import java.math.BigDecimal;
