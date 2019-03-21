@@ -8,7 +8,7 @@ import trader.candle.CandlestickPriceType;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
-import static trader.strategie.BGXStrategy.StrategyConfig.*;
+import static trader.strategy.BGXStrategy.StrategyConfig.*;
 
 public final class RelativeStrengthIndex extends BaseIndicator {
 

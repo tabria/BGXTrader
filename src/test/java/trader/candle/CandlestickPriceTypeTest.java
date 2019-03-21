@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static trader.strategie.BGXStrategy.StrategyConfig.SCALE;
+import static trader.strategy.BGXStrategy.StrategyConfig.SCALE;
 
 public class CandlestickPriceTypeTest {
 

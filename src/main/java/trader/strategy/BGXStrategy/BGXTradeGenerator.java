@@ -1,7 +1,8 @@
-package trader.strategie.BGXStrategy;
+package trader.strategy.BGXStrategy;
 
 
 import trader.indicator.Indicator;
+import trader.strategy.BaseStrategy;
 import trader.trade.entitie.LineSegment;
 import trader.trade.entitie.Point;
 import trader.trade.entitie.Trade;
@@ -21,7 +22,7 @@ import java.util.List;
  */
 
 
-public final class BGXTradeGenerator {
+public final class BGXTradeGenerator extends BaseStrategy {
 
 //    private static final BigDecimal OFFSET_FAST_WMA = BigDecimal.valueOf(0.0005);
 //    private static final BigDecimal OFFSET_MIDDLE_WMA = BigDecimal.valueOf(0.0005);
@@ -49,6 +50,13 @@ public final class BGXTradeGenerator {
         this.rsi = rsi;
         this.setDefaultTrade();
     }
+
+
+    @Override
+    public void run() {
+
+    }
+
 
     /**
      * Check if trade is generated
@@ -242,5 +250,4 @@ public final class BGXTradeGenerator {
         }
         return direction;
     }
-
 }

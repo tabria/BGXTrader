@@ -3,12 +3,7 @@ package trader;
 
 import com.oanda.v20.Context;
 import com.oanda.v20.ContextBuilder;
-import com.oanda.v20.ExecuteException;
-import com.oanda.v20.RequestException;
-import com.oanda.v20.account.*;
-import com.oanda.v20.primitives.InstrumentName;
 import trader.config.Config;
-import trader.connection.Connection;
 import trader.connector.ApiConnector;
 import trader.core.Observable;
 import trader.core.Observer;
@@ -21,14 +16,11 @@ import trader.indicator.rsi.RSIBuilder;
 import trader.price.PriceObservable;
 import trader.price.PricePull;
 import trader.trade.PositionManager;
-import trader.strategie.BGXStrategy.BGXTradeGenerator;
+import trader.strategy.BGXStrategy.BGXTradeGenerator;
 import trader.trade.service.NewTradeService;
 import trader.trade.service.OrderService;
 import trader.trade.service.exit_strategie.ExitStrategy;
 import trader.trade.service.exit_strategie.FullCloseStrategy;
-
-
-import java.util.List;
 
 
 /**
@@ -42,7 +34,7 @@ import java.util.List;
  *
  * Entries: The signals are generated from crosses between WMA(5) and WMA(20), priceSMA(1) and WMA(20), priceSMA(1) and WMA(100). All trade are in the direction of WMA(100). Entry signal is 25 pips away from the cross. Stop is on the cross. Entries are executed with Market If Touched Order. If there is an unfilled order and price move more than 5 pips below(for longs)/above(for shorts) cross point, then the waiting order will be canceled.
  *
- * There are 2 strategie for exiting:
+ * There are 2 strategy for exiting:
  *  First: When price hit +32 pips, half of the position will be liquidated and stop will be set to break even. Then the stop will be trailed after each bar's extreme.
  *  Second: When price hit +32 pips, stop loss is moved to +16 pips for the hole trade and then will be trailed after significant extremes. For example for long, when price make high, then low and then higher high than the first one, the significant extreme is the low and the stop will be placed there. For shorts is reversed.
  *
@@ -54,7 +46,14 @@ import java.util.List;
 
 public class Main {
     
-    public static void main(String[] args) throws ExecuteException, RequestException {
+    public static void main(String[] args)  {
+
+
+        ApiConnector apiConnector = ApiConnector.create("Oanda");
+
+
+
+
         Context context = new ContextBuilder(Config.URL)
                 .setToken(Config.TOKEN)
                 .setApplication("Context")
@@ -63,9 +62,8 @@ public class Main {
 //Start transaction for bgxtrader
 //        TransactionSinceResponse since = context.transaction.since(Config.ACCOUNTID, new TransactionID("156"));
 
-        validateAccount(context);
+ //       validateAccount(context);
 
-        ApiConnector apiConnector = ApiConnector.create("Oanda");
 
         //simple ma with period of 1 representing the price
         Indicator smaPrice = new MovingAverageBuilder(apiConnector)
@@ -143,59 +141,59 @@ public class Main {
         PricePull pricePull = new PricePull("PricePull", priceObserver);
     }
 
-    //Check for valid account
-    private static void validateAccount(Context context){
-
-        Connection.waitToConnect(Config.URL);
-
-        try {
-
-            AccountListResponse response = context.account.list();
-            List<AccountProperties> accountProperties;
-            accountProperties = response.getAccounts();
-
-            boolean hasAccount = false;
-            for (AccountProperties account : accountProperties) {
-                if (account.getId().equals(Config.ACCOUNTID))
-                    hasAccount = true;
-            }
-            if (!hasAccount)
-                throw new IllegalArgumentException("Account "+Config.ACCOUNTID+" not found");
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        //Check if account balance is not zero
-        try {
-
-            AccountGetResponse response = context.account.get(Config.ACCOUNTID);
-            Account account;
-            account = response.getAccount();
-
-            // Check the balance
-            if (account.getBalance().doubleValue() <= 0.0) {
-                throw new IllegalArgumentException("Account "+Config.ACCOUNTID+" balance "+account.getBalance()+" <= 0");
-            }
-
-            if (!Config.INSTRUMENT.equals(new InstrumentName("EUR_USD"))){
-                throw new IllegalArgumentException("Robot must be used only on EUR/USD pair");
-            }
-
-            if(!account.getCurrency().toString().equalsIgnoreCase("EUR")){
-                throw  new IllegalArgumentException("Robot must be used only on EURO based accounts");
-            }
-        } catch(RequestException re){
-            if (re.getStatus() == 504 || re.getStatus() == 503){
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    throw  new RuntimeException(e);
-                }
-            }
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+//    //Check for valid account
+//    private static void validateAccount(Context context){
+//
+//        Connection.waitToConnect(Config.URL);
+//
+//        try {
+//
+//            AccountListResponse response = context.account.list();
+//            List<AccountProperties> accountProperties;
+//            accountProperties = response.getAccounts();
+//
+//            boolean hasAccount = false;
+//            for (AccountProperties account : accountProperties) {
+//                if (account.getId().equals(Config.ACCOUNTID))
+//                    hasAccount = true;
+//            }
+//            if (!hasAccount)
+//                throw new IllegalArgumentException("Account "+Config.ACCOUNTID+" not found");
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//        //Check if account balance is not zero
+//        try {
+//
+//            AccountGetResponse response = context.account.get(Config.ACCOUNTID);
+//            Account account;
+//            account = response.getAccount();
+//
+//            // Check the balance
+//            if (account.getBalance().doubleValue() <= 0.0) {
+//                throw new IllegalArgumentException("Account "+Config.ACCOUNTID+" balance "+account.getBalance()+" <= 0");
+//            }
+//
+//            if (!Config.INSTRUMENT.equals(new InstrumentName("EUR_USD"))){
+//                throw new IllegalArgumentException("Robot must be used only on EUR/USD pair");
+//            }
+//
+//            if(!account.getCurrency().toString().equalsIgnoreCase("EUR")){
+//                throw  new IllegalArgumentException("Robot must be used only on EURO based accounts");
+//            }
+//        } catch(RequestException re){
+//            if (re.getStatus() == 504 || re.getStatus() == 503){
+//                try {
+//                    Thread.sleep(1000);
+//                } catch (InterruptedException e) {
+//                    throw  new RuntimeException(e);
+//                }
+//            }
+//        }
+//        catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 
 }

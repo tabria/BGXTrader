@@ -7,6 +7,9 @@ import org.junit.Before;
 import org.junit.Test;
 import trader.OandaAPIMock.OandaAPIMockAccount;
 import trader.connector.oanda.OandaAccountValidator.*;
+import trader.exception.AccountBalanceBelowMinimum;
+import trader.exception.AccountDoNotExistException;
+import trader.exception.UnableToExecuteRequest;
 
 import java.util.ArrayList;
 import java.util.List;

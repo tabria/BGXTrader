@@ -8,7 +8,7 @@ import java.math.RoundingMode;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 
-import static trader.strategie.BGXStrategy.StrategyConfig.*;
+import static trader.strategy.BGXStrategy.StrategyConfig.*;
 
 public class Price implements Pricing {
 

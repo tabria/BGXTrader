@@ -21,7 +21,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static trader.strategie.BGXStrategy.StrategyConfig.*;
+import static trader.strategy.BGXStrategy.StrategyConfig.*;
 
 public class OandaCandlesResponseTest {
 

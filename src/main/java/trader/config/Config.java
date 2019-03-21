@@ -60,6 +60,6 @@ public final class Config {
      */
     public static final CandleGranularity TIME_FRAME = CandleGranularity.M30;
 
-    public static final double MIN_BALANCE = 1.0D;
+
 
 }

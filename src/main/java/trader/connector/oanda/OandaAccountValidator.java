@@ -3,11 +3,15 @@ package trader.connector.oanda;
 import com.oanda.v20.ExecuteException;
 import com.oanda.v20.RequestException;
 import com.oanda.v20.account.*;
-import trader.config.Config;
+import trader.exception.AccountBalanceBelowMinimum;
+import trader.exception.AccountDoNotExistException;
+import trader.exception.UnableToExecuteRequest;
 
 import java.util.List;
 
 public class OandaAccountValidator {
+
+    private static final double MIN_BALANCE = 1.0D;
 
     private OandaConnector oandaConnector;
 
@@ -45,17 +49,13 @@ public class OandaAccountValidator {
         }
     }
 
-    public class AccountDoNotExistException extends RuntimeException{};
-    public class AccountBalanceBelowMinimum extends RuntimeException{};
-    public class UnableToExecuteRequest extends RuntimeException{};
-
 
     private AccountContext getAccountContext() {
         return oandaConnector.getContext().account;
     }
 
     private boolean isBalanceBelowMinimum() {
-        return getAccount().getBalance().doubleValue() <= Config.MIN_BALANCE;
+        return getAccount().getBalance().doubleValue() <= MIN_BALANCE;
     }
 
 //    private void serverDown(RequestException re) {

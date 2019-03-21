@@ -7,7 +7,7 @@ import trader.candle.CandlestickPriceType;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static trader.strategie.BGXStrategy.StrategyConfig.SCALE;
+import static trader.strategy.BGXStrategy.StrategyConfig.SCALE;
 
 public final class WeightedMovingAverage extends BaseIndicator {
 

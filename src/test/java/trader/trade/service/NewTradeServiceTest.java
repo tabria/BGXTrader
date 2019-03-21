@@ -11,7 +11,7 @@ import com.oanda.v20.transaction.TransactionID;
 import org.junit.Before;
 import org.junit.Test;
 import trader.trade.entitie.Trade;
-import trader.strategie.BGXStrategy.BGXTradeGenerator;
+import trader.strategy.BGXStrategy.BGXTradeGenerator;
 import trader.trade.enums.Direction;
 
 import java.lang.reflect.Field;
