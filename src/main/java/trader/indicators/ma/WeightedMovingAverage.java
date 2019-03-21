@@ -66,14 +66,14 @@ public final class WeightedMovingAverage extends BaseIndicator {
      */
     private BigDecimal calculateWMAValue(List<Candlestick> candlestickList, int candleIndex){
         long wmaPeriod = indicatorPeriod;
-        BigDecimal wmaValue = ZERO;
+        BigDecimal wmaValue = BigDecimal.ZERO;
         for (int i = candleIndex; i >= candleIndex - lastCandlestickIndex(); i--) {
             wmaValue = obtainPrice(candlestickList.get(i))
                     .multiply(BigDecimal.valueOf(wmaPeriod--))
                     .add(wmaValue)
                     .setScale(SCALE, BigDecimal.ROUND_HALF_UP);
         }
-        if (candlestickList.size() > 0 && divisor.compareTo(ZERO) != 0)
+        if (candlestickList.size() > 0 && divisor.compareTo(BigDecimal.ZERO) != 0)
             return wmaValue.divide(divisor, SCALE, BigDecimal.ROUND_HALF_UP);
         return wmaValue;
     }

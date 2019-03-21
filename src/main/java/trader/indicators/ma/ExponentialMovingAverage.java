@@ -78,7 +78,7 @@ public final class ExponentialMovingAverage extends BaseIndicator {
     }
 
     private void setSMAValue(List<Candlestick> candlestickList) {
-        BigDecimal smaValue = ZERO;
+        BigDecimal smaValue = BigDecimal.ZERO;
         for (int candleIndex = 0; candleIndex <= indicatorPeriod -1 ; candleIndex++) {
             smaValue = smaValue.add(obtainPrice(candlestickList.get(candleIndex)));
         }
