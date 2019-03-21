@@ -47,7 +47,7 @@ public class IndicatorUpdateHelper {
 
 
 
-    protected List<Candlestick> candlestickList;
+    public List<Candlestick> candlestickList;
     protected CandlestickPriceType mockCandlestickPriceType;
 
     public IndicatorUpdateHelper(CandlestickPriceType mockCandlestickPriceType) {
@@ -87,6 +87,9 @@ public class IndicatorUpdateHelper {
     public Candlestick createCandlestickMock() {
         Candlestick newCandlestick = mock(Candlestick.class);
         when(newCandlestick.getClosePrice()).thenReturn(UPDATED_CANDLESTICK_PRICE);
+        when(newCandlestick.getOpenPrice()).thenReturn(UPDATED_CANDLESTICK_PRICE);
+        when(newCandlestick.getLowPrice()).thenReturn(UPDATED_CANDLESTICK_PRICE);
+        when(newCandlestick.getHighPrice()).thenReturn(UPDATED_CANDLESTICK_PRICE);
         when(newCandlestick.getDateTime()).thenReturn(ZonedDateTime.now().withZoneSameInstant(ZoneId.of("UTC")));
         return newCandlestick;
     }
@@ -119,6 +122,9 @@ public class IndicatorUpdateHelper {
     private Candlestick setCandlestickPrice(Candlestick candlestick, int candlestickNumber) {
         BigDecimal candlestickClosePrice = new BigDecimal(candlesClosePrices.get(candlestickNumber));
         when(candlestick.getClosePrice()).thenReturn(candlestickClosePrice);
+        when(candlestick.getOpenPrice()).thenReturn(candlestickClosePrice);
+        when(candlestick.getHighPrice()).thenReturn(candlestickClosePrice);
+        when(candlestick.getLowPrice()).thenReturn(candlestickClosePrice);
         return candlestick;
     }
 

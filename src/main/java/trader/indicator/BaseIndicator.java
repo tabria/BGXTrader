@@ -43,7 +43,7 @@ public abstract class BaseIndicator implements Indicator {
             throw new IndicatorPeriodTooBigException();
     }
 
-    protected BigDecimal obtainPrice(trader.candle.Candlestick candle) {
+    protected BigDecimal obtainPrice(Candlestick candle) {
         return candlestickPriceType.extractPrice(candle)
                         .setScale(SCALE, BigDecimal.ROUND_HALF_UP);
     }

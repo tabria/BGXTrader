@@ -15,6 +15,7 @@ import trader.indicator.ma.enums.MAType;
 import trader.indicator.rsi.RSIBuilder;
 import trader.price.PriceObservable;
 import trader.price.PricePull;
+import trader.strategy.Strategy;
 import trader.trade.PositionManager;
 import trader.strategy.BGXStrategy.BGXTradeGenerator;
 import trader.trade.service.NewTradeService;
@@ -50,6 +51,8 @@ public class Main {
 
 
         ApiConnector apiConnector = ApiConnector.create("Oanda");
+        Strategy strategy = new BGXTradeGenerator(apiConnector);
+        strategy.execute();
 
 
 

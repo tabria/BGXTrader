@@ -2,7 +2,12 @@ package trader.trade.generator;
 
 import org.junit.Before;
 import org.junit.Test;
+import trader.CommonTestClassMembers;
+import trader.candle.Candlestick;
+import trader.candle.CandlestickPriceType;
+import trader.connector.ApiConnector;
 import trader.indicator.Indicator;
+import trader.indicator.IndicatorUpdateHelper;
 import trader.indicator.ma.SimpleMovingAverage;
 import trader.indicator.ma.WeightedMovingAverage;
 import trader.indicator.rsi.RelativeStrengthIndex;
@@ -25,6 +30,10 @@ public class BGXTradeGeneratorTest {
 
 
     private BGXTradeGenerator signalGenerator;
+    private CommonTestClassMembers commonMembers;
+    private ApiConnector apiConnector;
+    private CandlestickPriceType candlestickPriceType = CandlestickPriceType.CLOSE;
+    private IndicatorUpdateHelper indicatorUpdateHelper;
     private Indicator mockSlowWma;
     private Indicator mockMiddleWma;
     private Indicator mockFastWma;
@@ -36,7 +45,6 @@ public class BGXTradeGeneratorTest {
     @Before
     public void before() throws Exception {
 
-
         this.mockSlowWma = mock(WeightedMovingAverage.class);
         this.mockMiddleWma = mock(WeightedMovingAverage.class);
         this.mockFastWma = mock(WeightedMovingAverage.class);
@@ -44,11 +52,36 @@ public class BGXTradeGeneratorTest {
         this.mockDailySma = mock(SimpleMovingAverage.class);
         this.mockRsi = mock(RelativeStrengthIndex.class);
 
+        this.apiConnector = mock(ApiConnector.class);
+        this.indicatorUpdateHelper = new IndicatorUpdateHelper(this.candlestickPriceType);
+        init();
+        this.commonMembers = new CommonTestClassMembers();
+
         this.signalGenerator = new BGXTradeGenerator(this.mockFastWma, this.mockMiddleWma, this.mockSlowWma, this.mockPriceSma, this.mockDailySma, this.mockRsi);
 
     }
 
 
+
+
+    @Test
+    public void WhenInstantiateBGXTraderGenaratorThenGenerateIndicators(){
+
+        this.signalGenerator = new BGXTradeGenerator(apiConnector);
+        Indicator fastWMA = (Indicator) commonMembers.extractFieldObject(this.signalGenerator, "fastWMA");
+        Indicator middleWMA = (Indicator) commonMembers.extractFieldObject(this.signalGenerator, "middleWMA");
+        Indicator slowWMA = (Indicator) commonMembers.extractFieldObject(this.signalGenerator, "slowWMA");
+        Indicator priceSma = (Indicator) commonMembers.extractFieldObject(this.signalGenerator, "priceSma");
+        Indicator dailySMA = (Indicator) commonMembers.extractFieldObject(this.signalGenerator, "dailySMA");
+        Indicator rsi = (Indicator) commonMembers.extractFieldObject(this.signalGenerator, "rsi");
+
+        assertEquals(fastWMA.getClass(), WeightedMovingAverage.class);
+        assertEquals(middleWMA.getClass(), WeightedMovingAverage.class);
+        assertEquals(slowWMA.getClass(), WeightedMovingAverage.class);
+        assertEquals(priceSma.getClass(), SimpleMovingAverage.class);
+        assertEquals(dailySMA.getClass(), SimpleMovingAverage.class);
+        assertEquals(rsi.getClass(), RelativeStrengthIndex.class);
+    }
 
     @Test
     public void WhenFastWMACrossMiddleWMAFromBelowThenGenerateCorrectLongSignal() {
@@ -438,13 +471,11 @@ public class BGXTradeGeneratorTest {
         List<BigDecimal> rsiValues = createIndicatorValues(49, 50, 22);
 
         when(this.mockRsi.getValues()).thenReturn(rsiValues);
-
         when(this.mockFastWma.getValues()).thenReturn(fastWMAValues);
         when(this.mockPriceSma.getValues()).thenReturn(priceSMAValues);
         when(this.mockMiddleWma.getValues()).thenReturn(middleWMAValues);
         when(this.mockDailySma.getValues()).thenReturn(dailyValues);
         when(this.mockSlowWma.getValues()).thenReturn(slowWMAValues);
-
 
         Trade trade = this.signalGenerator.generateTrade();
 
@@ -457,7 +488,6 @@ public class BGXTradeGeneratorTest {
         assertTrue("Trade must be tradable", trade.getTradable());
         assertEquals(0, compareEntry);
         assertEquals(0, compareStopLoss);
-
     }
 
     private List<BigDecimal> createIndicatorValues(double ... prices) {
@@ -465,5 +495,18 @@ public class BGXTradeGeneratorTest {
         for (double price :prices)
             maValues.add( BigDecimal.valueOf(price));
         return maValues;
+    }
+
+    private void init() {
+        this.indicatorUpdateHelper.fillCandlestickList();
+        addExtraCandlesToTestList(170);
+        when(apiConnector.getInitialCandles()).thenReturn(indicatorUpdateHelper.getCandlestickList());
+    }
+
+    private void addExtraCandlesToTestList(int quantity) {
+        for (int i = 0; i <quantity ; i++) {
+            Candlestick candlestickMock = this.indicatorUpdateHelper.createCandlestickMock();
+            this.indicatorUpdateHelper.candlestickList.add(candlestickMock);
+        }
     }
 }

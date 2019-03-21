@@ -1,6 +1,9 @@
 package trader.candle;
 
+import trader.exception.NegativeNumberException;
 import trader.exception.NullArgumentException;
+import trader.exception.OverflowException;
+import trader.exception.UnderflowException;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
@@ -192,12 +195,5 @@ public final class Candle implements Candlestick {
                 throw new NullArgumentException();
             }
         }
-
     }
-
-    static class UnderflowException extends RuntimeException{};
-    static class OverflowException extends RuntimeException{};
-    static class NegativeNumberException extends RuntimeException{};
-
-
 }

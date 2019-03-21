@@ -3,7 +3,11 @@ package trader.candle;
 import org.junit.Before;
 import org.junit.Test;
 import trader.CommonTestClassMembers;
+import trader.exception.NegativeNumberException;
 import trader.exception.NullArgumentException;
+import trader.exception.OverflowException;
+import trader.exception.UnderflowException;
+import trader.strategy.BGXStrategy.StrategyConfig;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
@@ -11,6 +15,7 @@ import java.time.ZonedDateTime;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static trader.candle.Candle.*;
+import static trader.strategy.BGXStrategy.StrategyConfig.*;
 
 public class CandleBuilderTest {
 

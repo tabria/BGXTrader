@@ -7,6 +7,7 @@ import trader.connector.ApiConnector;
 import trader.exception.NoSuchConnectorException;
 import trader.exception.NullArgumentException;
 import trader.exception.OutOfBoundaryException;
+import trader.exception.WrongIndicatorSettingsException;
 import trader.indicator.Indicator;
 import trader.candle.CandlestickPriceType;
 import trader.indicator.IndicatorUpdateHelper;
@@ -15,6 +16,7 @@ import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static trader.indicator.ma.enums.MAType.*;
+import static trader.strategy.BGXStrategy.StrategyConfig.*;
 
 public class MovingAverageBuilderTest {
 
@@ -100,5 +102,29 @@ public class MovingAverageBuilderTest {
         assertEquals("The object is not SMA","SimpleMovingAverage", sma.getClass().getSimpleName());
         assertEquals("The object is not EMA","ExponentialMovingAverage", ema.getClass().getSimpleName());
         assertEquals("The object is not WMA","WeightedMovingAverage", wma.getClass().getSimpleName());
+    }
+
+    @Test(expected = WrongIndicatorSettingsException.class)
+    public void buildMovingAverage_ExternalSettingsNotDefaultQuantity(){
+        new MovingAverageBuilder(mockApiConnector).build(new String[]{""});
+    }
+
+    @Test(expected = WrongIndicatorSettingsException.class)
+    public void buildMovingAverageWithNullExternalSettings(){
+        new MovingAverageBuilder(mockApiConnector).build(null);
+    }
+
+    @Test
+    public void buildMovingAverageWithExternalSettings(){
+        when(mockApiConnector.getInitialCandles()).thenReturn(indicatorUpdateHelper.getCandlestickList());
+        Indicator sma = new MovingAverageBuilder(mockApiConnector)
+                .build(PRICE_SMA_SETTINGS);
+
+        long actualIndicatorPeriod = (long) commonClassMembers.extractFieldObject(sma, "indicatorPeriod");
+        CandlestickPriceType actualCandlestickPriceType = (CandlestickPriceType) commonClassMembers.extractFieldObject(sma, "candlestickPriceType");
+
+        assertEquals(SimpleMovingAverage.class, sma.getClass());
+        assertEquals(Long.parseLong(PRICE_SMA_SETTINGS[0]), actualIndicatorPeriod );
+        assertEquals(CandlestickPriceType.valueOf(PRICE_SMA_SETTINGS[1]), actualCandlestickPriceType);
     }
 }

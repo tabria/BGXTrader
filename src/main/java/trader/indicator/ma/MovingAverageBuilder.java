@@ -5,6 +5,7 @@ import trader.connector.ApiConnector;
 import trader.exception.NoSuchConnectorException;
 import trader.exception.NullArgumentException;
 import trader.exception.OutOfBoundaryException;
+import trader.exception.WrongIndicatorSettingsException;
 import trader.indicator.Indicator;
 import trader.candle.CandlestickPriceType;
 import trader.indicator.ma.enums.MAType;
@@ -20,6 +21,7 @@ public final class MovingAverageBuilder {
     private static final CandlestickPriceType DEFAULT_CANDLESTICK_PRICE_TYPE = CandlestickPriceType.CLOSE;
     private static final MAType DEFAULT_MA_TYPE = MAType.SIMPLE;
     private static final String MA_LOCATION = "trader.indicator.ma.";
+    private static final int SETTABLE_FIELDS_COUNT = 3;
 
     private long indicatorPeriod;
     private CandlestickPriceType candlestickPriceType;
@@ -53,6 +55,15 @@ public final class MovingAverageBuilder {
     }
 
     public Indicator build(){
+        return instantiatesIndicator(createCandlesUpdater());
+    }
+
+    public Indicator build(String[] settings){
+        if(settings == null || settings.length != SETTABLE_FIELDS_COUNT)
+            throw new WrongIndicatorSettingsException();
+        setPeriod(Long.parseLong(settings[0]));
+        setCandlestickPriceType(CandlestickPriceType.valueOf(settings[1]));
+        setMAType(MAType.valueOf(settings[2]));
         return instantiatesIndicator(createCandlesUpdater());
     }
 

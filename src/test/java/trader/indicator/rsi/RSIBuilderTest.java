@@ -3,16 +3,22 @@ package trader.indicator.rsi;
 import org.junit.Before;
 import org.junit.Test;
 import trader.CommonTestClassMembers;
+import trader.candle.Candlestick;
 import trader.candle.CandlestickPriceType;
 import trader.connector.ApiConnector;
 import trader.exception.NoSuchConnectorException;
 import trader.exception.NullArgumentException;
 import trader.exception.OutOfBoundaryException;
+import trader.exception.WrongIndicatorSettingsException;
 import trader.indicator.Indicator;
 import trader.indicator.IndicatorUpdateHelper;
+import trader.indicator.ma.SimpleMovingAverage;
+import trader.strategy.BGXStrategy.StrategyConfig;
+
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static trader.strategy.BGXStrategy.StrategyConfig.RSI_SETTINGS;
 
 public class RSIBuilderTest {
 
@@ -104,5 +110,30 @@ public class RSIBuilderTest {
         String rsiName = rsi.getClass().getSimpleName();
 
         assertEquals("The object is not RSI Indicator","RelativeStrengthIndex", rsiName);
+    }
+
+    @Test(expected = WrongIndicatorSettingsException.class)
+    public void buildRSI_ExternalSettingsNotDefaultQuantity(){
+        new RSIBuilder(apiConnector).build(new String[]{""});
+    }
+
+    @Test(expected = WrongIndicatorSettingsException.class)
+    public void buildRSIWithNullExternalSettings(){
+        new RSIBuilder(apiConnector).build(null);
+    }
+
+    @Test
+    public void buildRSIWithExternalSettings() {
+        indicatorUpdateHelper.candlestickList.add(indicatorUpdateHelper.createCandlestickMock());
+        when(apiConnector.getInitialCandles()).thenReturn(indicatorUpdateHelper.getCandlestickList());
+
+        Indicator rsi = new RSIBuilder(apiConnector).build(RSI_SETTINGS);
+        long actualIndicatorPeriod = (long) commonMembers
+                .extractFieldObject(rsi, "indicatorPeriod");
+        CandlestickPriceType actualCandlestickPriceType = (CandlestickPriceType) commonMembers.extractFieldObject(rsi, "candlestickPriceType");
+
+        assertEquals(RelativeStrengthIndex.class, rsi.getClass());
+        assertEquals(Long.parseLong(RSI_SETTINGS[0]), actualIndicatorPeriod );
+        assertEquals(CandlestickPriceType.valueOf(RSI_SETTINGS[1]), actualCandlestickPriceType);
     }
 }
