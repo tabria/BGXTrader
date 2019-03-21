@@ -23,9 +23,9 @@ public final class IndicatorObserver implements Observer {
 
     @Override
     public void updateObserver(DateTime lastCandleTime, BigDecimal ask, BigDecimal bid) {
-        if (lastCandleTime == null)
-            throw new NullPointerException("DateTime is null");
-        this.indicator.updateIndicator();
+//        if (lastCandleTime == null)
+//            throw new NullPointerException("DateTime is null");
+//        this.indicator.updateIndicator();
     }
 
     @Override

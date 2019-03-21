@@ -16,7 +16,6 @@ public final class PriceObservable implements Observable {
     private long threadSleepInterval = 1000L;
     private ApiConnector apiConnector;
     private Pricing oldPrice;
-
     private CopyOnWriteArrayList<Observer> observers;
 
     ////////////////// to be removed /////////////////////////

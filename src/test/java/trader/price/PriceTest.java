@@ -21,7 +21,7 @@ public class PriceTest {
     private Price price;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         price = new Price.PriceBuilder().build();
     }
 
@@ -54,7 +54,7 @@ public class PriceTest {
 
     @Test
     public void testEqualsWithSameObject(){
-        assertTrue(price.equals(price));
+        assertEquals(price, price);
     }
 
     @Test
@@ -65,7 +65,7 @@ public class PriceTest {
     @Test
     public void testEqualsWithEqualObject(){
         Price equalPrice = new Price.PriceBuilder().build();
-        assertTrue(price.equals(equalPrice));
+        assertEquals(price, equalPrice);
     }
 
     @Test
@@ -73,7 +73,7 @@ public class PriceTest {
         Price notEqualPrice = new Price.PriceBuilder()
                 .setAsk(BigDecimal.TEN)
                 .build();
-        assertFalse(price.equals(notEqualPrice));
+        assertNotEquals(price, notEqualPrice);
     }
 
     @Test
@@ -81,7 +81,7 @@ public class PriceTest {
         Price notEqualPrice = new Price.PriceBuilder()
                 .setBid(BigDecimal.TEN)
                 .build();
-        assertFalse(price.equals(notEqualPrice));
+        assertNotEquals(price, notEqualPrice);
     }
 
     @Test
@@ -89,7 +89,7 @@ public class PriceTest {
         Price notEqualPrice = new Price.PriceBuilder()
                 .setIsTradable(false)
                 .build();
-        assertFalse(price.equals(notEqualPrice));
+        assertNotEquals(price, notEqualPrice);
     }
 
     @Test
@@ -97,7 +97,7 @@ public class PriceTest {
         Price notEqualPrice = new Price.PriceBuilder()
                 .setDateTime(ZonedDateTime.now())
                 .build();
-        assertFalse(price.equals(notEqualPrice));
+        assertNotEquals(price, notEqualPrice);
     }
 
     @Test
@@ -105,7 +105,7 @@ public class PriceTest {
         Price notEqualPrice = new Price.PriceBuilder()
                 .setAvailableUnits(BigDecimal.TEN)
                 .build();
-        assertFalse(price.equals(notEqualPrice));
+        assertNotEquals(price, notEqualPrice);
     }
 
     @Test
@@ -117,14 +117,14 @@ public class PriceTest {
                 .setDateTime(ZonedDateTime.now())
                 .setAvailableUnits(BigDecimal.TEN)
                 .build();
-        assertFalse(price.equals(notEqualPrice));
+        assertNotEquals(price, notEqualPrice);
     }
 
     @Test
     public void testHashCode(){
         int expected = Objects.hash(price.getAsk(), price.getBid(), price.getDateTime(), price.isTradable(), price.getAvailableUnits());
 
-        assertTrue(expected == price.hashCode());
+        assertEquals(expected, price.hashCode());
     }
 
     @Test

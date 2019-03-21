@@ -15,16 +15,13 @@ import static org.mockito.Mockito.*;
 
 public class PriceObservableTest {
 
-    OandaAPIMock oandaAPIMock;
-    PriceObservable priceObservable;
-    Observer observer;
-    CommonTestClassMembers commonMembers;
+    private PriceObservable priceObservable;
+    private Observer observer;
+    private CommonTestClassMembers commonMembers;
 
 
     @Before
-    public void before() throws Exception {
-
-        oandaAPIMock = new OandaAPIMock();
+    public void before() {
         observer = mock(Observer.class);
         priceObservable = PriceObservable.create("Oanda");
         commonMembers = new CommonTestClassMembers();
@@ -145,12 +142,14 @@ public class PriceObservableTest {
         assertTrue(expected <= endTime - startTime);
     }
 
+
     @Test(expected = IllegalArgumentException.class)
     public void testExecute() {
         commonMembers.changeFieldObject(priceObservable,"threadSleepInterval",-1L);
         priceObservable.execute();
     }
 
+    @SuppressWarnings(value = "unchecked")
     private CopyOnWriteArrayList<Observer> getObservers() {
         return (CopyOnWriteArrayList<Observer>) commonMembers.extractFieldObject(this.priceObservable, "observers");
     }
