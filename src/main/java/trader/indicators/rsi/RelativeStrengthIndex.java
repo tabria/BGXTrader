@@ -19,11 +19,11 @@ public final class RelativeStrengthIndex extends BaseIndicator {
     private BigDecimal averageGains;
     private BigDecimal averageLosses;
 
-    RelativeStrengthIndex(long candlesticksQuantity, CandlestickPriceType candlestickPriceType, CandlesUpdater candlesUpdater){
-        super(candlesticksQuantity, candlestickPriceType, candlesUpdater);
+    RelativeStrengthIndex(long indicatorPeriod, CandlestickPriceType candlestickPriceType, CandlesUpdater candlesUpdater){
+        super(indicatorPeriod, candlestickPriceType, candlesUpdater);
         averageGains = BigDecimal.ZERO;
         averageLosses = BigDecimal.ZERO;
-        initiateEMAValues();
+        initiateRSIValues();
     }
 
     @Override
@@ -40,9 +40,7 @@ public final class RelativeStrengthIndex extends BaseIndicator {
     }
 
     @Override
-    protected void setDivisor() {
-
-    }
+    protected void setDivisor() {}
 
     @Override
     public String toString() {
@@ -53,7 +51,7 @@ public final class RelativeStrengthIndex extends BaseIndicator {
                 '}';
     }
 
-    private void initiateEMAValues() {
+    private void initiateRSIValues() {
         List<Candlestick> candles = candlesUpdater.getCandles();
         setRSIValues(candles);
     }

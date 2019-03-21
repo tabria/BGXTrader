@@ -21,8 +21,8 @@ public abstract class BaseIndicatorTest {
     private static final String NEW_DATETIME_ENTRY = "2018-08-01T09:53:00Z";
 
 
-    private List<String> candlesClosePrices;
-    private List<String> candlesDateTime;
+//    protected List<String> candlesClosePrices;
+//    private List<String> candlesDateTime;
     protected CandlesUpdater candlesUpdater;
     protected CandlestickPriceType candlestickPriceType = CandlestickPriceType.CLOSE;
     protected IndicatorUpdateHelper indicatorUpdateHelper;
@@ -33,8 +33,8 @@ public abstract class BaseIndicatorTest {
     public void before() {
         this.candlesUpdater = mock(CandlesUpdater.class);
         this.indicatorUpdateHelper = new IndicatorUpdateHelper(this.candlestickPriceType);
-        this.candlesClosePrices = indicatorUpdateHelper.getCandlesClosePrices();
-        this.candlesDateTime = indicatorUpdateHelper.getCandlesDateTime();
+//        this.candlesClosePrices = indicatorUpdateHelper.getCandlesClosePrices();
+//        this.candlesDateTime = indicatorUpdateHelper.getCandlesDateTime();
         this.indicatorUpdateHelper.fillCandlestickList();
         this.newCandle = mock(Candlestick.class);
         setNewCandle();
@@ -57,8 +57,8 @@ public abstract class BaseIndicatorTest {
     protected abstract BigDecimal getLastCandlestickPrice();
 
     protected void updateCandlestickListInSuper() {
-        this.candlesClosePrices.add(NEW_PRICE_ENTRY);
-        this.candlesDateTime.add(NEW_DATETIME_ENTRY);
+//        this.candlesClosePrices.add(NEW_PRICE_ENTRY);
+//        this.candlesDateTime.add(NEW_DATETIME_ENTRY);
         this.indicatorUpdateHelper.fillCandlestickList();
         List<Candlestick> candlestickList = this.indicatorUpdateHelper.getCandlestickList();
         when(this.candlesUpdater.getCandles()).thenReturn(candlestickList);
@@ -72,7 +72,7 @@ public abstract class BaseIndicatorTest {
     }
 
     private void setPeriod(){
-        long period = candlesClosePrices.size()/ DIVIDER;
+        long period =  indicatorUpdateHelper.getCandlesClosePrices().size()/ DIVIDER;
         if (period < MINIMUM_CANDLES_COUNT){
             throw new IllegalArgumentException("Prices in CANDLES_CLOSE_PRICES must be at least 3");
         }

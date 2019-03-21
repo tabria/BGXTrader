@@ -17,7 +17,7 @@ public class IndicatorUpdateHelper {
 
     private static final BigDecimal UPDATED_CANDLESTICK_PRICE = BigDecimal.valueOf(1.16264);
 
-    protected List<String> candlesClosePrices = new ArrayList<>(Arrays.asList(
+    public List<String> candlesClosePrices = new ArrayList<>(Arrays.asList(
             "1.16114", "1.16214", "1.16314", "1.16414", "1.16514", "1.16614", "1.16714",
             "1.16814", "1.16914", "1.16114", "1.16214", "1.16314", "1.16414", "1.15714"
     ));
@@ -26,7 +26,7 @@ public class IndicatorUpdateHelper {
 //    "1181.75", "1154.59998", "1133.19995", "1132.15002", "1167.40002", "1122.90002","1099.40002","1097.59998","1097.34998","1094.90002","1111.94995","1125.94995","1138.40002","1138.40002","1149.90002","1152.15002","1149.40002","1153.19995","1145.05005","1135.44995","1131.19995","1145.5","1136.80005","1122.90002","1138.30005","1134.59998","1103.84998","1103.84998","1103.84998","1100.80005","1080.19995","1061.5","1020"
 //            ));
 
-    protected List<String> candlesDateTime = new ArrayList<>(Arrays.asList(
+    public List<String> candlesDateTime = new ArrayList<>(Arrays.asList(
             "2018-08-01T09:39:00Z", "2018-08-01T09:40:00Z", "2018-08-01T09:41:00Z", "2018-08-01T09:42:00Z",
             "2018-08-01T09:43:00Z", "2018-08-01T09:44:00Z", "2018-08-01T09:45:00Z", "2018-08-01T09:46:00Z",
             "2018-08-01T09:47:00Z", "2018-08-01T09:48:00Z", "2018-08-01T09:49:00Z", "2018-08-01T09:50:00Z",
@@ -75,6 +75,14 @@ public class IndicatorUpdateHelper {
         candlestickList = new ArrayList<>();
         for (int candlestickNumber = 0; candlestickNumber < candlesClosePrices.size() ; candlestickNumber++)
             addCandlestick(candlestickNumber);
+    }
+
+    public void fillCandlestickListWithZeros(){
+        candlestickList = new ArrayList<>();
+        for (int candlestickNumber = 0; candlestickNumber < candlesClosePrices.size() ; candlestickNumber++) {
+            candlesClosePrices.set(candlestickNumber, "0");
+            addCandlestick(candlestickNumber);
+        }
     }
 
     public Candlestick createCandlestickMock() {

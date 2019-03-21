@@ -7,6 +7,7 @@ import trader.exceptions.IndicatorPeriodTooBigException;
 import trader.indicators.BaseIndicatorTest;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
@@ -53,6 +54,19 @@ public class RelativeStrengthIndexTest extends BaseIndicatorTest {
 
         assertEquals(oldSize + 1, newSize);
         assertEquals(oldLastValue, newNextToLastValue);
+    }
+
+    @Test
+    public void testRSIWithZeroAverageGainsAndZeroAverageLosses() {
+
+        indicatorUpdateHelper.fillCandlestickListWithZeros();
+        when(this.candlesUpdater.getCandles()).thenReturn(indicatorUpdateHelper.getCandlestickList());
+        RelativeStrengthIndex newRsi = new RelativeStrengthIndex(this.period, this.candlestickPriceType, this.candlesUpdater);
+        int newSize = newRsi.getValues().size();
+        BigDecimal lastValue = newRsi.getValues().get(newSize-1);
+
+        assertEquals(7, newSize);
+        assertEquals(BigDecimal.valueOf(50), lastValue);
     }
 
     @Test

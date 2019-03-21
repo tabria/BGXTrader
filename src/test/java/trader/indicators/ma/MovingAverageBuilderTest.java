@@ -3,9 +3,8 @@ package trader.indicators.ma;
 import com.oanda.v20.instrument.*;
 import org.junit.Before;
 import org.junit.Test;
+import trader.CommonTestClassMembers;
 import trader.OandaAPIMock.OandaAPIMockInstrument;
-import trader.candle.CandlesUpdater;
-import trader.candle.Candlestick;
 import trader.connectors.ApiConnector;
 import trader.exceptions.NoSuchConnectorException;
 import trader.exceptions.NullArgumentException;
@@ -32,23 +31,19 @@ public class MovingAverageBuilderTest {
     private static final String MIN_PERIOD = "MIN_INDICATOR_PERIOD";
 
     private MovingAverageBuilder builder;
-    private ApiConnector mockApiConnectior;
-    protected CandlestickPriceType candlestickPriceType = CandlestickPriceType.CLOSE;
+    private ApiConnector mockApiConnector;
+    private CandlestickPriceType candlestickPriceType = CandlestickPriceType.CLOSE;
     private IndicatorUpdateHelper indicatorUpdateHelper;
+    private CommonTestClassMembers commonClassMembers;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
 
-        OandaAPIMockInstrument oandaInstrument = new OandaAPIMockInstrument();
-        when(oandaInstrument.getMockResponse().getCandles())
-                .thenReturn(new ArrayList<>());
-        when(oandaInstrument.getContext().instrument.candles(any(InstrumentCandlesRequest.class)))
-                .thenReturn(oandaInstrument.getMockResponse());
-        mockApiConnectior = mock(ApiConnector.class);
+        mockApiConnector = mock(ApiConnector.class);
         this.indicatorUpdateHelper = new IndicatorUpdateHelper(this.candlestickPriceType);
         this.indicatorUpdateHelper.fillCandlestickList();
-        this.builder = new MovingAverageBuilder(mockApiConnectior);
-
+        commonClassMembers = new CommonTestClassMembers();
+        this.builder = new MovingAverageBuilder(mockApiConnector);
     }
 
     @Test(expected = NoSuchConnectorException.class)
@@ -57,23 +52,23 @@ public class MovingAverageBuilderTest {
     }
 
     @Test(expected = OutOfBoundaryException.class)
-    public void whenCallSetPeriodWithLessThanMinimumPeriod_Exception() throws NoSuchFieldException, IllegalAccessException {
-        long minPeriod = (long) extractFieldObject(MIN_PERIOD);
+    public void whenCallSetPeriodWithLessThanMinimumPeriod_Exception() {
+        long minPeriod = (long) commonClassMembers.extractFieldObject(builder, MIN_PERIOD);
         this.builder.setPeriod(minPeriod - 1);
     }
 
     @Test(expected = OutOfBoundaryException.class)
-    public void whenCallSetPeriodWithMoreThanMaxPeriod_Exception() throws NoSuchFieldException, IllegalAccessException {
-        long maxPeriod = (long) extractFieldObject(MAX_PERIOD);
+    public void whenCallSetPeriodWithMoreThanMaxPeriod_Exception() {
+        long maxPeriod = (long) commonClassMembers.extractFieldObject(builder, MAX_PERIOD);
         this.builder.setPeriod(maxPeriod + 1);
     }
 
     @Test
-    public void testForCorrectPeriod() throws NoSuchFieldException, IllegalAccessException {
+    public void testForCorrectPeriod(){
         long expected = 11L;
         this.builder.setPeriod(expected);
 
-        assertEquals(expected, extractFieldObject(PERIOD));
+        assertEquals(expected, commonClassMembers.extractFieldObject(builder, PERIOD));
     }
 
     @Test(expected = NullArgumentException.class)
@@ -82,10 +77,10 @@ public class MovingAverageBuilderTest {
     }
 
     @Test
-    public void callSetCandlestickPriceTypeWithMediumType() throws NoSuchFieldException, IllegalAccessException {
+    public void callSetCandlestickPriceTypeWithMediumType() {
         this.builder.setCandlestickPriceType(CandlestickPriceType.MEDIAN);
 
-        assertSame(CandlestickPriceType.MEDIAN, extractFieldObject(CANDLESTICK_PRICE_TYPE));
+        assertSame(CandlestickPriceType.MEDIAN, commonClassMembers.extractFieldObject(builder, CANDLESTICK_PRICE_TYPE));
     }
 
     @Test(expected = NullArgumentException.class)
@@ -94,15 +89,15 @@ public class MovingAverageBuilderTest {
     }
 
     @Test
-    public void testForCorrectMovingAverageType() throws NoSuchFieldException, IllegalAccessException {
+    public void testForCorrectMovingAverageType(){
         this.builder.setMAType(EXPONENTIAL);
 
-        assertSame(EXPONENTIAL, extractFieldObject(MOVING_AVERAGE_TYPE));
+        assertSame(EXPONENTIAL, commonClassMembers.extractFieldObject(builder, MOVING_AVERAGE_TYPE));
     }
 
     @Test
     public void buildMovingAverage()  {
-        when(mockApiConnectior.getInitialCandles()).thenReturn(indicatorUpdateHelper.getCandlestickList());
+        when(mockApiConnector.getInitialCandles()).thenReturn(indicatorUpdateHelper.getCandlestickList());
         Indicator sma = this.builder.setMAType(SIMPLE).setPeriod(7).build();
         Indicator ema = this.builder.setMAType(EXPONENTIAL).setPeriod(7).build();
         Indicator wma = this.builder.setMAType(WEIGHTED).setPeriod(7).build();
@@ -110,11 +105,5 @@ public class MovingAverageBuilderTest {
         assertEquals("The object is not SMA","SimpleMovingAverage", sma.getClass().getSimpleName());
         assertEquals("The object is not EMA","ExponentialMovingAverage", ema.getClass().getSimpleName());
         assertEquals("The object is not WMA","WeightedMovingAverage", wma.getClass().getSimpleName());
-    }
-
-    private Object extractFieldObject(String fieldName) throws NoSuchFieldException, IllegalAccessException {
-        Field field = this.builder.getClass().getDeclaredField(fieldName);
-        field.setAccessible(true);
-        return field.get(this.builder);
     }
 }

@@ -105,10 +105,10 @@ public class Main {
                 .setMAType(MAType.WEIGHTED)
                 .build();
 
-        Indicator rsi = new RSIBuilder(context)
-                .setCandlesticksQuantity(14)
+        Indicator rsi = new RSIBuilder(apiConnector)
+                .setPeriod(14)
                 .setCandlestickPriceType(CandlestickPriceType.CLOSE)
-                .setCandleGranularity(Config.TIME_FRAME)
+ //               .setCandleGranularity(Config.TIME_FRAME)
                 .build();
 
 
