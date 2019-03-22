@@ -15,9 +15,10 @@ import trader.indicator.ma.enums.MAType;
 import trader.indicator.rsi.RSIBuilder;
 import trader.price.PriceObservable;
 import trader.price.PricePull;
+import trader.strategy.BGXStrategy.BGXStrategy;
 import trader.strategy.Strategy;
-import trader.trade.PositionManager;
 import trader.strategy.BGXStrategy.BGXTradeGenerator;
+import trader.strategy.ThreadedStrategy;
 import trader.trade.service.NewTradeService;
 import trader.trade.service.OrderService;
 import trader.trade.service.exit_strategie.ExitStrategy;
@@ -43,7 +44,7 @@ import trader.trade.service.exit_strategie.FullCloseStrategy;
  *
  */
 
-//TODO log exception, remove active orders if price is equal or beyond break even point
+//TODO log exception, remove active orders if price surpassed the order entry price, before order creation.
 
 public class Main {
     
@@ -51,8 +52,8 @@ public class Main {
 
 
         ApiConnector apiConnector = ApiConnector.create("Oanda");
-        Strategy strategy = new BGXTradeGenerator(apiConnector);
-        strategy.execute();
+        Strategy strategy = new BGXStrategy(apiConnector);
+        ThreadedStrategy threadedStrategy = new ThreadedStrategy(strategy);
 
 
 
@@ -129,7 +130,7 @@ public class Main {
         OrderService orderService = new OrderService(context);
 
         //create position manager
-        Observer tradeManager = new PositionManager(context, newTradeService, exitStrategy, orderService);
+      //  Observer tradeManager = new BGXStrategy(apiConnector);
 
         priceObserver.registerObserver(smaPriceObserver);
         priceObserver.registerObserver(dailyPriceObserver);
@@ -137,7 +138,7 @@ public class Main {
         priceObserver.registerObserver(wmaMiddleObserver);
         priceObserver.registerObserver(wmaSlowObserver);
         priceObserver.registerObserver(rsiObserver);
-        priceObserver.registerObserver(tradeManager);
+ //       priceObserver.registerObserver(tradeManager);
 
         System.out.println("Start ");
 

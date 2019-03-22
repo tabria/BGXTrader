@@ -8,6 +8,7 @@ import com.oanda.v20.account.AccountID;
 import com.oanda.v20.order.*;
 import com.oanda.v20.primitives.DateTime;
 import com.oanda.v20.transaction.TransactionID;
+import trader.connector.ApiConnector;
 
 import java.math.BigDecimal;
 
@@ -24,6 +25,21 @@ public final class OrderService {
 
     public OrderService(Context context){
         this.setContext(context);
+    }
+
+
+    private ApiConnector apiConnector;
+
+    public OrderService(ApiConnector connector) {
+        apiConnector = connector;
+    }
+
+    public void submitNewOrder(){
+
+    }
+
+    public void closeUnfilledOrder(){
+
     }
 
     /**

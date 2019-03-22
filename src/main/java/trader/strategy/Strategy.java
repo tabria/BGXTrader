@@ -1,6 +1,6 @@
 package trader.strategy;
 
-public interface Strategy extends Runnable {
+public interface Strategy {
 
-    void execute();
+    default void execute(){};
 }

@@ -42,7 +42,7 @@ public class OandaCandlesResponseTest {
     @Before
     public void setUp()  {
         commonMembers = new CommonTestClassMembers();
-        oandaInstrument = new OandaAPIMockInstrument();
+        oandaInstrument = new OandaAPIMockInstrument(7);
         oandaConnector = mock(OandaConnector.class);
         candlesResponse = new OandaCandlesResponse(oandaConnector);
         oandaInstrument.init(3);

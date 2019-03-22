@@ -8,4 +8,6 @@ import java.math.BigDecimal;
 public interface ExitStrategy {
 
     void execute(Account account, BigDecimal ask, BigDecimal bid, DateTime dateTime);
+
+    default void execute(){};
 }

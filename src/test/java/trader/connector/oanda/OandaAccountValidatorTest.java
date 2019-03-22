@@ -42,7 +42,7 @@ public class OandaAccountValidatorTest {
     @Test(expected = UnableToExecuteRequest.class)
     public void validateNullAccount_Exception(){
         setOandaMockConnector();
-        oandaAPIMockAccount.setListAccountProperties(null);
+        oandaAPIMockAccount.setAccountListResponseToThrowException();
         validator.validateAccount();
     }
 
@@ -57,9 +57,9 @@ public class OandaAccountValidatorTest {
     @Test
     public void validateAccount() throws ExecuteException, RequestException {
         List<AccountProperties> accounts = setAccountPropertyList();
-        oandaAPIMockAccount.setMockAccountPropertiesGetId();
+ //       oandaAPIMockAccount.setMockAccountPropertiesGetId();
         oandaAPIMockAccount.setExtractAccountsFromContext(accounts);
-        oandaAPIMockAccount.setMockAccountGetBalance();
+ //       oandaAPIMockAccount.setMockAccountGetBalance();
         oandaAPIMockAccount.setMockAccountUnitsDoubleValue(BALANCE);
         validator.validateAccount();
         validator.validateAccountBalance();
@@ -81,8 +81,8 @@ public class OandaAccountValidatorTest {
     @Test(expected = AccountBalanceBelowMinimum.class)
     public void accountWithBalanceLowerThanMinimum_Exception() throws RequestException, ExecuteException {
         setOandaMockConnector();
-        oandaAPIMockAccount.setMockedAccountFromMockedContext();
-        oandaAPIMockAccount.setMockAccountGetBalance();
+//        oandaAPIMockAccount.setMockedAccountFromMockedContext();
+//        oandaAPIMockAccount.setMockAccountGetBalance();
         oandaAPIMockAccount.setMockAccountUnitsDoubleValue(MINIMUM_ACCOUNT_BALANCE);
         validator.validateAccountBalance();
     }

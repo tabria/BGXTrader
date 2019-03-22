@@ -11,19 +11,16 @@ import com.oanda.v20.primitives.DateTime;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class OandaAPIMockPricing {
+public class OandaAPIMockPricing extends OandaAPIMock {
 
-    private Context mockContext;
-    private DateTime mockDateTime;
     private PricingGetRequest mockPricingGetRequest;
     private PricingGetResponse mockPricingGetResponse;
 
     public OandaAPIMockPricing() {
-        mockContext = mock(Context.class);
         mockContext.pricing = mock(PricingContext.class);
-        mockDateTime = mock(DateTime.class);
         mockPricingGetRequest = mock(PricingGetRequest.class);
         mockPricingGetResponse = mock(PricingGetResponse.class);
+        init();
     }
 
     public Context getMockContext() {
@@ -38,11 +35,18 @@ public class OandaAPIMockPricing {
         return mockPricingGetResponse;
     }
 
-    public void setMockPricingGetRequest() throws ExecuteException, RequestException {
-        when(mockContext.pricing.get(mockPricingGetRequest)).thenReturn(mockPricingGetResponse);
-    }
-
     public void setMockPricingGetResponse(PricingGetResponse response) throws ExecuteException, RequestException {
         when(mockContext.pricing.get(mockPricingGetRequest)).thenReturn(response);
     }
+
+    private void init(){
+        try {
+            when(mockContext.pricing.get(mockPricingGetRequest))
+                    .thenReturn(mockPricingGetResponse);
+        } catch (RequestException | ExecuteException e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+    }
+
 }

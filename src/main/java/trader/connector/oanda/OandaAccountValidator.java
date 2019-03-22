@@ -34,8 +34,8 @@ public class OandaAccountValidator {
 
     private List<AccountProperties> extractAccounts() {
         try {
-            AccountListResponse list = getAccountContext().list();
-            return list.getAccounts();
+            AccountListResponse response = getAccountContext().list();
+            return response.getAccounts();
         } catch (NullPointerException | RequestException | ExecuteException e) {
             throw new UnableToExecuteRequest();
         }

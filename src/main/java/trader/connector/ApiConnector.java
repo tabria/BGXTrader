@@ -4,7 +4,9 @@ package trader.connector;
 import trader.candle.Candlestick;
 import trader.exception.NoSuchConnectorException;
 import trader.exception.NullArgumentException;
+import trader.order.Order;
 import trader.price.Pricing;
+import trader.trade.entitie.Trade;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -28,6 +30,10 @@ public abstract class ApiConnector {
 
     public abstract Candlestick getUpdateCandle();
 
+    public abstract List<Order> getOpenOrders();
+
+    public abstract List<Trade> getOpenTrades();
+
     private static ApiConnector createInstance(String apiName) {
         try {
             Class<?> connectorClass = Class.forName(composeConnectorClassName(apiName));
@@ -46,4 +52,5 @@ public abstract class ApiConnector {
                 + apiName.substring(1) + CONNECTOR_SUFFIX;
         return apiName;
     }
+
 }

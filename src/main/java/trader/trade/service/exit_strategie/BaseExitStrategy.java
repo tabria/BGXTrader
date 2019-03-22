@@ -21,7 +21,7 @@ import java.util.List;
  * This class provide common methods and variables for ExitStrategy classes.
  */
 
-final class BaseExitStrategy{
+public final class BaseExitStrategy{
 
     private static final long NUMBER_OF_CANDLES = 2L;
     private static final int TRADE_INDEX = 0;
@@ -37,6 +37,11 @@ final class BaseExitStrategy{
     BaseExitStrategy(Context context, CandleGranularity candlestickGranularity) {
         this.context = this.setContext(context);
         this.candlesUpdater = new CandlesUpdater(this.context, this.createCandleRequest(candlestickGranularity), candlestickGranularity);
+    }
+
+
+    public static ExitStrategy createInstance(){
+        return null;
     }
 
     /**

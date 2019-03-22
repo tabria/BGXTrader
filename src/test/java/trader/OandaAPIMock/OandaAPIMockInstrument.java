@@ -30,7 +30,7 @@ public class OandaAPIMockInstrument extends OandaAPIMock {
     private PriceValue mockPriceValue;
     private List<Candlestick> candlestickList;
 
-    public OandaAPIMockInstrument() {
+    public OandaAPIMockInstrument(int listCapacity) {
         candlestickList = new ArrayList<>();
         mockInstrumentContext = mock(InstrumentContext.class);
         mockContext.instrument = mockInstrumentContext;
@@ -41,6 +41,7 @@ public class OandaAPIMockInstrument extends OandaAPIMock {
         setMockNonTradableCandlestick();
         mockCandlestickData = mock(CandlestickData.class);
         mockPriceValue = mock(PriceValue.class);
+        init(listCapacity);
     }
 
     public InstrumentContext getMockInstrumentContext() {
@@ -51,21 +52,21 @@ public class OandaAPIMockInstrument extends OandaAPIMock {
         return mockRequest;
     }
 
-    public InstrumentCandlesResponse getMockResponse() {
-        return mockResponse;
-    }
+//    public InstrumentCandlesResponse getMockResponse() {
+//        return mockResponse;
+//    }
 
-    public CandlestickData getMockCandlestickData() {
-        return mockCandlestickData;
-    }
+//    public CandlestickData getMockCandlestickData() {
+//        return mockCandlestickData;
+//    }
 
     public Candlestick getMockCandlestick() {
         return mockCandlestick;
     }
 
-    public PriceValue getMockPriceValue() {
-        return mockPriceValue;
-    }
+//    public PriceValue getMockPriceValue() {
+//        return mockPriceValue;
+//    }
 
     public List<Candlestick> getMockCandlestickList() {
         return candlestickList;
@@ -73,32 +74,37 @@ public class OandaAPIMockInstrument extends OandaAPIMock {
 
 
     public void init(int listCapacity)  {
-        setOandaMockPriceValueActions();
-        setOandaMockDateTimeActions();
+        when(mockPriceValue.bigDecimalValue())
+                .thenReturn(DEFAULT_PRICE);
+        when(mockDateTime.toString())
+                .thenReturn(DEFAULT_DATE_TIME);
         try {
-            setMockRequestToCandles();
+            when(mockContext.instrument.candles(mockRequest)).thenReturn(mockResponse);
+            when(mockInstrumentContext.candles(mockRequest)).thenReturn(mockResponse);
         } catch (ExecuteException | RequestException e) {
             e.printStackTrace();
+            throw new RuntimeException();
         }
         candlestickList=setOandaCandlestickList(listCapacity);
-        setMockResponseToGetCandles();
+        when(mockResponse.getCandles())
+                .thenReturn(candlestickList);
         setOandaMockCandlestickDataActions();
         setOandaMockCandlestickDataActions();
         setOandaCandlestickActions(DEFAULT_VOLUME, true);
     }
 
-    public void setMockRequestToCandles() throws ExecuteException, RequestException {
-        when(mockContext.instrument.candles(mockRequest)).thenReturn(mockResponse);
-        when(mockInstrumentContext.candles(mockRequest)).thenReturn(mockResponse);
-    }
+//    public void setMockRequestToCandles() throws ExecuteException, RequestException {
+//        when(mockContext.instrument.candles(mockRequest)).thenReturn(mockResponse);
+//        when(mockInstrumentContext.candles(mockRequest)).thenReturn(mockResponse);
+//    }
 
     public void setMockResponseToGetCandles(List<Candlestick> candlestickList){
         when(mockResponse.getCandles()).thenReturn(candlestickList);
     }
 
-   public void setMockResponseToGetCandles(){
-        when(mockResponse.getCandles()).thenReturn(candlestickList);
-    }
+//   public void setMockResponseToGetCandles(){
+//        when(mockResponse.getCandles()).thenReturn(candlestickList);
+//    }
 
     public void setExceptionForMockInstrumentContext(InstrumentCandlesRequest request) throws ExecuteException, RequestException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
 
@@ -149,15 +155,15 @@ public class OandaAPIMockInstrument extends OandaAPIMock {
         when(mockDateTime.toString()).thenReturn(dateTime);
     }
 
-    public void setOandaMockDateTimeActions(){
-        when(mockDateTime.toString()).thenReturn(DEFAULT_DATE_TIME);
-    }
+//    public void setOandaMockDateTimeActions(){
+//        when(mockDateTime.toString()).thenReturn(DEFAULT_DATE_TIME);
+//    }
 
     public void setOandaMockPriceValueActions(BigDecimal value){
         when(mockPriceValue.bigDecimalValue()).thenReturn(value);
     }
 
-    public void setOandaMockPriceValueActions(){
-        when(mockPriceValue.bigDecimalValue()).thenReturn(DEFAULT_PRICE);
-    }
+//    public void setOandaMockPriceValueActions(){
+//        when(mockPriceValue.bigDecimalValue()).thenReturn(DEFAULT_PRICE);
+//    }
 }

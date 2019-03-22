@@ -7,6 +7,6 @@ import java.math.BigDecimal;
 
 public interface Observer {
 
-    void updateObserver(DateTime dateTime, BigDecimal ask, BigDecimal bid);
+    default void updateObserver(DateTime dateTime, BigDecimal ask, BigDecimal bid){};
     void updateObserver(Pricing price);
 }

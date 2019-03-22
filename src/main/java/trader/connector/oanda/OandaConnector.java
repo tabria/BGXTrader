@@ -5,7 +5,9 @@ import com.oanda.v20.ContextBuilder;
 import com.oanda.v20.account.*;
 import trader.candle.Candlestick;
 import trader.connector.ApiConnector;
+import trader.order.Order;
 import trader.price.Pricing;
+import trader.trade.entitie.Trade;
 
 import java.util.List;
 
@@ -23,18 +25,29 @@ public class OandaConnector extends ApiConnector {
 
     }
 
-
-
+    @Override
     public Pricing getPrice() {
         return oandaPriceResponse.getPrice();
     }
 
+    @Override
     public List<Candlestick> getInitialCandles() {
         return oandaCandlesResponse.getInitialCandles();
     }
 
+    @Override
     public Candlestick getUpdateCandle(){
         return oandaCandlesResponse.getUpdateCandle();
+    }
+
+    @Override
+    public List<Order> getOpenOrders() {
+        return null;
+    }
+
+    @Override
+    public List<Trade> getOpenTrades() {
+        return null;
     }
 
     Context getContext(){

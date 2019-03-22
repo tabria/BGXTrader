@@ -4,15 +4,18 @@ import com.oanda.v20.Context;
 import com.oanda.v20.ExecuteException;
 import com.oanda.v20.RequestException;
 import com.oanda.v20.account.*;
+import com.oanda.v20.order.Order;
 import com.oanda.v20.primitives.AccountUnits;
+import com.oanda.v20.trade.TradeSummary;
+
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class OandaAPIMockAccount extends OandaAPIMock {
 
-    private Context mockContext;
     private AccountContext mockAccountContext;
     private Account mockAccount ;
     private AccountUnits mockAccountUnits;
@@ -22,20 +25,27 @@ public class OandaAPIMockAccount extends OandaAPIMock {
     private AccountProperties mockAccountProperties;
 
 
+    public OandaAPIMockAccount(Context context){
+        this();
+        setMockContext(context);
+    }
+
     public OandaAPIMockAccount(){
         mockAccountContext = mock(AccountContext.class);
-        mockContext = mock(Context.class);
         mockContext.account = mockAccountContext;
+        getContext().account = mockAccountContext;
         mockAccountGetResponse = mock(AccountGetResponse.class);
         mockAccount = mock(Account.class);
         mockAccountUnits = mock(AccountUnits.class);
         mockAccountID = mock(AccountID.class);
         mockAccountListResponse = mock(AccountListResponse.class);
         mockAccountProperties = mock(AccountProperties.class);
-    }
 
-    public Context getContext() {
-        return mockContext;
+        try {
+            init();
+        } catch (ExecuteException | RequestException e) {
+           throw new RuntimeException();
+        }
     }
 
     public AccountID getMockAccountID(){
@@ -47,24 +57,8 @@ public class OandaAPIMockAccount extends OandaAPIMock {
     }
 
     public void setMockAccountUnitsDoubleValue(double newValue){
-        when(mockAccountUnits.doubleValue()).thenReturn(newValue);
-    }
-
-    public void setMockAccountGetBalance(){
-        when(mockAccount.getBalance()).thenReturn(mockAccountUnits);
-    }
-
-    public void setMockAccountGetResponse(){
-        when(mockAccountGetResponse.getAccount()).thenReturn(mockAccount);
-    }
-
-    public void setMockedAccountFromMockedContext() throws ExecuteException, RequestException {
-        when(mockAccountContext.get(mockAccountID)).thenReturn(mockAccountGetResponse);
-        setMockAccountGetResponse();
-    }
-
-    public void setAccountListResponse() throws ExecuteException, RequestException {
-        when(mockAccountContext.list()).thenReturn(mockAccountListResponse);
+        when(mockAccountUnits.doubleValue())
+                .thenReturn(newValue);
     }
 
     public void setListAccountProperties(List<AccountProperties> accounts){
@@ -72,17 +66,43 @@ public class OandaAPIMockAccount extends OandaAPIMock {
                 .thenReturn(accounts);
     }
 
-    public void setExtractAccountsFromContext(List<AccountProperties> accounts) throws RequestException, ExecuteException {
-        setMockedAccountFromMockedContext();
-        setAccountListResponse();
+    public void setAccountListResponseToThrowException(){
+        when(mockAccountListResponse.getAccounts())
+                .thenThrow(NullPointerException.class);
+    }
+
+    public void setExtractAccountsFromContext(List<AccountProperties> accounts) {
         setListAccountProperties(accounts);
     }
 
-    public void setMockAccountPropertiesGetId(){
-        when( mockAccountProperties.getId()).thenReturn(mockAccountID);
+    public void setMockAccountPropertiesGetIdToReturnNewMock(){
+        when( mockAccountProperties.getId())
+                .thenReturn(mock(AccountID.class));
     }
 
-    public void setMockAccountPropertiesGetIdToReturnNewMock(){
-        when( mockAccountProperties.getId()).thenReturn(mock(AccountID.class));
+    public void setMockAccountTradeSummary(List<TradeSummary> tradeSummaries){
+        when(mockAccount.getTrades())
+                .thenReturn(tradeSummaries);
     }
+    public void setMockAccountOrders(List<Order> orders){
+        when(mockAccount.getOrders())
+                .thenReturn(orders);
+    }
+
+    private void init() throws ExecuteException, RequestException {
+        when(mockAccountGetResponse.getAccount())
+                .thenReturn(mockAccount);
+        when(mockAccount.getBalance())
+                .thenReturn(mockAccountUnits);
+        when(mockAccountContext.get(any(AccountID.class)))
+                .thenReturn(mockAccountGetResponse);
+//        when(mockAccountContext.get(mockAccountID)).thenReturn(mockAccountGetResponse);
+        when(mockAccountContext.list())
+                .thenReturn(mockAccountListResponse);
+        when(mockAccountProperties.getId())
+                .thenReturn(mockAccountID);
+        when(mockContext.account.get(any(AccountID.class)))
+                .thenReturn(mockAccountGetResponse);
+    }
+
 }

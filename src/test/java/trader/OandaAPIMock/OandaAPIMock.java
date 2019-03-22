@@ -25,11 +25,18 @@ public class OandaAPIMock {
     public OandaAPIMock() {
         mockContext = mock(Context.class);
         mockDateTime = mock(DateTime.class);
-
     }
 
     public Context getContext() {
         return mockContext;
+    }
+
+    public void setMockContext(Context mockContext) {
+        this.mockContext = mockContext;
+    }
+
+    public void setMockDateTime(DateTime mockDateTime) {
+        this.mockDateTime = mockDateTime;
     }
 
     public DateTime getMockDateTime(){
