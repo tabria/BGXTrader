@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
-import static trader.strategy.BGXStrategy.StrategyConfig.SCALE;
+import static trader.strategy.BGXStrategy.configuration.StrategyConfig.SCALE;
 
 public class ExponentialMovingAverageTest extends BaseIndicatorTest {
 

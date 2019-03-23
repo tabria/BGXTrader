@@ -9,7 +9,7 @@ import trader.indicator.BaseIndicator;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
-import static trader.strategy.BGXStrategy.StrategyConfig.*;
+import static trader.strategy.BGXStrategy.configuration.StrategyConfig.*;
 
 public final class RelativeStrengthIndex extends BaseIndicator {
 

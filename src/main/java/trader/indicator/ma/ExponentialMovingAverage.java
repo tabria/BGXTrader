@@ -8,7 +8,7 @@ import trader.indicator.BaseIndicator;
 
 import java.math.BigDecimal;
 import java.util.List;
-import static trader.strategy.BGXStrategy.StrategyConfig.*;
+import static trader.strategy.BGXStrategy.configuration.StrategyConfig.*;
 
 public final class ExponentialMovingAverage extends BaseIndicator {
 

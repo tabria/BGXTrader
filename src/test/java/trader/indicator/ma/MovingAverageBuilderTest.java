@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static trader.indicator.ma.enums.MAType.*;
-import static trader.strategy.BGXStrategy.StrategyConfig.*;
+import static trader.strategy.BGXStrategy.configuration.StrategyConfig.*;
 
 public class MovingAverageBuilderTest {
 

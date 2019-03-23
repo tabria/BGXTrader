@@ -14,7 +14,7 @@ import trader.trade.service.IntersectionService;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static trader.strategy.BGXStrategy.StrategyConfig.*;
+import static trader.strategy.BGXStrategy.configuration.StrategyConfig.*;
 
 
 /**

@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static trader.strategy.BGXStrategy.StrategyConfig.SCALE;
+import static trader.strategy.BGXStrategy.configuration.StrategyConfig.SCALE;
 
 public abstract class BaseIndicator implements Indicator {
 

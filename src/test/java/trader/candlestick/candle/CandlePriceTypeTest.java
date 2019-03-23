@@ -4,14 +4,13 @@ package trader.candlestick.candle;
 import org.junit.Before;
 import org.junit.Test;
 import trader.candlestick.Candlestick;
-import trader.candlestick.candle.CandlePriceType;
 
 import java.math.BigDecimal;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static trader.strategy.BGXStrategy.StrategyConfig.SCALE;
+import static trader.strategy.BGXStrategy.configuration.StrategyConfig.SCALE;
 
 public class CandlePriceTypeTest {
 

@@ -15,7 +15,7 @@ import trader.indicator.IndicatorUpdateHelper;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static trader.strategy.BGXStrategy.StrategyConfig.RSI_SETTINGS;
+import static trader.strategy.BGXStrategy.configuration.StrategyConfig.RSI_SETTINGS;
 
 public class RSIBuilderTest {
 
