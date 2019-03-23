@@ -6,15 +6,15 @@ import com.oanda.v20.order.*;
 import com.oanda.v20.primitives.DateTime;
 import com.oanda.v20.trade.*;
 import com.oanda.v20.transaction.TransactionID;
-import trader.candle.CandlesUpdater;
-import trader.candle.CandleGranularity;
+import trader.candlestick.updater.CandlesUpdater;
+import trader.candlestick.candle.CandleGranularity;
 
 
 import java.math.BigDecimal;
 
 
 /**
- * This exit strategy will close part of the position when price hit first target point. After that it will trail position's stop behind previous bar high(for short) or low(for long). For short trade stop will be moved if last closed candle's close is below current low and last closed candle's high is also below current high. For long trade stop will be moved if last closed candle's close is above current high and last closed candle's low is also above current low;
+ * This exit strategy will close part of the position when price hit first target point. After that it will trail position's stop behind previous bar high(for short) or low(for long). For short trade stop will be moved if last closed candlestick's close is below current low and last closed candlestick's high is also below current high. For long trade stop will be moved if last closed candlestick's close is above current high and last closed candlestick's low is also above current low;
  */
 public final class HalfCloseTrailExitStrategy implements ExitStrategy {
 
@@ -199,12 +199,12 @@ public final class HalfCloseTrailExitStrategy implements ExitStrategy {
 
     /**
      * Check if stop loss can be trailed.
-     * For short trade stop will be trailed if candle close is lower than current low and candle high is also lower than current high.
-     * For long trade stop will be trailed if candle close is higher than current high and candle low is also higher than current low
+     * For short trade stop will be trailed if candlestick close is lower than current low and candlestick high is also lower than current high.
+     * For long trade stop will be trailed if candlestick close is higher than current high and candlestick low is also higher than current low
      * @param currentUnits current size of the trade
-     * @param lastFullCandleClose last full candle close
-     * @param lastFullCandleHigh last full candle high
-     * @param lastFullCandleLow last full candle low
+     * @param lastFullCandleClose last full candlestick close
+     * @param lastFullCandleHigh last full candlestick high
+     * @param lastFullCandleLow last full candlestick low
      * @return {@link boolean} {@code true} if stop can be trailed
      *                         {@code false} otherwise
      */
@@ -223,7 +223,7 @@ public final class HalfCloseTrailExitStrategy implements ExitStrategy {
     /**
      * Update exit bar components - low or high
      * @param exitBarComponent exit bar component - exitBarHigh or exitBarLow
-     * @param lastFullCandleLow last full candle low
+     * @param lastFullCandleLow last full candlestick low
      * @param currentUnits trade's units
      */
     private BigDecimal updateExitBarComponent(BigDecimal exitBarComponent, BigDecimal lastFullCandleLow, BigDecimal currentUnits){

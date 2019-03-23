@@ -1,10 +1,11 @@
 package trader.indicator.ma;
 
 
-import trader.candle.CandlesUpdater;
-import trader.candle.Candlestick;
+import trader.candlestick.CandlesUpdatable;
+import trader.candlestick.candle.CandlePriceType;
+import trader.candlestick.Candlestick;
 import trader.indicator.BaseIndicator;
-import trader.candle.CandlestickPriceType;
+
 import java.math.BigDecimal;
 import java.util.List;
 import static trader.strategy.BGXStrategy.StrategyConfig.*;
@@ -16,8 +17,8 @@ public final class ExponentialMovingAverage extends BaseIndicator {
     private BigDecimal smoothFactor;
     private BigDecimal smoothMultiplier;
 
-    ExponentialMovingAverage(long indicatorPeriod, CandlestickPriceType candlestickPriceType, CandlesUpdater updater) {
-        super(indicatorPeriod, candlestickPriceType, updater);
+    ExponentialMovingAverage(long indicatorPeriod, CandlePriceType candlePriceType, CandlesUpdatable updater) {
+        super(indicatorPeriod, candlePriceType, updater);
         setDivisor();
         setSmoothFactor();
         setSmoothMultiplier();
@@ -26,7 +27,7 @@ public final class ExponentialMovingAverage extends BaseIndicator {
 
     @Override
     public void updateIndicator() {
-        Candlestick candlestick = candlesUpdater.getUpdateCandle();
+        Candlestick candlestick = candlesUpdater.getUpdatedCandle();
         indicatorValues.add(currentPriceSmoothed(candlestick).add(previousEMASmoothed()));
     }
 
@@ -34,7 +35,7 @@ public final class ExponentialMovingAverage extends BaseIndicator {
     public String toString() {
         return "ExponentialMovingAverage{" +
                 "period=" + indicatorPeriod +
-                ", candlestickPriceType=" + candlestickPriceType.toString() +
+                ", candlePriceType=" + candlePriceType.toString() +
                 ", indicatorValues=" + indicatorValues.toString() +
                 '}';
     }

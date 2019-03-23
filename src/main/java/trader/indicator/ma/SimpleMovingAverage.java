@@ -1,9 +1,9 @@
 package trader.indicator.ma;
 
-import trader.candle.CandlesUpdater;
-import trader.candle.Candlestick;
+import trader.candlestick.CandlesUpdatable;
+import trader.candlestick.candle.CandlePriceType;
+import trader.candlestick.Candlestick;
 import trader.indicator.BaseIndicator;
-import trader.candle.CandlestickPriceType;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -12,15 +12,15 @@ import static trader.strategy.BGXStrategy.StrategyConfig.*;
 
 public final class SimpleMovingAverage extends BaseIndicator {
 
-    SimpleMovingAverage(long indicatorPeriod, CandlestickPriceType candlestickPriceType, CandlesUpdater updater) {
-        super(indicatorPeriod, candlestickPriceType, updater);
+    SimpleMovingAverage(long indicatorPeriod, CandlePriceType candlePriceType, CandlesUpdatable updater) {
+        super(indicatorPeriod, candlePriceType, updater);
         setDivisor();
         initiateSMAValues();
     }
     
     @Override
     public void updateIndicator() {
-        candlesUpdater.getUpdateCandle();
+        candlesUpdater.getUpdatedCandle();
         List<Candlestick> candles = candlesUpdater.getCandles();
         BigDecimal smaValue = BigDecimal.ZERO;
         for (int i = candles.size()-1; i >indicatorPeriod ; i--) {
@@ -33,7 +33,7 @@ public final class SimpleMovingAverage extends BaseIndicator {
     public String toString() {
         return "SimpleMovingAverage{" +
                 "period=" + indicatorPeriod +
-                ", candlestickPriceType=" + candlestickPriceType.toString() +
+                ", candlePriceType=" + candlePriceType.toString() +
                 ", indicatorValues=" + indicatorValues.toString() +
                 '}';
     }
@@ -64,7 +64,6 @@ public final class SimpleMovingAverage extends BaseIndicator {
             }
         }
     }
-
 
     private BigDecimal calculatedSMAValue(BigDecimal commonPrice) {
         return commonPrice.divide(divisor, SCALE, BigDecimal.ROUND_HALF_UP);

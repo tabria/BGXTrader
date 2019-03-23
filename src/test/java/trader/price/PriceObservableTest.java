@@ -34,6 +34,7 @@ public class PriceObservableTest {
         assertNotSame(priceObservable, priceObservable2);
     }
 
+    //change apiconnector name
     @Test
     public void WhenCreateThenNotNullFieldMembers(){
         Object apiConnector = commonMembers.extractFieldObject(priceObservable, "apiConnector");

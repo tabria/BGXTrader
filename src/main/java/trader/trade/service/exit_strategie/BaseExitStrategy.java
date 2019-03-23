@@ -5,14 +5,15 @@ import com.oanda.v20.ExecuteException;
 import com.oanda.v20.RequestException;
 import com.oanda.v20.account.Account;
 import com.oanda.v20.instrument.Candlestick;
+import com.oanda.v20.instrument.CandlestickGranularity;
 import com.oanda.v20.instrument.InstrumentCandlesRequest;
 import com.oanda.v20.order.*;
 import com.oanda.v20.primitives.DateTime;
 import com.oanda.v20.trade.*;
 import com.oanda.v20.transaction.StopLossDetails;
-import trader.candle.CandlesUpdater;
+import trader.candlestick.updater.CandlesUpdater;
 import trader.config.Config;
-import trader.candle.CandleGranularity;
+import trader.candlestick.candle.CandleGranularity;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -45,10 +46,10 @@ public final class BaseExitStrategy{
     }
 
     /**
-     * Get last completed candle High.
-     * Index for the candle is calculated with this formula: listSize - numberOfCandles
+     * Get last completed candlestick High.
+     * Index for the candlestick is calculated with this formula: listSize - numberOfCandles
      * @return {@link BigDecimal} high value
-     * @throws IndexOutOfBoundsException if candle count is not equal to required
+     * @throws IndexOutOfBoundsException if candlestick count is not equal to required
      */
     BigDecimal getLastFullCandleHigh(){
 
@@ -59,8 +60,8 @@ public final class BaseExitStrategy{
     }
 
     /**
-     * Get last completed candle Low
-     * * Index for the candle is calculated with this formula: listSize - numberOfCandles
+     * Get last completed candlestick Low
+     * * Index for the candlestick is calculated with this formula: listSize - numberOfCandles
      * @return {@link BigDecimal} low value
      */
     BigDecimal getLastFullCandleLow(){
@@ -72,7 +73,7 @@ public final class BaseExitStrategy{
     }
 
     /**
-     * Get last completed candle Close
+     * Get last completed candlestick Close
      * @return {@link BigDecimal} close value
      */
     BigDecimal getLastFullCandleClose(){
@@ -84,7 +85,7 @@ public final class BaseExitStrategy{
 
     /**
      * Call updateCandles method in candlesUpdater
-     * * Index for the candle is calculated with this formula: listSize - numberOfCandles
+     * * Index for the candlestick is calculated with this formula: listSize - numberOfCandles
      * @param dateTime of the last price
      * @return {@link boolean} {@code true} if updateIndicator successful
      *                        {@code false} otherwise
@@ -189,7 +190,7 @@ public final class BaseExitStrategy{
         if (candles.size()!= NUMBER_OF_CANDLES){
             throw new IndexOutOfBoundsException("Candles count is: " +candles.size()+" required count: "+NUMBER_OF_CANDLES);
         }
-        //index for last finished candle
+        //index for last finished candlestick
         return (int) (candles.size() - NUMBER_OF_CANDLES);
     }
 
@@ -208,7 +209,7 @@ public final class BaseExitStrategy{
     }
 
     /**
-     * Create candle request object
+     * Create candlestick request object
      * @param candlestickGranularity current time frame
      * @return {@link InstrumentCandlesRequest} object
      * @throws NullPointerException if candlestickGranularity is null
@@ -220,7 +221,7 @@ public final class BaseExitStrategy{
         }
         return new InstrumentCandlesRequest(Config.INSTRUMENT)
                 .setCount(NUMBER_OF_CANDLES)
-                .setGranularity(candlestickGranularity.extractOANDAGranularity())
+                .setGranularity(CandlestickGranularity.valueOf(candlestickGranularity.toString()))
                 .setSmooth(false);
     }
 }

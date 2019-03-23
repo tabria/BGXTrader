@@ -1,8 +1,10 @@
-package trader.candle;
+package trader.candlestick.candle;
 
 
 import org.junit.Before;
 import org.junit.Test;
+import trader.candlestick.Candlestick;
+import trader.candlestick.candle.CandlePriceType;
 
 import java.math.BigDecimal;
 
@@ -11,7 +13,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static trader.strategy.BGXStrategy.StrategyConfig.SCALE;
 
-public class CandlestickPriceTypeTest {
+public class CandlePriceTypeTest {
 
     private static final BigDecimal CANDLE_OPEN_PRICE = new BigDecimal(1.16796);
     private static final BigDecimal CANDLE_CLOSE_PRICE = new BigDecimal(1.17245);
@@ -32,31 +34,31 @@ public class CandlestickPriceTypeTest {
 
     @Test
     public void testExtractPriceForOpen(){
-        BigDecimal openPrice = CandlestickPriceType.OPEN.extractPrice(this.mockCandlestick);
+        BigDecimal openPrice = CandlePriceType.OPEN.extractPrice(this.mockCandlestick);
         assertEquals("Open price are not equal", 0, comparePrices(openPrice, CANDLE_OPEN_PRICE));
     }
 
     @Test
     public void testExtractPriceForClose(){
-        BigDecimal closePrice = CandlestickPriceType.CLOSE.extractPrice(this.mockCandlestick);
+        BigDecimal closePrice = CandlePriceType.CLOSE.extractPrice(this.mockCandlestick);
         assertEquals("Close price are not equal", 0, comparePrices(closePrice, CANDLE_CLOSE_PRICE));
     }
 
     @Test
     public void testExtractPriceForHigh(){
-        BigDecimal highPrice = CandlestickPriceType.HIGH.extractPrice(this.mockCandlestick);
+        BigDecimal highPrice = CandlePriceType.HIGH.extractPrice(this.mockCandlestick);
         assertEquals("High price are not equal", 0, comparePrices(highPrice, CANDLE_HIGH_PRICE));
     }
 
     @Test
     public void testExtractPriceForLow(){
-        BigDecimal lowPrice = CandlestickPriceType.LOW.extractPrice(this.mockCandlestick);
+        BigDecimal lowPrice = CandlePriceType.LOW.extractPrice(this.mockCandlestick);
         assertEquals("Low price are not equal", 0, comparePrices(lowPrice, CANDLE_LOW_PRICE));
     }
 
     @Test
     public void testExtractPriceForMedian(){
-        BigDecimal medianPrice = CandlestickPriceType.MEDIAN.extractPrice(this.mockCandlestick);
+        BigDecimal medianPrice = CandlePriceType.MEDIAN.extractPrice(this.mockCandlestick);
         assertEquals("Median price are not equal", 0, comparePrices(medianPrice, averagePrice()));
     }
 

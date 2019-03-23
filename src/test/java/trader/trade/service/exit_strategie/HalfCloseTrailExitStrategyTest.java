@@ -12,8 +12,8 @@ import com.oanda.v20.primitives.DecimalNumber;
 import com.oanda.v20.trade.*;
 import org.junit.Before;
 import org.junit.Test;
-import trader.candle.CandlesUpdater;
-import trader.candle.CandleGranularity;
+import trader.candlestick.updater.CandlesUpdater;
+import trader.candlestick.candle.CandleGranularity;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;

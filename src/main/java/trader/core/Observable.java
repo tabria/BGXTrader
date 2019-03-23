@@ -1,6 +1,7 @@
 package trader.core;
 
 import com.oanda.v20.primitives.DateTime;
+import trader.price.Price;
 import trader.price.Pricing;
 
 import java.math.BigDecimal;

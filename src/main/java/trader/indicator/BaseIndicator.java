@@ -1,9 +1,9 @@
 package trader.indicator;
 
 
-import trader.candle.CandlesUpdater;
-import trader.candle.Candlestick;
-import trader.candle.CandlestickPriceType;
+import trader.candlestick.CandlesUpdatable;
+import trader.candlestick.candle.CandlePriceType;
+import trader.candlestick.Candlestick;
 import trader.exception.BadRequestException;
 import trader.exception.IndicatorPeriodTooBigException;
 import java.math.BigDecimal;
@@ -16,14 +16,14 @@ import static trader.strategy.BGXStrategy.StrategyConfig.SCALE;
 public abstract class BaseIndicator implements Indicator {
 
     protected long indicatorPeriod;
-    protected final CandlestickPriceType candlestickPriceType;
-    protected final CandlesUpdater candlesUpdater;
+    protected final CandlePriceType candlePriceType;
+    protected final CandlesUpdatable candlesUpdater;
     protected List<BigDecimal> indicatorValues;
     protected BigDecimal divisor;
 
-    public BaseIndicator(long indicatorPeriod, CandlestickPriceType candlestickPriceType, CandlesUpdater candlesUpdater) {
+    public BaseIndicator(long indicatorPeriod, CandlePriceType candlePriceType, CandlesUpdatable candlesUpdater) {
         this.indicatorPeriod = indicatorPeriod;
-        this.candlestickPriceType = candlestickPriceType;
+        this.candlePriceType = candlePriceType;
         this.candlesUpdater = candlesUpdater;
         this.indicatorValues = new ArrayList<>();
     }
@@ -44,7 +44,7 @@ public abstract class BaseIndicator implements Indicator {
     }
 
     protected BigDecimal obtainPrice(Candlestick candle) {
-        return candlestickPriceType.extractPrice(candle)
+        return candlePriceType.extractPrice(candle)
                         .setScale(SCALE, BigDecimal.ROUND_HALF_UP);
     }
 }

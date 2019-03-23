@@ -4,8 +4,8 @@ import org.junit.Before;
 import org.junit.Test;
 import trader.CommonTestClassMembers;
 import trader.OandaAPIMock.OandaAPIMockAccount;
-import trader.candle.Candlestick;
-import trader.connector.ApiConnector;
+import trader.candlestick.Candlestick;
+import trader.connector.BaseConnector;
 import trader.price.Price;
 import trader.price.Pricing;
 
@@ -33,7 +33,7 @@ public class OandaConnectorTest {
 
     @Before
     public void setUp() {
-        oandaConnector = (OandaConnector) ApiConnector.create("Oanda");
+        oandaConnector = (OandaConnector) BaseConnector.create("Oanda");
         commonMembers = new CommonTestClassMembers();
         oandaAPIMockAccount = new OandaAPIMockAccount();
         mockOandaConfig = mock(OandaConfig.class);
@@ -91,7 +91,7 @@ public class OandaConnectorTest {
     @Test
     public void getCorrectCandlesQuantityWhenUpdating() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         setCandlesResponseField();
-        Candlestick candlestick = (Candlestick) invokeTestMethod("getUpdateCandle");
+        Candlestick candlestick = (Candlestick) invokeTestMethod("getUpdatedCandle");
 
         assertSame(mockCandle, candlestick);
     }

@@ -13,7 +13,7 @@ import com.oanda.v20.trade.*;
 import org.junit.Before;
 import org.junit.Test;
 import trader.config.Config;
-import trader.candle.CandleGranularity;
+import trader.candlestick.candle.CandleGranularity;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -169,14 +169,14 @@ public class TrailExitAfterSignificantExtremeStrategyTest {
 
     }
 
-    //Simulating 3 candle:
+    //Simulating 3 candlestick:
     // 1st is higher than open price,
     // 2nd is lower than 1st and high than firstStopPrice
     // 3-rd is higher than first.
-    // In this way the lastSignificant low will be bigger than firstStopPrice and will be confirmed with new significantHigh(from 3-rd candle), which broke previous significantHigh(from 1-st candle)
+    // In this way the lastSignificant low will be bigger than firstStopPrice and will be confirmed with new significantHigh(from 3-rd candlestick), which broke previous significantHigh(from 1-st candlestick)
     @Test
     public void WhenUnitsSizePositiveAndPriceOverTargetAndSignificantLowHigherThanFirstStopPriceThenChangeStopToSignificantLow() throws NoSuchFieldException, IllegalAccessException {
-        //first higher candle
+        //first higher candlestick
         BigDecimal lastFullCandleHigh = BigDecimal.valueOf(1.14886);
         BigDecimal lastFullCandleLow = BigDecimal.valueOf(1.14806);
         BigDecimal ask = BigDecimal.valueOf(1.14887);
@@ -195,7 +195,7 @@ public class TrailExitAfterSignificantExtremeStrategyTest {
 
         this.trailExitAfterSignificantExtremeStrategy.execute(this.mockAccount, ask, bid, this.mockDateTime);
 
-        //first lower candle
+        //first lower candlestick
         lastFullCandleHigh = BigDecimal.valueOf(1.14786);
         lastFullCandleLow = BigDecimal.valueOf(1.14626);
         ask = BigDecimal.valueOf(1.14688);
@@ -208,7 +208,7 @@ public class TrailExitAfterSignificantExtremeStrategyTest {
 
         this.trailExitAfterSignificantExtremeStrategy.execute(this.mockAccount, ask, bid, this.mockDateTime);
 
-        //second higher candle
+        //second higher candlestick
         lastFullCandleHigh = BigDecimal.valueOf(1.14986);
         lastFullCandleLow = BigDecimal.valueOf(1.14806);
         ask = BigDecimal.valueOf(1.14988);
@@ -279,14 +279,14 @@ public class TrailExitAfterSignificantExtremeStrategyTest {
     }
 
 
-    //Simulating 3 candle:
+    //Simulating 3 candlestick:
     // 1st is lower than open price,
     // 2nd is higher than 1st and lower than firstStopPrice
     // 3-rd is lower than first.
-    // In this way the lastSignificantHigh will be lower than firstStopPrice and will be confirmed with new significantLow(from 3-rd candle), which broke previous significantLow(from 1-st candle)
+    // In this way the lastSignificantHigh will be lower than firstStopPrice and will be confirmed with new significantLow(from 3-rd candlestick), which broke previous significantLow(from 1-st candlestick)
     @Test
     public void WhenUnitsSizeNegativeAndPriceUnderTargetAndSignificantHighLowerThanFirstStopPriceThenChangeStopToSignificantHigh() throws NoSuchFieldException, IllegalAccessException {
-        //first lower candle
+        //first lower candlestick
         BigDecimal lastFullCandleHigh = BigDecimal.valueOf(1.13976);
         BigDecimal lastFullCandleLow = BigDecimal.valueOf(1.13916);
         BigDecimal bid = BigDecimal.valueOf(1.13906);
@@ -305,7 +305,7 @@ public class TrailExitAfterSignificantExtremeStrategyTest {
 
         this.trailExitAfterSignificantExtremeStrategy.execute(this.mockAccount, ask, bid, this.mockDateTime);
 
-        //first higher candle
+        //first higher candlestick
         lastFullCandleHigh = BigDecimal.valueOf(1.14105);
         lastFullCandleLow = BigDecimal.valueOf(1.14015);
         bid = BigDecimal.valueOf(1.14010);
@@ -318,7 +318,7 @@ public class TrailExitAfterSignificantExtremeStrategyTest {
 
         this.trailExitAfterSignificantExtremeStrategy.execute(this.mockAccount, ask, bid, this.mockDateTime);
 
-        //second lower candle
+        //second lower candlestick
         lastFullCandleHigh = BigDecimal.valueOf(1.1401);
         lastFullCandleLow = BigDecimal.valueOf(1.13891);
         bid = BigDecimal.valueOf(1.13881);

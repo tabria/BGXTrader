@@ -1,6 +1,6 @@
 package trader.strategy.BGXStrategy;
 
-import trader.connector.ApiConnector;
+import trader.connector.BaseConnector;
 import trader.exception.NullArgumentException;
 import trader.strategy.Strategy;
 import trader.trade.service.OrderService;
@@ -11,11 +11,11 @@ public final class BGXStrategy implements Strategy {
 
     private ExitStrategy exitStrategy;
     private OrderService orderService;
-    private ApiConnector apiConnector;
+    private BaseConnector baseConnector;
 
-    public BGXStrategy(ApiConnector connector) {
-        setApiConnector(connector);
-        orderService = new OrderService(apiConnector);
+    public BGXStrategy(BaseConnector connector) {
+        setBaseConnector(connector);
+        orderService = new OrderService(baseConnector);
         exitStrategy = BaseExitStrategy.createInstance();
     }
 
@@ -33,19 +33,19 @@ public final class BGXStrategy implements Strategy {
         return "BGXStrategy";
     }
 
-    public void setApiConnector(ApiConnector apiConnector) {
-        if(apiConnector == null){
+    public void setBaseConnector(BaseConnector baseConnector) {
+        if(baseConnector == null){
             throw new NullArgumentException();
         }
-        this.apiConnector = apiConnector;
+        this.baseConnector = baseConnector;
     }
 
     private boolean haveOpenOrders() {
-        return apiConnector.getOpenOrders().size() > 0;
+        return baseConnector.getOpenOrders().size() > 0;
     }
 
     private boolean haveOpenTrades() {
-        return apiConnector.getOpenTrades().size()>0;
+        return baseConnector.getOpenTrades().size()>0;
     }
 
 }

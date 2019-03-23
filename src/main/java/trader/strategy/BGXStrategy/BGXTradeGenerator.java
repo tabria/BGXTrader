@@ -1,7 +1,7 @@
 package trader.strategy.BGXStrategy;
 
 
-import trader.connector.ApiConnector;
+import trader.connector.BaseConnector;
 import trader.indicator.Indicator;
 import trader.indicator.ma.MovingAverageBuilder;
 import trader.indicator.rsi.RSIBuilder;
@@ -56,13 +56,13 @@ public final class BGXTradeGenerator {
         this.setDefaultTrade();
     }
 
-    public BGXTradeGenerator(ApiConnector apiConnector) {
-        fastWMA = new MovingAverageBuilder(apiConnector).build(FAST_WMA_SETTINGS);
-        middleWMA = new MovingAverageBuilder(apiConnector).build(MIDDLE_WMA_SETTINGS);
-        priceSma = new MovingAverageBuilder(apiConnector).build( PRICE_SMA_SETTINGS);
-        dailySMA = new MovingAverageBuilder(apiConnector).build(DAILY_SMA_SETTINGS);
-        slowWMA = new MovingAverageBuilder(apiConnector).build(SLOW_WMA_SETTINGS);
-        rsi = new RSIBuilder(apiConnector).build(RSI_SETTINGS);
+    public BGXTradeGenerator(BaseConnector baseConnector) {
+        fastWMA = new MovingAverageBuilder(baseConnector).build(FAST_WMA_SETTINGS);
+        middleWMA = new MovingAverageBuilder(baseConnector).build(MIDDLE_WMA_SETTINGS);
+        priceSma = new MovingAverageBuilder(baseConnector).build( PRICE_SMA_SETTINGS);
+        dailySMA = new MovingAverageBuilder(baseConnector).build(DAILY_SMA_SETTINGS);
+        slowWMA = new MovingAverageBuilder(baseConnector).build(SLOW_WMA_SETTINGS);
+        rsi = new RSIBuilder(baseConnector).build(RSI_SETTINGS);
         direction = Direction.FLAT;
 
     }

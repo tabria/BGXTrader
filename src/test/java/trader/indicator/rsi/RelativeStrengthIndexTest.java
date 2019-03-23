@@ -19,7 +19,7 @@ public class RelativeStrengthIndexTest extends BaseIndicatorTest {
     public void before() {
 
         super.before();
-        this.rsi = new RelativeStrengthIndex(this.period, this.candlestickPriceType, this.candlesUpdater);
+        this.rsi = new RelativeStrengthIndex(this.period, this.candlePriceType, this.candlesUpdater);
     }
 
     @Test
@@ -60,7 +60,7 @@ public class RelativeStrengthIndexTest extends BaseIndicatorTest {
 
         indicatorUpdateHelper.fillCandlestickListWithZeros();
         when(this.candlesUpdater.getCandles()).thenReturn(indicatorUpdateHelper.getCandlestickList());
-        RelativeStrengthIndex newRsi = new RelativeStrengthIndex(this.period, this.candlestickPriceType, this.candlesUpdater);
+        RelativeStrengthIndex newRsi = new RelativeStrengthIndex(this.period, this.candlePriceType, this.candlesUpdater);
         int newSize = newRsi.getValues().size();
         BigDecimal lastValue = newRsi.getValues().get(newSize-1);
 
@@ -72,7 +72,7 @@ public class RelativeStrengthIndexTest extends BaseIndicatorTest {
     public void TestToString(){
         String result = this.rsi.toString();
         String expected = String.format("RelativeStrengthIndex{period=%d, " +
-                "candlestickPriceType=%s, rsiValues=%s}", period, this.candlestickPriceType.toString(), rsi.getValues().toString());
+                "candlePriceType=%s, rsiValues=%s}", period, this.candlePriceType.toString(), rsi.getValues().toString());
 
         assertEquals(expected, result);
     }
@@ -81,14 +81,14 @@ public class RelativeStrengthIndexTest extends BaseIndicatorTest {
     public void testPeriodBiggerThanCandlesCount(){
         this.period = 200;
         new RelativeStrengthIndex(this.period,
-                this.candlestickPriceType, this.candlesUpdater);
+                this.candlePriceType, this.candlesUpdater);
     }
 
     @Test(expected = BadRequestException.class)
     public void testCreatingEMAWithZeroCandles(){
         when(candlesUpdater.getCandles()).thenReturn(new ArrayList<>());
         new RelativeStrengthIndex(this.period,
-                this.candlestickPriceType, this.candlesUpdater);
+                this.candlePriceType, this.candlesUpdater);
     }
 
     @Override

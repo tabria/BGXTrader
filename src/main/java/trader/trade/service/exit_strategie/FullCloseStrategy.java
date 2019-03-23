@@ -8,8 +8,8 @@ import com.oanda.v20.trade.TradeID;
 import com.oanda.v20.trade.TradeSetDependentOrdersResponse;
 import com.oanda.v20.trade.TradeSummary;
 import com.oanda.v20.transaction.TransactionID;
-import trader.candle.CandlesUpdater;
-import trader.candle.CandleGranularity;
+import trader.candlestick.updater.CandlesUpdater;
+import trader.candlestick.candle.CandleGranularity;
 
 import java.math.BigDecimal;
 

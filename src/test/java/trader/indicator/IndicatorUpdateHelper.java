@@ -1,7 +1,7 @@
 package trader.indicator;
 
-import trader.candle.Candlestick;
-import trader.candle.CandlestickPriceType;
+import trader.candlestick.Candlestick;
+import trader.candlestick.candle.CandlePriceType;
 import java.math.BigDecimal;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -48,10 +48,10 @@ public class IndicatorUpdateHelper {
 
 
     public List<Candlestick> candlestickList;
-    protected CandlestickPriceType mockCandlestickPriceType;
+    protected CandlePriceType mockCandlePriceType;
 
-    public IndicatorUpdateHelper(CandlestickPriceType mockCandlestickPriceType) {
-        this.mockCandlestickPriceType = mockCandlestickPriceType;
+    public IndicatorUpdateHelper(CandlePriceType mockCandlePriceType) {
+        this.mockCandlePriceType = mockCandlePriceType;
     }
 
     public List<Candlestick> getCandlestickList() {
@@ -114,9 +114,9 @@ public class IndicatorUpdateHelper {
 //    }
 
 //    private void setCandlestickPrice(Candlestick candlestick, int candlestickNumber) {
-//        Candlestick candle = createCandlestickPriceData(candlestickNumber);
-//        when(candlestick.getClosePrice()).thenReturn(candle);
-// //       when(this.mockCandlestickPriceType.extractPrice(candlestickPriceData)).thenReturn(new BigDecimal(candlesClosePrices.get(candlestickNumber)));
+//        Candlestick candlestick = createCandlestickPriceData(candlestickNumber);
+//        when(candlestick.getClosePrice()).thenReturn(candlestick);
+// //       when(this.mockCandlePriceType.extractPrice(candlestickPriceData)).thenReturn(new BigDecimal(candlesClosePrices.get(candlestickNumber)));
 //    }
 
     private Candlestick setCandlestickPrice(Candlestick candlestick, int candlestickNumber) {

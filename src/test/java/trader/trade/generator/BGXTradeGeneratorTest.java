@@ -3,9 +3,9 @@ package trader.trade.generator;
 import org.junit.Before;
 import org.junit.Test;
 import trader.CommonTestClassMembers;
-import trader.candle.Candlestick;
-import trader.candle.CandlestickPriceType;
-import trader.connector.ApiConnector;
+import trader.candlestick.Candlestick;
+import trader.candlestick.candle.CandlePriceType;
+import trader.connector.BaseConnector;
 import trader.indicator.Indicator;
 import trader.indicator.IndicatorUpdateHelper;
 import trader.indicator.ma.SimpleMovingAverage;
@@ -16,7 +16,6 @@ import trader.trade.entitie.Trade;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static junit.framework.TestCase.assertFalse;
@@ -31,8 +30,8 @@ public class BGXTradeGeneratorTest {
 
     private BGXTradeGenerator signalGenerator;
     private CommonTestClassMembers commonMembers;
-    private ApiConnector apiConnector;
-    private CandlestickPriceType candlestickPriceType = CandlestickPriceType.CLOSE;
+    private BaseConnector baseConnector;
+    private CandlePriceType candlePriceType = CandlePriceType.CLOSE;
     private IndicatorUpdateHelper indicatorUpdateHelper;
     private Indicator mockSlowWma;
     private Indicator mockMiddleWma;
@@ -52,8 +51,8 @@ public class BGXTradeGeneratorTest {
         this.mockDailySma = mock(SimpleMovingAverage.class);
         this.mockRsi = mock(RelativeStrengthIndex.class);
 
-        this.apiConnector = mock(ApiConnector.class);
-        this.indicatorUpdateHelper = new IndicatorUpdateHelper(this.candlestickPriceType);
+        this.baseConnector = mock(BaseConnector.class);
+        this.indicatorUpdateHelper = new IndicatorUpdateHelper(this.candlePriceType);
         init();
         this.commonMembers = new CommonTestClassMembers();
 
@@ -67,7 +66,7 @@ public class BGXTradeGeneratorTest {
     @Test
     public void WhenInstantiateBGXTraderGenaratorThenGenerateIndicators(){
 
-        this.signalGenerator = new BGXTradeGenerator(apiConnector);
+        this.signalGenerator = new BGXTradeGenerator(baseConnector);
         Indicator fastWMA = (Indicator) commonMembers.extractFieldObject(this.signalGenerator, "fastWMA");
         Indicator middleWMA = (Indicator) commonMembers.extractFieldObject(this.signalGenerator, "middleWMA");
         Indicator slowWMA = (Indicator) commonMembers.extractFieldObject(this.signalGenerator, "slowWMA");
@@ -500,7 +499,7 @@ public class BGXTradeGeneratorTest {
     private void init() {
         this.indicatorUpdateHelper.fillCandlestickList();
         addExtraCandlesToTestList(170);
-        when(apiConnector.getInitialCandles()).thenReturn(indicatorUpdateHelper.getCandlestickList());
+        when(baseConnector.getInitialCandles()).thenReturn(indicatorUpdateHelper.getCandlestickList());
     }
 
     private void addExtraCandlesToTestList(int quantity) {

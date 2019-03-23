@@ -1,27 +1,28 @@
 package trader.indicator.rsi;
 
-import trader.candle.CandlesUpdater;
-import trader.connector.ApiConnector;
+import trader.candlestick.CandlesUpdatable;
+import trader.candlestick.updater.CandlesUpdater;
+import trader.connector.CandlesUpdaterConnector;
 import trader.exception.*;
 import trader.indicator.Indicator;
-import trader.candle.CandlestickPriceType;
+import trader.candlestick.candle.CandlePriceType;
 
 public final class RSIBuilder {
 
     private static final long DEFAULT_INDICATOR_PERIOD = 14L;
     private static final long MIN_INDICATOR_PERIOD = 1L;
     private static final long MAX_INDICATOR_PERIOD = 1000L;
-    private static final CandlestickPriceType DEFAULT_CANDLESTICK_PRICE_TYPE = CandlestickPriceType.CLOSE;
+    private static final CandlePriceType DEFAULT_CANDLESTICK_PRICE_TYPE = CandlePriceType.CLOSE;
     public static final int SETTABLE_FIELDS_COUNT = 2;
 
-    private ApiConnector apiConnector;
+    private CandlesUpdaterConnector updaterConnector;
     private long indicatorPeriod;
-    private CandlestickPriceType candlestickPriceType;
+    private CandlePriceType candlePriceType;
 
-    public RSIBuilder(ApiConnector apiConnector){
-            setApiConnector(apiConnector);
+    public RSIBuilder(CandlesUpdaterConnector updaterConnector){
+            setCandlesUpdaterConnector(updaterConnector);
             setPeriod(DEFAULT_INDICATOR_PERIOD);
-            setCandlestickPriceType(DEFAULT_CANDLESTICK_PRICE_TYPE);
+            setCandlePriceType(DEFAULT_CANDLESTICK_PRICE_TYPE);
     }
 
     public RSIBuilder setPeriod(long indicatorPeriod) {
@@ -31,34 +32,33 @@ public final class RSIBuilder {
         return this;
     }
 
-    public RSIBuilder setCandlestickPriceType(CandlestickPriceType candlestickPriceType) {
-        if (isNull(candlestickPriceType))
+    public RSIBuilder setCandlePriceType(CandlePriceType candlePriceType) {
+        if (isNull(candlePriceType))
             throw  new NullArgumentException();
-        this.candlestickPriceType = candlestickPriceType;
+        this.candlePriceType = candlePriceType;
         return this;
     }
     
     public Indicator build(){
-        return new RelativeStrengthIndex(indicatorPeriod, candlestickPriceType, createCandlesUpdater());
+        return new RelativeStrengthIndex(indicatorPeriod, candlePriceType, createCandlesUpdater());
     }
 
     public Indicator build(String[] settings){
         if (settings == null || settings.length != SETTABLE_FIELDS_COUNT)
             throw new WrongIndicatorSettingsException();
         setPeriod(Long.parseLong(settings[0]));
-        setCandlestickPriceType(CandlestickPriceType.valueOf(settings[1]));
-        return new RelativeStrengthIndex(indicatorPeriod, candlestickPriceType, createCandlesUpdater());
+        setCandlePriceType(CandlePriceType.valueOf(settings[1]));
+        return new RelativeStrengthIndex(indicatorPeriod, candlePriceType, createCandlesUpdater());
     }
 
-
-    private void setApiConnector(ApiConnector connector){
+    private void setCandlesUpdaterConnector(CandlesUpdaterConnector connector){
         if (connector == null)
             throw new NoSuchConnectorException();
-        apiConnector = connector;
+        updaterConnector = connector;
     }
 
-    private CandlesUpdater createCandlesUpdater() {
-        return new CandlesUpdater(apiConnector);
+    private CandlesUpdatable createCandlesUpdater() {
+        return new CandlesUpdater(updaterConnector);
     }
     
     private boolean notInBoundary(long candlesticksQuantity) {

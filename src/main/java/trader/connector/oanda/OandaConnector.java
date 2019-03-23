@@ -3,15 +3,15 @@ package trader.connector.oanda;
 import com.oanda.v20.Context;
 import com.oanda.v20.ContextBuilder;
 import com.oanda.v20.account.*;
-import trader.candle.Candlestick;
-import trader.connector.ApiConnector;
+import trader.candlestick.Candlestick;
+import trader.connector.BaseConnector;
 import trader.order.Order;
 import trader.price.Pricing;
 import trader.trade.entitie.Trade;
 
 import java.util.List;
 
-public class OandaConnector extends ApiConnector {
+public class OandaConnector extends BaseConnector {
 
     private OandaConfig oandaConfig;
     private OandaAccountValidator oandaAccountValidator ;

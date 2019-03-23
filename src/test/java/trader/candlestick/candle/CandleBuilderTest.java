@@ -1,26 +1,24 @@
-package trader.candle;
+package trader.candlestick.candle;
 
 import org.junit.Before;
 import org.junit.Test;
 import trader.CommonTestClassMembers;
+import trader.candlestick.candle.Candle;
 import trader.exception.NegativeNumberException;
 import trader.exception.NullArgumentException;
 import trader.exception.OverflowException;
 import trader.exception.UnderflowException;
-import trader.strategy.BGXStrategy.StrategyConfig;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
-import static trader.candle.Candle.*;
-import static trader.strategy.BGXStrategy.StrategyConfig.*;
+import static trader.candlestick.candle.Candle.*;
 
 public class CandleBuilderTest {
 
 
-//    private static final String PRICE_TYPE = "LOW";
     private static final long MIN_TIME_FRAME_IN_SECONDS = 5L;
     private static final long MAX_TIME_FRAME_IN_SECONDS = 2629800L;
     private static final long TIME_FRAME_IN_SECONDS = 60L;
@@ -31,7 +29,6 @@ public class CandleBuilderTest {
     private static final ZonedDateTime DEFAULT_ZONED_DATE_TIME = ZonedDateTime.parse("2012-06-30T12:30:40Z[UTC]");
 
     CandleBuilder candleBuilder;
-    CandlePriceType closeCandlePriceType;
     Candle candle;
     CommonTestClassMembers commonMembers;
 
@@ -39,7 +36,6 @@ public class CandleBuilderTest {
     public void setUp() throws Exception {
         candle = new CandleBuilder().build();
         candleBuilder = new CandleBuilder();
-        closeCandlePriceType = mock(CloseCandlePriceType.class);
         commonMembers = new CommonTestClassMembers();
 
     }
@@ -50,25 +46,6 @@ public class CandleBuilderTest {
         String candleName = candle.getClass().getSimpleName();
 
         assertEquals("Candle", candleName);
-    }
-
-    @Test(expected = NullArgumentException.class)
-    public void callSetCandlePriceTypeWithNull_Exception(){
-        candleBuilder.setPriceType(null);
-    }
-
-//    @Test
-//    public void setCorrectPriceType(){
-//        candleBuilder.setPriceType(closeCandlePriceType);
-//        when(closeCandlePriceType.getType()).thenReturn(PRICE_TYPE);
-//        CandlePriceType candlePriceType = (CandlePriceType) commonMembers.extractFieldObject(candleBuilder, "priceType");
-//
-//        assertEquals(candlePriceType.getType(), PRICE_TYPE);
-//    }
-
-    @Test
-    public void WhenCallSetCandlePriceType_ReturnCurrentObject(){
-        assertEquals(candleBuilder, candleBuilder.setPriceType(closeCandlePriceType));
     }
 
     @Test(expected = UnderflowException.class)
@@ -240,7 +217,7 @@ public class CandleBuilderTest {
 //    @Test
 //    public void createCandleBuilderWitPriceType_Default(){
 //        when(closeCandlePriceType.getType()).thenReturn("CLOSE");
-//        String expected = candle.getPriceType().getType();
+//        String expected = candlestick.getPriceType().getType();
 //        assertEquals("CLOSE", expected);
 //    }
 

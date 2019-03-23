@@ -5,8 +5,8 @@ import com.oanda.v20.RequestException;
 import com.oanda.v20.instrument.*;
 import com.oanda.v20.primitives.DateTime;
 import com.oanda.v20.primitives.InstrumentName;
-import trader.candle.Candle;
-import trader.candle.Candlestick;
+import trader.candlestick.candle.Candle;
+import trader.candlestick.Candlestick;
 import trader.exception.BadRequestException;
 
 import java.time.Instant;

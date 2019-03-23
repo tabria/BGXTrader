@@ -6,8 +6,8 @@ import com.oanda.v20.primitives.DateTime;
 import com.oanda.v20.trade.TradeSetDependentOrdersResponse;
 import com.oanda.v20.trade.TradeSummary;
 import com.oanda.v20.transaction.TransactionID;
-import trader.candle.CandlesUpdater;
-import trader.candle.CandleGranularity;
+import trader.candlestick.updater.CandlesUpdater;
+import trader.candlestick.candle.CandleGranularity;
 
 import java.math.BigDecimal;
 
@@ -93,12 +93,12 @@ public class TrailExitStrategy implements ExitStrategy {
 
         /**
          * Check if stop loss can be trailed.
-         * For short trade stop will be trailed if candle close is lower than current low and candle high is also lower than current high.
-         * For long trade stop will be trailed if candle close is higher than current high and candle low is also higher than current low
+         * For short trade stop will be trailed if candlestick close is lower than current low and candlestick high is also lower than current high.
+         * For long trade stop will be trailed if candlestick close is higher than current high and candlestick low is also higher than current low
          * @param currentUnits current size of the trade
-         * @param lastFullCandleClose last full candle close
-         * @param lastFullCandleHigh last full candle high
-         * @param lastFullCandleLow last full candle low
+         * @param lastFullCandleClose last full candlestick close
+         * @param lastFullCandleHigh last full candlestick high
+         * @param lastFullCandleLow last full candlestick low
          * @return {@link boolean} {@code true} if stop can be trailed
          *                         {@code false} otherwise
          */
@@ -117,7 +117,7 @@ public class TrailExitStrategy implements ExitStrategy {
         /**
          * Update exit bar components - low or high
          * @param exitBarComponent exit bar component - exitBarHigh or exitBarLow
-         * @param lastFullCandleLow last full candle low
+         * @param lastFullCandleLow last full candlestick low
          * @param currentUnits trade's units
          */
         private BigDecimal updateExitBarComponent(BigDecimal exitBarComponent, BigDecimal lastFullCandleLow, BigDecimal currentUnits){

@@ -6,9 +6,9 @@ import com.oanda.v20.account.Account;
 import com.oanda.v20.primitives.DateTime;
 import com.oanda.v20.trade.*;
 import com.oanda.v20.transaction.TransactionID;
-import trader.candle.CandlesUpdater;
+import trader.candlestick.updater.CandlesUpdater;
 import trader.config.Config;
-import trader.candle.CandleGranularity;
+import trader.candlestick.candle.CandleGranularity;
 
 
 import java.math.BigDecimal;
@@ -156,7 +156,7 @@ public final class TrailExitAfterSignificantExtremeStrategy implements ExitStrat
 
     /**
      * Set significant Low
-     * @param lastFullCandleLow last full candle low
+     * @param lastFullCandleLow last full candlestick low
      */
     private void setSignificantLow(BigDecimal lastFullCandleLow){
 
@@ -165,7 +165,7 @@ public final class TrailExitAfterSignificantExtremeStrategy implements ExitStrat
 
     /**
      * Set significant high
-     * @param lastFullCandleHigh last full candle high
+     * @param lastFullCandleHigh last full candlestick high
      */
     private void setSignificantHigh(BigDecimal lastFullCandleHigh){
 

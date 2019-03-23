@@ -1,43 +1,39 @@
-package trader.candle;
+package trader.candlestick.candle;
 
 
+import trader.candlestick.Candlestick;
 import java.math.BigDecimal;
 
 import static trader.strategy.BGXStrategy.StrategyConfig.SCALE;
 
 
-public enum CandlestickPriceType implements CandlestickPriceOperations {
+public enum CandlePriceType {
 
     OPEN {
-        @Override
         public BigDecimal extractPrice(Candlestick candle) {
             return candle.getOpenPrice();
         }
     },
 
     CLOSE {
-        @Override
         public BigDecimal extractPrice(Candlestick candle){
             return candle.getClosePrice();
         }
     },
 
     HIGH {
-        @Override
         public BigDecimal extractPrice(Candlestick candle){
             return candle.getHighPrice();
         }
     },
 
     LOW {
-        @Override
         public BigDecimal extractPrice(Candlestick candle) {
             return candle.getLowPrice();
         }
     },
 
     MEDIAN {
-        @Override
         public BigDecimal extractPrice(Candlestick candle) {
             return medianPrice(candle.getHighPrice(), candle.getLowPrice());
         }
@@ -46,5 +42,7 @@ public enum CandlestickPriceType implements CandlestickPriceOperations {
             return high.add(low)
                     .divide(BigDecimal.valueOf(2), SCALE,BigDecimal.ROUND_HALF_UP);
         }
-    }
+    };
+
+    public abstract BigDecimal extractPrice(Candlestick candle);
 }

@@ -1,9 +1,10 @@
 package trader.indicator.ma;
 
-import trader.candle.CandlesUpdater;
-import trader.candle.Candlestick;
+import trader.candlestick.CandlesUpdatable;
+import trader.candlestick.candle.CandlePriceType;
+import trader.candlestick.Candlestick;
 import trader.indicator.BaseIndicator;
-import trader.candle.CandlestickPriceType;
+
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -11,15 +12,15 @@ import static trader.strategy.BGXStrategy.StrategyConfig.SCALE;
 
 public final class WeightedMovingAverage extends BaseIndicator {
 
-    WeightedMovingAverage(long indicatorPeriod, CandlestickPriceType candlestickPriceType, CandlesUpdater updater) {
-        super(indicatorPeriod, candlestickPriceType, updater);
+    WeightedMovingAverage(long indicatorPeriod, CandlePriceType candlePriceType, CandlesUpdatable updater) {
+        super(indicatorPeriod, candlePriceType, updater);
         setDivisor();
         initiateWMAValues();
     }
 
     @Override
     public void updateIndicator() {
-        candlesUpdater.getUpdateCandle();
+        candlesUpdater.getUpdatedCandle();
         List<Candlestick> candles = candlesUpdater.getCandles();
         indicatorValues.add(calculateWMAValue(candles, candles.size() - 1));
     }
@@ -28,7 +29,7 @@ public final class WeightedMovingAverage extends BaseIndicator {
     public String toString() {
         return "WeightedMovingAverage{" +
                 "period=" + indicatorPeriod +
-                ", candlestickPriceType=" + candlestickPriceType.toString() +
+                ", candlePriceType=" + candlePriceType.toString() +
                 ", indicatorValues=" + indicatorValues.toString() +
                 '}';
     }

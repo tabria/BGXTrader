@@ -5,7 +5,6 @@ import java.util.List;
 
 public interface Indicator {
 
-
     List<BigDecimal> getValues();
     void updateIndicator();
 

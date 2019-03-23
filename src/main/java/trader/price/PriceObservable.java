@@ -2,7 +2,8 @@ package trader.price;
 
 import com.oanda.v20.Context;
 import com.oanda.v20.primitives.DateTime;
-import trader.connector.ApiConnector;
+import trader.connector.BaseConnector;
+import trader.connector.PriceConnector;
 import trader.core.Observable;
 import trader.core.Observer;
 import trader.exception.NullArgumentException;
@@ -11,16 +12,16 @@ import java.math.BigDecimal;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 
-public final class PriceObservable implements Observable {
+public final class PriceObservable implements Observable, PriceConnector {
 
     private long threadSleepInterval = 1000L;
-    private ApiConnector apiConnector;
+    private BaseConnector baseConnector;
     private Pricing oldPrice;
     private CopyOnWriteArrayList<Observer> observers;
 
     ////////////////// to be removed /////////////////////////
     private PriceObservable(Context context){
-        apiConnector =  ApiConnector.create("Oanda");
+        baseConnector =  BaseConnector.create("Oanda");
         oldPrice = new Price.PriceBuilder().build();
         observers = new CopyOnWriteArrayList<>();
     }
@@ -36,10 +37,15 @@ public final class PriceObservable implements Observable {
             observer.updateObserver(dateTime, ask, bid);
     }
 
+    @Override
+    public Price getPrice(){
+        return null;
+    }
+
     ////////////////////////////////////////////////////////////
 
     private PriceObservable(String apiConnectorName){
-        apiConnector = ApiConnector.create(apiConnectorName);
+        baseConnector = BaseConnector.create(apiConnectorName);
         oldPrice = new Price.PriceBuilder().build();
         observers = new CopyOnWriteArrayList<>();
     }
@@ -71,7 +77,7 @@ public final class PriceObservable implements Observable {
     @Override
     public void execute() {
         while(true){
-            Pricing newPrice = apiConnector.getPrice();
+            Pricing newPrice = baseConnector.getPrice();
             notifyEveryone(newPrice);
             sleepThread(threadSleepInterval);
         }

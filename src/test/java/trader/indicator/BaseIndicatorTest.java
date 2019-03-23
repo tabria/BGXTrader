@@ -2,9 +2,11 @@ package trader.indicator;
 
 import org.junit.Before;
 import org.junit.Test;
-import trader.candle.CandlesUpdater;
-import trader.candle.Candlestick;
-import trader.candle.CandlestickPriceType;
+import trader.candlestick.CandlesUpdatable;
+import trader.candlestick.candle.CandlePriceType;
+import trader.candlestick.updater.CandlesUpdater;
+import trader.candlestick.Candlestick;
+
 import java.math.BigDecimal;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -18,8 +20,8 @@ public abstract class BaseIndicatorTest {
     private static final String NEW_PRICE_ENTRY = "1.16814";
     private static final String NEW_DATETIME_ENTRY = "2018-08-01T09:53:00Z";
 
-    protected CandlesUpdater candlesUpdater;
-    protected CandlestickPriceType candlestickPriceType = CandlestickPriceType.CLOSE;
+    protected CandlesUpdatable candlesUpdater;
+    protected CandlePriceType candlePriceType = CandlePriceType.CLOSE;
     protected IndicatorUpdateHelper indicatorUpdateHelper;
     protected long period;
     protected Candlestick newCandle;
@@ -27,7 +29,7 @@ public abstract class BaseIndicatorTest {
     @Before
     public void before() {
         this.candlesUpdater = mock(CandlesUpdater.class);
-        this.indicatorUpdateHelper = new IndicatorUpdateHelper(this.candlestickPriceType);
+        this.indicatorUpdateHelper = new IndicatorUpdateHelper(this.candlePriceType);
         this.indicatorUpdateHelper.fillCandlestickList();
         this.newCandle = mock(Candlestick.class);
         setNewCandle();
@@ -59,7 +61,7 @@ public abstract class BaseIndicatorTest {
         when(newCandle.getClosePrice()).thenReturn(new BigDecimal(NEW_PRICE_ENTRY));
         when(newCandle.getDateTime())
                 .thenReturn(ZonedDateTime.parse(NEW_DATETIME_ENTRY).withZoneSameInstant(ZoneId.of("UTC")));
-        when(candlesUpdater.getUpdateCandle()).thenReturn(newCandle);
+        when(candlesUpdater.getUpdatedCandle()).thenReturn(newCandle);
     }
 
     private void setPeriod(){

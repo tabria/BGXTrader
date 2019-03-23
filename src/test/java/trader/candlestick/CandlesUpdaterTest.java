@@ -1,17 +1,17 @@
-package trader.candle;
+package trader.candlestick;
 
 import org.junit.Before;
 import org.junit.Test;
 import trader.CommonTestClassMembers;
-import trader.connector.ApiConnector;
+import trader.candlestick.updater.CandlesUpdater;
+import trader.connector.CandlesUpdaterConnector;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -20,8 +20,8 @@ public class CandlesUpdaterTest {
 
     private static final int CANDLESTICK_LIST_SIZE = 5;
 
-    private CandlesUpdater candlesUpdater;
-    private ApiConnector mockApiConnector;
+    private CandlesUpdatable candlesUpdater;
+    private CandlesUpdaterConnector mockConnector;
     private List<Candlestick> candlesticks;
     private Candlestick mockCandle;
     private CommonTestClassMembers commonMembers;
@@ -33,9 +33,9 @@ public class CandlesUpdaterTest {
         mockCandle = mock(Candlestick.class);
         candlesticks = new ArrayList<>();
         commonMembers = new CommonTestClassMembers();
-        mockApiConnector = mock(ApiConnector.class);
+        mockConnector = mock(CandlesUpdaterConnector.class);
         setMockApiConnector();
-        candlesUpdater = new CandlesUpdater(mockApiConnector);
+        candlesUpdater = new CandlesUpdater(mockConnector);
         timeNow = ZonedDateTime.now().withZoneSameInstant(ZoneId.of("UTC"));
         fillCandlestickList();
     }
@@ -68,7 +68,7 @@ public class CandlesUpdaterTest {
 
     @Test
     public void testGetUpdateCandleToReturnCorrectCandle(){
-        Candlestick updateCandle = candlesUpdater.getUpdateCandle();
+        Candlestick updateCandle = candlesUpdater.getUpdatedCandle();
 
         assertEquals(mockCandle, updateCandle);
     }
@@ -77,7 +77,7 @@ public class CandlesUpdaterTest {
     public void whenCallGetUpdateCandleWithNonUpdatableCandle_UpdateFalse(){
         when(mockCandle.isComplete()).thenReturn(false);
         int expected = candlesUpdater.getCandles().size();
-        candlesUpdater.getUpdateCandle();
+        candlesUpdater.getUpdatedCandle();
         int actual = candlesUpdater.getCandles().size();
         assertEquals(expected, actual);
     }
@@ -85,7 +85,7 @@ public class CandlesUpdaterTest {
     @Test
     public void whenCallGetUpdateCandleWithUpdatableCandleWithBiggerTime_UpdateTrue(){
         int expected = candlesUpdater.getCandles().size();
-        candlesUpdater.getUpdateCandle();
+        candlesUpdater.getUpdatedCandle();
         int actual = candlesUpdater.getCandles().size();
         assertEquals(expected+1, actual);
    //     assertTrue(result);
@@ -126,8 +126,8 @@ public class CandlesUpdaterTest {
     }
 
     private void setMockApiConnector() {
-        when(mockApiConnector.getInitialCandles()).thenReturn(candlesticks);
-        when(mockApiConnector.getUpdateCandle()).thenReturn(mockCandle);
+        when(mockConnector.getInitialCandles()).thenReturn(candlesticks);
+        when(mockConnector.getUpdateCandle()).thenReturn(mockCandle);
     }
 
     private void fillCandlestickList(){

@@ -3,16 +3,14 @@ package trader.strategy;
 import org.junit.Before;
 import org.junit.Test;
 import trader.CommonTestClassMembers;
-import trader.connector.ApiConnector;
+import trader.connector.BaseConnector;
 import trader.exception.NullArgumentException;
 import trader.order.Order;
-import trader.price.Price;
 import trader.strategy.BGXStrategy.BGXStrategy;
 import trader.trade.entitie.Trade;
 import trader.trade.service.exit_strategie.ExitStrategy;
 import trader.trade.service.OrderService;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +22,7 @@ public class BGXStrategyTest {
     private List<Trade> trades;
     private List<Order> orders;
     private Order mockOrder;
-    private ApiConnector apiConnector;
+    private BaseConnector baseConnector;
     private BGXStrategy bgxStrategy;
     private Trade mockTrade;
     private CommonTestClassMembers commonMembers;
@@ -37,12 +35,12 @@ public class BGXStrategyTest {
         orders = new ArrayList<>();
         mockOrderService = mock(OrderService.class);
         mockExitStrategy = mock(ExitStrategy.class);
-        apiConnector = mock(ApiConnector.class);
+        baseConnector = mock(BaseConnector.class);
         mockOrder = mock(Order.class);
         mockTrade = mock(Trade.class);
         commonMembers = new CommonTestClassMembers();
         applySettings();
-        bgxStrategy = new BGXStrategy(apiConnector);
+        bgxStrategy = new BGXStrategy(baseConnector);
     }
 
     @Test(expected = NullArgumentException.class)
@@ -53,15 +51,15 @@ public class BGXStrategyTest {
     @Test(expected = SubmitNewOrderCalledException.class)
     public void ifNoOpenOrdersAndNoOpenTrades_SubmitNewOrder(){
         commonMembers.changeFieldObject(bgxStrategy, "orderService", mockOrderService);
-        when(apiConnector.getOpenOrders()).thenReturn(new ArrayList<>());
-        when(apiConnector.getOpenTrades()).thenReturn(new ArrayList<>());
+        when(baseConnector.getOpenOrders()).thenReturn(new ArrayList<>());
+        when(baseConnector.getOpenTrades()).thenReturn(new ArrayList<>());
         bgxStrategy.execute();
     }
 
     @Test(expected = CloseUnfilledOrderCalledException.class)
     public void ifNoOpenTradesButHaveOpenOrders_closeUnfilledOrder(){
         commonMembers.changeFieldObject(bgxStrategy, "orderService", mockOrderService);
-        when(apiConnector.getOpenTrades()).thenReturn(new ArrayList<>());
+        when(baseConnector.getOpenTrades()).thenReturn(new ArrayList<>());
         bgxStrategy.execute();
     }
 
@@ -84,12 +82,12 @@ public class BGXStrategyTest {
     }
 
     private void tradeSettings() {
-        when(apiConnector.getOpenTrades()).thenReturn(trades);
+        when(baseConnector.getOpenTrades()).thenReturn(trades);
         doThrow(new ExitStrategyExecuteCalledException()).when(mockExitStrategy).execute();
     }
 
     private void orderSettings() {
-        when(apiConnector.getOpenOrders()).thenReturn(orders);
+        when(baseConnector.getOpenOrders()).thenReturn(orders);
         doThrow(new SubmitNewOrderCalledException()).when(mockOrderService).submitNewOrder();
         doThrow(new CloseUnfilledOrderCalledException()).when(mockOrderService).closeUnfilledOrder();
     }

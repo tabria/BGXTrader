@@ -9,8 +9,8 @@ import com.oanda.v20.primitives.DateTime;
 import com.oanda.v20.trade.*;
 import org.junit.Before;
 import org.junit.Test;
-import trader.candle.CandlesUpdater;
-import trader.candle.CandleGranularity;
+import trader.candlestick.updater.CandlesUpdater;
+import trader.candlestick.candle.CandleGranularity;
 
 
 import java.lang.reflect.Field;
@@ -122,7 +122,7 @@ public class BaseExitStrategyTest {
 
     @Test(expected = IndexOutOfBoundsException.class)
     public void WhenGetLastFullCandleHighWithDifferentNumberOfRequiredCandlesThenException(){
-        //candlestickList is empty and required number of candle is 2
+        //candlestickList is empty and required number of candlestick is 2
         BigDecimal result = this.baseExitStrategy.getLastFullCandleHigh();
     }
     
@@ -151,7 +151,7 @@ public class BaseExitStrategyTest {
 
     @Test(expected = IndexOutOfBoundsException.class)
     public void WhenGetLastFullCandleLowWithDifferentNumberOfRequiredCandlesThenException(){
-        //candlestickList is empty and required number of candle is 2
+        //candlestickList is empty and required number of candlestick is 2
         BigDecimal result = this.baseExitStrategy.getLastFullCandleLow();
     }
 
@@ -179,7 +179,7 @@ public class BaseExitStrategyTest {
 
     @Test(expected = IndexOutOfBoundsException.class)
     public void WhenGetLastFullCandleCloseWithDifferentNumberOfRequiredCandlesThenException(){
-        //candlestickList is empty and required number of candle is 2
+        //candlestickList is empty and required number of candlestick is 2
         BigDecimal result = this.baseExitStrategy.getLastFullCandleLow();
     }
 
@@ -315,13 +315,13 @@ public class BaseExitStrategyTest {
         updater.set(this.baseExitStrategy, this.mockCandlesUpdater);
     }
 
-    //fill candlestick list with candle. Candles have only time and close price
+    //fill candlestick list with candlestick. Candles have only time and close price
     private void fillCandlestickList() {
 
         this.candlestickList = new ArrayList<>();
 
         for (int i = 0; i < candlesClosePrices.size(); i++) {
-            //candle 1
+            //candlestick 1
             DateTime dateTime1 = mock(DateTime.class);
             //           when(dateTime1.toString()).thenReturn(candlesDateTime.get(i));
 

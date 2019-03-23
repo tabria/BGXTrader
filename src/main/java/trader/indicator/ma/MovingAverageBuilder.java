@@ -1,13 +1,14 @@
 package trader.indicator.ma;
 
-import trader.candle.CandlesUpdater;
-import trader.connector.ApiConnector;
+import trader.candlestick.CandlesUpdatable;
+import trader.candlestick.candle.CandlePriceType;
+import trader.candlestick.updater.CandlesUpdater;
+import trader.connector.CandlesUpdaterConnector;
 import trader.exception.NoSuchConnectorException;
 import trader.exception.NullArgumentException;
 import trader.exception.OutOfBoundaryException;
 import trader.exception.WrongIndicatorSettingsException;
 import trader.indicator.Indicator;
-import trader.candle.CandlestickPriceType;
 import trader.indicator.ma.enums.MAType;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -18,18 +19,18 @@ public final class MovingAverageBuilder {
     private static final long DEFAULT_INDICATOR_PERIOD = 20L;
     private static final long MIN_INDICATOR_PERIOD = 1L;
     private static final long MAX_INDICATOR_PERIOD = 4000L;
-    private static final CandlestickPriceType DEFAULT_CANDLESTICK_PRICE_TYPE = CandlestickPriceType.CLOSE;
+    private static final CandlePriceType DEFAULT_CANDLESTICK_PRICE_TYPE = CandlePriceType.CLOSE;
     private static final MAType DEFAULT_MA_TYPE = MAType.SIMPLE;
     private static final String MA_LOCATION = "trader.indicator.ma.";
     private static final int SETTABLE_FIELDS_COUNT = 3;
 
     private long indicatorPeriod;
-    private CandlestickPriceType candlestickPriceType;
+    private CandlePriceType candlePriceType;
     private MAType maType;
-    private ApiConnector apiConnector;
+    private CandlesUpdaterConnector updaterConnector;
 
-    public MovingAverageBuilder(ApiConnector apiConnector) {
-        setApiConnector(apiConnector);
+    public MovingAverageBuilder(CandlesUpdaterConnector updaterConnector) {
+        setCandlesUpdaterConnector(updaterConnector);
         setDefaults();
     }
 
@@ -40,10 +41,10 @@ public final class MovingAverageBuilder {
         return this;
     }
 
-    public MovingAverageBuilder setCandlestickPriceType(CandlestickPriceType candlestickPriceType){
-        if(candlestickPriceType == null)
+    public MovingAverageBuilder setCandlePriceType(CandlePriceType candlePriceType){
+        if(candlePriceType == null)
             throw new NullArgumentException();
-        this.candlestickPriceType = candlestickPriceType;
+        this.candlePriceType = candlePriceType;
         return this;
     }
 
@@ -62,20 +63,20 @@ public final class MovingAverageBuilder {
         if(settings == null || settings.length != SETTABLE_FIELDS_COUNT)
             throw new WrongIndicatorSettingsException();
         setPeriod(Long.parseLong(settings[0]));
-        setCandlestickPriceType(CandlestickPriceType.valueOf(settings[1]));
+        setCandlePriceType(CandlePriceType.valueOf(settings[1]));
         setMAType(MAType.valueOf(settings[2]));
         return instantiatesIndicator(createCandlesUpdater());
     }
 
-    private void setApiConnector(ApiConnector connector){
+    private void setCandlesUpdaterConnector(CandlesUpdaterConnector connector){
         if (connector == null)
             throw new NoSuchConnectorException();
-        apiConnector = connector;
+        updaterConnector = connector;
     }
 
     private void setDefaults() {
         this.indicatorPeriod = DEFAULT_INDICATOR_PERIOD;
-        this.candlestickPriceType = DEFAULT_CANDLESTICK_PRICE_TYPE;
+        this.candlePriceType = DEFAULT_CANDLESTICK_PRICE_TYPE;
         this.maType = DEFAULT_MA_TYPE;
     }
 
@@ -83,15 +84,15 @@ public final class MovingAverageBuilder {
         return period < MIN_INDICATOR_PERIOD || period > MAX_INDICATOR_PERIOD;
     }
 
-    private CandlesUpdater createCandlesUpdater() {
-        return new CandlesUpdater(apiConnector);
+    private CandlesUpdatable createCandlesUpdater() {
+        return new CandlesUpdater(updaterConnector);
     }
 
-    private Indicator instantiatesIndicator(CandlesUpdater updater)  {
+    private Indicator instantiatesIndicator(CandlesUpdatable updater)  {
         try {
             Class<?> indicatorClass = Class.forName(MA_LOCATION + composeIndicatorClassName());
-            Constructor<?> indicatorConstructor = indicatorClass.getDeclaredConstructor(long.class, CandlestickPriceType.class, CandlesUpdater.class);
-            return (Indicator) indicatorConstructor.newInstance(indicatorPeriod, candlestickPriceType, updater);
+            Constructor<?> indicatorConstructor = indicatorClass.getDeclaredConstructor(long.class, CandlePriceType.class, CandlesUpdatable.class);
+            return (Indicator) indicatorConstructor.newInstance(indicatorPeriod, candlePriceType, updater);
         }
         catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             throw new RuntimeException(e);

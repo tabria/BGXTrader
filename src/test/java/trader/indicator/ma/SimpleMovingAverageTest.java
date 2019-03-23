@@ -2,7 +2,7 @@ package trader.indicator.ma;
 
 import org.junit.Before;
 import org.junit.Test;
-import trader.candle.Candlestick;
+import trader.candlestick.Candlestick;
 import trader.exception.BadRequestException;
 import trader.exception.IndicatorPeriodTooBigException;
 import trader.indicator.BaseIndicatorTest;
@@ -20,7 +20,7 @@ public class SimpleMovingAverageTest extends BaseIndicatorTest {
     @Before
     public void before() {
         super.before();
-        this.sma = new SimpleMovingAverage(this.period, this.candlestickPriceType, this.candlesUpdater);
+        this.sma = new SimpleMovingAverage(this.period, this.candlePriceType, this.candlesUpdater);
     }
 
     @Override
@@ -58,8 +58,8 @@ public class SimpleMovingAverageTest extends BaseIndicatorTest {
     public void TestToString(){
         String result = this.sma.toString();
         String expected = String.format("SimpleMovingAverage{period=%d, " +
-                        "candlestickPriceType=%s, indicatorValues=%s}",
-                period, candlestickPriceType.toString(), sma.getValues().toString()
+                        "candlePriceType=%s, indicatorValues=%s}",
+                period, candlePriceType.toString(), sma.getValues().toString()
         );
 
         assertEquals(expected, result);
@@ -76,14 +76,14 @@ public class SimpleMovingAverageTest extends BaseIndicatorTest {
     public void testCreatingEMAWithZeroCandles(){
         when(candlesUpdater.getCandles()).thenReturn(new ArrayList<>());
         new SimpleMovingAverage(this.period,
-                this.candlestickPriceType, this.candlesUpdater);
+                this.candlePriceType, this.candlesUpdater);
     }
 
     @Test(expected = IndicatorPeriodTooBigException.class)
     public void testPeriodBiggerThanCandlesCount(){
         this.period = 200;
         new SimpleMovingAverage(this.period,
-                this.candlestickPriceType, this.candlesUpdater);
+                this.candlePriceType, this.candlesUpdater);
     }
 
     @Override

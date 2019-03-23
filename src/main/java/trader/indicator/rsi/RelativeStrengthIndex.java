@@ -1,10 +1,11 @@
 package trader.indicator.rsi;
 
 
-import trader.candle.CandlesUpdater;
-import trader.candle.Candlestick;
+import trader.candlestick.CandlesUpdatable;
+import trader.candlestick.candle.CandlePriceType;
+import trader.candlestick.Candlestick;
 import trader.indicator.BaseIndicator;
-import trader.candle.CandlestickPriceType;
+
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
@@ -19,8 +20,8 @@ public final class RelativeStrengthIndex extends BaseIndicator {
     private BigDecimal averageGains;
     private BigDecimal averageLosses;
 
-    RelativeStrengthIndex(long indicatorPeriod, CandlestickPriceType candlestickPriceType, CandlesUpdater candlesUpdater){
-        super(indicatorPeriod, candlestickPriceType, candlesUpdater);
+    RelativeStrengthIndex(long indicatorPeriod, CandlePriceType candlePriceType, CandlesUpdatable candlesUpdater){
+        super(indicatorPeriod, candlePriceType, candlesUpdater);
         averageGains = BigDecimal.ZERO;
         averageLosses = BigDecimal.ZERO;
         initiateRSIValues();
@@ -33,7 +34,7 @@ public final class RelativeStrengthIndex extends BaseIndicator {
 
     @Override
     public void updateIndicator() {
-        Candlestick candlestick = candlesUpdater.getUpdateCandle();
+        Candlestick candlestick = candlesUpdater.getUpdatedCandle();
         List<Candlestick> candles = candlesUpdater.getCandles();
         Candlestick prevCandle = getCurrentCandle(candles, candles.size() - 1);
         insertRemainingRSIValues(candlestick, prevCandle);
@@ -46,7 +47,7 @@ public final class RelativeStrengthIndex extends BaseIndicator {
     public String toString() {
         return "RelativeStrengthIndex{" +
                 "period=" + indicatorPeriod +
-                ", candlestickPriceType=" + candlestickPriceType.toString() +
+                ", candlePriceType=" + candlePriceType.toString() +
                 ", rsiValues=" + indicatorValues.toString() +
                 '}';
     }

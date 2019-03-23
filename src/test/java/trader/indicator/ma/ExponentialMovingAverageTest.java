@@ -3,7 +3,7 @@ package trader.indicator.ma;
 import org.junit.Before;
 import org.junit.Test;
 import trader.CommonTestClassMembers;
-import trader.candle.Candlestick;
+import trader.candlestick.Candlestick;
 import trader.exception.BadRequestException;
 import trader.exception.IndicatorPeriodTooBigException;
 import trader.indicator.BaseIndicatorTest;
@@ -29,7 +29,7 @@ public class ExponentialMovingAverageTest extends BaseIndicatorTest {
         super.before();
         commonMembers = new CommonTestClassMembers();
         this.ema = new ExponentialMovingAverage(this.period,
-                this.candlestickPriceType, this.candlesUpdater);
+                this.candlePriceType, this.candlesUpdater);
     }
 
     @Test
@@ -86,8 +86,8 @@ public class ExponentialMovingAverageTest extends BaseIndicatorTest {
     public void TestToString(){
         String result = this.ema.toString();
         String expected = String.format("ExponentialMovingAverage{period=%d, " +
-                        "candlestickPriceType=%s, indicatorValues=%s}",
-                         period, this.candlestickPriceType.toString(), ema.getValues().toString());
+                        "candlePriceType=%s, indicatorValues=%s}",
+                         period, this.candlePriceType.toString(), ema.getValues().toString());
         assertEquals(expected, result);
     }
 
@@ -95,14 +95,14 @@ public class ExponentialMovingAverageTest extends BaseIndicatorTest {
     public void testPeriodBiggerThanCandlesCount(){
         this.period = 200;
         new ExponentialMovingAverage(this.period,
-                this.candlestickPriceType, this.candlesUpdater);
+                this.candlePriceType, this.candlesUpdater);
     }
 
     @Test(expected = BadRequestException.class)
     public void testCreatingEMAWithZeroCandles(){
         when(candlesUpdater.getCandles()).thenReturn(new ArrayList<>());
         new ExponentialMovingAverage(this.period,
-                this.candlestickPriceType, this.candlesUpdater);
+                this.candlePriceType, this.candlesUpdater);
     }
 
     @Override

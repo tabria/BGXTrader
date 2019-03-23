@@ -1,4 +1,4 @@
-package trader.candle;
+package trader.candlestick;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;

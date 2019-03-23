@@ -24,7 +24,9 @@ public class OandaAPIMockPricing extends OandaAPIMock {
     }
 
     public OandaAPIMockPricing() {
+
         mockPricingContext =  mock(PricingContext.class);
+        mockContext.pricing = mockPricingContext;
         mockPricingGetRequest = mock(PricingGetRequest.class);
         mockPricingGetResponse = mock(PricingGetResponse.class);
         init();

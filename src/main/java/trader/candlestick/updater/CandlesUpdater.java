@@ -1,15 +1,18 @@
-package trader.candle;
+package trader.candlestick.updater;
 
 import com.oanda.v20.Context;
 import com.oanda.v20.instrument.InstrumentCandlesRequest;
 import com.oanda.v20.primitives.DateTime;
-import trader.connector.ApiConnector;
+import trader.candlestick.candle.CandleGranularity;
+import trader.candlestick.CandlesUpdatable;
+import trader.connector.CandlesUpdaterConnector;
+import trader.candlestick.Candlestick;
 
 import java.util.Collections;
 import java.util.List;
 
 
-public final class CandlesUpdater {
+public final class CandlesUpdater implements CandlesUpdatable {
 
 //    private static final DateTime DEFAULT_DATE_TIME = new DateTime("2018-01-01T01:01:01Z");
 
@@ -35,12 +38,12 @@ public final class CandlesUpdater {
 //////////////////////////////////////////////////////////////
 
     private int sleepTimeMilliseconds = 1000;
-    private ApiConnector apiConnector;
+    private CandlesUpdaterConnector connector;
     private List<Candlestick> candlestickList;
 
 
-    public CandlesUpdater(ApiConnector apiConnector){
-        this.apiConnector = apiConnector;
+    public CandlesUpdater(CandlesUpdaterConnector connector){
+        this.connector = connector;
         candlestickList = initialize();
     }
 
@@ -48,17 +51,17 @@ public final class CandlesUpdater {
         return Collections.unmodifiableList(this.candlestickList);
     }
 
-    public Candlestick getUpdateCandle(){
+    public Candlestick getUpdatedCandle(){
         updateCandles();
         return candlestickList.get(candlestickList.size()-1);
     }
 
     private List<Candlestick> initialize() {
-            return apiConnector.getInitialCandles();
+            return connector.getInitialCandles();
     }
 
     private void updateCandles(){
-        Candlestick updateCandle = apiConnector.getUpdateCandle();
+        Candlestick updateCandle = connector.getUpdateCandle();
         Candlestick lastCandlestick = getLastCandlestick();
         if(updateCandle.isComplete() && isDateTimeTradeable(updateCandle, lastCandlestick))
             candlestickList.add(updateCandle);
@@ -66,7 +69,7 @@ public final class CandlesUpdater {
 
     private boolean isDateTimeTradeable(Candlestick updateCandle, Candlestick lastCandlestick) {
         while(compareDateTimes(updateCandle, lastCandlestick)){
-            updateCandle = apiConnector.getUpdateCandle();
+            updateCandle = connector.getUpdateCandle();
             sleep(sleepTimeMilliseconds);
         }
         return true;

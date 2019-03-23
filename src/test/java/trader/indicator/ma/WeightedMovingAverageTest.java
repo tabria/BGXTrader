@@ -23,7 +23,7 @@ public class WeightedMovingAverageTest extends BaseIndicatorTest {
     @Before
     public void before()  {
         super.before();
-        this.wma = new WeightedMovingAverage(period, candlestickPriceType, candlesUpdater) ;
+        this.wma = new WeightedMovingAverage(period, candlePriceType, candlesUpdater) ;
     }
 
     @Test
@@ -67,8 +67,8 @@ public class WeightedMovingAverageTest extends BaseIndicatorTest {
     public void TestToString(){
         String result = this.wma.toString();
         String expected = String.format("WeightedMovingAverage{period=%d, " +
-                        "candlestickPriceType=%s, indicatorValues=%s}",
-                period, this.candlestickPriceType.toString(), wma.getValues().toString());
+                        "candlePriceType=%s, indicatorValues=%s}",
+                period, this.candlePriceType.toString(), wma.getValues().toString());
         assertEquals(expected, result);
     }
 
@@ -76,14 +76,14 @@ public class WeightedMovingAverageTest extends BaseIndicatorTest {
     public void testPeriodBiggerThanCandlesCount(){
         this.period = 200;
         new WeightedMovingAverage(this.period,
-                this.candlestickPriceType, this.candlesUpdater);
+                this.candlePriceType, this.candlesUpdater);
     }
 
     @Test(expected = BadRequestException.class)
     public void testCreatingEMAWithZeroCandles(){
         when(candlesUpdater.getCandles()).thenReturn(new ArrayList<>());
         new WeightedMovingAverage(this.period,
-                this.candlestickPriceType, this.candlesUpdater);
+                this.candlePriceType, this.candlesUpdater);
     }
 
     @Override
