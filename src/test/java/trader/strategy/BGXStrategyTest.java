@@ -4,12 +4,15 @@ import org.junit.Before;
 import org.junit.Test;
 import trader.CommonTestClassMembers;
 import trader.connector.ApiConnector;
+import trader.exception.NullArgumentException;
 import trader.order.Order;
 import trader.price.Price;
 import trader.strategy.BGXStrategy.BGXStrategy;
 import trader.trade.entitie.Trade;
 import trader.trade.service.exit_strategie.ExitStrategy;
 import trader.trade.service.OrderService;
+
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +43,11 @@ public class BGXStrategyTest {
         commonMembers = new CommonTestClassMembers();
         applySettings();
         bgxStrategy = new BGXStrategy(apiConnector);
+    }
+
+    @Test(expected = NullArgumentException.class)
+    public void ifApiConnectorIsNull_Exception(){
+        new BGXStrategy(null);
     }
 
     @Test(expected = SubmitNewOrderCalledException.class)

@@ -1,6 +1,8 @@
 package trader.trade.service;
 
 import com.oanda.v20.Context;
+import com.oanda.v20.ExecuteException;
+import com.oanda.v20.RequestException;
 import com.oanda.v20.account.Account;
 import com.oanda.v20.account.AccountID;
 import com.oanda.v20.order.*;
@@ -12,6 +14,10 @@ import com.oanda.v20.transaction.StopLossDetails;
 import com.oanda.v20.transaction.TransactionID;
 import org.junit.Before;
 import org.junit.Test;
+import trader.OandaAPIMock.OandaAPIMockAccount;
+import trader.OandaAPIMock.OandaAPIMockOrder;
+import trader.OandaAPIMock.OandaAPIMockPricing;
+import trader.OandaAPIMock.OandaAPIMockTransaction;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -28,75 +34,36 @@ public class OrderServiceTest {
     private static final String TRANSACTION_ID = "12";
     private static final String DATE_TIME = "11:11:11T01:01:01Z";
 
+
     private Context mockContext;
-    private Account mockAccount;
-    private MarketIfTouchedOrder mockOrder;
-    private StopLossDetails mockStopLossDetails;
+    private OandaAPIMockAccount oandaAPIMockAccount;
+    private OandaAPIMockOrder oandaAPIMockOrder;
+    private OandaAPIMockTransaction oandaAPIMockTransaction;
     private PriceValue mockStopLossPrice;
     private DecimalNumber mockDecimalNumber;
     private OrderCancelResponse mockOrderCancelResponse;
     private List<Order> orderList;
     private OrderService orderService;
     private OrderCancelTransaction mockOrderCancelTransaction;
-    private TransactionID mockTransactionID;
-    private DateTime mockDateTime;
 
     @Before
     public void before() throws Exception {
 
-
-        this.mockOrderCancelResponse = mock(OrderCancelResponse.class);
-        this.mockOrderCancelTransaction = mock(OrderCancelTransaction.class);
-        this.mockTransactionID = mock(TransactionID.class);
-        when(this.mockTransactionID.toString()).thenReturn(TRANSACTION_ID);
-        when(this.mockOrderCancelTransaction.getId()).thenReturn(this.mockTransactionID);
-
-        this.mockDateTime = mock(DateTime.class);
-        when(this.mockDateTime.toString()).thenReturn(DATE_TIME);
-        when(this.mockOrderCancelTransaction.getTime()).thenReturn(this.mockDateTime);
-        when(this.mockOrderCancelResponse.getOrderCancelTransaction()).thenReturn(this.mockOrderCancelTransaction);
-
-        //context
-        this.mockContext = mock(Context.class);
-        this.mockContext.order = mock(OrderContext.class);
-        when(this.mockContext.order.cancel(any(AccountID.class), any(OrderSpecifier.class))).thenReturn(this.mockOrderCancelResponse);
-
+        mockContext = mock(Context.class);
+        oandaAPIMockAccount = new OandaAPIMockAccount(mockContext);
+        oandaAPIMockOrder = new OandaAPIMockOrder(mockContext);
+        oandaAPIMockTransaction = new OandaAPIMockTransaction(mockContext);
         this.orderList = new ArrayList<>();
-
         this.mockStopLossPrice = mock(PriceValue.class);
-
-        this.mockStopLossDetails = mock(StopLossDetails.class);
-        when(this.mockStopLossDetails.getPrice()).thenReturn(this.mockStopLossPrice);
-
         this.mockDecimalNumber = mock(DecimalNumber.class);
-
-        //order
-        this.mockOrder = mock(MarketIfTouchedOrder.class);
-        when(this.mockOrder.getType()).thenReturn(OrderType.MARKET_IF_TOUCHED);
-        when(this.mockOrder.getStopLossOnFill()).thenReturn(this.mockStopLossDetails);
-        when(this.mockOrder.getUnits()).thenReturn(this.mockDecimalNumber);
-        when(this.mockOrder.getId()).thenReturn(mock(OrderID.class));
-
-        //account
-        this.mockAccount = mock(Account.class);
-        when(this.mockAccount.getOrders()).thenReturn(this.orderList);
-        when(this.mockAccount.getId()).thenReturn(mock(AccountID.class));
-
+        settings();
         this.orderService = new OrderService(this.mockContext);
 
     }
-
-    @Test(expected = NullPointerException.class)
-    public void WhenContextIsNullThenException(){
-        new OrderService(null);
-    }
-
-
-
     @Test
     public void WhenNoWaitingOrderThanNoAction() throws NoSuchFieldException, IllegalAccessException {
 
-        assertEquals("Order List must be empty", 0, this.orderList.size());
+        assertEquals("Order List must be empty", 0, orderList.size());
         assertNull(getOrderCancelResponse());
 
     }
@@ -107,26 +74,25 @@ public class OrderServiceTest {
         StopLossOrder slo = mock(StopLossOrder.class);
         when(slo.getType()).thenReturn(OrderType.STOP_LOSS);
 
-        this.orderList.add(slo);
+        orderList.add(slo);
 
-        assertEquals("Order List must have 1 entry", 1, this.orderList.size());
+        assertEquals("Order List must have 1 entry", 1, orderList.size());
         assertNull(getOrderCancelResponse());
     }
 
     @Test
     public void WhenUnitsNegativeAndDeltaBiggerThanOffsetThenCancelOrder() throws NoSuchFieldException, IllegalAccessException {
 
-        when(this.mockDecimalNumber.bigDecimalValue()).thenReturn(BigDecimal.valueOf(-50));
-        when(this.mockStopLossPrice.bigDecimalValue()).thenReturn(BigDecimal.valueOf(1.14201));
-
-        this.orderList.add(this.mockOrder);
+        when(mockDecimalNumber.bigDecimalValue()).thenReturn(BigDecimal.valueOf(-50));
+        when(mockStopLossPrice.bigDecimalValue()).thenReturn(BigDecimal.valueOf(1.14201));
+        orderList.add(oandaAPIMockOrder.getMockMarketIfTouchedOrder());
 
         BigDecimal ask = BigDecimal.valueOf(1.14252);
         BigDecimal bid = BigDecimal.valueOf(1.14150);
 
-        this.orderService.closeUnfilledOrder(this.mockAccount, ask, bid);
+        orderService.closeUnfilledOrder(oandaAPIMockAccount.getMockAccount(), ask, bid);
 
-        assertSame(this.mockOrderCancelResponse, this.getOrderCancelResponse());
+        assertSame(mockOrderCancelResponse, this.getOrderCancelResponse());
 
     }
 
@@ -136,12 +102,12 @@ public class OrderServiceTest {
         when(this.mockDecimalNumber.bigDecimalValue()).thenReturn(BigDecimal.valueOf(-50));
         when(this.mockStopLossPrice.bigDecimalValue()).thenReturn(BigDecimal.valueOf(1.14201));
 
-        this.orderList.add(this.mockOrder);
+        this.orderList.add(oandaAPIMockOrder.getMockMarketIfTouchedOrder());
 
         BigDecimal ask = BigDecimal.valueOf(1.14119);
         BigDecimal bid = BigDecimal.valueOf(1.14200);
 
-        this.orderService.closeUnfilledOrder(this.mockAccount, ask, bid);
+        this.orderService.closeUnfilledOrder(oandaAPIMockAccount.getMockAccount(), ask, bid);
 
         assertNull(getOrderCancelResponse());
 
@@ -153,14 +119,14 @@ public class OrderServiceTest {
         when(this.mockDecimalNumber.bigDecimalValue()).thenReturn(BigDecimal.valueOf(50));
         when(this.mockStopLossPrice.bigDecimalValue()).thenReturn(BigDecimal.valueOf(1.14201));
 
-        this.orderList.add(this.mockOrder);
+        this.orderList.add(oandaAPIMockOrder.getMockMarketIfTouchedOrder());
 
         BigDecimal ask = BigDecimal.valueOf(1.14252);
         BigDecimal bid = BigDecimal.valueOf(1.14150);
 
-        this.orderService.closeUnfilledOrder(this.mockAccount, ask, bid);
+        this.orderService.closeUnfilledOrder(oandaAPIMockAccount.getMockAccount(), ask, bid);
 
-        assertSame(this.mockOrderCancelResponse, this.getOrderCancelResponse());
+        assertSame(mockOrderCancelResponse, this.getOrderCancelResponse());
 
     }
 
@@ -170,15 +136,38 @@ public class OrderServiceTest {
         when(this.mockDecimalNumber.bigDecimalValue()).thenReturn(BigDecimal.valueOf(50));
         when(this.mockStopLossPrice.bigDecimalValue()).thenReturn(BigDecimal.valueOf(1.14201));
 
-        this.orderList.add(this.mockOrder);
+        this.orderList.add(oandaAPIMockOrder.getMockMarketIfTouchedOrder());
 
         BigDecimal ask = BigDecimal.valueOf(1.14203);
         BigDecimal bid = BigDecimal.valueOf(1.14202);
 
-        this.orderService.closeUnfilledOrder(this.mockAccount, ask, bid);
+        this.orderService.closeUnfilledOrder(oandaAPIMockAccount.getMockAccount(), ask, bid);
 
         assertNull(getOrderCancelResponse());
 
+    }
+
+    private void settings() throws RequestException, ExecuteException {
+        this.mockOrderCancelResponse = mock(OrderCancelResponse.class);
+        this.mockOrderCancelTransaction = mock(OrderCancelTransaction.class);
+        when(oandaAPIMockTransaction.getMockTransactionID().toString()).thenReturn(TRANSACTION_ID);
+        when(this.mockOrderCancelTransaction.getId())
+                .thenReturn(oandaAPIMockTransaction.getMockTransactionID());
+        when(oandaAPIMockOrder.getMockDateTime().toString()).thenReturn(DATE_TIME);
+        when(oandaAPIMockTransaction.getMockOrderCancelTransaction().getTime()).thenReturn(this.oandaAPIMockTransaction.getMockDateTime());
+        when(this.mockOrderCancelResponse.getOrderCancelTransaction()).thenReturn(this.mockOrderCancelTransaction);
+        when(this.mockContext.order.cancel(any(AccountID.class), any(OrderSpecifier.class))).thenReturn(this.mockOrderCancelResponse);
+        when(oandaAPIMockTransaction.getMockStopLossDetails().getPrice()).thenReturn(this.mockStopLossPrice);
+        when(oandaAPIMockOrder.getMockMarketIfTouchedOrder().getType()).thenReturn(OrderType.MARKET_IF_TOUCHED);
+        when(oandaAPIMockOrder.getMockMarketIfTouchedOrder().getStopLossOnFill()).thenReturn(oandaAPIMockTransaction.getMockStopLossDetails());
+        when(oandaAPIMockOrder.getMockMarketIfTouchedOrder().getUnits()).thenReturn(this.mockDecimalNumber);
+        when(oandaAPIMockOrder.getMockMarketIfTouchedOrder().getId()).thenReturn(mock(OrderID.class));
+
+
+        when(oandaAPIMockAccount.getMockAccount().getOrders())
+                .thenReturn(this.orderList);
+        when(oandaAPIMockAccount.getMockAccount().getId())
+                .thenReturn(mock(AccountID.class));
     }
 
     private OrderCancelResponse getOrderCancelResponse() throws NoSuchFieldException, IllegalAccessException {
@@ -186,4 +175,14 @@ public class OrderServiceTest {
         cancelOrderResponse.setAccessible(true);
         return (OrderCancelResponse) cancelOrderResponse.get(this.orderService);
     }
+
+//    private void setMockOrder() {
+////        when(oandaAPIMockOrder.getMockMarketIfTouchedOrder().getType())
+////                .thenReturn(OrderType.MARKET_IF_TOUCHED);
+//        when(oandaAPIMockOrder.getMockMarketIfTouchedOrder().getStopLossOnFill()).thenReturn(oandaAPIMockTransaction.getMockStopLossDetails());
+//        when(oandaAPIMockOrder.getMockMarketIfTouchedOrder().getUnits())
+//                .thenReturn(this.mockDecimalNumber);
+////        when(oandaAPIMockOrder.getMockMarketIfTouchedOrder().getId())
+////                .thenReturn(oandaAPIMockOrder.getMockOrderID());
+//    }
 }

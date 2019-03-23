@@ -13,11 +13,18 @@ import static org.mockito.Mockito.when;
 
 public class OandaAPIMockPricing extends OandaAPIMock {
 
+    private PricingContext mockPricingContext;
     private PricingGetRequest mockPricingGetRequest;
     private PricingGetResponse mockPricingGetResponse;
 
+    public OandaAPIMockPricing(Context context){
+        this();
+        mockContext = context;
+        mockContext.pricing = mockPricingContext;
+    }
+
     public OandaAPIMockPricing() {
-        mockContext.pricing = mock(PricingContext.class);
+        mockPricingContext =  mock(PricingContext.class);
         mockPricingGetRequest = mock(PricingGetRequest.class);
         mockPricingGetResponse = mock(PricingGetResponse.class);
         init();

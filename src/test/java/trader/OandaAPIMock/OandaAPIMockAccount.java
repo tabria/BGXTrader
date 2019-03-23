@@ -28,12 +28,12 @@ public class OandaAPIMockAccount extends OandaAPIMock {
     public OandaAPIMockAccount(Context context){
         this();
         setMockContext(context);
+        mockContext.account = mockAccountContext;
     }
 
     public OandaAPIMockAccount(){
         mockAccountContext = mock(AccountContext.class);
         mockContext.account = mockAccountContext;
-        getContext().account = mockAccountContext;
         mockAccountGetResponse = mock(AccountGetResponse.class);
         mockAccount = mock(Account.class);
         mockAccountUnits = mock(AccountUnits.class);
@@ -50,6 +50,10 @@ public class OandaAPIMockAccount extends OandaAPIMock {
 
     public AccountID getMockAccountID(){
         return mockAccountID;
+    }
+
+    public Account getMockAccount(){
+        return mockAccount;
     }
 
     public AccountProperties getMockAccountProperties() {
@@ -103,6 +107,8 @@ public class OandaAPIMockAccount extends OandaAPIMock {
                 .thenReturn(mockAccountID);
         when(mockContext.account.get(any(AccountID.class)))
                 .thenReturn(mockAccountGetResponse);
+        when(this.mockAccount.getId())
+                .thenReturn(mockAccountID);
     }
 
 }

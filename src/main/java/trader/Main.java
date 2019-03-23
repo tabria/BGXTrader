@@ -52,7 +52,7 @@ public class Main {
 
 
         ApiConnector apiConnector = ApiConnector.create("Oanda");
-        Strategy strategy = new BGXStrategy(apiConnector);
+        Strategy strategy = new BGXStrategy(null);
         ThreadedStrategy threadedStrategy = new ThreadedStrategy(strategy);
 
 

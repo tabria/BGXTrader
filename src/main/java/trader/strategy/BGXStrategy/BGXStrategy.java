@@ -1,6 +1,7 @@
 package trader.strategy.BGXStrategy;
 
 import trader.connector.ApiConnector;
+import trader.exception.NullArgumentException;
 import trader.strategy.Strategy;
 import trader.trade.service.OrderService;
 import trader.trade.service.exit_strategie.BaseExitStrategy;
@@ -13,7 +14,7 @@ public final class BGXStrategy implements Strategy {
     private ApiConnector apiConnector;
 
     public BGXStrategy(ApiConnector connector) {
-        apiConnector = connector;
+        setApiConnector(connector);
         orderService = new OrderService(apiConnector);
         exitStrategy = BaseExitStrategy.createInstance();
     }
@@ -30,6 +31,13 @@ public final class BGXStrategy implements Strategy {
     @Override
     public String toString() {
         return "BGXStrategy";
+    }
+
+    public void setApiConnector(ApiConnector apiConnector) {
+        if(apiConnector == null){
+            throw new NullArgumentException();
+        }
+        this.apiConnector = apiConnector;
     }
 
     private boolean haveOpenOrders() {
