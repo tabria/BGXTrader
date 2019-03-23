@@ -127,7 +127,7 @@ public class CandlesUpdaterTest {
 
     private void setMockApiConnector() {
         when(mockConnector.getInitialCandles()).thenReturn(candlesticks);
-        when(mockConnector.getUpdatedCandle()).thenReturn(mockCandle);
+        when(mockConnector.updateCandle()).thenReturn(mockCandle);
     }
 
     private void fillCandlestickList(){

@@ -16,6 +16,7 @@ import trader.indicator.rsi.RSIBuilder;
 import trader.price.PriceObservable;
 import trader.price.PricePull;
 import trader.strategy.BGXStrategy.BGXStrategy;
+import trader.strategy.BGXStrategy.configuration.MovingAveragesSettings;
 import trader.strategy.Strategy;
 import trader.strategy.BGXStrategy.BGXTradeGenerator;
 import trader.strategy.ThreadedStrategy;
@@ -23,6 +24,9 @@ import trader.order.NewTradeService;
 import trader.order.OrderService;
 import trader.exit.ExitStrategy;
 import trader.exit.exit_strategie.FullCloseStrategy;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -50,7 +54,20 @@ public class Main {
     
     public static void main(String[] args)  {
 
+
+
+
         ApiConnector apiConnector = ApiConnector.create("Oanda");
+        List<Indicator> indi = new ArrayList<>();
+        for (MovingAveragesSettings ma : MovingAveragesSettings.values()) {
+            indi.add(ma.build(apiConnector));
+        }
+
+        for (Indicator indicator : indi) {
+            indicator.getValues();
+            String a ="";
+        }
+
         Strategy strategy = new BGXStrategy(apiConnector);
         ThreadedStrategy threadedStrategy = new ThreadedStrategy(strategy);
 

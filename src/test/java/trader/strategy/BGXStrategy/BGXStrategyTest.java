@@ -1,4 +1,4 @@
-package trader.strategy;
+package trader.strategy.BGXStrategy;
 
 import org.junit.Before;
 import org.junit.Test;

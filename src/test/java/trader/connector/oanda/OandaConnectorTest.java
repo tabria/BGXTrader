@@ -101,7 +101,7 @@ public class OandaConnectorTest {
     @Test
     public void testGetUpdateCandle_CorrectResult(){
         setCandlesResponseField();
-        assertEquals(mockCandle, oandaConnector.getUpdatedCandle());
+        assertEquals(mockCandle, oandaConnector.updateCandle());
     }
 
 
