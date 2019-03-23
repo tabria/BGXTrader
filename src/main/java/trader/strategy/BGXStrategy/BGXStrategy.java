@@ -1,21 +1,22 @@
 package trader.strategy.BGXStrategy;
 
-import trader.connector.BaseConnector;
+import trader.connector.ApiConnector;
 import trader.exception.NullArgumentException;
+import trader.order.OrderStrategy;
 import trader.strategy.Strategy;
-import trader.trade.service.OrderService;
-import trader.trade.service.exit_strategie.BaseExitStrategy;
-import trader.trade.service.exit_strategie.ExitStrategy;
+import trader.order.OrderService;
+import trader.exit.exit_strategie.BaseExitStrategy;
+import trader.exit.ExitStrategy;
 
 public final class BGXStrategy implements Strategy {
 
     private ExitStrategy exitStrategy;
-    private OrderService orderService;
-    private BaseConnector baseConnector;
+    private OrderStrategy orderStrategy;
+    private ApiConnector apiConnector;
 
-    public BGXStrategy(BaseConnector connector) {
-        setBaseConnector(connector);
-        orderService = new OrderService(baseConnector);
+    public BGXStrategy(ApiConnector connector) {
+        setApiConnector(connector);
+        orderStrategy = new OrderService(apiConnector);
         exitStrategy = BaseExitStrategy.createInstance();
     }
 
@@ -23,9 +24,9 @@ public final class BGXStrategy implements Strategy {
     public void execute() {
         if(haveOpenTrades())
             exitStrategy.execute();
-        if (haveOpenOrders())
-            orderService.closeUnfilledOrder();
-        orderService.submitNewOrder();
+    //    if (haveOpenOrders())
+        //    orderStrategy.closeUnfilledOrder();
+      //  orderStrategy.submitNewOrder();
     }
 
     @Override
@@ -33,19 +34,19 @@ public final class BGXStrategy implements Strategy {
         return "BGXStrategy";
     }
 
-    public void setBaseConnector(BaseConnector baseConnector) {
-        if(baseConnector == null){
+    public void setApiConnector(ApiConnector connector) {
+        if(connector == null){
             throw new NullArgumentException();
         }
-        this.baseConnector = baseConnector;
+        this.apiConnector = connector;
     }
 
     private boolean haveOpenOrders() {
-        return baseConnector.getOpenOrders().size() > 0;
+        return apiConnector.getOpenOrders().size() > 0;
     }
 
     private boolean haveOpenTrades() {
-        return baseConnector.getOpenTrades().size()>0;
+        return apiConnector.getOpenTrades().size()>0;
     }
 
 }

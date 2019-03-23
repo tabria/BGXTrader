@@ -8,5 +8,5 @@ public interface CandlesUpdaterConnector {
 
     List<Candlestick> getInitialCandles();
 
-    Candlestick getUpdateCandle();
+    Candlestick getUpdatedCandle();
 }

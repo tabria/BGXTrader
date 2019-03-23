@@ -61,7 +61,7 @@ public final class CandlesUpdater implements CandlesUpdatable {
     }
 
     private void updateCandles(){
-        Candlestick updateCandle = connector.getUpdateCandle();
+        Candlestick updateCandle = connector.getUpdatedCandle();
         Candlestick lastCandlestick = getLastCandlestick();
         if(updateCandle.isComplete() && isDateTimeTradeable(updateCandle, lastCandlestick))
             candlestickList.add(updateCandle);
@@ -69,7 +69,7 @@ public final class CandlesUpdater implements CandlesUpdatable {
 
     private boolean isDateTimeTradeable(Candlestick updateCandle, Candlestick lastCandlestick) {
         while(compareDateTimes(updateCandle, lastCandlestick)){
-            updateCandle = connector.getUpdateCandle();
+            updateCandle = connector.getUpdatedCandle();
             sleep(sleepTimeMilliseconds);
         }
         return true;

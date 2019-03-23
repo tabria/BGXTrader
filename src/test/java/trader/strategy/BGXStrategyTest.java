@@ -8,8 +8,8 @@ import trader.exception.NullArgumentException;
 import trader.order.Order;
 import trader.strategy.BGXStrategy.BGXStrategy;
 import trader.trade.entitie.Trade;
-import trader.trade.service.exit_strategie.ExitStrategy;
-import trader.trade.service.OrderService;
+import trader.exit.ExitStrategy;
+import trader.order.OrderService;
 
 import java.util.ArrayList;
 import java.util.List;

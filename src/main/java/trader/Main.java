@@ -5,7 +5,6 @@ import com.oanda.v20.Context;
 import com.oanda.v20.ContextBuilder;
 import trader.config.Config;
 import trader.connector.ApiConnector;
-import trader.connector.BaseConnector;
 import trader.core.Observable;
 import trader.core.Observer;
 import trader.indicator.Indicator;
@@ -20,10 +19,10 @@ import trader.strategy.BGXStrategy.BGXStrategy;
 import trader.strategy.Strategy;
 import trader.strategy.BGXStrategy.BGXTradeGenerator;
 import trader.strategy.ThreadedStrategy;
-import trader.trade.service.NewTradeService;
-import trader.trade.service.OrderService;
-import trader.trade.service.exit_strategie.ExitStrategy;
-import trader.trade.service.exit_strategie.FullCloseStrategy;
+import trader.order.NewTradeService;
+import trader.order.OrderService;
+import trader.exit.ExitStrategy;
+import trader.exit.exit_strategie.FullCloseStrategy;
 
 
 /**
@@ -52,8 +51,7 @@ public class Main {
     public static void main(String[] args)  {
 
         ApiConnector apiConnector = ApiConnector.create("Oanda");
-        BaseConnector baseConnector = BaseConnector.create("Oanda");
-        Strategy strategy = new BGXStrategy(null);
+        Strategy strategy = new BGXStrategy(apiConnector);
         ThreadedStrategy threadedStrategy = new ThreadedStrategy(strategy);
 
 
@@ -70,42 +68,42 @@ public class Main {
 
 
         //simple ma with period of 1 representing the price
-        Indicator smaPrice = new MovingAverageBuilder(baseConnector)
+        Indicator smaPrice = new MovingAverageBuilder(apiConnector)
                 .setPeriod(1)
                 .setCandlePriceType(CandlePriceType.CLOSE)
 //                .setCandleTimeFrame(Config.TIME_FRAME)
                 .setMAType(MAType.SIMPLE)
                 .build();
 
-        Indicator dailyPrice = new MovingAverageBuilder(baseConnector)
+        Indicator dailyPrice = new MovingAverageBuilder(apiConnector)
                 .setPeriod(1)
                 .setCandlePriceType(CandlePriceType.OPEN)
  //               .setCandleTimeFrame(CandleGranularity.D)
                 .setMAType(MAType.SIMPLE)
                 .build();
 
-        Indicator wmaFast = new MovingAverageBuilder(baseConnector)
+        Indicator wmaFast = new MovingAverageBuilder(apiConnector)
                 .setPeriod(5)
                 .setCandlePriceType(CandlePriceType.CLOSE)
  //               .setCandleTimeFrame(Config.TIME_FRAME)
                 .setMAType(MAType.WEIGHTED)
                 .build();
 
-        Indicator wmaMiddle = new MovingAverageBuilder(baseConnector)
+        Indicator wmaMiddle = new MovingAverageBuilder(apiConnector)
                 .setPeriod(20)
                 .setCandlePriceType(CandlePriceType.CLOSE)
  //               .setCandleTimeFrame(Config.TIME_FRAME)
                 .setMAType(MAType.WEIGHTED)
                 .build();
 
-        Indicator wmaSlow = new MovingAverageBuilder(baseConnector)
+        Indicator wmaSlow = new MovingAverageBuilder(apiConnector)
                 .setPeriod(100)
                 .setCandlePriceType(CandlePriceType.CLOSE)
  //               .setCandleTimeFrame(Config.TIME_FRAME)
                 .setMAType(MAType.WEIGHTED)
                 .build();
 
-        Indicator rsi = new RSIBuilder(baseConnector)
+        Indicator rsi = new RSIBuilder(apiConnector)
                 .setPeriod(14)
                 .setCandlePriceType(CandlePriceType.CLOSE)
  //               .setCandleGranularity(Config.TIME_FRAME)
@@ -130,7 +128,7 @@ public class Main {
         OrderService orderService = new OrderService(context);
 
         //create position manager
-      //  Observer tradeManager = new BGXStrategy(baseConnector);
+      //  Observer tradeManager = new BGXStrategy(apiConnector);
 
         priceObserver.registerObserver(smaPriceObserver);
         priceObserver.registerObserver(dailyPriceObserver);

@@ -1,4 +1,4 @@
-package trader.trade.service.exit_strategie;
+package trader.exit.exit_strategie;
 
 import com.oanda.v20.Context;
 import com.oanda.v20.account.Account;
@@ -10,6 +10,7 @@ import com.oanda.v20.trade.TradeSummary;
 import com.oanda.v20.transaction.TransactionID;
 import trader.candlestick.updater.CandlesUpdater;
 import trader.candlestick.candle.CandleGranularity;
+import trader.exit.ExitStrategy;
 
 import java.math.BigDecimal;
 

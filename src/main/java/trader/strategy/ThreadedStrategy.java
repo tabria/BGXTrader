@@ -12,6 +12,8 @@ public class ThreadedStrategy implements Runnable {
         this.strategy = strategy;
         strategyThread = new Thread(this, "Strategy");
         strategyThread.start();
+
+
     }
 
     private void validateStrategy(Strategy strategyName) {

@@ -36,7 +36,7 @@ public class OandaConnector extends BaseConnector {
     }
 
     @Override
-    public Candlestick getUpdateCandle(){
+    public Candlestick getUpdatedCandle(){
         return oandaCandlesResponse.getUpdateCandle();
     }
 

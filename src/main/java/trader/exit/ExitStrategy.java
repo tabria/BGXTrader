@@ -1,4 +1,4 @@
-package trader.trade.service.exit_strategie;
+package trader.exit;
 
 import com.oanda.v20.account.Account;
 import com.oanda.v20.primitives.DateTime;

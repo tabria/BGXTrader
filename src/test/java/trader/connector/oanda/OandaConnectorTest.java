@@ -26,6 +26,7 @@ public class OandaConnectorTest {
     private OandaAPIMockAccount oandaAPIMockAccount;
     private OandaConfig mockOandaConfig;
     private OandaPriceResponse mockResponse;
+    private OandaCandlesResponse mockCandlesResponse;
     private Pricing mockPrice;
     private Candlestick mockCandle;
     private List<Candlestick> candlesticks;
@@ -38,6 +39,7 @@ public class OandaConnectorTest {
         oandaAPIMockAccount = new OandaAPIMockAccount();
         mockOandaConfig = mock(OandaConfig.class);
         mockResponse = mock(OandaPriceResponse.class);
+        mockCandlesResponse = mock(OandaCandlesResponse.class);
         mockPrice = mock(Price.class);
         mockCandle = mock(Candlestick.class);
         candlesticks = new ArrayList<>();
@@ -96,11 +98,17 @@ public class OandaConnectorTest {
         assertSame(mockCandle, candlestick);
     }
 
+    @Test
+    public void testGetUpdateCandle_CorrectResult(){
+        setCandlesResponseField();
+        assertEquals(mockCandle, oandaConnector.getUpdatedCandle());
+    }
+
+
     private void setCandlesResponseField() {
-        OandaCandlesResponse oandaCandlesResponse = mock(OandaCandlesResponse.class);
-        when(oandaCandlesResponse.getUpdateCandle()).thenReturn(mockCandle);
-        when(oandaCandlesResponse.getInitialCandles()).thenReturn(candlesticks);
-        commonMembers.changeFieldObject(oandaConnector, "oandaCandlesResponse", oandaCandlesResponse);
+        when(mockCandlesResponse.getUpdateCandle()).thenReturn(mockCandle);
+        when(mockCandlesResponse.getInitialCandles()).thenReturn(candlesticks);
+        commonMembers.changeFieldObject(oandaConnector, "oandaCandlesResponse", mockCandlesResponse);
     }
 
     private Object invokeTestMethod(String methodName) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {

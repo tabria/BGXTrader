@@ -1,10 +1,11 @@
-package trader.trade.service;
+package trader.order;
 
 import com.oanda.v20.Context;
 import com.oanda.v20.ExecuteException;
 import com.oanda.v20.RequestException;
 import com.oanda.v20.account.Account;
 import com.oanda.v20.order.*;
+import com.oanda.v20.order.Order;
 import com.oanda.v20.primitives.DateTime;
 import com.oanda.v20.transaction.StopLossDetails;
 import com.oanda.v20.transaction.TransactionID;

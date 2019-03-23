@@ -1,4 +1,4 @@
-package trader.trade.service;
+package trader.order;
 
 import com.oanda.v20.Context;
 import com.oanda.v20.ExecuteException;
@@ -6,8 +6,10 @@ import com.oanda.v20.RequestException;
 import com.oanda.v20.account.Account;
 import com.oanda.v20.account.AccountID;
 import com.oanda.v20.order.*;
+import com.oanda.v20.order.Order;
 import com.oanda.v20.primitives.DateTime;
 import com.oanda.v20.transaction.TransactionID;
+import trader.connector.ApiConnector;
 import trader.connector.BaseConnector;
 
 import java.math.BigDecimal;
@@ -16,7 +18,7 @@ import java.math.BigDecimal;
  * Manage waiting orders
  */
 
-public final class OrderService {
+public final class OrderService implements OrderStrategy {
 
     private static final BigDecimal STOP_LOSS_OFFSET = BigDecimal.valueOf(0.0005);
 
@@ -28,10 +30,10 @@ public final class OrderService {
     }
 
 
-    private BaseConnector baseConnector;
+    private ApiConnector apiConnector;
 
-    public OrderService(BaseConnector connector) {
-        baseConnector = connector;
+    public OrderService(ApiConnector connector) {
+        apiConnector = connector;
     }
 
     public void submitNewOrder(){
