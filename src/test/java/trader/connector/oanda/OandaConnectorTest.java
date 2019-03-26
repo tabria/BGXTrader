@@ -93,7 +93,7 @@ public class OandaConnectorTest {
     @Test
     public void getCorrectCandlesQuantityWhenUpdating() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         setCandlesResponseField();
-        Candlestick candlestick = (Candlestick) invokeTestMethod("getUpdatedCandle");
+        Candlestick candlestick = (Candlestick) invokeTestMethod("updateCandle");
 
         assertSame(mockCandle, candlestick);
     }

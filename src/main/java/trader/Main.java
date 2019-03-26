@@ -5,6 +5,7 @@ import com.oanda.v20.Context;
 import com.oanda.v20.ContextBuilder;
 import trader.config.Config;
 import trader.connector.ApiConnector;
+import trader.connector.CandlesUpdaterConnector;
 import trader.core.Observable;
 import trader.core.Observer;
 import trader.indicator.Indicator;
@@ -16,7 +17,6 @@ import trader.indicator.rsi.RSIBuilder;
 import trader.price.PriceObservable;
 import trader.price.PricePull;
 import trader.strategy.BGXStrategy.BGXStrategy;
-import trader.strategy.BGXStrategy.configuration.MovingAveragesSettings;
 import trader.strategy.Strategy;
 import trader.strategy.BGXStrategy.BGXTradeGenerator;
 import trader.strategy.ThreadedStrategy;
@@ -25,8 +25,11 @@ import trader.order.OrderService;
 import trader.exit.ExitStrategy;
 import trader.exit.exit_strategie.FullCloseStrategy;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Type;
+import java.util.*;
 
 
 /**
@@ -52,22 +55,12 @@ import java.util.List;
 
 public class Main {
     
-    public static void main(String[] args)  {
+    public static void main(String[] args) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
 
 
 
 
         ApiConnector apiConnector = ApiConnector.create("Oanda");
-        List<Indicator> indi = new ArrayList<>();
-        for (MovingAveragesSettings ma : MovingAveragesSettings.values()) {
-            indi.add(ma.build(apiConnector));
-        }
-
-        for (Indicator indicator : indi) {
-            indicator.getValues();
-            String a ="";
-        }
-
         Strategy strategy = new BGXStrategy(apiConnector);
         ThreadedStrategy threadedStrategy = new ThreadedStrategy(strategy);
 
@@ -129,7 +122,7 @@ public class Main {
 
         BGXTradeGenerator signalGenerator = new BGXTradeGenerator(wmaFast, wmaMiddle, wmaSlow, smaPrice, dailyPrice, rsi);
 
-        Observable priceObserver = PriceObservable.create(context);
+ //       Observable priceObserver = PriceObservable.create(context);
 
         //create observers
         Observer smaPriceObserver = IndicatorObserver.create(smaPrice);
@@ -147,17 +140,17 @@ public class Main {
         //create position manager
       //  Observer tradeManager = new BGXStrategy(apiConnector);
 
-        priceObserver.registerObserver(smaPriceObserver);
-        priceObserver.registerObserver(dailyPriceObserver);
-        priceObserver.registerObserver(wmaFastObserver);
-        priceObserver.registerObserver(wmaMiddleObserver);
-        priceObserver.registerObserver(wmaSlowObserver);
-        priceObserver.registerObserver(rsiObserver);
+//        priceObserver.registerObserver(smaPriceObserver);
+//        priceObserver.registerObserver(dailyPriceObserver);
+//        priceObserver.registerObserver(wmaFastObserver);
+//        priceObserver.registerObserver(wmaMiddleObserver);
+//        priceObserver.registerObserver(wmaSlowObserver);
+//        priceObserver.registerObserver(rsiObserver);
  //       priceObserver.registerObserver(tradeManager);
 
         System.out.println("Start ");
 
-        PricePull pricePull = new PricePull("PricePull", priceObserver);
+ //       PricePull pricePull = new PricePull("PricePull", priceObserver);
     }
 
 //    //Check for valid account

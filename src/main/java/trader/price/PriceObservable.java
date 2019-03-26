@@ -1,58 +1,28 @@
 package trader.price;
 
-import com.oanda.v20.Context;
-import com.oanda.v20.primitives.DateTime;
-import trader.connector.BaseConnector;
 import trader.connector.PriceConnector;
 import trader.core.Observable;
 import trader.core.Observer;
 import trader.exception.NullArgumentException;
 
-import java.math.BigDecimal;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 
-public final class PriceObservable implements Observable, PriceConnector {
+public final class PriceObservable implements Observable {
 
     private long threadSleepInterval = 1000L;
-    private BaseConnector baseConnector;
+    private PriceConnector priceConnector;
     private Pricing oldPrice;
     private CopyOnWriteArrayList<Observer> observers;
 
-    ////////////////// to be removed /////////////////////////
-    private PriceObservable(Context context){
-        baseConnector =  BaseConnector.create("Oanda");
+    private PriceObservable(PriceConnector priceConnector){
+        this.priceConnector = priceConnector;
         oldPrice = new Price.PriceBuilder().build();
         observers = new CopyOnWriteArrayList<>();
     }
 
-    public static PriceObservable create(Context context){
-        return new PriceObservable(context);
-
-    }
-
-    @Override
-    public void notifyObservers(DateTime dateTime, BigDecimal ask, BigDecimal bid) {
-        for (Observer observer : this.observers)
-            observer.updateObserver(dateTime, ask, bid);
-    }
-
-    @Override
-    public Price getPrice(){
-        return null;
-    }
-
-    ////////////////////////////////////////////////////////////
-
-    private PriceObservable(String apiConnectorName){
-        baseConnector = BaseConnector.create(apiConnectorName);
-        oldPrice = new Price.PriceBuilder().build();
-        observers = new CopyOnWriteArrayList<>();
-    }
-
-    public static PriceObservable create(String apiConnectorName){
-        return new PriceObservable(apiConnectorName);
-
+    public static PriceObservable create(PriceConnector priceConnector){
+        return new PriceObservable(priceConnector);
     }
 
     @Override
@@ -77,7 +47,7 @@ public final class PriceObservable implements Observable, PriceConnector {
     @Override
     public void execute() {
         while(true){
-            Pricing newPrice = baseConnector.getPrice();
+            Pricing newPrice = priceConnector.getPrice();
             notifyEveryone(newPrice);
             sleepThread(threadSleepInterval);
         }
@@ -97,5 +67,4 @@ public final class PriceObservable implements Observable, PriceConnector {
             e.printStackTrace();
         }
     }
-
 }

@@ -2,7 +2,7 @@ package trader.price;
 
 import org.junit.*;
 import trader.CommonTestClassMembers;
-import trader.OandaAPIMock.OandaAPIMock;
+import trader.connector.PriceConnector;
 import trader.core.Observer;
 import trader.exception.NullArgumentException;
 
@@ -18,30 +18,31 @@ public class PriceObservableTest {
     private PriceObservable priceObservable;
     private Observer observer;
     private CommonTestClassMembers commonMembers;
+    private PriceConnector mockPriceConnector;
 
 
     @Before
     public void before() {
         observer = mock(Observer.class);
-        priceObservable = PriceObservable.create("Oanda");
+        mockPriceConnector = mock(PriceConnector.class);
+        priceObservable = PriceObservable.create(mockPriceConnector);
         commonMembers = new CommonTestClassMembers();
     }
 
     @Test
     public void WhenCreateThenNewPriceObservable_DifferentObjectcs() {
-        PriceObservable priceObservable2 = PriceObservable.create("Oanda");
+        PriceObservable priceObservable2 = PriceObservable.create(mockPriceConnector);
 
         assertNotSame(priceObservable, priceObservable2);
     }
 
-    //change apiconnector name
     @Test
-    public void WhenCreateThenNotNullFieldMembers(){
-        Object apiConnector = commonMembers.extractFieldObject(priceObservable, "apiConnector");
+    public void WhenCreateNewObjectThenFieldsMustNotBeNull(){
+        Object priceConnector = commonMembers.extractFieldObject(priceObservable, "priceConnector");
         Object oldPrice = commonMembers.extractFieldObject(priceObservable, "oldPrice");
         Object observers = commonMembers.extractFieldObject(priceObservable, "observers");
 
-        assertNotNull(apiConnector);
+        assertNotNull(priceConnector);
         assertNotNull(oldPrice);
         assertNotNull(observers);
     }
@@ -94,10 +95,8 @@ public class PriceObservableTest {
         priceObservable.notifyObservers(mockPrice);
     }
 
-
     @Test
-    public void testNotifyEveryoneWithNotTradableNotEqualNewPrice() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-
+    public void WhenCallNotifyEveryoneWithDifferentNotTradablePrice_NoCallsToNotifyObserver() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         Pricing mockPrice = mock(Pricing.class);
         when(mockPrice.isTradable()).thenReturn(false);
         Method notifyEveryone = commonMembers.getPrivateMethodForTest(priceObservable,"notifyEveryone", Pricing.class);
@@ -108,7 +107,7 @@ public class PriceObservableTest {
     }
 
     @Test
-    public void testNotifyEveryoneWithTradableEqualNewPrice() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void WhenCallNotifyEveryoneWithTradablePriceEqualToTheOldOne_NoCallsToNotifyObservers() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 
         Pricing expected = (Pricing) commonMembers.extractFieldObject(priceObservable, "oldPrice");
         Method notifyEveryone = commonMembers.getPrivateMethodForTest(priceObservable,"notifyEveryone", Pricing.class);
@@ -119,7 +118,7 @@ public class PriceObservableTest {
     }
 
     @Test
-    public void testNotifyEveryoneWithTradableNotEqualNewPrice() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void WhenCallNotifyEveryoneWithDifferentTradablePrice_CallsNotifyObservers() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 
         Pricing expected = mock(Pricing.class);
         when(expected.isTradable()).thenReturn(true);
@@ -143,9 +142,11 @@ public class PriceObservableTest {
         assertTrue(expected <= endTime - startTime);
     }
 
-
     @Test(expected = IllegalArgumentException.class)
     public void testExecute() {
+        Pricing mockPrice = mock(Pricing.class);
+        when(mockPrice.isTradable()).thenReturn(true);
+        when(mockPriceConnector.getPrice()).thenReturn(mockPrice);
         commonMembers.changeFieldObject(priceObservable,"threadSleepInterval",-1L);
         priceObservable.execute();
     }

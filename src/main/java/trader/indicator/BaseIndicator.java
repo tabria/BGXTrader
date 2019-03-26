@@ -1,6 +1,5 @@
 package trader.indicator;
 
-
 import trader.candlestick.CandlesUpdatable;
 import trader.candlestick.candle.CandlePriceType;
 import trader.candlestick.Candlestick;
@@ -13,7 +12,7 @@ import java.util.List;
 
 import static trader.strategy.BGXStrategy.configuration.StrategyConfig.SCALE;
 
-public abstract class BaseIndicator implements Indicator {
+public abstract class BaseIndicator implements Indicator{
 
     protected long indicatorPeriod;
     protected final CandlePriceType candlePriceType;

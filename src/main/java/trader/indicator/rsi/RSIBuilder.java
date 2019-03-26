@@ -13,7 +13,7 @@ public final class RSIBuilder {
     private static final long MIN_INDICATOR_PERIOD = 1L;
     private static final long MAX_INDICATOR_PERIOD = 1000L;
     private static final CandlePriceType DEFAULT_CANDLESTICK_PRICE_TYPE = CandlePriceType.CLOSE;
-    public static final int SETTABLE_FIELDS_COUNT = 2;
+    private static final int SETTABLE_FIELDS_COUNT = 2;
 
     private CandlesUpdaterConnector updaterConnector;
     private long indicatorPeriod;

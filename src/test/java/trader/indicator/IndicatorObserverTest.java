@@ -1,16 +1,17 @@
 package trader.indicator;
 
-import com.oanda.v20.primitives.DateTime;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import trader.core.Observer;
+import trader.exception.NullArgumentException;
+import trader.price.Pricing;
 import java.lang.reflect.Field;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
-import static trader.CommonTestClassMembers.ASK;
-import static trader.CommonTestClassMembers.BID;
+
 
 public class IndicatorObserverTest {
 
@@ -37,9 +38,9 @@ public class IndicatorObserverTest {
         assertSame(mockMA, extractIndicator(indicatorObserver));
     }
 
-    @Test(expected = NullPointerException.class)
-    public void callUpdateObserverWithNullDateTime_ThrowException() {
-        mockObserver.updateObserver(null, ASK, BID);
+    @Test(expected = NullArgumentException.class)
+    public void callUpdateObserverWithNullPrice_ThrowException() {
+        mockObserver.updateObserver(null);
     }
 
     @Rule
@@ -47,13 +48,12 @@ public class IndicatorObserverTest {
 
     @Test
     public void testUpdateObserver() {
-
+        Pricing mockPricing = mock(Pricing.class);
         exception.expect(RuntimeException.class);
         exception.expectMessage("Update OK");
 
-        DateTime lastCandleTime = new DateTime("2018-07-29T18:46:19Z");
         doThrow(new RuntimeException("Update OK")).when(mockMA).updateIndicator();
-        mockObserver.updateObserver(lastCandleTime, ASK, BID);
+        mockObserver.updateObserver(mockPricing);
     }
 
     private Indicator extractIndicator(Observer indicatorObserver) throws NoSuchFieldException, IllegalAccessException {
