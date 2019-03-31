@@ -1,7 +1,7 @@
-package trader.price;
+package trader.strategy.observable;
 
 
-import trader.core.Observable;
+import trader.strategy.Observable;
 
 public final class PricePull implements Runnable {
 

@@ -1,4 +1,4 @@
-package trader.connector;
+package trader.indicator;
 
 import trader.candlestick.Candlestick;
 

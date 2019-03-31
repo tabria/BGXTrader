@@ -1,7 +1,7 @@
 package trader.indicator.rsi;
 
 
-import trader.candlestick.CandlesUpdatable;
+import trader.indicator.CandlesUpdatable;
 import trader.candlestick.candle.CandlePriceType;
 import trader.candlestick.Candlestick;
 import trader.indicator.BaseIndicator;
@@ -9,7 +9,7 @@ import trader.indicator.BaseIndicator;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
-import static trader.strategy.BGXStrategy.configuration.StrategyConfig.*;
+import static trader.strategy.bgxstrategy.configuration.StrategyConfig.*;
 
 public final class RelativeStrengthIndex extends BaseIndicator {
 
@@ -20,12 +20,23 @@ public final class RelativeStrengthIndex extends BaseIndicator {
     private BigDecimal averageGains;
     private BigDecimal averageLosses;
 
+    ////////////////////////remove///////////////////////////////////
+
     RelativeStrengthIndex(long indicatorPeriod, CandlePriceType candlePriceType, CandlesUpdatable candlesUpdater){
         super(indicatorPeriod, candlePriceType, candlesUpdater);
         averageGains = BigDecimal.ZERO;
         averageLosses = BigDecimal.ZERO;
         initiateRSIValues();
     }
+    ////////////////////////remove/////////////////////////
+
+    RelativeStrengthIndex(long indicatorPeriod, CandlePriceType candlePriceType, List<Candlestick> candlesList){
+        super(indicatorPeriod, candlePriceType, candlesList);
+        averageGains = BigDecimal.ZERO;
+        averageLosses = BigDecimal.ZERO;
+      //  initiateRSIValues();
+    }
+
 
     @Override
     public List<BigDecimal> getValues() {

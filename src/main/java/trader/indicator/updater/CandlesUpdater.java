@@ -1,11 +1,11 @@
-package trader.candlestick.updater;
+package trader.indicator.updater;
 
 import com.oanda.v20.Context;
 import com.oanda.v20.instrument.InstrumentCandlesRequest;
 import com.oanda.v20.primitives.DateTime;
 import trader.candlestick.candle.CandleGranularity;
-import trader.candlestick.CandlesUpdatable;
-import trader.connector.CandlesUpdaterConnector;
+import trader.indicator.CandlesUpdatable;
+import trader.indicator.CandlesUpdaterConnector;
 import trader.candlestick.Candlestick;
 
 import java.util.Collections;

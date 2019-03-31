@@ -1,4 +1,4 @@
-package trader.strategy.BGXStrategy;
+package trader.strategy.bgxstrategy;
 
 
 import trader.connector.BaseConnector;
@@ -12,9 +12,10 @@ import trader.trade.enums.Direction;
 import trader.trade.service.IntersectionService;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 
-import static trader.strategy.BGXStrategy.configuration.StrategyConfig.*;
+import static trader.strategy.bgxstrategy.configuration.StrategyConfig.*;
 
 
 /**
@@ -62,7 +63,8 @@ public final class BGXTradeGenerator {
         priceSma = new MovingAverageBuilder(baseConnector).build( PRICE_SMA_SETTINGS);
         dailySMA = new MovingAverageBuilder(baseConnector).build(DAILY_SMA_SETTINGS);
         slowWMA = new MovingAverageBuilder(baseConnector).build(SLOW_WMA_SETTINGS);
-        rsi = new RSIBuilder(baseConnector).build(RSI_SETTINGS);
+ //       rsi = new RSIBuilder(baseConnector).build(RSI_SETTINGS);
+        rsi = new RSIBuilder().build(new HashMap<>());
         direction = Direction.FLAT;
 
     }

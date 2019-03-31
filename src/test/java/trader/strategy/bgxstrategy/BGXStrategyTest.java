@@ -1,4 +1,4 @@
-package trader.strategy.BGXStrategy;
+package trader.strategy.bgxstrategy;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -6,18 +6,10 @@ import trader.CommonTestClassMembers;
 import trader.candlestick.Candlestick;
 import trader.connector.ApiConnector;
 import trader.exception.NullArgumentException;
-import trader.indicator.Indicator;
-import trader.indicator.IndicatorObserver;
-import trader.indicator.ma.SimpleMovingAverage;
-import trader.indicator.ma.WeightedMovingAverage;
-import trader.indicator.rsi.RelativeStrengthIndex;
 import trader.order.Order;
 import trader.trade.entitie.Trade;
 import trader.exit.ExitStrategy;
 import trader.order.OrderService;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -91,7 +83,7 @@ public class BGXStrategyTest {
 
     @Test
     public void testToString(){
-       assertEquals("BGXStrategy", bgxStrategy.toString());
+       assertEquals("bgxstrategy", bgxStrategy.toString());
     }
 
 

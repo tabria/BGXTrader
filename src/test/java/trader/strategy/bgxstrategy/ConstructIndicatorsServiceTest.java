@@ -1,17 +1,15 @@
-package trader.strategy.BGXStrategy;
+package trader.strategy.bgxstrategy;
 
 import org.junit.Before;
 import org.junit.Test;
 import trader.CommonTestClassMembers;
 import trader.candlestick.Candlestick;
 import trader.connector.ApiConnector;
-import trader.indicator.IndicatorObserver;
+import trader.indicator.observer.IndicatorObserver;
 import trader.indicator.ma.SimpleMovingAverage;
 import trader.indicator.ma.WeightedMovingAverage;
 import trader.indicator.rsi.RelativeStrengthIndex;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;

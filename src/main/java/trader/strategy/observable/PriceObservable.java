@@ -1,9 +1,11 @@
-package trader.price;
+package trader.strategy.observable;
 
-import trader.connector.PriceConnector;
-import trader.core.Observable;
-import trader.core.Observer;
+import trader.indicator.observer.Observer;
 import trader.exception.NullArgumentException;
+import trader.price.Price;
+import trader.price.Pricing;
+import trader.strategy.Observable;
+import trader.strategy.PriceConnector;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 

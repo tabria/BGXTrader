@@ -3,7 +3,9 @@ package trader.price;
 import org.junit.Before;
 import org.junit.Test;
 import trader.CommonTestClassMembers;
-import trader.core.Observable;
+import trader.strategy.Observable;
+import trader.strategy.observable.PriceObservable;
+import trader.strategy.observable.PricePull;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;

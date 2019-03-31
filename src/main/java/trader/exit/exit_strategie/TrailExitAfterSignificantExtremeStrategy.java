@@ -6,7 +6,7 @@ import com.oanda.v20.account.Account;
 import com.oanda.v20.primitives.DateTime;
 import com.oanda.v20.trade.*;
 import com.oanda.v20.transaction.TransactionID;
-import trader.candlestick.updater.CandlesUpdater;
+import trader.indicator.updater.CandlesUpdater;
 import trader.config.Config;
 import trader.candlestick.candle.CandleGranularity;
 import trader.exit.ExitStrategy;

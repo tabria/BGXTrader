@@ -2,6 +2,8 @@ package trader.connector.oanda;
 
 import com.oanda.v20.Context;
 import com.oanda.v20.ContextBuilder;
+import com.oanda.v20.ExecuteException;
+import com.oanda.v20.RequestException;
 import com.oanda.v20.account.*;
 import trader.candlestick.Candlestick;
 import trader.connector.BaseConnector;
@@ -11,17 +13,26 @@ import trader.trade.entitie.Trade;
 
 import java.util.List;
 
+import static trader.connector.oanda.OandaConfig.*;
+
 public class OandaConnector extends BaseConnector {
 
-    private OandaConfig oandaConfig;
+    List<AccountProperties> accountProperties;
+
     private OandaAccountValidator oandaAccountValidator ;
+
     private OandaPriceResponse oandaPriceResponse;
     private OandaCandlesResponse oandaCandlesResponse;
     private Context context;
 
     public OandaConnector(){
-        oandaConfig = new OandaConfig();
+
         initialize();
+        try {
+            accountProperties = context.account.list().getAccounts();
+        } catch (RequestException | ExecuteException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -54,29 +65,29 @@ public class OandaConnector extends BaseConnector {
         return context;
     }
 
-    AccountID getAccountID(){
-        return oandaConfig.getAccountID();
-    }
-
-    String getToken(){
-        return oandaConfig.getToken();
-    }
-
-    String getUrl(){
-        return oandaConfig.getUrl();
-    }
+//    AccountID getAccountID(){
+//        return oandaConfig.getAccountID();
+//    }
+//
+//    String getToken(){
+//        return oandaConfig.getToken();
+//    }
+//
+//    String getUrl(){
+//        return oandaConfig.getUrl();
+//    }
 
 
 
     private void setContext(){
-        context = new ContextBuilder(oandaConfig.getUrl())
-                .setToken(oandaConfig.getToken())
+        context = new ContextBuilder(URL)
+                .setToken(TOKEN)
                 .setApplication("Context")
                 .build();
     }
 
     private void setOandaValidator() {
-        oandaAccountValidator = new OandaAccountValidator(this);
+        oandaAccountValidator = new OandaAccountValidator();
     }
 
     private void setOandaPriceResponse() {
@@ -88,8 +99,8 @@ public class OandaConnector extends BaseConnector {
     }
 
     private void validateAccount(){
-        oandaAccountValidator.validateAccount();
-        oandaAccountValidator.validateAccountBalance();
+        oandaAccountValidator.validateAccount(this);
+        oandaAccountValidator.validateAccountBalance(this);
     }
 
     private void initialize() {

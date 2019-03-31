@@ -9,7 +9,7 @@ import com.oanda.v20.primitives.DateTime;
 import com.oanda.v20.trade.*;
 import org.junit.Before;
 import org.junit.Test;
-import trader.candlestick.updater.CandlesUpdater;
+import trader.indicator.updater.CandlesUpdater;
 import trader.candlestick.candle.CandleGranularity;
 
 

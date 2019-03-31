@@ -9,53 +9,50 @@ import trader.exception.UnableToExecuteRequest;
 
 import java.util.List;
 
+import static trader.connector.oanda.OandaConfig.ACCOUNT_ID;
+
 public class OandaAccountValidator {
 
     private static final double MIN_BALANCE = 1.0D;
 
-    private OandaConnector oandaConnector;
+    public OandaAccountValidator() {}
 
-    public OandaAccountValidator(OandaConnector connector) {
-        oandaConnector = connector;
-    }
-
-    public void validateAccount() {
-        for (AccountProperties account : extractAccounts()) {
-            if (account.getId().equals(oandaConnector.getAccountID()))
+    public void validateAccount(OandaConnector connector) {
+        for (AccountProperties account : extractAccounts(connector)) {
+            if (account.getId().equals(ACCOUNT_ID))
                 return;
         }
         throw new AccountDoNotExistException();
     }
 
-    public void validateAccountBalance() {
-        if (isBalanceBelowMinimum())
+    public void validateAccountBalance(OandaConnector connector) {
+        if (isBalanceBelowMinimum(connector))
             throw new AccountBalanceBelowMinimum();
     }
 
-    private List<AccountProperties> extractAccounts() {
+    private List<AccountProperties> extractAccounts(OandaConnector connector) {
         try {
-            AccountListResponse response = getAccountContext().list();
+            AccountListResponse response = getAccountContext(connector).list();
             return response.getAccounts();
         } catch (NullPointerException | RequestException | ExecuteException e) {
             throw new UnableToExecuteRequest();
         }
     }
 
-    private Account getAccount() {
+    private Account getAccount(OandaConnector connector) {
         try {
-            return  getAccountContext().get(oandaConnector.getAccountID()).getAccount();
+            return  getAccountContext(connector).get(ACCOUNT_ID).getAccount();
         } catch (NullPointerException | RequestException | ExecuteException e) {
             throw new UnableToExecuteRequest();
         }
     }
 
-
-    private AccountContext getAccountContext() {
-        return oandaConnector.getContext().account;
+    private AccountContext getAccountContext(OandaConnector connector) {
+        return connector.getContext().account;
     }
 
-    private boolean isBalanceBelowMinimum() {
-        return getAccount().getBalance().doubleValue() <= MIN_BALANCE;
+    private boolean isBalanceBelowMinimum(OandaConnector connector) {
+        return getAccount(connector).getBalance().doubleValue() <= MIN_BALANCE;
     }
 
 //    private void serverDown(RequestException re) {

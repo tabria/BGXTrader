@@ -1,4 +1,4 @@
-package trader.core;
+package trader.indicator.observer;
 
 import com.oanda.v20.primitives.DateTime;
 import trader.price.Pricing;

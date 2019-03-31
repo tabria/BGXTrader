@@ -2,10 +2,9 @@ package trader.indicator;
 
 import org.junit.Before;
 import org.junit.Test;
-import trader.candlestick.CandlesUpdatable;
 import trader.candlestick.candle.CandlePriceType;
-import trader.candlestick.updater.CandlesUpdater;
 import trader.candlestick.Candlestick;
+import trader.indicator.updater.*;
 
 import java.math.BigDecimal;
 import java.time.ZoneId;

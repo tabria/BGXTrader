@@ -1,4 +1,6 @@
-package trader.candlestick;
+package trader.indicator;
+
+import trader.candlestick.Candlestick;
 
 import java.util.List;
 

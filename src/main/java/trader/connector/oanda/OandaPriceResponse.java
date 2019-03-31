@@ -17,6 +17,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import static trader.config.Config.INSTRUMEN_T;
+import static trader.connector.oanda.OandaConfig.ACCOUNT_ID;
 
 
 public class OandaPriceResponse {
@@ -72,7 +73,7 @@ public class OandaPriceResponse {
     private void createPricingRequest(){
         List<String> instruments = new ArrayList<>();
         instruments.add(INSTRUMEN_T);
-        pricingGetRequest = new PricingGetRequest(oandaConnector.getAccountID(), instruments);
+        pricingGetRequest = new PricingGetRequest(ACCOUNT_ID, instruments);
     }
 
     private ZonedDateTime convertDateTimeToZonedDateTime(DateTime dateTime){

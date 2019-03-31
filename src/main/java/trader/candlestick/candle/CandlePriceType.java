@@ -4,7 +4,7 @@ package trader.candlestick.candle;
 import trader.candlestick.Candlestick;
 import java.math.BigDecimal;
 
-import static trader.strategy.BGXStrategy.configuration.StrategyConfig.SCALE;
+import static trader.strategy.bgxstrategy.configuration.StrategyConfig.SCALE;
 
 
 public enum CandlePriceType {

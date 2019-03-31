@@ -12,7 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import trader.order.NewTradeService;
 import trader.trade.entitie.Trade;
-import trader.strategy.BGXStrategy.BGXTradeGenerator;
+import trader.strategy.bgxstrategy.BGXTradeGenerator;
 import trader.trade.enums.Direction;
 
 import java.lang.reflect.Field;

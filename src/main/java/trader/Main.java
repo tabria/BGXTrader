@@ -5,31 +5,21 @@ import com.oanda.v20.Context;
 import com.oanda.v20.ContextBuilder;
 import trader.config.Config;
 import trader.connector.ApiConnector;
-import trader.connector.CandlesUpdaterConnector;
-import trader.core.Observable;
-import trader.core.Observer;
 import trader.indicator.Indicator;
-import trader.indicator.IndicatorObserver;
 import trader.candlestick.candle.CandlePriceType;
 import trader.indicator.ma.MovingAverageBuilder;
 import trader.indicator.ma.enums.MAType;
 import trader.indicator.rsi.RSIBuilder;
-import trader.price.PriceObservable;
-import trader.price.PricePull;
-import trader.strategy.BGXStrategy.BGXStrategy;
+import trader.strategy.bgxstrategy.BGXStrategy;
 import trader.strategy.Strategy;
-import trader.strategy.BGXStrategy.BGXTradeGenerator;
+import trader.strategy.bgxstrategy.BGXTradeGenerator;
 import trader.strategy.ThreadedStrategy;
 import trader.order.NewTradeService;
 import trader.order.OrderService;
 import trader.exit.ExitStrategy;
 import trader.exit.exit_strategie.FullCloseStrategy;
 
-import java.io.*;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Type;
-import java.util.*;
 
 
 /**
@@ -113,32 +103,32 @@ public class Main {
                 .setMAType(MAType.WEIGHTED)
                 .build();
 
-        Indicator rsi = new RSIBuilder(apiConnector)
-                .setPeriod(14)
-                .setCandlePriceType(CandlePriceType.CLOSE)
- //               .setCandleGranularity(Config.TIME_FRAME)
-                .build();
+//        Indicator rsi = new RSIBuilder(apiConnector)
+//                .setPeriod(14)
+//                .setCandlePriceType(CandlePriceType.CLOSE)
+// //               .setCandleGranularity(Config.TIME_FRAME)
+//                .build();
 
 
-        BGXTradeGenerator signalGenerator = new BGXTradeGenerator(wmaFast, wmaMiddle, wmaSlow, smaPrice, dailyPrice, rsi);
+//        BGXTradeGenerator signalGenerator = new BGXTradeGenerator(wmaFast, wmaMiddle, wmaSlow, smaPrice, dailyPrice, rsi);
 
  //       Observable priceObserver = PriceObservable.create(context);
 
-        //create observers
-        Observer smaPriceObserver = IndicatorObserver.create(smaPrice);
-        Observer dailyPriceObserver = IndicatorObserver.create(dailyPrice);
-        Observer wmaFastObserver = IndicatorObserver.create(wmaFast);
-        Observer wmaMiddleObserver = IndicatorObserver.create(wmaMiddle);
-        Observer wmaSlowObserver = IndicatorObserver.create(wmaSlow);
-        Observer rsiObserver = IndicatorObserver.create(rsi);
+//        //create observers
+//        Observer smaPriceObserver = IndicatorObserver.create(smaPrice);
+//        Observer dailyPriceObserver = IndicatorObserver.create(dailyPrice);
+//        Observer wmaFastObserver = IndicatorObserver.create(wmaFast);
+//        Observer wmaMiddleObserver = IndicatorObserver.create(wmaMiddle);
+//        Observer wmaSlowObserver = IndicatorObserver.create(wmaSlow);
+//        Observer rsiObserver = IndicatorObserver.create(rsi);
 
         //create trade service
-        NewTradeService newTradeService = new NewTradeService(context, signalGenerator);
+ //       NewTradeService newTradeService = new NewTradeService(context, signalGenerator);
         ExitStrategy exitStrategy = new FullCloseStrategy(context, Config.TIME_FRAME);
         OrderService orderService = new OrderService(context);
 
         //create position manager
-      //  Observer tradeManager = new BGXStrategy(apiConnector);
+      //  Observer tradeManager = new bgxstrategy(apiConnector);
 
 //        priceObserver.registerObserver(smaPriceObserver);
 //        priceObserver.registerObserver(dailyPriceObserver);

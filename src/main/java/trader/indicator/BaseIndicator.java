@@ -1,6 +1,5 @@
 package trader.indicator;
 
-import trader.candlestick.CandlesUpdatable;
 import trader.candlestick.candle.CandlePriceType;
 import trader.candlestick.Candlestick;
 import trader.exception.BadRequestException;
@@ -10,21 +9,36 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static trader.strategy.BGXStrategy.configuration.StrategyConfig.SCALE;
+import static trader.strategy.bgxstrategy.configuration.StrategyConfig.SCALE;
 
 public abstract class BaseIndicator implements Indicator{
+    protected final CandlesUpdatable candlesUpdater;
+
 
     protected long indicatorPeriod;
     protected final CandlePriceType candlePriceType;
-    protected final CandlesUpdatable candlesUpdater;
+    protected List<Candlestick> candlestickList;
     protected List<BigDecimal> indicatorValues;
     protected BigDecimal divisor;
 
+    //////////////////////////// to remove ///////////////////////////////////////////
     public BaseIndicator(long indicatorPeriod, CandlePriceType candlePriceType, CandlesUpdatable candlesUpdater) {
         this.indicatorPeriod = indicatorPeriod;
         this.candlePriceType = candlePriceType;
         this.candlesUpdater = candlesUpdater;
         this.indicatorValues = new ArrayList<>();
+        this.candlestickList = new ArrayList<>();
+    }
+
+    //////////////////to remove -/////////////////////////////////
+
+
+    public BaseIndicator(long indicatorPeriod, CandlePriceType candlePriceType, List<Candlestick> candlesList) {
+        this.indicatorPeriod = indicatorPeriod;
+        this.candlePriceType = candlePriceType;
+        this.candlesUpdater = null; //to be removed
+        this.indicatorValues = new ArrayList<>();
+        this.candlestickList = candlesList;
     }
 
     public List<BigDecimal> getValues() {

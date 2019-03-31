@@ -1,17 +1,18 @@
 package trader.indicator.ma;
 
-import trader.candlestick.CandlesUpdatable;
+import trader.indicator.CandlesUpdatable;
 import trader.candlestick.candle.CandlePriceType;
-import trader.candlestick.updater.CandlesUpdater;
-import trader.connector.CandlesUpdaterConnector;
+import trader.indicator.CandlesUpdaterConnector;
 import trader.exception.NoSuchConnectorException;
 import trader.exception.NullArgumentException;
 import trader.exception.OutOfBoundaryException;
 import trader.exception.WrongIndicatorSettingsException;
 import trader.indicator.Indicator;
+import trader.indicator.updater.*;
 import trader.indicator.ma.enums.MAType;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 
 
 public final class MovingAverageBuilder {
@@ -28,9 +29,14 @@ public final class MovingAverageBuilder {
     private CandlePriceType candlePriceType;
     private MAType maType;
     private CandlesUpdaterConnector updaterConnector;
-
+////////////////////////////////////////////////////////
     public MovingAverageBuilder(CandlesUpdaterConnector updaterConnector) {
         setCandlesUpdaterConnector(updaterConnector);
+        setDefaults();
+    }
+///////////////////////////////////////////////
+    public MovingAverageBuilder() {
+    //    setCandlesUpdaterConnector(updaterConnector);
         setDefaults();
     }
 
@@ -54,7 +60,7 @@ public final class MovingAverageBuilder {
         this.maType = maType;
         return this;
     }
-
+///////////////////////////////////////remove///////////////////////////////////////////////
     public Indicator build(){
         return instantiatesIndicator(createCandlesUpdater());
     }
@@ -66,6 +72,15 @@ public final class MovingAverageBuilder {
         setCandlePriceType(CandlePriceType.valueOf(settings[1]));
         setMAType(MAType.valueOf(settings[2]));
         return instantiatesIndicator(createCandlesUpdater());
+    }
+/////////////////////////////////////remove////////////////////////////////////////////
+    public Indicator build(HashMap<String, String> settings){
+//        if(settings == null || settings.length != SETTABLE_FIELDS_COUNT)
+//            throw new WrongIndicatorSettingsException();
+//        setPeriod(Long.parseLong(settings[0]));
+//        setCandlePriceType(CandlePriceType.valueOf(settings[1]));
+//        setMAType(MAType.valueOf(settings[2]));
+        return instantiatesIndicator();
     }
 
     private void setCandlesUpdaterConnector(CandlesUpdaterConnector connector){
@@ -83,7 +98,7 @@ public final class MovingAverageBuilder {
     private boolean periodIsOutOfBoundary(long period) {
         return period < MIN_INDICATOR_PERIOD || period > MAX_INDICATOR_PERIOD;
     }
-
+////////////////////remove////////////////////////////////////////////////////////
     private CandlesUpdatable createCandlesUpdater() {
         return new CandlesUpdater(updaterConnector);
     }
@@ -93,6 +108,18 @@ public final class MovingAverageBuilder {
             Class<?> indicatorClass = Class.forName(MA_LOCATION + composeIndicatorClassName());
             Constructor<?> indicatorConstructor = indicatorClass.getDeclaredConstructor(long.class, CandlePriceType.class, CandlesUpdatable.class);
             return (Indicator) indicatorConstructor.newInstance(indicatorPeriod, candlePriceType, updater);
+        }
+        catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
+    }
+/////////////////////////////////////remove///////////////////////////////////////////////
+
+    private Indicator instantiatesIndicator()  {
+        try {
+            Class<?> indicatorClass = Class.forName(MA_LOCATION + composeIndicatorClassName());
+            Constructor<?> indicatorConstructor = indicatorClass.getDeclaredConstructor(long.class, CandlePriceType.class);
+            return (Indicator) indicatorConstructor.newInstance(indicatorPeriod, candlePriceType);
         }
         catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             throw new RuntimeException(e);

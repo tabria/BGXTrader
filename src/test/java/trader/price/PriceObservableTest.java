@@ -2,9 +2,10 @@ package trader.price;
 
 import org.junit.*;
 import trader.CommonTestClassMembers;
-import trader.connector.PriceConnector;
-import trader.core.Observer;
+import trader.strategy.PriceConnector;
+import trader.indicator.observer.Observer;
 import trader.exception.NullArgumentException;
+import trader.strategy.observable.PriceObservable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

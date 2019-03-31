@@ -1,11 +1,13 @@
 package trader.indicator.rsi;
 
-import trader.candlestick.CandlesUpdatable;
-import trader.candlestick.updater.CandlesUpdater;
-import trader.connector.CandlesUpdaterConnector;
+import trader.candlestick.Candlestick;
 import trader.exception.*;
 import trader.indicator.Indicator;
 import trader.candlestick.candle.CandlePriceType;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public final class RSIBuilder {
 
@@ -14,59 +16,66 @@ public final class RSIBuilder {
     private static final long MAX_INDICATOR_PERIOD = 1000L;
     private static final CandlePriceType DEFAULT_CANDLESTICK_PRICE_TYPE = CandlePriceType.CLOSE;
     private static final int SETTABLE_FIELDS_COUNT = 2;
+    private static final String SETTINGS_PERIOD_KEY_NAME = "period";
+    private static final String SETTINGS_CANDLE_PRICE_TYPE_KEY_NAME = "candlePriceType";
 
-    private CandlesUpdaterConnector updaterConnector;
+    private List<Candlestick> candlestickList;
     private long indicatorPeriod;
     private CandlePriceType candlePriceType;
 
-    public RSIBuilder(CandlesUpdaterConnector updaterConnector){
-            setCandlesUpdaterConnector(updaterConnector);
-            setPeriod(DEFAULT_INDICATOR_PERIOD);
-            setCandlePriceType(DEFAULT_CANDLESTICK_PRICE_TYPE);
+    public RSIBuilder(){
+        this.candlestickList = new ArrayList<>();
+        setPeriod("");
+        setCandlePriceType("");
     }
 
-    public RSIBuilder setPeriod(long indicatorPeriod) {
-        if (notInBoundary(indicatorPeriod))
-            throw  new OutOfBoundaryException();
-        this.indicatorPeriod = indicatorPeriod;
+    public RSIBuilder setPeriod(String period) {
+        long rsiPeriod = parsePeriod(period);
+        checkBoundaries(rsiPeriod);
+        this.indicatorPeriod = rsiPeriod;
         return this;
     }
 
-    public RSIBuilder setCandlePriceType(CandlePriceType candlePriceType) {
-        if (isNull(candlePriceType))
-            throw  new NullArgumentException();
-        this.candlePriceType = candlePriceType;
+    public RSIBuilder setCandlePriceType(String candlePriceType) {
+        this.candlePriceType = parseCandlePriceType(candlePriceType);
         return this;
     }
-    
-    public Indicator build(){
-        return new RelativeStrengthIndex(indicatorPeriod, candlePriceType, createCandlesUpdater());
-    }
 
-    public Indicator build(String[] settings){
-        if (settings == null || settings.length != SETTABLE_FIELDS_COUNT)
+    public Indicator build(HashMap<String, String> settings){
+        if (settings == null || settings.size() != SETTABLE_FIELDS_COUNT)
             throw new WrongIndicatorSettingsException();
-        setPeriod(Long.parseLong(settings[0]));
-        setCandlePriceType(CandlePriceType.valueOf(settings[1]));
-        return new RelativeStrengthIndex(indicatorPeriod, candlePriceType, createCandlesUpdater());
+        setPeriod(settings.get(SETTINGS_PERIOD_KEY_NAME));
+        setCandlePriceType(settings.get(SETTINGS_CANDLE_PRICE_TYPE_KEY_NAME));
+        return new RelativeStrengthIndex(indicatorPeriod, candlePriceType, candlestickList);
     }
 
-    private void setCandlesUpdaterConnector(CandlesUpdaterConnector connector){
-        if (connector == null)
-            throw new NoSuchConnectorException();
-        updaterConnector = connector;
+    private long parsePeriod(String period) {
+        if(!period.isEmpty())
+            return parseStringToLong(period);
+        return DEFAULT_INDICATOR_PERIOD;
     }
 
-    private CandlesUpdatable createCandlesUpdater() {
-        return new CandlesUpdater(updaterConnector);
-    }
-    
-    private boolean notInBoundary(long candlesticksQuantity) {
-        return candlesticksQuantity < MIN_INDICATOR_PERIOD || candlesticksQuantity > MAX_INDICATOR_PERIOD;
-    }
-    
-    private boolean isNull(Object object) {
-        return object == null;
+    private long parseStringToLong(String period) {
+        try{
+            return Long.parseLong(period);
+        } catch (Exception e){
+            throw new WrongIndicatorSettingsException();
+        }
     }
 
+    private void checkBoundaries(long period) {
+        if (period < MIN_INDICATOR_PERIOD || period > MAX_INDICATOR_PERIOD)
+            throw  new OutOfBoundaryException();
+    }
+
+    private CandlePriceType parseCandlePriceType(String candlePriceType) {
+        if (!candlePriceType.isEmpty()) {
+            try {
+                return CandlePriceType.valueOf(candlePriceType.toUpperCase());
+            } catch (Exception e) {
+                throw new WrongIndicatorSettingsException();
+            }
+        }
+        return DEFAULT_CANDLESTICK_PRICE_TYPE;
+    }
 }

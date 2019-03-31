@@ -1,14 +1,14 @@
 package trader.indicator.ma;
 
 
-import trader.candlestick.CandlesUpdatable;
+import trader.indicator.CandlesUpdatable;
 import trader.candlestick.candle.CandlePriceType;
 import trader.candlestick.Candlestick;
 import trader.indicator.BaseIndicator;
 
 import java.math.BigDecimal;
 import java.util.List;
-import static trader.strategy.BGXStrategy.configuration.StrategyConfig.*;
+import static trader.strategy.bgxstrategy.configuration.StrategyConfig.*;
 
 public final class ExponentialMovingAverage extends BaseIndicator {
 

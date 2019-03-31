@@ -1,10 +1,7 @@
-package trader.core;
+package trader.strategy;
 
-import com.oanda.v20.primitives.DateTime;
-import trader.price.Price;
+import trader.indicator.observer.Observer;
 import trader.price.Pricing;
-
-import java.math.BigDecimal;
 
 public interface Observable {
 

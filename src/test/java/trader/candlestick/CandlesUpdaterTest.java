@@ -3,8 +3,9 @@ package trader.candlestick;
 import org.junit.Before;
 import org.junit.Test;
 import trader.CommonTestClassMembers;
-import trader.candlestick.updater.CandlesUpdater;
-import trader.connector.CandlesUpdaterConnector;
+import trader.indicator.CandlesUpdatable;
+import trader.indicator.updater.CandlesUpdater;
+import trader.indicator.CandlesUpdaterConnector;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

@@ -1,15 +1,9 @@
 package trader.strategy;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import trader.CommonTestClassMembers;
 import trader.exception.NullArgumentException;
-import trader.strategy.BGXStrategy.BGXStrategy;
-
-import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;

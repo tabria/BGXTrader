@@ -15,7 +15,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static trader.strategy.BGXStrategy.configuration.StrategyConfig.*;
+import static trader.strategy.bgxstrategy.configuration.StrategyConfig.*;
 
 public class OandaCandlesResponse {
 

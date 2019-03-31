@@ -8,7 +8,7 @@ import com.oanda.v20.trade.TradeID;
 import com.oanda.v20.trade.TradeSetDependentOrdersResponse;
 import com.oanda.v20.trade.TradeSummary;
 import com.oanda.v20.transaction.TransactionID;
-import trader.candlestick.updater.CandlesUpdater;
+import trader.indicator.updater.CandlesUpdater;
 import trader.candlestick.candle.CandleGranularity;
 import trader.exit.ExitStrategy;
 

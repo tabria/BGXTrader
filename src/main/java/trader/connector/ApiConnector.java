@@ -1,8 +1,8 @@
 package trader.connector;
 
-import trader.candlestick.Candlestick;
+import trader.indicator.CandlesUpdaterConnector;
 import trader.order.Order;
-import trader.price.Pricing;
+import trader.strategy.PriceConnector;
 import trader.trade.entitie.Trade;
 
 import java.util.List;

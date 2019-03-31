@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static trader.indicator.ma.enums.MAType.*;
-import static trader.strategy.BGXStrategy.configuration.StrategyConfig.*;
+import static trader.strategy.bgxstrategy.configuration.StrategyConfig.*;
 
 public class MovingAverageBuilderTest {
 
@@ -109,10 +109,10 @@ public class MovingAverageBuilderTest {
         new MovingAverageBuilder(mockBaseConnector).build(new String[]{""});
     }
 
-    @Test(expected = WrongIndicatorSettingsException.class)
-    public void buildMovingAverageWithNullExternalSettings(){
-        new MovingAverageBuilder(mockBaseConnector).build(null);
-    }
+//    @Test(expected = WrongIndicatorSettingsException.class)
+//    public void buildMovingAverageWithNullExternalSettings(){
+//        new MovingAverageBuilder(mockBaseConnector).build(null);
+//    }
 
     @Test
     public void buildMovingAverageWithExternalSettings(){

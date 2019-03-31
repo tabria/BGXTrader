@@ -17,9 +17,13 @@ public class RelativeStrengthIndexTest extends BaseIndicatorTest {
 
     @Before
     public void before() {
-
         super.before();
-        this.rsi = new RelativeStrengthIndex(this.period, this.candlePriceType, this.candlesUpdater);
+        this.rsi = new RelativeStrengthIndex(this.period, this.candlePriceType, new ArrayList<>());
+    }
+
+    @Test
+    public void WhenCreateRSI_ThenNoValues(){
+        assertEquals(0, rsi.getValues().size());
     }
 
     @Test
@@ -72,7 +76,7 @@ public class RelativeStrengthIndexTest extends BaseIndicatorTest {
     public void TestToString(){
         String result = this.rsi.toString();
         String expected = String.format("RelativeStrengthIndex{period=%d, " +
-                "candlePriceType=%s, rsiValues=%s}", period, this.candlePriceType.toString(), rsi.getValues().toString());
+                "candlePriceType=%s, rsiValues=%s}", period, this.candlePriceType.toString(), "[]");
 
         assertEquals(expected, result);
     }
@@ -81,7 +85,7 @@ public class RelativeStrengthIndexTest extends BaseIndicatorTest {
     public void testPeriodBiggerThanCandlesCount(){
         this.period = 200;
         new RelativeStrengthIndex(this.period,
-                this.candlePriceType, this.candlesUpdater);
+                this.candlePriceType, new ArrayList<>());
     }
 
     @Test(expected = BadRequestException.class)

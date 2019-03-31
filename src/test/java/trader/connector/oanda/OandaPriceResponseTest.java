@@ -43,15 +43,15 @@ public class OandaPriceResponseTest {
         commonMembers = new CommonTestClassMembers();
     }
 
-    @Test
-    public void getCorrectPriceRequest(){
-        commonMembers.changeFieldObject(priceResponse, "oandaConnector", mockOandaConnector);
-        when(mockOandaConnector.getAccountID()).thenReturn(oandaAPIMockAccount.getMockAccountID());
-        priceResponse = new OandaPriceResponse(mockOandaConnector);
-        PricingGetRequest priceRequest = (PricingGetRequest) commonMembers.extractFieldObject(priceResponse, "pricingGetRequest");
-
-        assertTrue(priceRequest.getPathParams().containsValue(oandaAPIMockAccount.getMockAccountID()));
-    }
+//    @Test
+//    public void getCorrectPriceRequest(){
+//        commonMembers.changeFieldObject(priceResponse, "oandaConnector", mockOandaConnector);
+//        when(mockOandaConnector.getAccountID()).thenReturn(oandaAPIMockAccount.getMockAccountID());
+//        priceResponse = new OandaPriceResponse(mockOandaConnector);
+//        PricingGetRequest priceRequest = (PricingGetRequest) commonMembers.extractFieldObject(priceResponse, "pricingGetRequest");
+//
+//        assertTrue(priceRequest.getPathParams().containsValue(oandaAPIMockAccount.getMockAccountID()));
+//    }
 
     @Test
     public void getPriceReturnsCorrectValues(){

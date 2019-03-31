@@ -1,20 +1,16 @@
-package trader.strategy.BGXStrategy;
+package trader.strategy.bgxstrategy;
 
 import trader.connector.ApiConnector;
-import trader.core.Observable;
+import trader.strategy.Observable;
 import trader.exception.NullArgumentException;
-import trader.indicator.Indicator;
-import trader.indicator.IndicatorObserver;
+import trader.indicator.observer.IndicatorObserver;
 import trader.order.OrderStrategy;
-import trader.price.PriceObservable;
+import trader.strategy.observable.PriceObservable;
 import trader.strategy.Strategy;
 import trader.order.OrderService;
 import trader.exit.exit_strategie.BaseExitStrategy;
 import trader.exit.ExitStrategy;
-import java.util.ArrayList;
 import java.util.List;
-
-import static trader.strategy.BGXStrategy.configuration.StrategyConfig.*;
 
 public final class BGXStrategy implements Strategy {
 
@@ -50,7 +46,7 @@ public final class BGXStrategy implements Strategy {
 
     @Override
     public String toString() {
-        return "BGXStrategy";
+        return "bgxstrategy";
     }
 
     private void setApiConnector(ApiConnector connector) {

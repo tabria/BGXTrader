@@ -1,4 +1,4 @@
-package trader.connector;
+package trader.strategy;
 
 import trader.price.Pricing;
 

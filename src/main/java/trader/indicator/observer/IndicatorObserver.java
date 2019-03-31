@@ -1,7 +1,7 @@
-package trader.indicator;
+package trader.indicator.observer;
 
-import trader.core.Observer;
 import trader.exception.NullArgumentException;
+import trader.indicator.Indicator;
 import trader.price.Pricing;
 
 public final class IndicatorObserver implements Observer {

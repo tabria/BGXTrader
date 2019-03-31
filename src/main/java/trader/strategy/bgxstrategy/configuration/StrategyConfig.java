@@ -1,4 +1,4 @@
-package trader.strategy.BGXStrategy.configuration;
+package trader.strategy.bgxstrategy.configuration;
 
 import trader.candlestick.candle.CandleGranularity;
 
