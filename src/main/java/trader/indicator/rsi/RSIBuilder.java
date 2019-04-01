@@ -25,34 +25,37 @@ public final class RSIBuilder {
 
     public RSIBuilder(){
         this.candlestickList = new ArrayList<>();
-        setPeriod("");
-        setCandlePriceType("");
     }
 
-    public RSIBuilder setPeriod(String period) {
-        long rsiPeriod = parsePeriod(period);
-        checkBoundaries(rsiPeriod);
+    public RSIBuilder setPeriod(HashMap<String, String> settings) {
+        long rsiPeriod = parsePeriod(settings);
+        checkPeriodBoundaries(rsiPeriod);
         this.indicatorPeriod = rsiPeriod;
         return this;
     }
 
-    public RSIBuilder setCandlePriceType(String candlePriceType) {
-        this.candlePriceType = parseCandlePriceType(candlePriceType);
+    public RSIBuilder setCandlePriceType(HashMap<String, String> settings) {
+        this.candlePriceType = parseCandlePriceType(settings);
         return this;
     }
 
     public Indicator build(HashMap<String, String> settings){
-        if (settings == null || settings.size() != SETTABLE_FIELDS_COUNT)
+        if (settings == null || settings.size() > SETTABLE_FIELDS_COUNT)
             throw new WrongIndicatorSettingsException();
-        setPeriod(settings.get(SETTINGS_PERIOD_KEY_NAME));
-        setCandlePriceType(settings.get(SETTINGS_CANDLE_PRICE_TYPE_KEY_NAME));
+        setPeriod(settings);
+        setCandlePriceType(settings);
         return new RelativeStrengthIndex(indicatorPeriod, candlePriceType, candlestickList);
     }
 
-    private long parsePeriod(String period) {
-        if(!period.isEmpty())
-            return parseStringToLong(period);
+    private long parsePeriod(HashMap<String, String> settings) {
+        if(isNotDefault(settings, SETTINGS_PERIOD_KEY_NAME))
+            return parseStringToLong(settings.get(SETTINGS_PERIOD_KEY_NAME));
         return DEFAULT_INDICATOR_PERIOD;
+    }
+
+    private boolean isNotDefault(HashMap<String, String> settings, String settingKeyName) {
+        return settings.containsKey(settingKeyName) &&
+                !settings.get(settingKeyName).isEmpty();
     }
 
     private long parseStringToLong(String period) {
@@ -63,15 +66,15 @@ public final class RSIBuilder {
         }
     }
 
-    private void checkBoundaries(long period) {
+    private void checkPeriodBoundaries(long period) {
         if (period < MIN_INDICATOR_PERIOD || period > MAX_INDICATOR_PERIOD)
             throw  new OutOfBoundaryException();
     }
 
-    private CandlePriceType parseCandlePriceType(String candlePriceType) {
-        if (!candlePriceType.isEmpty()) {
+    private CandlePriceType parseCandlePriceType(HashMap<String, String> settings) {
+        if (isNotDefault(settings, SETTINGS_CANDLE_PRICE_TYPE_KEY_NAME)) {
             try {
-                return CandlePriceType.valueOf(candlePriceType.toUpperCase());
+                return CandlePriceType.valueOf(settings.get(SETTINGS_CANDLE_PRICE_TYPE_KEY_NAME).toUpperCase());
             } catch (Exception e) {
                 throw new WrongIndicatorSettingsException();
             }

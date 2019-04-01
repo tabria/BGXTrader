@@ -44,5 +44,6 @@ public enum CandlePriceType {
         }
     };
 
+
     public abstract BigDecimal extractPrice(Candlestick candle);
 }

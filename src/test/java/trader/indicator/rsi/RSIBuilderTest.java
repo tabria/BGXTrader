@@ -35,77 +35,95 @@ public class RSIBuilderTest {
     }
 
     @Test
-    public void testCreateNewBuilderWithDefaultPeriod() {
-        assertEquals(DEFAULT_INDICATOR_PERIOD, getActualPeriod(builder));
-    }
-
-    @Test
-    public void testCreateNewBuilderWithDefaultCandlestickPriceType() {
-        assertEquals(DEFAULT_CANDLESTICK_PRICE_TYPE, getActualCandlePriceType(builder));
-    }
-
-    @Test
     public void WhenCallSetPeriod_ReturnCurrentObject(){
-        assertEquals(builder, builder.setPeriod(""));
+        settings.clear();
+        assertEquals(builder, builder.setPeriod(settings));
     }
 
     @Test
     public void WhenCallSetPeriodWithEmptyString_SetToDefaultPeriod(){
-        builder.setPeriod("");
+        settings.remove("period");
+        builder.setPeriod(settings);
         assertEquals(DEFAULT_INDICATOR_PERIOD, getActualPeriod(builder));
     }
 
     @Test(expected = WrongIndicatorSettingsException.class)
     public void WhenCallSetPeriodWithNotParsableStringToLong_Exception(){
-        builder.setPeriod("c");
+        settings.put("period", "c");
+        builder.setPeriod(settings);
     }
 
     @Test(expected = OutOfBoundaryException.class)
     public void WhenCallSetPeriodWithValueLessThanMINPeriod_Exception() {
-        builder.setPeriod("0");
+        settings.put("period", "0");
+        builder.setPeriod(settings);
     }
 
     @Test(expected = OutOfBoundaryException.class)
     public void WhenCallSetPeriodWithValueGreaterThanMAXPeriod_Exception() {
-        builder.setPeriod("1001");
+        settings.put("period", "1001");
+        builder.setPeriod(settings);
     }
 
     @Test
     public void callSetPeriodWithCorrectValue_SuccessfulUpdate() {
-        builder.setPeriod("11");
+        settings.put("period", "11");
+        builder.setPeriod(settings);
 
         assertEquals(11L, getActualPeriod(builder));
     }
 
     @Test
     public void WhenCallSetCandlestickPriceType_ReturnCurrentObject(){
-        assertEquals(builder, builder.setCandlePriceType("Close"));
+        settings.put("candlePriceType", "Close");
+        assertEquals(builder, builder.setCandlePriceType(settings));
     }
 
     @Test
     public void WhenCallSetCandlestickPriceTypeWithEmptyString_SetToDefaultValue(){
-        builder.setCandlePriceType("");
+        settings.clear();
+        builder.setCandlePriceType(settings);
 
         assertEquals(DEFAULT_CANDLESTICK_PRICE_TYPE, getActualCandlePriceType(builder));
     }
 
     @Test(expected = WrongIndicatorSettingsException.class)
     public void WhenCallSetCandlestickPriceTypeWithBadValue_Exception(){
-        builder.setCandlePriceType("Mor");
+        settings.put("candlePriceType", "Mor");
+        builder.setCandlePriceType(settings);
     }
 
     @Test
     public void WhenCallSetCandlestickPriceTypeWithCorrectValue_SuccessfulUpdate(){
-        builder.setCandlePriceType("open");
+        settings.put("candlePriceType", "open");
+        builder.setCandlePriceType(settings);
 
         assertEquals("open".toUpperCase(), getActualCandlePriceType(builder).toString());
     }
 
     @Test
     public void WhenCallSetCandlestickPriceTypeWithCorrectMixedUpperAndLowerCaseLetters_SuccessfulUpdate(){
-        builder.setCandlePriceType("HiGh");
+        settings.put("candlePriceType", "HiGh");
+        builder.setCandlePriceType(settings);
 
         assertEquals("HiGh".toUpperCase(), getActualCandlePriceType(builder).toString());
+    }
+
+    @Test(expected = WrongIndicatorSettingsException.class)
+    public void WhenCallBuildWithMoreThanMaximumSettingCount_Exception(){
+        settings.put("period", "13");
+        settings.put("candlePriceType", "median");
+        settings.put("price", "12");
+        builder.build(settings);
+    }
+
+    @Test
+    public void WhenCallBuildWithMoreThanZeroAndLessThanMaxSettingsCount_DefaultForNonPresentSettings(){
+        settings.remove("period");
+        Indicator rsi = builder.build(settings);
+
+        assertEquals(DEFAULT_INDICATOR_PERIOD, getActualPeriod(rsi));
+
     }
 
     @Test
