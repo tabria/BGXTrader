@@ -6,7 +6,6 @@ import trader.exception.NullArgumentException;
 import trader.entity.indicator.Indicator;
 import trader.entity.indicator.ma.MovingAverageBuilder;
 import trader.entity.indicator.rsi.RSIBuilder;
-import trader.interactor.RequestImpl;
 import trader.requestor.Request;
 import trader.requestor.RequestBuilder;
 
@@ -27,9 +26,9 @@ public class RequestBuilderImpl implements RequestBuilder {
     private Request<?> buildIndicatorRequest(String dataStructureName, HashMap<String, String> settings) {
         Request<Indicator> request = new RequestImpl<>();
         if(dataStructureName.contains("rsi")){
-            request.setDataStructure(new RSIBuilder().build(settings));
+            request.setRequestDataStructure(new RSIBuilder().build(settings));
         } else if(dataStructureName.contains("sma")){
-            request.setDataStructure(new MovingAverageBuilder().build(settings));
+            request.setRequestDataStructure(new MovingAverageBuilder().build(settings));
         }
         return request;
     }

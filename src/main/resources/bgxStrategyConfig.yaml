@@ -1,0 +1,33 @@
+# candlePriceType can have one of 5 values: OPEN, CLOSE, HIGH, LOW, MEDIUM
+# maType can have one of 3 values: SIMPLE, EXPONENTIAL, WEIGHTED
+
+rsiIndicator1:
+  period: "14"
+  candlePriceType: "CLOSE"
+smaIndicator1:
+  period: "1"
+  candlePriceType: "CLOSE"
+  maType: "SIMPLE"
+smaIndicator2:
+  period: "1"
+  candlePriceType: "OPEN"
+  maType: "SIMPLE"
+wmaIndicator1:
+  period: "5"
+  candlePriceType: "CLOSE"
+  maType: "WEIGHTED"
+wmaIndicator2:
+  period: "20"
+  candlePriceType: "CLOSE"
+  maType: "WEIGHTED"
+wmaIndicator3:
+  period: "100"
+  candlePriceType: "CLOSE"
+  maType: "WEIGHTED"
+systemTimeFrame:
+  granularity: "M30"
+instrument:
+  instrumentName: "EUR_USD"
+candlesQuantity:
+  initial: "4999"
+  update: "2"

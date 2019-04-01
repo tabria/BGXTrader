@@ -4,7 +4,6 @@ import org.junit.Before;
 import org.junit.Test;
 import trader.requestor.Request;
 import trader.requestor.RequestBuilder;
-import trader.interactor.RequestBuilderImpl;
 import trader.exception.EmptyArgumentException;
 import trader.exception.NoSuchDataStructureException;
 import trader.exception.NullArgumentException;
@@ -52,21 +51,21 @@ public class RequestImplBuilderImplTest {
     public void whenCallBuildWithRSIIndicatorDataStructureName_ReturnRSIRequest(){
         Request<?> rsiIndicatorRequest = requestBuilder.build("rsiIndicator", settings);
 
-        assertEquals(RelativeStrengthIndex.class, rsiIndicatorRequest.getDataStructure().getClass());
+        assertEquals(RelativeStrengthIndex.class, rsiIndicatorRequest.getRequestDataStructure().getClass());
     }
 
     @Test
     public void whenCallBuildWithRSIIndicatorDataStructureNameWithExtraSpaces_ReturnRSIRequest(){
         Request<?> rsiIndicatorRequest = requestBuilder.build("  rsiIndicator   ", settings);
 
-        assertEquals(RelativeStrengthIndex.class, rsiIndicatorRequest.getDataStructure().getClass());
+        assertEquals(RelativeStrengthIndex.class, rsiIndicatorRequest.getRequestDataStructure().getClass());
     }
 
     @Test
     public void whenCallBuildWithMovingAverageIndicatorDataStructureName_ReturnMARequest(){
         Request<?> smaIndicator = requestBuilder.build("smaIndicator", settings);
 
-        assertEquals(SimpleMovingAverage.class, smaIndicator.getDataStructure().getClass());
+        assertEquals(SimpleMovingAverage.class, smaIndicator.getRequestDataStructure().getClass());
     }
 
 }

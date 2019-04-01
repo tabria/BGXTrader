@@ -7,12 +7,12 @@ public class RequestImpl<T> implements Request<T> {
     private T dataStructure;
 
     @Override
-    public T getDataStructure() {
+    public T getRequestDataStructure() {
         return dataStructure;
     }
 
     @Override
-    public void setDataStructure(T dataStructure) {
+    public void setRequestDataStructure(T dataStructure) {
         this.dataStructure = dataStructure;
     }
 }
