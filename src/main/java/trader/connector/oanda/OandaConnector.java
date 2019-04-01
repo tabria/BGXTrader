@@ -5,7 +5,7 @@ import com.oanda.v20.ContextBuilder;
 import com.oanda.v20.ExecuteException;
 import com.oanda.v20.RequestException;
 import com.oanda.v20.account.*;
-import trader.candlestick.Candlestick;
+import trader.entity.candlestick.Candlestick;
 import trader.connector.BaseConnector;
 import trader.order.Order;
 import trader.price.Pricing;

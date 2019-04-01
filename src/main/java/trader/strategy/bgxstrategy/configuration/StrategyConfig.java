@@ -1,6 +1,6 @@
 package trader.strategy.bgxstrategy.configuration;
 
-import trader.candlestick.candle.CandleGranularity;
+import trader.entity.candlestick.candle.CandleGranularity;
 
 import java.math.BigDecimal;
 

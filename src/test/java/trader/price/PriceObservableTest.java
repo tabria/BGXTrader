@@ -3,7 +3,7 @@ package trader.price;
 import org.junit.*;
 import trader.CommonTestClassMembers;
 import trader.strategy.PriceConnector;
-import trader.indicator.observer.Observer;
+import trader.entity.indicator.observer.Observer;
 import trader.exception.NullArgumentException;
 import trader.strategy.observable.PriceObservable;
 

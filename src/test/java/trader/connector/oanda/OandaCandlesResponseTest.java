@@ -9,7 +9,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import trader.CommonTestClassMembers;
 import trader.OandaAPIMock.OandaAPIMockInstrument;
-import trader.candlestick.Candlestick;
+import trader.entity.candlestick.Candlestick;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;

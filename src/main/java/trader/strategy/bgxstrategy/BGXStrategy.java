@@ -3,7 +3,7 @@ package trader.strategy.bgxstrategy;
 import trader.connector.ApiConnector;
 import trader.strategy.Observable;
 import trader.exception.NullArgumentException;
-import trader.indicator.observer.IndicatorObserver;
+import trader.entity.indicator.observer.IndicatorObserver;
 import trader.order.OrderStrategy;
 import trader.strategy.observable.PriceObservable;
 import trader.strategy.Strategy;

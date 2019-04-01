@@ -83,7 +83,7 @@ public final class NewTradeService {
     }
 
     /**
-     * Create Order Request for MarketIfTouchedOrder
+     * Create Order RequestImpl for MarketIfTouchedOrder
      * @param unitsSize trade's unit size
      * @param newTrade current trade
      * @return {@link OrderCreateRequest} object

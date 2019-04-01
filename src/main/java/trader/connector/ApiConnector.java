@@ -1,6 +1,6 @@
 package trader.connector;
 
-import trader.indicator.CandlesUpdaterConnector;
+import trader.entity.indicator.CandlesUpdaterConnector;
 import trader.order.Order;
 import trader.strategy.PriceConnector;
 import trader.trade.entitie.Trade;

@@ -6,10 +6,6 @@ import com.oanda.v20.ContextBuilder;
 import org.yaml.snakeyaml.Yaml;
 import trader.config.Config;
 import trader.connector.ApiConnector;
-import trader.indicator.Indicator;
-import trader.candlestick.candle.CandlePriceType;
-import trader.indicator.ma.MovingAverageBuilder;
-import trader.indicator.ma.enums.MAType;
 import trader.strategy.bgxstrategy.BGXStrategy;
 import trader.strategy.Strategy;
 import trader.strategy.ThreadedStrategy;
@@ -17,12 +13,8 @@ import trader.order.OrderService;
 import trader.exit.ExitStrategy;
 import trader.exit.exit_strategie.FullCloseStrategy;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 

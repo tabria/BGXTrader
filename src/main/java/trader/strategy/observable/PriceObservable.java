@@ -1,6 +1,6 @@
 package trader.strategy.observable;
 
-import trader.indicator.observer.Observer;
+import trader.entity.indicator.observer.Observer;
 import trader.exception.NullArgumentException;
 import trader.price.Price;
 import trader.price.Pricing;

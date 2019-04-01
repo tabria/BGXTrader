@@ -2,8 +2,8 @@ package trader.strategy.bgxstrategy.configuration;
 
 import org.junit.Before;
 import trader.CommonTestClassMembers;
-import trader.candlestick.Candlestick;
-import trader.indicator.CandlesUpdaterConnector;
+import trader.entity.candlestick.Candlestick;
+import trader.entity.indicator.CandlesUpdaterConnector;
 
 import java.math.BigDecimal;
 import java.time.ZoneId;

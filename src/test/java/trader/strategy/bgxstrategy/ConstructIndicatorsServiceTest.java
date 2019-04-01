@@ -3,12 +3,12 @@ package trader.strategy.bgxstrategy;
 import org.junit.Before;
 import org.junit.Test;
 import trader.CommonTestClassMembers;
-import trader.candlestick.Candlestick;
+import trader.entity.candlestick.Candlestick;
 import trader.connector.ApiConnector;
-import trader.indicator.observer.IndicatorObserver;
-import trader.indicator.ma.SimpleMovingAverage;
-import trader.indicator.ma.WeightedMovingAverage;
-import trader.indicator.rsi.RelativeStrengthIndex;
+import trader.entity.indicator.observer.IndicatorObserver;
+import trader.entity.indicator.ma.SimpleMovingAverage;
+import trader.entity.indicator.ma.WeightedMovingAverage;
+import trader.entity.indicator.rsi.RelativeStrengthIndex;
 
 import java.math.BigDecimal;
 import java.time.ZoneId;

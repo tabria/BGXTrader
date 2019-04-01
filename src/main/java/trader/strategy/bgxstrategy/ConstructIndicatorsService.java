@@ -1,12 +1,9 @@
 package trader.strategy.bgxstrategy;
 
-import trader.candlestick.candle.CandlePriceType;
 import trader.connector.ApiConnector;
-import trader.indicator.Indicator;
-import trader.indicator.observer.IndicatorObserver;
-import trader.indicator.ma.MovingAverageBuilder;
-import trader.indicator.ma.enums.MAType;
-import trader.indicator.rsi.RSIBuilder;
+import trader.entity.indicator.Indicator;
+import trader.entity.indicator.observer.IndicatorObserver;
+import trader.entity.indicator.ma.MovingAverageBuilder;
 
 import java.util.ArrayList;
 import java.util.Collections;

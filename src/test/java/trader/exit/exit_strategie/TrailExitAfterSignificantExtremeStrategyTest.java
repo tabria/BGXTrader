@@ -13,7 +13,7 @@ import com.oanda.v20.trade.*;
 import org.junit.Before;
 import org.junit.Test;
 import trader.config.Config;
-import trader.candlestick.candle.CandleGranularity;
+import trader.entity.candlestick.candle.CandleGranularity;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;

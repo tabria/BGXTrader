@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import trader.CommonTestClassMembers;
 import trader.OandaAPIMock.OandaAPIMockAccount;
-import trader.candlestick.Candlestick;
+import trader.entity.candlestick.Candlestick;
 import trader.connector.BaseConnector;
 import trader.price.Price;
 import trader.price.Pricing;

@@ -2,9 +2,9 @@ package trader.strategy.bgxstrategy;
 
 
 import trader.connector.BaseConnector;
-import trader.indicator.Indicator;
-import trader.indicator.ma.MovingAverageBuilder;
-import trader.indicator.rsi.RSIBuilder;
+import trader.entity.indicator.Indicator;
+import trader.entity.indicator.ma.MovingAverageBuilder;
+import trader.entity.indicator.rsi.RSIBuilder;
 import trader.trade.entitie.LineSegment;
 import trader.trade.entitie.Point;
 import trader.trade.entitie.Trade;

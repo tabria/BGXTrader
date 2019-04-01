@@ -6,8 +6,8 @@ import com.oanda.v20.primitives.DateTime;
 import com.oanda.v20.trade.TradeSetDependentOrdersResponse;
 import com.oanda.v20.trade.TradeSummary;
 import com.oanda.v20.transaction.TransactionID;
-import trader.indicator.updater.CandlesUpdater;
-import trader.candlestick.candle.CandleGranularity;
+import trader.entity.indicator.updater.CandlesUpdater;
+import trader.entity.candlestick.candle.CandleGranularity;
 import trader.exit.ExitStrategy;
 
 import java.math.BigDecimal;
