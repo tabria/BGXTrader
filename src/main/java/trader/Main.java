@@ -3,23 +3,27 @@ package trader;
 
 import com.oanda.v20.Context;
 import com.oanda.v20.ContextBuilder;
+import org.yaml.snakeyaml.Yaml;
 import trader.config.Config;
 import trader.connector.ApiConnector;
 import trader.indicator.Indicator;
 import trader.candlestick.candle.CandlePriceType;
 import trader.indicator.ma.MovingAverageBuilder;
 import trader.indicator.ma.enums.MAType;
-import trader.indicator.rsi.RSIBuilder;
 import trader.strategy.bgxstrategy.BGXStrategy;
 import trader.strategy.Strategy;
-import trader.strategy.bgxstrategy.BGXTradeGenerator;
 import trader.strategy.ThreadedStrategy;
-import trader.order.NewTradeService;
 import trader.order.OrderService;
 import trader.exit.ExitStrategy;
 import trader.exit.exit_strategie.FullCloseStrategy;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 
 /**
@@ -47,8 +51,20 @@ public class Main {
     
     public static void main(String[] args) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
 
+        ///for parsing strategy config///
+        Yaml yaml = new Yaml();
+        InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("bgxStrategyConfig.yaml");
 
-
+        Map<String, Map<String, Object>> bgxSettings = yaml.load(is);
+        for (Map.Entry<String, Map<String, Object>> entry : bgxSettings.entrySet()) {
+            String name = entry.getKey();
+            Map<String, Object> settings = entry.getValue();
+            for (Map.Entry<String, Object> value : settings.entrySet()) {
+                String val = value.getKey();
+                Object value1 =  value.getValue();
+                String a ="";
+            }
+        }
 
         ApiConnector apiConnector = ApiConnector.create("Oanda");
         Strategy strategy = new BGXStrategy(apiConnector);
@@ -68,40 +84,40 @@ public class Main {
 
 
         //simple ma with period of 1 representing the price
-        Indicator smaPrice = new MovingAverageBuilder(apiConnector)
-                .setPeriod(1)
-                .setCandlePriceType(CandlePriceType.CLOSE)
-//                .setCandleTimeFrame(Config.TIME_FRAME)
-                .setMAType(MAType.SIMPLE)
-                .build();
+//        Indicator smaPrice = new MovingAverageBuilder(apiConnector)
+//                .setPeriod(1)
+//                .setCandlePriceType(CandlePriceType.CLOSE)
+////                .setCandleTimeFrame(Config.TIME_FRAME)
+//                .setMAType(MAType.SIMPLE)
+//                .build();
 
-        Indicator dailyPrice = new MovingAverageBuilder(apiConnector)
-                .setPeriod(1)
-                .setCandlePriceType(CandlePriceType.OPEN)
- //               .setCandleTimeFrame(CandleGranularity.D)
-                .setMAType(MAType.SIMPLE)
-                .build();
-
-        Indicator wmaFast = new MovingAverageBuilder(apiConnector)
-                .setPeriod(5)
-                .setCandlePriceType(CandlePriceType.CLOSE)
- //               .setCandleTimeFrame(Config.TIME_FRAME)
-                .setMAType(MAType.WEIGHTED)
-                .build();
-
-        Indicator wmaMiddle = new MovingAverageBuilder(apiConnector)
-                .setPeriod(20)
-                .setCandlePriceType(CandlePriceType.CLOSE)
- //               .setCandleTimeFrame(Config.TIME_FRAME)
-                .setMAType(MAType.WEIGHTED)
-                .build();
-
-        Indicator wmaSlow = new MovingAverageBuilder(apiConnector)
-                .setPeriod(100)
-                .setCandlePriceType(CandlePriceType.CLOSE)
- //               .setCandleTimeFrame(Config.TIME_FRAME)
-                .setMAType(MAType.WEIGHTED)
-                .build();
+//        Indicator dailyPrice = new MovingAverageBuilder(apiConnector)
+//                .setPeriod(1)
+//                .setCandlePriceType(CandlePriceType.OPEN)
+// //               .setCandleTimeFrame(CandleGranularity.D)
+//                .setMAType(MAType.SIMPLE)
+//                .build();
+//
+//        Indicator wmaFast = new MovingAverageBuilder(apiConnector)
+//                .setPeriod(5)
+//                .setCandlePriceType(CandlePriceType.CLOSE)
+// //               .setCandleTimeFrame(Config.TIME_FRAME)
+//                .setMAType(MAType.WEIGHTED)
+//                .build();
+//
+//        Indicator wmaMiddle = new MovingAverageBuilder(apiConnector)
+//                .setPeriod(20)
+//                .setCandlePriceType(CandlePriceType.CLOSE)
+// //               .setCandleTimeFrame(Config.TIME_FRAME)
+//                .setMAType(MAType.WEIGHTED)
+//                .build();
+//
+//        Indicator wmaSlow = new MovingAverageBuilder(apiConnector)
+//                .setPeriod(100)
+//                .setCandlePriceType(CandlePriceType.CLOSE)
+// //               .setCandleTimeFrame(Config.TIME_FRAME)
+//                .setMAType(MAType.WEIGHTED)
+//                .build();
 
 //        Indicator rsi = new RSIBuilder(apiConnector)
 //                .setPeriod(14)

@@ -58,12 +58,17 @@ public final class BGXTradeGenerator {
     }
 
     public BGXTradeGenerator(BaseConnector baseConnector) {
-        fastWMA = new MovingAverageBuilder(baseConnector).build(FAST_WMA_SETTINGS);
-        middleWMA = new MovingAverageBuilder(baseConnector).build(MIDDLE_WMA_SETTINGS);
-        priceSma = new MovingAverageBuilder(baseConnector).build( PRICE_SMA_SETTINGS);
-        dailySMA = new MovingAverageBuilder(baseConnector).build(DAILY_SMA_SETTINGS);
-        slowWMA = new MovingAverageBuilder(baseConnector).build(SLOW_WMA_SETTINGS);
+//        fastWMA = new MovingAverageBuilder(baseConnector).build(FAST_WMA_SETTINGS);
+//        middleWMA = new MovingAverageBuilder(baseConnector).build(MIDDLE_WMA_SETTINGS);
+//        priceSma = new MovingAverageBuilder(baseConnector).build( PRICE_SMA_SETTINGS);
+//        dailySMA = new MovingAverageBuilder(baseConnector).build(DAILY_SMA_SETTINGS);
+//        slowWMA = new MovingAverageBuilder(baseConnector).build(SLOW_WMA_SETTINGS);
  //       rsi = new RSIBuilder(baseConnector).build(RSI_SETTINGS);
+        fastWMA = new MovingAverageBuilder().build(new HashMap<>());
+        middleWMA = new MovingAverageBuilder().build(new HashMap<>());
+        priceSma = new MovingAverageBuilder().build( new HashMap<>());
+        dailySMA = new MovingAverageBuilder().build(new HashMap<>());
+        slowWMA = new MovingAverageBuilder().build(new HashMap<>());
         rsi = new RSIBuilder().build(new HashMap<>());
         direction = Direction.FLAT;
 

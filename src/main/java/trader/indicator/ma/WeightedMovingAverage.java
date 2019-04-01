@@ -17,6 +17,13 @@ public final class WeightedMovingAverage extends BaseIndicator {
         setDivisor();
         initiateWMAValues();
     }
+////////////////////////////do not remove /////////////////////////////////////////
+    WeightedMovingAverage(long indicatorPeriod, CandlePriceType candlePriceType, List<Candlestick> candlestickList) {
+        super(indicatorPeriod, candlePriceType, candlestickList);
+        setDivisor();
+  //      initiateWMAValues();
+    }
+  ///////////////////do not remove////////////////////////////////////////////////
 
     @Override
     public void updateIndicator() {

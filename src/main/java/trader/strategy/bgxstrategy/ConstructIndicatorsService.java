@@ -10,6 +10,7 @@ import trader.indicator.rsi.RSIBuilder;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import static trader.strategy.bgxstrategy.configuration.StrategyConfig.*;
@@ -55,11 +56,11 @@ class ConstructIndicatorsService {
     }
 
     private Indicator buildMovingAverage(ApiConnector connector, String[] indicatorSettings) {
-        MovingAverageBuilder movingAverageBuilder = new MovingAverageBuilder(connector);
-        movingAverageBuilder.setPeriod(Long.parseLong(indicatorSettings[0]));
-        movingAverageBuilder.setCandlePriceType(CandlePriceType.valueOf(indicatorSettings[1]));
-        movingAverageBuilder.setMAType(MAType.valueOf(indicatorSettings[2]));
-        return movingAverageBuilder.build();
+        MovingAverageBuilder movingAverageBuilder = new MovingAverageBuilder();
+//        movingAverageBuilder.setPeriod(Long.parseLong(indicatorSettings[0]));
+//        movingAverageBuilder.setCandlePriceType(CandlePriceType.valueOf(indicatorSettings[1]));
+//        movingAverageBuilder.setMAType(MAType.valueOf(indicatorSettings[2]));
+        return movingAverageBuilder.build(new HashMap<>());
     }
 
 //    private Indicator buildRSI(ApiConnector connector, String[] indicatorSettings) {

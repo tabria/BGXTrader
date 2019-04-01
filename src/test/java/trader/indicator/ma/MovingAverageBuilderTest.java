@@ -2,129 +2,93 @@ package trader.indicator.ma;
 
 import org.junit.Before;
 import org.junit.Test;
-import trader.CommonTestClassMembers;
-import trader.candlestick.candle.CandlePriceType;
-import trader.connector.BaseConnector;
-import trader.exception.NoSuchConnectorException;
-import trader.exception.NullArgumentException;
-import trader.exception.OutOfBoundaryException;
 import trader.exception.WrongIndicatorSettingsException;
+import trader.indicator.BaseBuilderTest;
 import trader.indicator.Indicator;
-import trader.indicator.IndicatorUpdateHelper;
-
+import trader.indicator.ma.enums.MAType;
 import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-import static trader.indicator.ma.enums.MAType.*;
-import static trader.strategy.bgxstrategy.configuration.StrategyConfig.*;
 
-public class MovingAverageBuilderTest {
+public class MovingAverageBuilderTest extends BaseBuilderTest {
 
-
-    private static final String CANDLESTICK_PRICE_TYPE = "candlePriceType";
-    private static final String MOVING_AVERAGE_TYPE = "maType";
-    private static final String PERIOD = "indicatorPeriod";
-    private static final String MAX_PERIOD = "MAX_INDICATOR_PERIOD";
-    private static final String MIN_PERIOD = "MIN_INDICATOR_PERIOD";
+    private static final MAType DEFAULT_MA_TYPE = MAType.SIMPLE;
+    private static final String MA_TYPE = "maType";
 
     private MovingAverageBuilder builder;
-    private BaseConnector mockBaseConnector;
-    private CandlePriceType candlePriceType = CandlePriceType.CLOSE;
-    private IndicatorUpdateHelper indicatorUpdateHelper;
-    private CommonTestClassMembers commonClassMembers;
 
     @Before
     public void setUp() {
-
-        mockBaseConnector = mock(BaseConnector.class);
-        this.indicatorUpdateHelper = new IndicatorUpdateHelper(this.candlePriceType);
-        this.indicatorUpdateHelper.fillCandlestickList();
-        commonClassMembers = new CommonTestClassMembers();
-        this.builder = new MovingAverageBuilder(mockBaseConnector);
-    }
-
-    @Test(expected = NoSuchConnectorException.class)
-    public void whenCreateMABuilderWithNullApiConnector_Exception(){
-        new MovingAverageBuilder(null);
-    }
-
-    @Test(expected = OutOfBoundaryException.class)
-    public void whenCallSetPeriodWithLessThanMinimumPeriod_Exception() {
-        long minPeriod = (long) commonClassMembers.extractFieldObject(builder, MIN_PERIOD);
-        this.builder.setPeriod(minPeriod - 1);
-    }
-
-    @Test(expected = OutOfBoundaryException.class)
-    public void whenCallSetPeriodWithMoreThanMaxPeriod_Exception() {
-        long maxPeriod = (long) commonClassMembers.extractFieldObject(builder, MAX_PERIOD);
-        this.builder.setPeriod(maxPeriod + 1);
+        this.builder = new MovingAverageBuilder();
+        setBuilder(builder);
     }
 
     @Test
-    public void testForCorrectPeriod(){
-        long expected = 11L;
-        this.builder.setPeriod(expected);
-
-        assertEquals(expected, commonClassMembers.extractFieldObject(builder, PERIOD));
-    }
-
-    @Test(expected = NullArgumentException.class)
-    public void whenCallSetCandlestickPriceTypeWithNull_Exception() {
-        this.builder.setCandlePriceType(null);
+    public void WhenCallSetMAType_ReturnCurrentObject(){
+        settings.put(MA_TYPE, "Exponential");
+        assertEquals(builder, builder.setMAType(settings));
     }
 
     @Test
-    public void callSetCandlestickPriceTypeWithMediumType() {
-        this.builder.setCandlePriceType(CandlePriceType.MEDIAN);
+    public void WhenCallSetMATypeWithEmptyString_SetToDefaultValue(){
+        settings.clear();
+        builder.setMAType(settings);
 
-        assertSame(CandlePriceType.MEDIAN, commonClassMembers.extractFieldObject(builder, CANDLESTICK_PRICE_TYPE));
-    }
-
-    @Test(expected = NullArgumentException.class)
-    public void callSetMATypeWithNull_Exception() {
-        this.builder.setMAType(null);
-    }
-
-    @Test
-    public void testForCorrectMovingAverageType(){
-        this.builder.setMAType(EXPONENTIAL);
-
-        assertSame(EXPONENTIAL, commonClassMembers.extractFieldObject(builder, MOVING_AVERAGE_TYPE));
-    }
-
-    @Test
-    public void buildMovingAverage()  {
-        when(mockBaseConnector.getInitialCandles()).thenReturn(indicatorUpdateHelper.getCandlestickList());
-        Indicator sma = this.builder.setMAType(SIMPLE).setPeriod(7).build();
-        Indicator ema = this.builder.setMAType(EXPONENTIAL).setPeriod(7).build();
-        Indicator wma = this.builder.setMAType(WEIGHTED).setPeriod(7).build();
-
-        assertEquals("The object is not SMA","SimpleMovingAverage", sma.getClass().getSimpleName());
-        assertEquals("The object is not EMA","ExponentialMovingAverage", ema.getClass().getSimpleName());
-        assertEquals("The object is not WMA","WeightedMovingAverage", wma.getClass().getSimpleName());
+        assertEquals(DEFAULT_MA_TYPE, getActualMAType(builder));
     }
 
     @Test(expected = WrongIndicatorSettingsException.class)
-    public void buildMovingAverage_ExternalSettingsNotDefaultQuantity(){
-        new MovingAverageBuilder(mockBaseConnector).build(new String[]{""});
+    public void WhenCallSetMATypeWithBadValue_Exception(){
+        settings.put(MA_TYPE, "Mor");
+        builder.setMAType(settings);
     }
-
-//    @Test(expected = WrongIndicatorSettingsException.class)
-//    public void buildMovingAverageWithNullExternalSettings(){
-//        new MovingAverageBuilder(mockBaseConnector).build(null);
-//    }
 
     @Test
-    public void buildMovingAverageWithExternalSettings(){
-        when(mockBaseConnector.getInitialCandles()).thenReturn(indicatorUpdateHelper.getCandlestickList());
-        Indicator sma = new MovingAverageBuilder(mockBaseConnector)
-                .build(PRICE_SMA_SETTINGS);
+    public void WhenCallSetMATypeWithCorrectValue_SuccessfulUpdate(){
+        settings.put(MA_TYPE, "weighted");
+        builder.setMAType(settings);
 
-        long actualIndicatorPeriod = (long) commonClassMembers.extractFieldObject(sma, "indicatorPeriod");
-        CandlePriceType actualCandlePriceType = (CandlePriceType) commonClassMembers.extractFieldObject(sma, "candlePriceType");
-
-        assertEquals(SimpleMovingAverage.class, sma.getClass());
-        assertEquals(Long.parseLong(PRICE_SMA_SETTINGS[0]), actualIndicatorPeriod );
-        assertEquals(CandlePriceType.valueOf(PRICE_SMA_SETTINGS[1]), actualCandlePriceType);
+        assertEquals("weighted".toUpperCase(), getActualMAType(builder).toString());
     }
+
+    @Test
+    public void WhenCallSetMATypeWithCorrectMixedUpperAndLowerCaseLetters_SuccessfulUpdate(){
+        settings.put(MA_TYPE, "ExpoNeNTiaL");
+        builder.setMAType(settings);
+
+        assertEquals("exponential".toUpperCase(), getActualMAType(builder).toString());
+    }
+
+    @Test(expected = WrongIndicatorSettingsException.class)
+    public void WhenCallBuildWithMoreThanMaximumSettingCount_Exception(){
+        settings.put(PERIOD, "13");
+        settings.put(CANDLE_PRICE_TYPE, "median");
+        settings.put("price", "12");
+        settings.put("doh", null);
+        builder.build(settings);
+    }
+
+    @Test
+    public void WhenCallBuildWithMoreThanZeroAndLessThanMaxSettingsCount_DefaultForNonPresentSettings(){
+        settings.remove(PERIOD);
+        Indicator indicator = builder.build(settings);
+
+        assertEquals(DEFAULT_INDICATOR_PERIOD, getActualPeriod(indicator));
+    }
+
+    @Test
+    public void WhenCallBuildWithCustomSettings_SuccessfulBuildWithCustomSettings(){
+        settings.put(PERIOD, "9");
+        settings.put(CANDLE_PRICE_TYPE, "median");
+        settings.put(MA_TYPE, "weighted");
+        Indicator indicator = builder.build(settings);
+
+        assertEquals("WeightedMovingAverage", indicator.getClass().getSimpleName());
+        assertEquals(0, getActualCandlestickList(indicator).size());
+        assertEquals("median".toUpperCase(), getActualCandlePriceType(indicator).toString());
+        assertEquals(9L, getActualPeriod(indicator));
+    }
+
+    protected MAType getActualMAType(Object object) {
+        return (MAType) commonMembers.extractFieldObject(object, "maType");
+    }
+
 }

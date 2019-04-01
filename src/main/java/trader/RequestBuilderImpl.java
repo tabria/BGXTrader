@@ -10,6 +10,7 @@ import trader.indicator.rsi.RSIBuilder;
 import java.util.HashMap;
 
 public class RequestBuilderImpl implements RequestBuilder {
+
     @Override
     public Request<?> build(String dataStructureName, HashMap<String, String> settings) {
         verifyInput(dataStructureName, settings);

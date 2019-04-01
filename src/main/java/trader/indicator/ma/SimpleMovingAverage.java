@@ -20,8 +20,8 @@ public final class SimpleMovingAverage extends BaseIndicator {
         initiateSMAValues();
     }
 ///////////////////////////////////remove//////////////////////////
-    SimpleMovingAverage(long indicatorPeriod, CandlePriceType candlePriceType) {
-        super(indicatorPeriod, candlePriceType, new ArrayList<>());
+    SimpleMovingAverage(long indicatorPeriod, CandlePriceType candlePriceType, List<Candlestick> candlestickList) {
+        super(indicatorPeriod, candlePriceType, candlestickList);
         setDivisor();
      //   initiateSMAValues();
     }
