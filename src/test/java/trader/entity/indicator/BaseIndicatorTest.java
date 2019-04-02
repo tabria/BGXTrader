@@ -2,6 +2,7 @@ package trader.entity.indicator;
 
 import org.junit.Before;
 import org.junit.Test;
+import trader.entity.candlestick.candle.CandleGranularity;
 import trader.entity.candlestick.candle.CandlePriceType;
 import trader.entity.candlestick.Candlestick;
 import trader.entity.indicator.updater.*;
@@ -23,6 +24,7 @@ public abstract class BaseIndicatorTest {
     protected CandlePriceType candlePriceType = CandlePriceType.CLOSE;
     protected IndicatorUpdateHelper indicatorUpdateHelper;
     protected long period;
+    protected CandleGranularity granularity = CandleGranularity.M30;
     protected Candlestick newCandle;
 
     @Before

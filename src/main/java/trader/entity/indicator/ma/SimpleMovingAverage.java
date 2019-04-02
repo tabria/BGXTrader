@@ -1,5 +1,6 @@
 package trader.entity.indicator.ma;
 
+import trader.entity.candlestick.candle.CandleGranularity;
 import trader.entity.indicator.CandlesUpdatable;
 import trader.entity.candlestick.candle.CandlePriceType;
 import trader.entity.candlestick.Candlestick;
@@ -19,8 +20,8 @@ public final class SimpleMovingAverage extends BaseIndicator {
         initiateSMAValues();
     }
 ///////////////////////////////////remove//////////////////////////
-    SimpleMovingAverage(long indicatorPeriod, CandlePriceType candlePriceType, List<Candlestick> candlestickList) {
-        super(indicatorPeriod, candlePriceType, candlestickList);
+    SimpleMovingAverage(long indicatorPeriod, CandlePriceType candlePriceType, List<Candlestick> candlestickList, CandleGranularity granularity) {
+        super(indicatorPeriod, candlePriceType, candlestickList, granularity);
         setDivisor();
      //   initiateSMAValues();
     }

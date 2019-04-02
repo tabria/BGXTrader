@@ -1,8 +1,11 @@
-package trader.entity.indicator.observer;
+package trader.controller;
 
 import trader.exception.NullArgumentException;
 import trader.entity.indicator.Indicator;
 import trader.price.Pricing;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 public final class IndicatorObserver implements Observer {
 

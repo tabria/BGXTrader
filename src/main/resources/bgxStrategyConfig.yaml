@@ -1,31 +1,36 @@
 # candlePriceType can have one of 5 values: OPEN, CLOSE, HIGH, LOW, MEDIUM
 # maType can have one of 3 values: SIMPLE, EXPONENTIAL, WEIGHTED
+# granularity can have one of : S5, S10, S15, S30, M1, M2, M4, M5, M10, M15, M30, H1, H2, H3, H4, H6, H8, H12, D, W, M;
 
 rsiIndicator1:
   period: "14"
   candlePriceType: "CLOSE"
+  granularity: "M30";
 smaIndicator1:
   period: "1"
   candlePriceType: "CLOSE"
+  granularity: "M30";
   maType: "SIMPLE"
 smaIndicator2:
   period: "1"
   candlePriceType: "OPEN"
+  granularity: "D";
   maType: "SIMPLE"
 wmaIndicator1:
   period: "5"
   candlePriceType: "CLOSE"
+  granularity: "M30";
   maType: "WEIGHTED"
 wmaIndicator2:
   period: "20"
   candlePriceType: "CLOSE"
+  granularity: "M30";
   maType: "WEIGHTED"
 wmaIndicator3:
   period: "100"
   candlePriceType: "CLOSE"
+  granularity: "M30";
   maType: "WEIGHTED"
-systemTimeFrame:
-  granularity: "M30"
 instrument:
   instrumentName: "EUR_USD"
 candlesQuantity:

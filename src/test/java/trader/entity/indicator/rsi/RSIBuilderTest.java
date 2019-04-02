@@ -21,28 +21,60 @@ public class RSIBuilderTest extends BaseBuilderTest {
     public void WhenCallBuildWithMoreThanMaximumSettingCount_Exception(){
         settings.put(PERIOD, "13");
         settings.put(CANDLE_PRICE_TYPE, "median");
-        settings.put("price", "12");
+        settings.put(CANDLE_GRANULARITY, "M30");
+        settings.put("price", "100");
         builder.build(settings);
     }
 
     @Test
-    public void WhenCallBuildWithMoreThanZeroAndLessThanMaxSettingsCount_DefaultForNonPresentSettings(){
+    public void WhenCallBuildWithZeroSettingsCount_DefaultSettings(){
         settings.remove(PERIOD);
+        Indicator indicator = builder.build(settings);
+
+        assertEquals(DEFAULT_INDICATOR_PERIOD, getActualPeriod(indicator));
+        assertEquals(DEFAULT_CANDLESTICK_PRICE_TYPE, getActualCandlePriceType(indicator));
+        assertEquals(DEFAULT_GRANULARITY, getActualGranularity(indicator));
+    }
+
+    @Test
+    public void WhenCallBuildOnlyWithGranularityAndCandlePriceType_DefaultForPeriod(){
+        settings.put(CANDLE_GRANULARITY, "M5");
+        settings.put(CANDLE_PRICE_TYPE, "median");
         Indicator indicator = builder.build(settings);
 
         assertEquals(DEFAULT_INDICATOR_PERIOD, getActualPeriod(indicator));
     }
 
     @Test
-    public void WhenCallBuildWithCustomSettings_SuccessfulBuildWithCustomSettings(){
+    public void WhenCallBuildOnlyWithPeriodAndGranularity_DefaultForCandlePriceType(){
+        settings.put(PERIOD, "16");
+        settings.put(CANDLE_GRANULARITY, "M5");
+        Indicator indicator = builder.build(settings);
+
+        assertEquals(DEFAULT_CANDLESTICK_PRICE_TYPE, getActualCandlePriceType(indicator));
+    }
+
+    @Test
+    public void WhenCallBuildOnlyWithPeriodAndCandlePriceType_DefaultForGranularity(){
         settings.put(PERIOD, "13");
         settings.put(CANDLE_PRICE_TYPE, "median");
+        Indicator indicator = builder.build(settings);
+
+        assertEquals(DEFAULT_GRANULARITY, getActualGranularity(indicator));
+    }
+
+    @Test
+    public void WhenCallBuildWithCustomSettings_SuccessfulBuildWithCustomSettings(){
+        settings.put(PERIOD, "7");
+        settings.put(CANDLE_PRICE_TYPE, "median");
+        settings.put(CANDLE_GRANULARITY, "W");
         Indicator rsi = builder.build(settings);
 
         assertEquals("RelativeStrengthIndex", rsi.getClass().getSimpleName());
         assertEquals(0, getActualCandlestickList(rsi).size());
         assertEquals("median".toUpperCase(), getActualCandlePriceType(rsi).toString());
-        assertEquals(13L, getActualPeriod(rsi));
+        assertEquals(7L, getActualPeriod(rsi));
+        assertEquals("W".toUpperCase(), getActualGranularity(rsi).toString());
     }
 
 }

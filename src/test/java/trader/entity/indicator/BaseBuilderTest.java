@@ -3,6 +3,7 @@ package trader.entity.indicator;
 import org.junit.Test;
 import trader.CommonTestClassMembers;
 import trader.entity.candlestick.Candlestick;
+import trader.entity.candlestick.candle.CandleGranularity;
 import trader.entity.candlestick.candle.CandlePriceType;
 import trader.exception.OutOfBoundaryException;
 import trader.exception.WrongIndicatorSettingsException;
@@ -18,8 +19,10 @@ public abstract class BaseBuilderTest {
     private static final long MIN_INDICATOR_PERIOD = 1L;
     private static final long MAX_INDICATOR_PERIOD = 4000L;
     protected static final CandlePriceType DEFAULT_CANDLESTICK_PRICE_TYPE = CandlePriceType.CLOSE;
+    protected static final CandleGranularity DEFAULT_GRANULARITY = CandleGranularity.M30;
     protected static final String PERIOD = "period";
     protected static final String CANDLE_PRICE_TYPE = "candlePriceType";
+    protected static final String CANDLE_GRANULARITY = "granularity";
 
     protected CommonTestClassMembers commonMembers;
     protected HashMap<String, String> settings;
@@ -139,6 +142,58 @@ public abstract class BaseBuilderTest {
         assertEquals("HiGh".toUpperCase(), getActualCandlePriceType(builder).toString());
     }
 
+    @Test
+    public void WhenCallSetGranularity_ReturnCurrentObject(){
+        settings.clear();
+        assertEquals(builder, builder.setGranularity(settings));
+    }
+
+    @Test
+    public void WhenCallSetGranularityWithNull_SetDefaultGranularity(){
+        settings.put(CANDLE_GRANULARITY, null);
+        builder.setGranularity(settings);
+
+        assertEquals(DEFAULT_GRANULARITY, getActualGranularity(builder));
+    }
+
+    @Test
+    public void WhenCallSetGranularityWithEmptyString_SetToDefault(){
+        settings.remove(CANDLE_GRANULARITY);
+        builder.setGranularity(settings);
+        assertEquals(DEFAULT_GRANULARITY, getActualGranularity(builder));
+    }
+
+    @Test(expected = WrongIndicatorSettingsException.class)
+    public void WhenCallSetGranularityWithBadValue_Exception(){
+        settings.put(CANDLE_GRANULARITY, "Mor");
+        builder.setGranularity(settings);
+    }
+
+    @Test
+    public void WhenCallSetGranularityWithCorrectValue_SuccessfulUpdate(){
+        settings.put(CANDLE_GRANULARITY, "M5");
+        builder.setGranularity(settings);
+
+        assertEquals("M5".toUpperCase(), getActualGranularity(builder).toString());
+    }
+
+    @Test
+    public void WhenCallSetGranularityWithCorrectMixedUpperAndLowerCaseLetters_SuccessfulUpdate(){
+        settings.put(CANDLE_GRANULARITY, "m15");
+        builder.setGranularity(settings);
+
+        assertEquals("m15".toUpperCase(), getActualGranularity(builder).toString());
+    }
+
+    @Test
+    public void WhenCallSetGranularityWithCorrectValueWithExtraSpaces_TrimAndSuccessfulUpdate(){
+        settings.put(CANDLE_GRANULARITY, "  h4   ");
+        builder.setGranularity(settings);
+
+        assertEquals("h4".toUpperCase(), getActualGranularity(builder).toString());
+    }
+
+
     @SuppressWarnings("unchecked")
     protected List<Candlestick> getActualCandlestickList(Object object) {
         return (List<Candlestick>) commonMembers.extractFieldObject(object, "candlestickList");
@@ -150,5 +205,9 @@ public abstract class BaseBuilderTest {
 
     protected CandlePriceType getActualCandlePriceType(Object object) {
         return (CandlePriceType) commonMembers.extractFieldObject(object, "candlePriceType");
+    }
+
+    protected CandleGranularity getActualGranularity(Object object) {
+        return (CandleGranularity) commonMembers.extractFieldObject(object, "granularity");
     }
 }

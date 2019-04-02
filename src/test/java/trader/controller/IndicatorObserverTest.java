@@ -1,13 +1,14 @@
-package trader.entity.indicator;
+package trader.controller;
 
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import trader.entity.indicator.Indicator;
 import trader.exception.NullArgumentException;
-import trader.entity.indicator.observer.IndicatorObserver;
-import trader.entity.indicator.observer.Observer;
+import trader.controller.IndicatorObserver;
+import trader.controller.Observer;
 import trader.price.Pricing;
 import java.lang.reflect.Field;
 import static org.junit.Assert.*;

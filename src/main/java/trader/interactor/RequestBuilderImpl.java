@@ -27,10 +27,16 @@ public class RequestBuilderImpl implements RequestBuilder {
         Request<Indicator> request = new RequestImpl<>();
         if(dataStructureName.contains("rsi")){
             request.setRequestDataStructure(new RSIBuilder().build(settings));
-        } else if(dataStructureName.contains("sma")){
+            return request;
+        } else if(isMovingAverage(dataStructureName)){
             request.setRequestDataStructure(new MovingAverageBuilder().build(settings));
+            return request;
         }
-        return request;
+       throw new NoSuchDataStructureException();
+    }
+
+    private boolean isMovingAverage(String dataStructureName) {
+        return dataStructureName.contains("sma") || dataStructureName.contains("wma") || dataStructureName.contains("ema");
     }
 
     private void verifyInput(String dataStructureName, HashMap<String, String> settings) {

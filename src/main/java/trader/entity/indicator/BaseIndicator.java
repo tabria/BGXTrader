@@ -1,5 +1,6 @@
 package trader.entity.indicator;
 
+import trader.entity.candlestick.candle.CandleGranularity;
 import trader.entity.candlestick.candle.CandlePriceType;
 import trader.entity.candlestick.Candlestick;
 import trader.exception.BadRequestException;
@@ -19,6 +20,7 @@ public abstract class BaseIndicator implements Indicator{
     protected final CandlePriceType candlePriceType;
     protected List<Candlestick> candlestickList;
     protected List<BigDecimal> indicatorValues;
+    protected CandleGranularity granularity;
     protected BigDecimal divisor;
 
     //////////////////////////// to remove ///////////////////////////////////////////
@@ -33,9 +35,10 @@ public abstract class BaseIndicator implements Indicator{
     //////////////////to remove -/////////////////////////////////
 
 
-    public BaseIndicator(long indicatorPeriod, CandlePriceType candlePriceType, List<Candlestick> candlesList) {
+    public BaseIndicator(long indicatorPeriod, CandlePriceType candlePriceType, List<Candlestick> candlesList, CandleGranularity granularity) {
         this.indicatorPeriod = indicatorPeriod;
         this.candlePriceType = candlePriceType;
+        this.granularity = granularity;
         this.candlesUpdater = null; //to be removed
         this.indicatorValues = new ArrayList<>();
         this.candlestickList = candlesList;

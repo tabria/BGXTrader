@@ -1,22 +1,28 @@
 package trader.strategy.bgxstrategy;
 
 import trader.connector.ApiConnector;
+import trader.controller.AddIndicatorController;
+import trader.interactor.RequestBuilderImpl;
+import trader.interactor.UseCaseFactoryImpl;
+import trader.requestor.RequestBuilder;
+import trader.requestor.UseCaseFactory;
 import trader.strategy.Observable;
 import trader.exception.NullArgumentException;
-import trader.entity.indicator.observer.IndicatorObserver;
 import trader.order.OrderStrategy;
 import trader.strategy.observable.PriceObservable;
 import trader.strategy.Strategy;
 import trader.order.OrderService;
 import trader.exit.exit_strategie.BaseExitStrategy;
 import trader.exit.ExitStrategy;
-import java.util.List;
+
+import java.util.HashMap;
 
 public final class BGXStrategy implements Strategy {
 
     private ApiConnector apiConnector;
-    private List<IndicatorObserver> indicatorObservers;
     private Observable priceObservable;
+    private RequestBuilder requestBuilder;
+    private UseCaseFactory useCaseFactory;
 
     private ExitStrategy exitStrategy;
     private OrderStrategy orderStrategy;
@@ -25,13 +31,12 @@ public final class BGXStrategy implements Strategy {
     public BGXStrategy(ApiConnector connector) {
         setApiConnector(connector);
         priceObservable = PriceObservable.create(apiConnector);
+        requestBuilder = new RequestBuilderImpl();
+        useCaseFactory = new UseCaseFactoryImpl();
+
         orderStrategy = new OrderService(apiConnector);
         exitStrategy = BaseExitStrategy.createInstance();
-        init();
-    }
-
-    private void setIndicatorObservers(ConstructIndicatorsService constructIndicatorsService) {
-        indicatorObservers = constructIndicatorsService.getIndicatorObservers();
+     //   init();
     }
 
 
@@ -49,6 +54,12 @@ public final class BGXStrategy implements Strategy {
         return "bgxstrategy";
     }
 
+    void addIndicators(String indicatorType, HashMap<String, String> settings){
+        AddIndicatorController addIndicatorController = new AddIndicatorController(requestBuilder, useCaseFactory);
+        addIndicatorController.execute(indicatorType, settings, priceObservable);
+    }
+
+
     private void setApiConnector(ApiConnector connector) {
         if(connector == null){
             throw new NullArgumentException();
@@ -56,10 +67,6 @@ public final class BGXStrategy implements Strategy {
         this.apiConnector = connector;
     }
 
-    private void init(){
-        ConstructIndicatorsService constructIndicatorsService = new ConstructIndicatorsService(apiConnector);
-        setIndicatorObservers(constructIndicatorsService);
-    }
 
     private boolean haveOpenOrders() {
         return apiConnector.getOpenOrders().size() > 0;

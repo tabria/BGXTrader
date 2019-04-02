@@ -8,14 +8,15 @@ import java.util.HashMap;
 
 public final class RSIBuilder extends BaseIndicatorBuilder {
 
-    private static final int SETTABLE_FIELDS_COUNT = 2;
+    private static final int SETTABLE_FIELDS_COUNT = 3;
 
     public Indicator build(HashMap<String, String> settings){
         if (settings == null || settings.size() > SETTABLE_FIELDS_COUNT)
             throw new WrongIndicatorSettingsException();
         setPeriod(settings);
         setCandlePriceType(settings);
-        return new RelativeStrengthIndex(indicatorPeriod, candlePriceType, candlestickList);
+        setGranularity(settings);
+        return new RelativeStrengthIndex(indicatorPeriod, candlePriceType, candlestickList, granularity);
     }
 
 }

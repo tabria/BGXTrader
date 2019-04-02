@@ -1,6 +1,7 @@
 package trader.entity.indicator.rsi;
 
 
+import trader.entity.candlestick.candle.CandleGranularity;
 import trader.entity.indicator.CandlesUpdatable;
 import trader.entity.candlestick.candle.CandlePriceType;
 import trader.entity.candlestick.Candlestick;
@@ -22,19 +23,18 @@ public final class RelativeStrengthIndex extends BaseIndicator {
 
     ////////////////////////remove///////////////////////////////////
 
-    RelativeStrengthIndex(long indicatorPeriod, CandlePriceType candlePriceType, CandlesUpdatable candlesUpdater){
-        super(indicatorPeriod, candlePriceType, candlesUpdater);
-        averageGains = BigDecimal.ZERO;
-        averageLosses = BigDecimal.ZERO;
-        initiateRSIValues();
-    }
+//    RelativeStrengthIndex(long indicatorPeriod, CandlePriceType candlePriceType, CandlesUpdatable candlesUpdater){
+//        super(indicatorPeriod, candlePriceType, candlesUpdater);
+//        averageGains = BigDecimal.ZERO;
+//        averageLosses = BigDecimal.ZERO;
+//        initiateRSIValues();
+//    }
     ////////////////////////remove/////////////////////////
 
-    RelativeStrengthIndex(long indicatorPeriod, CandlePriceType candlePriceType, List<Candlestick> candlesList){
-        super(indicatorPeriod, candlePriceType, candlesList);
+    RelativeStrengthIndex(long indicatorPeriod, CandlePriceType candlePriceType, List<Candlestick> candlesList, CandleGranularity granularity){
+        super(indicatorPeriod, candlePriceType, candlesList, granularity);
         averageGains = BigDecimal.ZERO;
         averageLosses = BigDecimal.ZERO;
-      //  initiateRSIValues();
     }
 
 
@@ -59,6 +59,7 @@ public final class RelativeStrengthIndex extends BaseIndicator {
         return "RelativeStrengthIndex{" +
                 "period=" + indicatorPeriod +
                 ", candlePriceType=" + candlePriceType.toString() +
+                ", granularity=" + granularity.toString() +
                 ", rsiValues=" + indicatorValues.toString() +
                 '}';
     }

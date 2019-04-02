@@ -1,5 +1,6 @@
 package trader.entity.indicator.ma;
 
+import trader.entity.candlestick.candle.CandleGranularity;
 import trader.entity.indicator.CandlesUpdatable;
 import trader.entity.candlestick.candle.CandlePriceType;
 import trader.entity.candlestick.Candlestick;
@@ -18,8 +19,8 @@ public final class WeightedMovingAverage extends BaseIndicator {
         initiateWMAValues();
     }
 ////////////////////////////do not remove /////////////////////////////////////////
-    WeightedMovingAverage(long indicatorPeriod, CandlePriceType candlePriceType, List<Candlestick> candlestickList) {
-        super(indicatorPeriod, candlePriceType, candlestickList);
+    WeightedMovingAverage(long indicatorPeriod, CandlePriceType candlePriceType, List<Candlestick> candlestickList, CandleGranularity granularity) {
+        super(indicatorPeriod, candlePriceType, candlestickList, granularity);
         setDivisor();
   //      initiateWMAValues();
     }

@@ -2,7 +2,7 @@ package trader.strategy.bgxstrategy;
 
 import trader.connector.ApiConnector;
 import trader.entity.indicator.Indicator;
-import trader.entity.indicator.observer.IndicatorObserver;
+import trader.controller.IndicatorObserver;
 import trader.entity.indicator.ma.MovingAverageBuilder;
 
 import java.util.ArrayList;

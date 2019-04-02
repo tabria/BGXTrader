@@ -47,6 +47,11 @@ public class RequestImplBuilderImplTest {
         requestBuilder.build("trah", settings);
     }
 
+    @Test(expected = NoSuchDataStructureException.class)
+    public void WhenCallBuildWithNotExistingDataStrucTureName_Exception(){
+        requestBuilder.build("trahIndicator", settings);
+    }
+
     @Test
     public void whenCallBuildWithRSIIndicatorDataStructureName_ReturnRSIRequest(){
         Request<?> rsiIndicatorRequest = requestBuilder.build("rsiIndicator", settings);

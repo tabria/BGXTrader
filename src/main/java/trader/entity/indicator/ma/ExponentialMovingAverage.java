@@ -1,6 +1,7 @@
 package trader.entity.indicator.ma;
 
 
+import trader.entity.candlestick.candle.CandleGranularity;
 import trader.entity.indicator.CandlesUpdatable;
 import trader.entity.candlestick.candle.CandlePriceType;
 import trader.entity.candlestick.Candlestick;
@@ -16,13 +17,21 @@ public final class ExponentialMovingAverage extends BaseIndicator {
 
     private BigDecimal smoothFactor;
     private BigDecimal smoothMultiplier;
-
+//////////////////remove////////////////////////////////
     ExponentialMovingAverage(long indicatorPeriod, CandlePriceType candlePriceType, CandlesUpdatable updater) {
         super(indicatorPeriod, candlePriceType, updater);
         setDivisor();
         setSmoothFactor();
         setSmoothMultiplier();
         initiateEMAValues();
+    }
+////////////////////// remove ///////////////////////////////////////
+    ExponentialMovingAverage(long indicatorPeriod, CandlePriceType candlePriceType, List<Candlestick> candlestickList, CandleGranularity granularity) {
+        super(indicatorPeriod, candlePriceType, candlestickList, granularity);
+//        setDivisor();
+//        setSmoothFactor();
+//        setSmoothMultiplier();
+//        initiateEMAValues();
     }
 
     @Override

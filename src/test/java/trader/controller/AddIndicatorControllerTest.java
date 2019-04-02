@@ -2,18 +2,20 @@ package trader.controller;
 
 import org.junit.Before;
 import org.junit.Test;
-import trader.CommonTestClassMembers;
 import trader.entity.indicator.Indicator;
+import trader.exception.BadRequestException;
 import trader.exception.NullArgumentException;
 import trader.interactor.UseCase;
 import trader.requestor.Request;
 import trader.requestor.RequestBuilder;
 import trader.requestor.UseCaseFactory;
 import trader.responder.Response;
-
+import trader.strategy.observable.PriceObservable;
 import java.util.HashMap;
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -23,15 +25,17 @@ public class AddIndicatorControllerTest {
     private AddIndicatorController addIndicatorController;
     private RequestBuilder requestBuilderMock;
     private UseCaseFactory useCaseFactoryMock;
+    private PriceObservable priceObservableMock;
     private Indicator indicatorMock;
     private UseCase useCaseMock;
     private Request requestMock;
     private HashMap<String, String> settings;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         requestBuilderMock = mock(RequestBuilder.class);
         useCaseFactoryMock = mock(UseCaseFactory.class);
+        priceObservableMock = mock(PriceObservable.class);
         indicatorMock = mock(Indicator.class);
         useCaseMock = mock(UseCase.class);
         requestMock = mock(Request.class);
@@ -68,7 +72,7 @@ public class AddIndicatorControllerTest {
     public void TestIfUseCaseNameIsCorrect(){
         String useCaseName = addIndicatorController.composeUseCaseName();
 
-        assertEquals("AddIndicatorUseCase", useCaseName);
+        assertEquals("AddIndicator", useCaseName);
     }
 
     @Test
@@ -82,21 +86,30 @@ public class AddIndicatorControllerTest {
 
     @Test
     public void WhenCallMakeWithCorrectSetting_CorrectResult(){
-        String useCaseName = "AddIndicatorUseCase";
+        String useCaseName = "AddIndicator";
         when(useCaseFactoryMock.make(useCaseName)).thenReturn(useCaseMock);
         UseCase useCase = addIndicatorController.make(useCaseName);
 
         assertEquals(useCaseMock, useCase);
     }
 
-    @Test
+    @Test(expected = NullArgumentException.class)
+    public void WhenCallExecuteWithNullPriceObservable_Exception(){
+        addIndicatorController.execute(RSI_INDICATOR, settings, null);
+    }
+    @Test(expected = BadRequestException.class)
     public void WhenCallExecuteWithCorrectSettings_CorrectResponse(){
+        setExecuteSettings();
+
+        addIndicatorController.execute(RSI_INDICATOR, settings, priceObservableMock);
+    }
+
+    private void setExecuteSettings() {
         Response responseMock = mock(Response.class);
+        when(responseMock.getResponseDataStructure()).thenReturn(indicatorMock);
         when(useCaseFactoryMock.make(anyString())).thenReturn(useCaseMock);
         when(useCaseMock.execute(requestMock)).thenReturn(responseMock);
         when(requestBuilderMock.build(RSI_INDICATOR, settings)).thenReturn(requestMock);
-        Response<Indicator> executeResponse = addIndicatorController.execute(RSI_INDICATOR, settings);
-
-        assertEquals(responseMock, executeResponse);
+        doThrow(BadRequestException.class).when(priceObservableMock).registerObserver(any(Observer.class));
     }
 }

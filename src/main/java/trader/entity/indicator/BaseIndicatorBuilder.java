@@ -1,6 +1,7 @@
 package trader.entity.indicator;
 
 import trader.entity.candlestick.Candlestick;
+import trader.entity.candlestick.candle.CandleGranularity;
 import trader.entity.candlestick.candle.CandlePriceType;
 import trader.exception.OutOfBoundaryException;
 import trader.exception.WrongIndicatorSettingsException;
@@ -14,12 +15,15 @@ public abstract class BaseIndicatorBuilder {
     private static final long MIN_INDICATOR_PERIOD = 1L;
     private static final long MAX_INDICATOR_PERIOD = 4000L;
     private static final CandlePriceType DEFAULT_CANDLESTICK_PRICE_TYPE = CandlePriceType.CLOSE;
+    private static final CandleGranularity DEFAULT_GRANULARITY = CandleGranularity.M30;
     private static final String SETTINGS_PERIOD_KEY_NAME = "period";
     private static final String SETTINGS_CANDLE_PRICE_TYPE_KEY_NAME = "candlePriceType";
+    private static final String SETTINGS_GRANULARITY_NAME = "granularity";
 
     protected List<Candlestick> candlestickList;
     protected long indicatorPeriod;
     protected CandlePriceType candlePriceType;
+    protected CandleGranularity granularity;
 
     public BaseIndicatorBuilder() {
         this.candlestickList = new ArrayList<>();
@@ -34,6 +38,11 @@ public abstract class BaseIndicatorBuilder {
 
     public BaseIndicatorBuilder setCandlePriceType(HashMap<String, String> settings) {
         this.candlePriceType = parseCandlePriceType(settings);
+        return this;
+    }
+
+    public BaseIndicatorBuilder setGranularity(HashMap<String, String> settings){
+        this.granularity = parseGranularity(settings);
         return this;
     }
 
@@ -72,4 +81,16 @@ public abstract class BaseIndicatorBuilder {
         }
         return DEFAULT_CANDLESTICK_PRICE_TYPE;
     }
+
+    private CandleGranularity parseGranularity(HashMap<String, String> settings) {
+        if (isNotDefault(settings, SETTINGS_GRANULARITY_NAME)) {
+            try {
+                return CandleGranularity.valueOf(settings.get(SETTINGS_GRANULARITY_NAME).trim().toUpperCase());
+            } catch (Exception e) {
+                throw new WrongIndicatorSettingsException();
+            }
+        }
+        return DEFAULT_GRANULARITY;
+    }
+
 }

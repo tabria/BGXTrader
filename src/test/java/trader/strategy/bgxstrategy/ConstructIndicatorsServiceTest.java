@@ -5,7 +5,7 @@ import org.junit.Test;
 import trader.CommonTestClassMembers;
 import trader.entity.candlestick.Candlestick;
 import trader.connector.ApiConnector;
-import trader.entity.indicator.observer.IndicatorObserver;
+import trader.controller.IndicatorObserver;
 import trader.entity.indicator.ma.SimpleMovingAverage;
 import trader.entity.indicator.ma.WeightedMovingAverage;
 import trader.entity.indicator.rsi.RelativeStrengthIndex;
