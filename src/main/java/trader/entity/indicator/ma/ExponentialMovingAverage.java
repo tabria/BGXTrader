@@ -45,6 +45,7 @@ public final class ExponentialMovingAverage extends BaseIndicator {
         return "ExponentialMovingAverage{" +
                 "period=" + indicatorPeriod +
                 ", candlePriceType=" + candlePriceType.toString() +
+                ", granularity=" + granularity.toString() +
                 ", indicatorValues=" + indicatorValues.toString() +
                 '}';
     }

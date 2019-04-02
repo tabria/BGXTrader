@@ -18,13 +18,13 @@ public final class WeightedMovingAverage extends BaseIndicator {
 //        setDivisor();
 //        initiateWMAValues();
 //    }
-////////////////////////////do not remove /////////////////////////////////////////
+
     WeightedMovingAverage(long indicatorPeriod, CandlePriceType candlePriceType, CandleGranularity granularity) {
         super(indicatorPeriod, candlePriceType, granularity);
         setDivisor();
   //      initiateWMAValues();
     }
-  ///////////////////do not remove////////////////////////////////////////////////
+
 
     @Override
     public void updateIndicator() {
@@ -38,6 +38,7 @@ public final class WeightedMovingAverage extends BaseIndicator {
         return "WeightedMovingAverage{" +
                 "period=" + indicatorPeriod +
                 ", candlePriceType=" + candlePriceType.toString() +
+                ", granularity=" + granularity.toString() +
                 ", indicatorValues=" + indicatorValues.toString() +
                 '}';
     }

@@ -43,6 +43,7 @@ public final class SimpleMovingAverage extends BaseIndicator {
         return "SimpleMovingAverage{" +
                 "period=" + indicatorPeriod +
                 ", candlePriceType=" + candlePriceType.toString() +
+                ", granularity=" + granularity.toString() +
                 ", indicatorValues=" + indicatorValues.toString() +
                 '}';
     }
