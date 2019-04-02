@@ -21,10 +21,12 @@ public abstract class BaseIndicatorTest {
     private static final String NEW_DATETIME_ENTRY = "2018-08-01T09:53:00Z";
 
     protected CandlesUpdatable candlesUpdater;
-    protected CandlePriceType candlePriceType = CandlePriceType.CLOSE;
     protected IndicatorUpdateHelper indicatorUpdateHelper;
+
     protected long period;
+    protected CandlePriceType candlePriceType = CandlePriceType.CLOSE;
     protected CandleGranularity granularity = CandleGranularity.M30;
+
     protected Candlestick newCandle;
 
     @Before

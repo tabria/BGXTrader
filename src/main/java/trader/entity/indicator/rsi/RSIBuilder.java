@@ -16,7 +16,7 @@ public final class RSIBuilder extends BaseIndicatorBuilder {
         setPeriod(settings);
         setCandlePriceType(settings);
         setGranularity(settings);
-        return new RelativeStrengthIndex(indicatorPeriod, candlePriceType, candlestickList, granularity);
+        return new RelativeStrengthIndex(indicatorPeriod, candlePriceType, granularity);
     }
 
 }

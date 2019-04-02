@@ -1,5 +1,6 @@
 package trader.entity.indicator.ma;
 
+import trader.entity.candlestick.candle.CandleGranularity;
 import trader.entity.indicator.BaseIndicatorBuilder;
 import trader.entity.candlestick.candle.CandlePriceType;
 import trader.exception.WrongIndicatorSettingsException;
@@ -16,7 +17,7 @@ public final class MovingAverageBuilder extends BaseIndicatorBuilder {
     private static final MAType SETTINGS_DEFAULT_MA_TYPE = MAType.SIMPLE;
     private static final String SETTINGS_MA_TYPE_KEY_NAME = "maType";
     private static final String MA_LOCATION = "trader.entity.indicator.ma.";
-    private static final int SETTABLE_FIELDS_COUNT = 3;
+    private static final int SETTABLE_FIELDS_COUNT = 4;
     private static final String MOVING_AVERAGE = "MovingAverage";
 
     private MAType maType;
@@ -26,6 +27,7 @@ public final class MovingAverageBuilder extends BaseIndicatorBuilder {
             throw new WrongIndicatorSettingsException();
         setPeriod(settings);
         setCandlePriceType(settings);
+        setGranularity(settings);
         setMAType(settings);
         return instantiatesIndicator();
     }
@@ -49,8 +51,8 @@ public final class MovingAverageBuilder extends BaseIndicatorBuilder {
     private Indicator instantiatesIndicator()  {
         try {
             Class<?> indicatorClass = Class.forName(MA_LOCATION + composeIndicatorClassName());
-            Constructor<?> indicatorConstructor = indicatorClass.getDeclaredConstructor(long.class, CandlePriceType.class, List.class);
-            return (Indicator) indicatorConstructor.newInstance(indicatorPeriod, candlePriceType, candlestickList);
+            Constructor<?> indicatorConstructor = indicatorClass.getDeclaredConstructor(long.class, CandlePriceType.class, CandleGranularity.class);
+            return (Indicator) indicatorConstructor.newInstance(indicatorPeriod, candlePriceType, granularity);
         }
         catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             throw new RuntimeException(e);

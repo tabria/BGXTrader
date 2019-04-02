@@ -13,35 +13,35 @@ import java.util.List;
 import static trader.strategy.bgxstrategy.configuration.StrategyConfig.SCALE;
 
 public abstract class BaseIndicator implements Indicator{
-    protected final CandlesUpdatable candlesUpdater;
+ //   protected final CandlesUpdatable candlesUpdater;
 
 
     protected long indicatorPeriod;
-    protected final CandlePriceType candlePriceType;
+    protected CandlePriceType candlePriceType;
+    protected CandleGranularity granularity;
     protected List<Candlestick> candlestickList;
     protected List<BigDecimal> indicatorValues;
-    protected CandleGranularity granularity;
     protected BigDecimal divisor;
 
     //////////////////////////// to remove ///////////////////////////////////////////
-    public BaseIndicator(long indicatorPeriod, CandlePriceType candlePriceType, CandlesUpdatable candlesUpdater) {
-        this.indicatorPeriod = indicatorPeriod;
-        this.candlePriceType = candlePriceType;
-        this.candlesUpdater = candlesUpdater;
-        this.indicatorValues = new ArrayList<>();
-        this.candlestickList = new ArrayList<>();
-    }
+//    public BaseIndicator(long indicatorPeriod, CandlePriceType candlePriceType, CandlesUpdatable candlesUpdater) {
+//        this.indicatorPeriod = indicatorPeriod;
+//        this.candlePriceType = candlePriceType;
+//        this.candlesUpdater = candlesUpdater;
+//        this.indicatorValues = new ArrayList<>();
+//        this.candlestickList = new ArrayList<>();
+//    }
 
     //////////////////to remove -/////////////////////////////////
 
 
-    public BaseIndicator(long indicatorPeriod, CandlePriceType candlePriceType, List<Candlestick> candlesList, CandleGranularity granularity) {
+    public BaseIndicator(long indicatorPeriod, CandlePriceType candlePriceType, CandleGranularity granularity) {
         this.indicatorPeriod = indicatorPeriod;
         this.candlePriceType = candlePriceType;
         this.granularity = granularity;
-        this.candlesUpdater = null; //to be removed
+//        this.candlesUpdater = null; //to be removed
         this.indicatorValues = new ArrayList<>();
-        this.candlestickList = candlesList;
+        this.candlestickList = new ArrayList<>();
     }
 
     public List<BigDecimal> getValues() {

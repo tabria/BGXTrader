@@ -14,14 +14,14 @@ import static trader.strategy.bgxstrategy.configuration.StrategyConfig.*;
 public final class SimpleMovingAverage extends BaseIndicator {
 
     ////////////////////////////remove/////////////////////////
-    SimpleMovingAverage(long indicatorPeriod, CandlePriceType candlePriceType, CandlesUpdatable updater) {
-        super(indicatorPeriod, candlePriceType, updater);
-        setDivisor();
-        initiateSMAValues();
-    }
+//    SimpleMovingAverage(long indicatorPeriod, CandlePriceType candlePriceType, CandlesUpdatable updater) {
+//        super(indicatorPeriod, candlePriceType, updater);
+//        setDivisor();
+//        initiateSMAValues();
+//    }
 ///////////////////////////////////remove//////////////////////////
-    SimpleMovingAverage(long indicatorPeriod, CandlePriceType candlePriceType, List<Candlestick> candlestickList, CandleGranularity granularity) {
-        super(indicatorPeriod, candlePriceType, candlestickList, granularity);
+    SimpleMovingAverage(long indicatorPeriod, CandlePriceType candlePriceType, CandleGranularity granularity) {
+        super(indicatorPeriod, candlePriceType, granularity);
         setDivisor();
      //   initiateSMAValues();
     }
@@ -29,13 +29,13 @@ public final class SimpleMovingAverage extends BaseIndicator {
 
     @Override
     public void updateIndicator() {
-        candlesUpdater.getUpdatedCandle();
-        List<Candlestick> candles = candlesUpdater.getCandles();
-        BigDecimal smaValue = BigDecimal.ZERO;
-        for (int i = candles.size()-1; i >indicatorPeriod ; i--) {
-            smaValue = smaValue.add(obtainPrice(candles.get(i)));
-        }
-        indicatorValues.add(smaValue.divide(divisor, SCALE, BigDecimal.ROUND_HALF_UP));
+//        candlesUpdater.getUpdatedCandle();
+//        List<Candlestick> candles = candlesUpdater.getCandles();
+//        BigDecimal smaValue = BigDecimal.ZERO;
+//        for (int i = candles.size()-1; i >indicatorPeriod ; i--) {
+//            smaValue = smaValue.add(obtainPrice(candles.get(i)));
+//        }
+//        indicatorValues.add(smaValue.divide(divisor, SCALE, BigDecimal.ROUND_HALF_UP));
     }
     
     @Override
@@ -52,10 +52,10 @@ public final class SimpleMovingAverage extends BaseIndicator {
         super.divisor = BigDecimal.valueOf(indicatorPeriod);
     }
 
-    private void initiateSMAValues() {
-        List<Candlestick> candles = candlesUpdater.getCandles();
-        calculateSMAValue(candles);
-    }
+//    private void initiateSMAValues() {
+//        List<Candlestick> candles = candlesUpdater.getCandles();
+//        calculateSMAValue(candles);
+//    }
 
     private void calculateSMAValue(List<Candlestick> candlestickList) {
         verifyCalculationInput(candlestickList);

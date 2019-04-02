@@ -18,7 +18,7 @@ public class RelativeStrengthIndexTest extends BaseIndicatorTest {
     @Before
     public void before() {
         super.before();
-        this.rsi = new RelativeStrengthIndex(this.period, this.candlePriceType, new ArrayList<>(), this.granularity);
+        this.rsi = new RelativeStrengthIndex(this.period, this.candlePriceType, this.granularity);
     }
 
     @Test

@@ -18,16 +18,16 @@ public final class ExponentialMovingAverage extends BaseIndicator {
     private BigDecimal smoothFactor;
     private BigDecimal smoothMultiplier;
 //////////////////remove////////////////////////////////
-    ExponentialMovingAverage(long indicatorPeriod, CandlePriceType candlePriceType, CandlesUpdatable updater) {
-        super(indicatorPeriod, candlePriceType, updater);
-        setDivisor();
-        setSmoothFactor();
-        setSmoothMultiplier();
-        initiateEMAValues();
-    }
+//    ExponentialMovingAverage(long indicatorPeriod, CandlePriceType candlePriceType, CandlesUpdatable updater) {
+//        super(indicatorPeriod, candlePriceType, updater);
+//        setDivisor();
+//        setSmoothFactor();
+//        setSmoothMultiplier();
+//        initiateEMAValues();
+//    }
 ////////////////////// remove ///////////////////////////////////////
-    ExponentialMovingAverage(long indicatorPeriod, CandlePriceType candlePriceType, List<Candlestick> candlestickList, CandleGranularity granularity) {
-        super(indicatorPeriod, candlePriceType, candlestickList, granularity);
+    ExponentialMovingAverage(long indicatorPeriod, CandlePriceType candlePriceType, CandleGranularity granularity) {
+        super(indicatorPeriod, candlePriceType, granularity);
 //        setDivisor();
 //        setSmoothFactor();
 //        setSmoothMultiplier();
@@ -36,8 +36,8 @@ public final class ExponentialMovingAverage extends BaseIndicator {
 
     @Override
     public void updateIndicator() {
-        Candlestick candlestick = candlesUpdater.getUpdatedCandle();
-        indicatorValues.add(currentPriceSmoothed(candlestick).add(previousEMASmoothed()));
+//        Candlestick candlestick = candlesUpdater.getUpdatedCandle();
+//        indicatorValues.add(currentPriceSmoothed(candlestick).add(previousEMASmoothed()));
     }
 
     @Override
@@ -64,10 +64,10 @@ public final class ExponentialMovingAverage extends BaseIndicator {
                 .setScale(SCALE, BigDecimal.ROUND_HALF_UP);
     }
 
-    private void initiateEMAValues() {
-        List<Candlestick> candles = candlesUpdater.getCandles();
-        setEMAValues(candles);
-    }
+//    private void initiateEMAValues() {
+//        List<Candlestick> candles = candlesUpdater.getCandles();
+//        setEMAValues(candles);
+//    }
 
     /**
      * Calculation Formula:

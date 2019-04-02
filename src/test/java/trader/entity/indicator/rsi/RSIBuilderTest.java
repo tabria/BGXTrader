@@ -28,7 +28,6 @@ public class RSIBuilderTest extends BaseBuilderTest {
 
     @Test
     public void WhenCallBuildWithZeroSettingsCount_DefaultSettings(){
-        settings.remove(PERIOD);
         Indicator indicator = builder.build(settings);
 
         assertEquals(DEFAULT_INDICATOR_PERIOD, getActualPeriod(indicator));
@@ -62,6 +61,7 @@ public class RSIBuilderTest extends BaseBuilderTest {
 
         assertEquals(DEFAULT_GRANULARITY, getActualGranularity(indicator));
     }
+
 
     @Test
     public void WhenCallBuildWithCustomSettings_SuccessfulBuildWithCustomSettings(){

@@ -13,14 +13,14 @@ import static trader.strategy.bgxstrategy.configuration.StrategyConfig.SCALE;
 
 public final class WeightedMovingAverage extends BaseIndicator {
 
-    WeightedMovingAverage(long indicatorPeriod, CandlePriceType candlePriceType, CandlesUpdatable updater) {
-        super(indicatorPeriod, candlePriceType, updater);
-        setDivisor();
-        initiateWMAValues();
-    }
+//    WeightedMovingAverage(long indicatorPeriod, CandlePriceType candlePriceType, CandlesUpdatable updater) {
+//        super(indicatorPeriod, candlePriceType, updater);
+//        setDivisor();
+//        initiateWMAValues();
+//    }
 ////////////////////////////do not remove /////////////////////////////////////////
-    WeightedMovingAverage(long indicatorPeriod, CandlePriceType candlePriceType, List<Candlestick> candlestickList, CandleGranularity granularity) {
-        super(indicatorPeriod, candlePriceType, candlestickList, granularity);
+    WeightedMovingAverage(long indicatorPeriod, CandlePriceType candlePriceType, CandleGranularity granularity) {
+        super(indicatorPeriod, candlePriceType, granularity);
         setDivisor();
   //      initiateWMAValues();
     }
@@ -28,9 +28,9 @@ public final class WeightedMovingAverage extends BaseIndicator {
 
     @Override
     public void updateIndicator() {
-        candlesUpdater.getUpdatedCandle();
-        List<Candlestick> candles = candlesUpdater.getCandles();
-        indicatorValues.add(calculateWMAValue(candles, candles.size() - 1));
+//        candlesUpdater.getUpdatedCandle();
+//        List<Candlestick> candles = candlesUpdater.getCandles();
+//        indicatorValues.add(calculateWMAValue(candles, candles.size() - 1));
     }
 
     @Override
@@ -50,10 +50,10 @@ public final class WeightedMovingAverage extends BaseIndicator {
                 .multiply(BigDecimal.valueOf(indicatorPeriod)).setScale(SCALE, BigDecimal.ROUND_HALF_UP);
     }
 
-    private void initiateWMAValues() {
-        List<Candlestick> candles = candlesUpdater.getCandles();
-        setWMAValues(candles);
-    }
+//    private void initiateWMAValues() {
+//        List<Candlestick> candles = candlesUpdater.getCandles();
+//        setWMAValues(candles);
+//    }
 
     private void setWMAValues(List<Candlestick> candlestickList){
         verifyCalculationInput(candlestickList);

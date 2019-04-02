@@ -69,23 +69,56 @@ public class MovingAverageBuilderTest extends BaseBuilderTest {
     public void WhenCallBuildWithMoreThanMaximumSettingCount_Exception(){
         settings.put(PERIOD, "13");
         settings.put(CANDLE_PRICE_TYPE, "median");
+        settings.put(CANDLE_GRANULARITY, "M5");
         settings.put("price", "12");
         settings.put("doh", null);
         builder.build(settings);
     }
 
     @Test
-    public void WhenCallBuildWithMoreThanZeroAndLessThanMaxSettingsCount_DefaultForNonPresentSettings(){
-        settings.remove(PERIOD);
+    public void WhenCallBuildWithZeroSettings_DefaultSettings(){
+        Indicator indicator = builder.build(settings);
+        String indicatorName = indicator.getClass().getSimpleName();
+
+        assertTrue(indicatorName.toUpperCase().contains(DEFAULT_MA_TYPE.toString()));
+        assertEquals(DEFAULT_INDICATOR_PERIOD, getActualPeriod(indicator));
+        assertEquals(DEFAULT_CANDLESTICK_PRICE_TYPE, getActualCandlePriceType(indicator));
+        assertEquals(DEFAULT_GRANULARITY, getActualGranularity(indicator));
+    }
+
+    @Test
+    public void WhenCallBuildOnlyWithGranularityAndCandlePriceType_DefaultForPeriod(){
+        settings.put(CANDLE_GRANULARITY, "M5");
+        settings.put(CANDLE_PRICE_TYPE, "median");
         Indicator indicator = builder.build(settings);
 
         assertEquals(DEFAULT_INDICATOR_PERIOD, getActualPeriod(indicator));
     }
 
     @Test
+    public void WhenCallBuildOnlyWithPeriodAndGranularity_DefaultForCandlePriceType(){
+        settings.put(PERIOD, "16");
+        settings.put(CANDLE_GRANULARITY, "M5");
+        Indicator indicator = builder.build(settings);
+
+        assertEquals(DEFAULT_CANDLESTICK_PRICE_TYPE, getActualCandlePriceType(indicator));
+    }
+
+    @Test
+    public void WhenCallBuildOnlyWithPeriodAndCandlePriceType_DefaultForGranularity(){
+        settings.put(PERIOD, "13");
+        settings.put(CANDLE_PRICE_TYPE, "median");
+        Indicator indicator = builder.build(settings);
+
+        assertEquals(DEFAULT_GRANULARITY, getActualGranularity(indicator));
+    }
+
+
+    @Test
     public void WhenCallBuildWithCustomSettings_SuccessfulBuildWithCustomSettings(){
         settings.put(PERIOD, "9");
         settings.put(CANDLE_PRICE_TYPE, "median");
+        settings.put(CANDLE_GRANULARITY, "h4");
         settings.put(MA_TYPE, "weighted");
         Indicator indicator = builder.build(settings);
 
@@ -93,6 +126,7 @@ public class MovingAverageBuilderTest extends BaseBuilderTest {
         assertEquals(0, getActualCandlestickList(indicator).size());
         assertEquals("median".toUpperCase(), getActualCandlePriceType(indicator).toString());
         assertEquals(9L, getActualPeriod(indicator));
+        assertEquals("h4".toUpperCase(), getActualGranularity(indicator).toString());
     }
 
     protected MAType getActualMAType(Object object) {
