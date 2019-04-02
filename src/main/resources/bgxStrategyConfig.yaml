@@ -31,8 +31,6 @@ wmaIndicator3:
   candlePriceType: "CLOSE"
   granularity: "M30";
   maType: "WEIGHTED"
-instrument:
-  instrumentName: "EUR_USD"
 candlesQuantity:
   initial: "4999"
   update: "2"
