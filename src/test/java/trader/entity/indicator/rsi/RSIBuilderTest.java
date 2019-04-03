@@ -17,15 +17,6 @@ public class RSIBuilderTest extends BaseBuilderTest {
         setBuilder(builder);
     }
 
-    @Test(expected = WrongIndicatorSettingsException.class)
-    public void WhenCallBuildWithMoreThanMaximumSettingCount_Exception(){
-        settings.put(PERIOD, "13");
-        settings.put(CANDLE_PRICE_TYPE, "median");
-        settings.put(CANDLE_GRANULARITY, "M30");
-        settings.put("price", "100");
-        builder.build(settings);
-    }
-
     @Test
     public void WhenCallBuildWithZeroSettingsCount_DefaultSettings(){
         Indicator indicator = builder.build(settings);

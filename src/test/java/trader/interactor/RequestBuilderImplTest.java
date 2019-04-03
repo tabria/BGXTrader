@@ -15,6 +15,7 @@ import static org.junit.Assert.assertEquals;
 
 public class RequestBuilderImplTest {
 
+    private static final String BGX_STRATEGY_CONFIG_FILE_NAME = "bgxStrategyConfig.yaml";
 
     private RequestBuilder requestBuilder;
     private HashMap<String, String> settings;
@@ -87,7 +88,8 @@ public class RequestBuilderImplTest {
     }
 
     @Test
-    public void whenCallBuildWithBGXConfigurationDataStructureName_ReturnBGXConfigurationRequest() {
+    public void whenCallBuildWithBGXConfigurationControllerName_ReturnBGXConfigurationRequest() {
+        settings.put("location", BGX_STRATEGY_CONFIG_FILE_NAME);
         Request<?> bgxConfigurationRequest = requestBuilder.build("BGXConfigurationController", settings);
 
         assertEquals(BGXConfigurationImpl.class, bgxConfigurationRequest.getRequestDataStructure().getClass());

@@ -9,7 +9,6 @@ import trader.entity.indicator.ma.enums.MAType;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
-import java.util.List;
 
 
 public final class MovingAverageBuilder extends BaseIndicatorBuilder {
@@ -17,13 +16,12 @@ public final class MovingAverageBuilder extends BaseIndicatorBuilder {
     private static final MAType SETTINGS_DEFAULT_MA_TYPE = MAType.SIMPLE;
     private static final String SETTINGS_MA_TYPE_KEY_NAME = "maType";
     private static final String MA_LOCATION = "trader.entity.indicator.ma.";
-//    private static final int SETTABLE_FIELDS_COUNT = 4;
     private static final String MOVING_AVERAGE = "MovingAverage";
 
     private MAType maType;
 
     public Indicator build(HashMap<String, String> settings){
-        if (settings == null) //|| settings.size() > SETTABLE_FIELDS_COUNT)
+        if (settings == null)
             throw new WrongIndicatorSettingsException();
         setPeriod(settings);
         setCandlePriceType(settings);

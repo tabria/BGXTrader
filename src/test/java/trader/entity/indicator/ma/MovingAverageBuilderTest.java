@@ -65,16 +65,6 @@ public class MovingAverageBuilderTest extends BaseBuilderTest {
         assertEquals("simple".toUpperCase(), getActualMAType(builder).toString());
     }
 
-    @Test(expected = WrongIndicatorSettingsException.class)
-    public void WhenCallBuildWithMoreThanMaximumSettingCount_Exception(){
-        settings.put(PERIOD, "13");
-        settings.put(CANDLE_PRICE_TYPE, "median");
-        settings.put(CANDLE_GRANULARITY, "M5");
-        settings.put("price", "12");
-        settings.put("doh", null);
-        builder.build(settings);
-    }
-
     @Test
     public void WhenCallBuildWithZeroSettings_DefaultSettings(){
         Indicator indicator = builder.build(settings);
