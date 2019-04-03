@@ -38,14 +38,15 @@ import java.lang.reflect.InvocationTargetException;
 
 public class Main {
 
-    public static final String BGX_STRATEGY_CONFIG_FILE_NAME = "bgxStrategyConfig.yaml";
+
 
     public static void main(String[] args) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
 
 
 
         ApiConnector apiConnector = ApiConnector.create("Oanda");
-        Strategy strategy = new BGXStrategyMain(apiConnector, BGX_STRATEGY_CONFIG_FILE_NAME);
+//        Strategy strategy = new BGXStrategyMain(apiConnector, "bgxStrategyConfig.yaml");
+        Strategy strategy = new BGXStrategyMain(apiConnector);
         ThreadedStrategy threadedStrategy = new ThreadedStrategy(strategy);
 
 

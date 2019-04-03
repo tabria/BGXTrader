@@ -8,10 +8,10 @@ import java.util.HashMap;
 
 public final class RSIBuilder extends BaseIndicatorBuilder {
 
-    private static final int SETTABLE_FIELDS_COUNT = 3;
+  //  private static final int SETTABLE_FIELDS_COUNT = 3;
 
     public Indicator build(HashMap<String, String> settings){
-        if (settings == null || settings.size() > SETTABLE_FIELDS_COUNT)
+        if (settings == null)//|| settings.size() > SETTABLE_FIELDS_COUNT)
             throw new WrongIndicatorSettingsException();
         setPeriod(settings);
         setCandlePriceType(settings);

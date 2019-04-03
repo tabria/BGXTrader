@@ -7,6 +7,7 @@ import trader.interactor.RequestBuilderImpl;
 import trader.interactor.UseCaseFactoryImpl;
 import trader.requestor.RequestBuilder;
 import trader.requestor.UseCaseFactory;
+import trader.responder.Response;
 import trader.strategy.Observable;
 import trader.exception.NullArgumentException;
 import trader.order.OrderStrategy;
@@ -18,13 +19,14 @@ import trader.exit.exit_strategie.BaseExitStrategy;
 import trader.exit.ExitStrategy;
 
 import java.util.HashMap;
+import java.util.List;
 
-import static trader.Main.BGX_STRATEGY_CONFIG_FILE_NAME;
 
 public final class BGXStrategyMain implements Strategy {
 
+    private static final String BGX_STRATEGY_CONFIG_FILE_NAME = "bgxStrategyConfig.yaml";
 
-    private BGXConfiguration configuration;//not tested
+    private BGXConfiguration configuration;
     private ApiConnector apiConnector;
     private Observable priceObservable;
     private RequestBuilder requestBuilder;
@@ -44,20 +46,12 @@ public final class BGXStrategyMain implements Strategy {
         configuration = setConfiguration(configurationFileName);
         setApiConnector(connector);
         priceObservable = PriceObservable.create(apiConnector);
+        addIndicatorsFromConfiguration(configuration.getIndicators());
 
 
         orderStrategy = new OrderService(apiConnector);
         exitStrategy = BaseExitStrategy.createInstance();
      //   init();
-    }
-
-    private BGXConfiguration setConfiguration(String configurationFileName) {
-        BGXConfigurationController configurationController = new BGXConfigurationController(requestBuilder, useCaseFactory);
-        String controllerName = configurationController.getClass().getSimpleName();
-        HashMap<String, String> settings = new HashMap<>();
-        settings.put("location", configurationFileName);
-        configurationController.execute(controllerName, settings);
-        return null; //new BGXConfigurationImpl();
     }
 
 
@@ -75,9 +69,20 @@ public final class BGXStrategyMain implements Strategy {
         return "bgxstrategy";
     }
 
-    void addIndicators(String indicatorType, HashMap<String, String> settings){
+    void addIndicatorsFromConfiguration(List<HashMap<String, String>> indicators){
         AddIndicatorController addIndicatorController = new AddIndicatorController(requestBuilder, useCaseFactory);
-        addIndicatorController.execute(indicatorType, settings, priceObservable);
+        for (HashMap<String, String> indicator :indicators) {
+            addIndicatorController.execute(indicator, priceObservable);
+        }
+    }
+
+    private BGXConfiguration setConfiguration(String configurationFileName) {
+        BGXConfigurationController configurationController = new BGXConfigurationController(requestBuilder, useCaseFactory);
+        String controllerName = configurationController.getClass().getSimpleName();
+        HashMap<String, String> settings = new HashMap<>();
+        settings.put("location", configurationFileName);
+        Response<BGXConfiguration> configurationResponse = configurationController.execute(controllerName, settings);
+        return configurationResponse.getResponseDataStructure();
     }
 
     BGXConfiguration getConfiguration() {

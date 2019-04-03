@@ -22,16 +22,15 @@ public class AddIndicatorController{
         this.useCaseFactory = useCaseFactory;
     }
 
-    public void execute(String indicatorType,
-                        HashMap<String, String> settings, Observable priceObservable){
+    public void execute(HashMap<String, String> settings, Observable priceObservable){
         if(priceObservable == null)
             throw new NullArgumentException();
-        Response<Indicator> indicatorResponse = getIndicatorResponse(indicatorType, settings);
+        Response<Indicator> indicatorResponse = getIndicatorResponse(settings);
         priceObservable.registerObserver(transformToIndicatorObserver(indicatorResponse));
     }
 
-    Request<?> getRequest(String useCaseName, HashMap<String, String> settings){
-        return requestBuilder.build(useCaseName, settings);
+    Request<?> getRequest(String controllerName, HashMap<String, String> settings){
+        return requestBuilder.build(controllerName, settings);
     }
 
     UseCase make(String useCaseName){
@@ -42,9 +41,10 @@ public class AddIndicatorController{
         return IndicatorObserver.create(indicatorResponse.getResponseDataStructure());
     }
 
-    private Response<Indicator> getIndicatorResponse(String indicatorType, HashMap<String, String> settings) {
-        UseCase useCase = make(this.getClass().getSimpleName());
-        Request<?> request = getRequest(indicatorType, settings);
+    private Response<Indicator> getIndicatorResponse(HashMap<String, String> settings) {
+        String controllerName = this.getClass().getSimpleName();
+        UseCase useCase = make(controllerName);
+        Request<?> request = getRequest(controllerName, settings);
         return useCase.execute(request);
     }
 

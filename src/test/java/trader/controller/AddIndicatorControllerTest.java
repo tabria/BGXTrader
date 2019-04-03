@@ -22,7 +22,7 @@ import static org.mockito.Mockito.when;
 
 public class AddIndicatorControllerTest {
 
-    private static final String RSI_INDICATOR = "rsiIndicator";
+    private static final String ADD_INDICATOR_CONTROLLER_NAME = "AddIndicatorController";
     private AddIndicatorController addIndicatorController;
     private PriceObservable priceObservableMock;
     private Indicator indicatorMock;
@@ -57,8 +57,8 @@ public class AddIndicatorControllerTest {
     @Test
     public void WhenCallGetRequestWithCorrectSettings_ReturnCorrectResult(){
         when(requestMock.getRequestDataStructure()).thenReturn(indicatorMock);
-        when(requestBuilderMock.build(RSI_INDICATOR, settings)).thenReturn(requestMock);
-        Request<?> rsiIndicatorRequest = addIndicatorController.getRequest(RSI_INDICATOR, settings);
+        when(requestBuilderMock.build(ADD_INDICATOR_CONTROLLER_NAME, settings)).thenReturn(requestMock);
+        Request<?> rsiIndicatorRequest = addIndicatorController.getRequest(ADD_INDICATOR_CONTROLLER_NAME, settings);
 
         Assert.assertEquals(indicatorMock, rsiIndicatorRequest.getRequestDataStructure());
     }
@@ -74,13 +74,14 @@ public class AddIndicatorControllerTest {
 
     @Test(expected = NullArgumentException.class)
     public void WhenCallExecuteWithNullPriceObservable_Exception(){
-        addIndicatorController.execute(RSI_INDICATOR, settings, null);
+        addIndicatorController.execute( settings, null);
+        //addIndicatorController.execute(RSI_INDICATOR, settings, null);
     }
     @Test(expected = BadRequestException.class)
     public void WhenCallExecuteWithCorrectSettings_CorrectResponse(){
         setExecuteSettings();
-
-        addIndicatorController.execute(RSI_INDICATOR, settings, priceObservableMock);
+        addIndicatorController.execute(settings, priceObservableMock);
+        //addIndicatorController.execute(RSI_INDICATOR, settings, priceObservableMock);
     }
 
     private void setExecuteSettings() {
@@ -88,7 +89,7 @@ public class AddIndicatorControllerTest {
         when(responseMock.getResponseDataStructure()).thenReturn(indicatorMock);
         when(useCaseFactoryMock.make(anyString())).thenReturn(useCaseMock);
         when(useCaseMock.execute(requestMock)).thenReturn(responseMock);
-        when(requestBuilderMock.build(RSI_INDICATOR, settings)).thenReturn(requestMock);
+        when(requestBuilderMock.build(ADD_INDICATOR_CONTROLLER_NAME, settings)).thenReturn(requestMock);
         doThrow(BadRequestException.class).when(priceObservableMock).registerObserver(any(Observer.class));
     }
 
