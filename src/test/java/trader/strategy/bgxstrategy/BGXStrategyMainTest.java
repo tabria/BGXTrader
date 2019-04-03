@@ -7,21 +7,24 @@ import trader.connector.ApiConnector;
 import trader.controller.Observer;
 import trader.exception.NullArgumentException;
 import trader.strategy.Observable;
+import trader.strategy.bgxstrategy.configuration.BGXConfiguration;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.*;
 
-public class BGXStrategyTest {
+public class BGXStrategyMainTest {
 
     private static final int CANDLESTICK_LIST_SIZE = 170;
     private static final BigDecimal DEFAULT_PRICE = new BigDecimal(0.00001).setScale(5, BigDecimal.ROUND_HALF_UP);
 
     private ApiConnector apiConnectorMock;
-    private BGXStrategy bgxStrategy;
+    private BGXStrategyMain bgxStrategyMain;
     private CommonTestClassMembers commonMembers;
 
 //    private List<Trade> trades;
@@ -54,37 +57,49 @@ public class BGXStrategyTest {
 //        fillCandlestickList();
         commonMembers = new CommonTestClassMembers();
         apiConnectorMock = mock(ApiConnector.class);
-        bgxStrategy = new BGXStrategy(apiConnectorMock);
+        bgxStrategyMain = new BGXStrategyMain(apiConnectorMock);
     }
 
 
     @Test(expected = NullArgumentException.class)
     public void WhenApiConnectorIsNull_Exception(){
-        new BGXStrategy(null);
+        new BGXStrategyMain(null);
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void addIndicatorsToPriceObservable_CorrectResult(){
         addIndicatorA();
         addIndicatorB();
-
-        Observable priceObservable = (Observable) commonMembers.extractFieldObject(bgxStrategy, "priceObservable");
+        Observable priceObservable = (Observable) commonMembers.extractFieldObject(bgxStrategyMain, "priceObservable");
         CopyOnWriteArrayList<Observer> observers = (CopyOnWriteArrayList<Observer>) commonMembers.extractFieldObject(priceObservable, "observers");
 
         assertEquals(2, observers.size());
+    }
+
+    @Test
+    public void WhenCreateWithNullConfiguration_Exception(){
+        BGXConfiguration configuration = bgxStrategyMain.getConfiguration();
+
+        assertNotNull(configuration);
+    }
+
+    @Test
+    public void WhenCreateConfigurationIndicatorsMustNotBeEmpty(){
+        assertNotEquals(0, bgxStrategyMain.getConfiguration().getIndicators().size());
     }
 
     private void addIndicatorB() {
         String indicatorB = "emaIndicator";
         HashMap<String, String> settingsB = indicatorASettings("9", "MEDIAN");
         settingsB.put("maType", "EXPONENTIAL");
-        bgxStrategy.addIndicators(indicatorB, settingsB);
+        bgxStrategyMain.addIndicators(indicatorB, settingsB);
     }
 
     private void addIndicatorA() {
         String indicatorA = "rsiIndicator";
         HashMap<String, String> settingsA = indicatorASettings("17", "LOW");
-        bgxStrategy.addIndicators(indicatorA, settingsA);
+        bgxStrategyMain.addIndicators(indicatorA, settingsA);
     }
 
     private HashMap<String, String> indicatorASettings(String s, String low) {
@@ -97,28 +112,28 @@ public class BGXStrategyTest {
 //
 //    @Test(expected = SubmitNewOrderCalledException.class)
 //    public void ifNoOpenOrdersAndNoOpenTrades_SubmitNewOrder(){
-//        commonMembers.changeFieldObject(bgxStrategy, "orderService", mockOrderService);
+//        commonMembers.changeFieldObject(bgxStrategyMain, "orderService", mockOrderService);
 //        when(apiConnector.getOpenOrders()).thenReturn(new ArrayList<>());
 //        when(apiConnector.getOpenTrades()).thenReturn(new ArrayList<>());
-//        bgxStrategy.execute();
+//        bgxStrategyMain.execute();
 //    }
 //
 //    @Test(expected = CloseUnfilledOrderCalledException.class)
 //    public void ifNoOpenTradesButHaveOpenOrders_closeUnfilledOrder(){
-//        commonMembers.changeFieldObject(bgxStrategy, "orderService", mockOrderService);
+//        commonMembers.changeFieldObject(bgxStrategyMain, "orderService", mockOrderService);
 //        when(apiConnector.getOpenTrades()).thenReturn(new ArrayList<>());
-//        bgxStrategy.execute();
+//        bgxStrategyMain.execute();
 //    }
 //
 //    @Test(expected = ExitStrategyExecuteCalledException.class)
 //    public void ifOpenTrades_Execute(){
-//        commonMembers.changeFieldObject(bgxStrategy, "exitStrategy", mockExitStrategy);
-//        bgxStrategy.execute();
+//        commonMembers.changeFieldObject(bgxStrategyMain, "exitStrategy", mockExitStrategy);
+//        bgxStrategyMain.execute();
 //    }
 //
 //    @Test
 //    public void testToString(){
-//       assertEquals("bgxstrategy", bgxStrategy.toString());
+//       assertEquals("bgxstrategy", bgxStrategyMain.toString());
 //    }
 //
 //
@@ -169,5 +184,30 @@ public class BGXStrategyTest {
 //    private class CloseUnfilledOrderCalledException extends RuntimeException{};
 //    private class SubmitNewOrderCalledException extends RuntimeException{};
 //    private class ExitStrategyExecuteCalledException extends RuntimeException{};
+
+    //
+//    @Test(expected = NullArgumentException.class)
+//    public void WhenLocationIsNull_Exception(){
+//        settings.put("location", null);
+//        bgxConfigurationBuilder.build(settings);
+//    }
+//
+//    @Test(expected = EmptyArgumentException.class)
+//    public void WhenLocationIsEmpty_Exception(){
+//        settings.put("location", "");
+//        bgxConfigurationBuilder.build(settings);
+//    }
+//
+//    @Test(expected = UnableToExecuteRequest.class)
+//    public void whenSettingsDoNotContainLocation_Exception(){
+//        settings.put("rock", "xxx.yyy");
+//        bgxConfigurationBuilder.build(settings);
+//    }
+//
+//    @Test(expected = BadRequestException.class)
+//    public void WhenCannotParseSettingsFromFile_Exception(){
+//        settings.put("location", "xxx.yyy");
+//        bgxConfigurationBuilder.build(settings);
+//    }
 
 }

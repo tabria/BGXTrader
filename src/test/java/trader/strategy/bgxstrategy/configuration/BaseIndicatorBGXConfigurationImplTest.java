@@ -16,7 +16,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public abstract class BaseIndicatorConfigurationTest {
+public abstract class BaseIndicatorBGXConfigurationImplTest {
     private static final long DEFAULT_CANDLE_TIME_FRAME_IN_SECONDS = 1_800L;
     private static final long DEFAULT_VOLUME = 1L;
     private static final BigDecimal DEFAULT_PRICE = new BigDecimal(0.00001).setScale(5, BigDecimal.ROUND_HALF_UP);

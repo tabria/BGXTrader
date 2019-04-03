@@ -11,6 +11,7 @@ public class UseCaseFactoryImpl implements UseCaseFactory {
 
     private static final String USE_CASE_LOCATION = "trader.interactor.";
     private static final String USE_CASE = "UseCase";
+    private static final String CONTROLLER = "Controller";
 
     @Override
     public UseCase make(String useCaseName) {
@@ -27,7 +28,7 @@ public class UseCaseFactoryImpl implements UseCaseFactory {
 
     private UseCase createUseCaseInstance(String useCaseName) {
         try {
-            Class<?> useCaseClass = Class.forName(USE_CASE_LOCATION + composeUseCaseClassName(useCaseName.trim()));
+            Class<?> useCaseClass = Class.forName(USE_CASE_LOCATION + composeUseCaseClassName(useCaseName));
             Constructor<?> declaredConstructor = useCaseClass.getDeclaredConstructor();
             return (UseCase) declaredConstructor.newInstance();
         } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
@@ -36,8 +37,6 @@ public class UseCaseFactoryImpl implements UseCaseFactory {
     }
 
     private String composeUseCaseClassName(String inputName){
-        char initialChar = Character.toUpperCase(inputName.charAt(0));
-        inputName = inputName.substring(1);
-        return initialChar + inputName + USE_CASE;
+        return inputName.replace(CONTROLLER, USE_CASE).trim();
     }
 }

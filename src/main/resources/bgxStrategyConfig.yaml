@@ -1,36 +1,54 @@
-# candlePriceType can have one of 5 values: OPEN, CLOSE, HIGH, LOW, MEDIUM
-# maType can have one of 3 values: SIMPLE, EXPONENTIAL, WEIGHTED
-# granularity can have one of : S5, S10, S15, S30, M1, M2, M4, M5, M10, M15, M30, H1, H2, H3, H4, H6, H8, H12, D, W, M;
+#available options:
+#indicator: type, period, candlePriceType, granularity
+#### candlePriceType can have one of 5 values: OPEN, CLOSE, HIGH, LOW, MEDIUM
+#### maType can have one of 3 values: SIMPLE, EXPONENTIAL, WEIGHTED
+#### granularity can have one of : S5, S10, S15, S30, M1, M2, M4, M5, M10, M15, M30, H1, H2, H3, H4, H6, H8, H12, D, W, M;
+# candlesQuantity have:
+#### initial - initial number of candles for calculating indicators
+#### update - number of candles when updating indicators after first initialization
+# risk have: riskPerTrade - risk per trade as decimal example - 0.01 is 1% of the account
+## Default values:
+#candlesQuantity: initial: "4999", update: "2"
+#risk: riskPerTrade: "0.01"
+## For default values omit from the file
 
-rsiIndicator1:
+indicator1:
+  type: "rsi"
   period: "14"
   candlePriceType: "CLOSE"
-  granularity: "M30";
-smaIndicator1:
+  granularity: "M30"
+indicator2:
+  type: "sma"
   period: "1"
   candlePriceType: "CLOSE"
-  granularity: "M30";
+  granularity: "M30"
   maType: "SIMPLE"
-smaIndicator2:
+indicator3:
+  type: "sma"
   period: "1"
   candlePriceType: "OPEN"
-  granularity: "D";
+  granularity: "D"
   maType: "SIMPLE"
-wmaIndicator1:
+indicator4:
+  type: "wma"
   period: "5"
   candlePriceType: "CLOSE"
-  granularity: "M30";
+  granularity: "M30"
   maType: "WEIGHTED"
-wmaIndicator2:
+indicator5:
+  type: "wma"
   period: "20"
   candlePriceType: "CLOSE"
-  granularity: "M30";
+  granularity: "M30"
   maType: "WEIGHTED"
-wmaIndicator3:
+indicator6:
+  type: "wma"
   period: "100"
   candlePriceType: "CLOSE"
-  granularity: "M30";
+  granularity: "M30"
   maType: "WEIGHTED"
 candlesQuantity:
   initial: "4999"
   update: "2"
+risk:
+  riskPerTrade: "0.01"

@@ -2,6 +2,7 @@ package trader.strategy.bgxstrategy;
 
 import trader.connector.ApiConnector;
 import trader.controller.AddIndicatorController;
+import trader.controller.BGXConfigurationController;
 import trader.interactor.RequestBuilderImpl;
 import trader.interactor.UseCaseFactoryImpl;
 import trader.requestor.RequestBuilder;
@@ -9,6 +10,7 @@ import trader.requestor.UseCaseFactory;
 import trader.strategy.Observable;
 import trader.exception.NullArgumentException;
 import trader.order.OrderStrategy;
+import trader.strategy.bgxstrategy.configuration.BGXConfiguration;
 import trader.strategy.observable.PriceObservable;
 import trader.strategy.Strategy;
 import trader.order.OrderService;
@@ -17,8 +19,12 @@ import trader.exit.ExitStrategy;
 
 import java.util.HashMap;
 
-public final class BGXStrategy implements Strategy {
+import static trader.Main.BGX_STRATEGY_CONFIG_FILE_NAME;
 
+public final class BGXStrategyMain implements Strategy {
+
+
+    private BGXConfiguration configuration;//not tested
     private ApiConnector apiConnector;
     private Observable priceObservable;
     private RequestBuilder requestBuilder;
@@ -28,15 +34,30 @@ public final class BGXStrategy implements Strategy {
     private OrderStrategy orderStrategy;
 
 
-    public BGXStrategy(ApiConnector connector) {
-        setApiConnector(connector);
-        priceObservable = PriceObservable.create(apiConnector);
+    public BGXStrategyMain(ApiConnector connector) {
+        this(connector, BGX_STRATEGY_CONFIG_FILE_NAME);
+    }
+
+    public BGXStrategyMain(ApiConnector connector, String configurationFileName) {
         requestBuilder = new RequestBuilderImpl();
         useCaseFactory = new UseCaseFactoryImpl();
+        configuration = setConfiguration(configurationFileName);
+        setApiConnector(connector);
+        priceObservable = PriceObservable.create(apiConnector);
+
 
         orderStrategy = new OrderService(apiConnector);
         exitStrategy = BaseExitStrategy.createInstance();
      //   init();
+    }
+
+    private BGXConfiguration setConfiguration(String configurationFileName) {
+        BGXConfigurationController configurationController = new BGXConfigurationController(requestBuilder, useCaseFactory);
+        String controllerName = configurationController.getClass().getSimpleName();
+        HashMap<String, String> settings = new HashMap<>();
+        settings.put("location", configurationFileName);
+        configurationController.execute(controllerName, settings);
+        return null; //new BGXConfigurationImpl();
     }
 
 
@@ -59,6 +80,9 @@ public final class BGXStrategy implements Strategy {
         addIndicatorController.execute(indicatorType, settings, priceObservable);
     }
 
+    BGXConfiguration getConfiguration() {
+        return configuration;
+    }
 
     private void setApiConnector(ApiConnector connector) {
         if(connector == null){

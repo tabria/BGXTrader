@@ -10,7 +10,7 @@ import trader.responder.Response;
 import trader.strategy.Observable;
 
 import java.util.HashMap;
-public class AddIndicatorController {
+public class AddIndicatorController{
 
     private RequestBuilder requestBuilder;
     private UseCaseFactory useCaseFactory;
@@ -23,28 +23,19 @@ public class AddIndicatorController {
     }
 
     public void execute(String indicatorType,
-                                   HashMap<String, String> settings, Observable priceObservable){
+                        HashMap<String, String> settings, Observable priceObservable){
         if(priceObservable == null)
             throw new NullArgumentException();
         Response<Indicator> indicatorResponse = getIndicatorResponse(indicatorType, settings);
         priceObservable.registerObserver(transformToIndicatorObserver(indicatorResponse));
     }
 
-    Request<?> getRequest(String indicatorType, HashMap<String, String> settings){
-        if(indicatorType == null || settings == null)
-            throw new NullArgumentException();
-        return requestBuilder.build(indicatorType, settings);
+    Request<?> getRequest(String useCaseName, HashMap<String, String> settings){
+        return requestBuilder.build(useCaseName, settings);
     }
 
     UseCase make(String useCaseName){
-        if(useCaseName == null)
-            throw new NullArgumentException();
         return useCaseFactory.make(useCaseName);
-    }
-
-    String composeUseCaseName(){
-        String controllerName = this.getClass().getSimpleName();
-        return controllerName.replace("Controller", "").trim();
     }
 
     private IndicatorObserver transformToIndicatorObserver(Response<Indicator> indicatorResponse) {
@@ -52,8 +43,8 @@ public class AddIndicatorController {
     }
 
     private Response<Indicator> getIndicatorResponse(String indicatorType, HashMap<String, String> settings) {
-        UseCase useCase = make(composeUseCaseName());
-        Request<?> request = requestBuilder.build(indicatorType, settings);
+        UseCase useCase = make(this.getClass().getSimpleName());
+        Request<?> request = getRequest(indicatorType, settings);
         return useCase.execute(request);
     }
 

@@ -3,19 +3,16 @@ package trader;
 
 import com.oanda.v20.Context;
 import com.oanda.v20.ContextBuilder;
-import org.yaml.snakeyaml.Yaml;
 import trader.config.Config;
 import trader.connector.ApiConnector;
-import trader.strategy.bgxstrategy.BGXStrategy;
+import trader.strategy.bgxstrategy.BGXStrategyMain;
 import trader.strategy.Strategy;
 import trader.strategy.ThreadedStrategy;
 import trader.order.OrderService;
 import trader.exit.ExitStrategy;
 import trader.exit.exit_strategie.FullCloseStrategy;
 
-import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Map;
 
 
 /**
@@ -40,26 +37,15 @@ import java.util.Map;
 //TODO log exception, remove active orders if price surpassed the order entry price, before order creation.
 
 public class Main {
-    
+
+    public static final String BGX_STRATEGY_CONFIG_FILE_NAME = "bgxStrategyConfig.yaml";
+
     public static void main(String[] args) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
 
-        ///for parsing strategy config///
-        Yaml yaml = new Yaml();
-        InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("bgxStrategyConfig.yaml");
 
-        Map<String, Map<String, Object>> bgxSettings = yaml.load(is);
-        for (Map.Entry<String, Map<String, Object>> entry : bgxSettings.entrySet()) {
-            String name = entry.getKey();
-            Map<String, Object> settings = entry.getValue();
-            for (Map.Entry<String, Object> value : settings.entrySet()) {
-                String val = value.getKey();
-                Object value1 =  value.getValue();
-                String a ="";
-            }
-        }
 
         ApiConnector apiConnector = ApiConnector.create("Oanda");
-        Strategy strategy = new BGXStrategy(apiConnector);
+        Strategy strategy = new BGXStrategyMain(apiConnector, BGX_STRATEGY_CONFIG_FILE_NAME);
         ThreadedStrategy threadedStrategy = new ThreadedStrategy(strategy);
 
 

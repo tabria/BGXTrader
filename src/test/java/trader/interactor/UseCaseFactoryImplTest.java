@@ -1,6 +1,5 @@
 package trader.interactor;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import trader.exception.EmptyArgumentException;
@@ -14,7 +13,7 @@ public class UseCaseFactoryImplTest {
     private UseCaseFactoryImpl useCaseFactory;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         useCaseFactory = new UseCaseFactoryImpl();
     }
 
@@ -40,11 +39,10 @@ public class UseCaseFactoryImplTest {
 
     @Test
     public void WhenCallWithCorrectUseCaseName_ReturnCorrectObject(){
-        UseCase useCase = useCaseFactory.make("addIndicator");
-        UseCase spacedUseCase = useCaseFactory.make("   addIndicator   ");
+        UseCase useCase = useCaseFactory.make("AddIndicatorController");
+        UseCase spacedUseCase = useCaseFactory.make("   AddIndicatorController   ");
 
         assertEquals(AddIndicatorUseCase.class, useCase.getClass());
         assertEquals(AddIndicatorUseCase.class, spacedUseCase.getClass());
     }
-
 }
