@@ -24,11 +24,11 @@ public class OandaPriceResponse {
 
     private static final int THREAD_SLEEP_INTERVAL = 1000;
 
-    private OandaConnector oandaConnector;
+ //   private OandaConnector oandaConnector;
     private PricingGetRequest pricingGetRequest;
 
     OandaPriceResponse(OandaConnector connector){
-        oandaConnector = connector;
+  //      oandaConnector = connector;
         createPricingRequest();
     }
 

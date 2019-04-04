@@ -5,7 +5,6 @@ import org.junit.Before;
 import org.junit.Test;
 import trader.entity.indicator.Indicator;
 import trader.exception.BadRequestException;
-import trader.exception.EmptyArgumentException;
 import trader.exception.NullArgumentException;
 import trader.interactor.UseCase;
 import trader.requestor.Request;
@@ -30,6 +29,7 @@ public class AddIndicatorControllerTest {
     private Request requestMock;
     private RequestBuilder requestBuilderMock;
     private UseCaseFactory useCaseFactoryMock;
+    private UpdateIndicatorController updateIndicatorController;
     private HashMap<String, String> settings;
 
     @Before
@@ -37,21 +37,32 @@ public class AddIndicatorControllerTest {
         priceObservableMock = mock(PriceObservable.class);
         indicatorMock = mock(Indicator.class);
         useCaseMock = mock(UseCase.class);
+        updateIndicatorController = mock(UpdateIndicatorController.class);
         requestMock = mock(Request.class);
         settings = new HashMap<>();
         requestBuilderMock = mock(RequestBuilder.class);
         useCaseFactoryMock = mock(UseCaseFactory.class);
-        addIndicatorController = new AddIndicatorController(requestBuilderMock, useCaseFactoryMock);
+        addIndicatorController = new AddIndicatorController(requestBuilderMock, useCaseFactoryMock, updateIndicatorController, priceObservableMock);
     }
 
     @Test(expected = NullArgumentException.class)
     public void WhenCreateControllerWithNullRequestBuilder_Exception(){
-        new AddIndicatorController(null, useCaseFactoryMock);
+        new AddIndicatorController(null, useCaseFactoryMock, updateIndicatorController, priceObservableMock);
     }
 
     @Test(expected = NullArgumentException.class)
     public void WhenCreateControllerWithNullUserCaseFactory_Exception(){
-        new AddIndicatorController(requestBuilderMock, null);
+        new AddIndicatorController(requestBuilderMock, null, updateIndicatorController, priceObservableMock);
+    }
+
+    @Test(expected = NullArgumentException.class)
+    public void WhenCreateControllerWithNullIndicatorUpdateController_Exception(){
+        new AddIndicatorController(requestBuilderMock, useCaseFactoryMock, null, priceObservableMock);
+    }
+
+    @Test(expected = NullArgumentException.class)
+    public void WhenCreateControllerWithNullObservable_Exception(){
+        new AddIndicatorController(requestBuilderMock, useCaseFactoryMock, updateIndicatorController, null);
     }
 
     @Test
@@ -72,15 +83,10 @@ public class AddIndicatorControllerTest {
         Assert.assertEquals(useCaseMock, useCase);
     }
 
-    @Test(expected = NullArgumentException.class)
-    public void WhenCallExecuteWithNullPriceObservable_Exception(){
-        addIndicatorController.execute( settings, null);
-        //addIndicatorController.execute(RSI_INDICATOR, settings, null);
-    }
     @Test(expected = BadRequestException.class)
     public void WhenCallExecuteWithCorrectSettings_CorrectResponse(){
         setExecuteSettings();
-        addIndicatorController.execute(settings, priceObservableMock);
+        addIndicatorController.execute(settings);
         //addIndicatorController.execute(RSI_INDICATOR, settings, priceObservableMock);
     }
 

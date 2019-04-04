@@ -8,23 +8,27 @@ import trader.requestor.RequestBuilder;
 import trader.requestor.UseCaseFactory;
 import trader.responder.Response;
 import trader.strategy.Observable;
+import trader.strategy.observable.PriceObservable;
 
 import java.util.HashMap;
 public class AddIndicatorController{
 
     private RequestBuilder requestBuilder;
     private UseCaseFactory useCaseFactory;
+    private UpdateIndicatorController updateIndicatorController;
+    private Observable priceObservable;
 
-    public AddIndicatorController(RequestBuilder requestBuilder, UseCaseFactory useCaseFactory) {
-        if(requestBuilder == null || useCaseFactory == null)
+    public AddIndicatorController(RequestBuilder requestBuilder, UseCaseFactory useCaseFactory, UpdateIndicatorController updateIndicatorController, Observable priceObservable) {
+        if(requestBuilder == null || useCaseFactory == null
+                || updateIndicatorController == null || priceObservable == null)
             throw new NullArgumentException();
         this.requestBuilder = requestBuilder;
         this.useCaseFactory = useCaseFactory;
+        this.updateIndicatorController = updateIndicatorController;
+        this.priceObservable = priceObservable;
     }
 
-    public void execute(HashMap<String, String> settings, Observable priceObservable){
-        if(priceObservable == null)
-            throw new NullArgumentException();
+    public void execute(HashMap<String, String> settings){
         Response<Indicator> indicatorResponse = getIndicatorResponse(settings);
         priceObservable.registerObserver(transformToIndicatorObserver(indicatorResponse));
     }
@@ -38,8 +42,7 @@ public class AddIndicatorController{
     }
 
     private IndicatorObserver transformToIndicatorObserver(Response<Indicator> indicatorResponse) {
-        UpdateIndicatorController updateController = new UpdateIndicatorController(requestBuilder, useCaseFactory);
-        return IndicatorObserver.create(indicatorResponse.getResponseDataStructure(), updateController);
+        return IndicatorObserver.create(indicatorResponse.getResponseDataStructure(), updateIndicatorController);
     }
 
     private Response<Indicator> getIndicatorResponse(HashMap<String, String> settings) {
