@@ -33,12 +33,13 @@ public class AddIndicatorController{
         return requestBuilder.build(controllerName, settings);
     }
 
-    UseCase make(String useCaseName){
-        return useCaseFactory.make(useCaseName);
+    UseCase make(String controllerName){
+        return useCaseFactory.make(controllerName);
     }
 
     private IndicatorObserver transformToIndicatorObserver(Response<Indicator> indicatorResponse) {
-        return IndicatorObserver.create(indicatorResponse.getResponseDataStructure());
+        UpdateIndicatorController updateController = new UpdateIndicatorController(requestBuilder, useCaseFactory);
+        return IndicatorObserver.create(indicatorResponse.getResponseDataStructure(), updateController);
     }
 
     private Response<Indicator> getIndicatorResponse(HashMap<String, String> settings) {

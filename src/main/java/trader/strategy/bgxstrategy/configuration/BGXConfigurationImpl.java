@@ -9,14 +9,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class BGXConfigurationImpl implements BGXConfiguration {
+public class BGXConfigurationImpl implements TradingStrategyConfiguration {
 
     private static final String DEFAULT_INSTRUMENT = "EUR_USD";
     private static final long DEFAULT_INITIAL_CANDLES_QUANTITY = 4999L;
     private static final long DEFAULT_UPDATE_CANDLES_QUANTITY = 2L;
     private static final String DEFAULT_BGX_CONFIG_FILE_LOCATION = "bgxStrategyConfig.yaml";
     private static final BigDecimal DEFAULT_SPREAD = BigDecimal.valueOf(0.0002).setScale(5, BigDecimal.ROUND_HALF_UP);
-    public static final BigDecimal DEFAULT_RISK_PER_TRADE = BigDecimal.valueOf(0.01).setScale(5, BigDecimal.ROUND_HALF_UP);
+    private static final BigDecimal DEFAULT_RISK_PER_TRADE = BigDecimal.valueOf(0.01).setScale(5, BigDecimal.ROUND_HALF_UP);
 
     private String fileLocation;
     private List<HashMap<String, String>> indicators;

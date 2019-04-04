@@ -1,6 +1,6 @@
 package trader.interactor;
 
-import org.yaml.snakeyaml.Yaml;
+import trader.broker.connector.SettableBrokerConnector;
 import trader.entity.indicator.Indicator;
 import trader.entity.indicator.ma.MovingAverageBuilder;
 import trader.entity.indicator.rsi.RSIBuilder;
@@ -10,7 +10,7 @@ import trader.exception.NullArgumentException;
 import trader.exception.WrongIndicatorSettingsException;
 import trader.requestor.Request;
 import trader.requestor.RequestBuilder;
-import trader.strategy.bgxstrategy.configuration.BGXConfiguration;
+import trader.strategy.bgxstrategy.configuration.TradingStrategyConfiguration;
 import trader.strategy.bgxstrategy.configuration.BGXConfigurationImpl;
 import java.util.HashMap;
 
@@ -18,6 +18,7 @@ public class RequestBuilderImpl implements RequestBuilder {
 
 
     private static final String LOCATION = "location";
+    private static final String BROKER_NAME = "brokerName";
 
     @Override
     public Request<?> build(String controllerName, HashMap<String, String> settings) {
@@ -26,10 +27,17 @@ public class RequestBuilderImpl implements RequestBuilder {
         if(controllerName.contains(type(DataStructureType.INDICATOR)))
             return buildIndicatorRequest(settings);
         if(controllerName.contains(type(DataStructureType.BGXCONFIGURATION))) {
-            Request<BGXConfiguration> request = new RequestImpl<>();
+            Request<TradingStrategyConfiguration> request = new RequestImpl<>();
             BGXConfigurationImpl bgxConfiguration = new BGXConfigurationImpl();
             bgxConfiguration.setFileLocation(settings.get(LOCATION));
-            request.setRequestDataStructure(new BGXConfigurationImpl());
+            request.setRequestDataStructure(bgxConfiguration);
+            return request;
+        }
+        if(controllerName.contains(type(DataStructureType.BROKERCONNECTOR))) {
+            Request<SettableBrokerConnector> request = new RequestImpl<>();
+            SettableBrokerConnector brokerConnector = SettableBrokerConnector.create(settings.get(BROKER_NAME));
+            brokerConnector.setFileLocation(settings.get(LOCATION));
+            request.setRequestDataStructure(brokerConnector);
             return request;
         }
 

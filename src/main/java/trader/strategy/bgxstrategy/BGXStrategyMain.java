@@ -1,22 +1,25 @@
 package trader.strategy.bgxstrategy;
 
-import trader.connector.ApiConnector;
+import trader.broker.BrokerGateway;
+import trader.broker.connector.ApiConnector;
+import trader.broker.BrokerConnector;
+import trader.controller.AddBGXConfigurationController;
+import trader.controller.AddBrokerConnectorController;
 import trader.controller.AddIndicatorController;
-import trader.controller.BGXConfigurationController;
 import trader.interactor.RequestBuilderImpl;
 import trader.interactor.UseCaseFactoryImpl;
 import trader.requestor.RequestBuilder;
 import trader.requestor.UseCaseFactory;
 import trader.responder.Response;
 import trader.strategy.Observable;
-import trader.exception.NullArgumentException;
 import trader.order.OrderStrategy;
-import trader.strategy.bgxstrategy.configuration.BGXConfiguration;
+import trader.strategy.bgxstrategy.configuration.TradingStrategyConfiguration;
 import trader.strategy.observable.PriceObservable;
 import trader.strategy.Strategy;
 import trader.order.OrderService;
 import trader.exit.exit_strategie.BaseExitStrategy;
 import trader.exit.ExitStrategy;
+import trader.strategy.observable.PricePull;
 
 import java.util.HashMap;
 import java.util.List;
@@ -24,27 +27,35 @@ import java.util.List;
 
 public final class BGXStrategyMain implements Strategy {
 
-    private static final String BGX_STRATEGY_CONFIG_FILE_NAME = "bgxStrategyConfig.yaml";
+ //   private static final String BGX_STRATEGY_CONFIG_FILE_NAME = "bgxStrategyConfig.yaml";
+ //   private static final String BROKER_CONFIG_FILE_NAME = "oandaBrokerConfig.yaml";
+    private static final String LOCATION = "location";
+    private static final String BROKER_NAME = "brokerName";
 
-    private BGXConfiguration configuration;
-    private ApiConnector apiConnector;
-    private Observable priceObservable;
     private RequestBuilder requestBuilder;
     private UseCaseFactory useCaseFactory;
+    private TradingStrategyConfiguration configuration;
+    private BrokerConnector brokerConnector;
+    private BrokerGateway brokerGateway;
+    private ApiConnector apiConnector;
+    private Observable priceObservable;
+
 
     private ExitStrategy exitStrategy;
     private OrderStrategy orderStrategy;
 
 
-    public BGXStrategyMain(ApiConnector connector) {
-        this(connector, BGX_STRATEGY_CONFIG_FILE_NAME);
-    }
+//    public BGXStrategyMain(String brokerName) {
+//        this(brokerName, BGX_STRATEGY_CONFIG_FILE_NAME, BROKER_CONFIG_FILE_NAME);
+//    }
 
-    public BGXStrategyMain(ApiConnector connector, String configurationFileName) {
+    public BGXStrategyMain(String brokerName, String configurationFileName, String brokerConfigurationFileName) {
         requestBuilder = new RequestBuilderImpl();
         useCaseFactory = new UseCaseFactoryImpl();
         configuration = setConfiguration(configurationFileName);
-        setApiConnector(connector);
+        brokerConnector = setBrokerConnector(brokerName, brokerConfigurationFileName);
+
+        // setApiConnector(connector);
         priceObservable = PriceObservable.create(apiConnector);
         addIndicatorsFromConfiguration(configuration.getIndicators());
 
@@ -54,9 +65,12 @@ public final class BGXStrategyMain implements Strategy {
      //   init();
     }
 
-
     @Override
     public void execute() {
+        new PricePull("PricePull", priceObservable);
+
+
+
         if(haveOpenTrades())
             exitStrategy.execute();
     //    if (haveOpenOrders())
@@ -69,6 +83,14 @@ public final class BGXStrategyMain implements Strategy {
         return "bgxstrategy";
     }
 
+    TradingStrategyConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    BrokerConnector getBrokerConnector() {
+        return brokerConnector;
+    }
+
     void addIndicatorsFromConfiguration(List<HashMap<String, String>> indicators){
         AddIndicatorController addIndicatorController = new AddIndicatorController(requestBuilder, useCaseFactory);
         for (HashMap<String, String> indicator :indicators) {
@@ -76,25 +98,30 @@ public final class BGXStrategyMain implements Strategy {
         }
     }
 
-    private BGXConfiguration setConfiguration(String configurationFileName) {
-        BGXConfigurationController configurationController = new BGXConfigurationController(requestBuilder, useCaseFactory);
-        String controllerName = configurationController.getClass().getSimpleName();
+    private TradingStrategyConfiguration setConfiguration(String configurationFileName) {
+        AddBGXConfigurationController configurationController = new AddBGXConfigurationController(requestBuilder, useCaseFactory);
         HashMap<String, String> settings = new HashMap<>();
-        settings.put("location", configurationFileName);
-        Response<BGXConfiguration> configurationResponse = configurationController.execute(controllerName, settings);
+        settings.put(LOCATION, configurationFileName);
+        Response<TradingStrategyConfiguration> configurationResponse = configurationController.execute(settings);
         return configurationResponse.getResponseDataStructure();
     }
 
-    BGXConfiguration getConfiguration() {
-        return configuration;
+    private BrokerConnector setBrokerConnector(String brokerName, String brokerConfigurationFileName) {
+        AddBrokerConnectorController addBrokerConnectorController = new AddBrokerConnectorController(requestBuilder, useCaseFactory);
+        HashMap<String, String> settings = new HashMap<>();
+        settings.put(BROKER_NAME, brokerName);
+        settings.put(LOCATION, brokerConfigurationFileName);
+        Response<BrokerConnector> brokerConfigurationResponse = addBrokerConnectorController.execute(settings);
+        return brokerConfigurationResponse.getResponseDataStructure();
     }
 
-    private void setApiConnector(ApiConnector connector) {
-        if(connector == null){
-            throw new NullArgumentException();
-        }
-        this.apiConnector = connector;
-    }
+
+//    private void setApiConnector(ApiConnector connector) {
+//        if(connector == null){
+//            throw new NullArgumentException();
+//        }
+//        this.apiConnector = connector;
+//    }
 
 
     private boolean haveOpenOrders() {

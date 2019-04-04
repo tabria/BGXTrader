@@ -4,21 +4,20 @@ import trader.exception.NullArgumentException;
 import trader.entity.indicator.Indicator;
 import trader.price.Pricing;
 
-import java.math.BigDecimal;
-import java.util.List;
-
 public final class IndicatorObserver implements Observer {
 
     private final Indicator indicator;
+    private final UpdateIndicatorController controller;
 
-    private IndicatorObserver(Indicator indicator){
-        if(indicator == null)
-            throw new IllegalArgumentException("Indicator must not be null");
+    private IndicatorObserver(Indicator indicator, UpdateIndicatorController controller){
+        if(indicator == null || controller == null)
+            throw new NullArgumentException();
         this.indicator = indicator;
+        this.controller = controller;
     }
 
-    public static IndicatorObserver create(Indicator indicator){
-        return new IndicatorObserver(indicator);
+    public static IndicatorObserver create(Indicator indicator, UpdateIndicatorController controller){
+        return new IndicatorObserver(indicator, controller);
     }
 
     @Override

@@ -1,7 +1,8 @@
 package trader.interactor;
 
 import org.yaml.snakeyaml.Yaml;
-import trader.connector.BrokerConfiguration;
+import trader.broker.BrokerConnector;
+import trader.broker.connector.SettableBrokerConnector;
 import trader.exception.BadRequestException;
 import trader.exception.NullArgumentException;
 import trader.requestor.Request;
@@ -11,7 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 
-public class AddBrokerConfigurationUseCase implements UseCase {
+public class AddBrokerConnectorUseCase implements UseCase {
 
 
     private static final String URL = "url";
@@ -22,30 +23,30 @@ public class AddBrokerConfigurationUseCase implements UseCase {
     public <T, E> Response<E> execute(Request<T> request) {
         if(request == null)
             throw new NullArgumentException();
-        BrokerConfiguration brokerConfiguration = (BrokerConfiguration) request.getRequestDataStructure();
-        setConfigurations(brokerConfiguration);
-        return setResponse((E) brokerConfiguration);
+        SettableBrokerConnector brokerConnector = (SettableBrokerConnector) request.getRequestDataStructure();
+        setConfigurations(brokerConnector);
+        return setResponse((E) brokerConnector);
     }
 
-    private <E> Response<E> setResponse(E brokerConfiguration) {
+    private <E> Response<E> setResponse(E brokerConnector) {
         Response<E> response = new ResponseImpl<>();
-        response.setResponseDataStructure(brokerConfiguration);
+        response.setResponseDataStructure(brokerConnector);
         return response;
     }
 
-    private void setConfigurations(BrokerConfiguration brokerConfiguration) {
-        String location = brokerConfiguration.getFileLocation();
+    private void setConfigurations(SettableBrokerConnector brokerConnector) {
+        String location = brokerConnector.getFileLocation();
         Yaml yaml = new Yaml();
         try(InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(location)){
             HashMap<String, String> brokerSettings = yaml.load(is);
             if(brokerSettings.containsKey(URL)){
-                brokerConfiguration.setUrl(brokerSettings.get(URL));
+                brokerConnector.setUrl(brokerSettings.get(URL));
             }
             if(brokerSettings.containsKey(TOKEN)){
-                brokerConfiguration.setToken(brokerSettings.get(TOKEN));
+                brokerConnector.setToken(brokerSettings.get(TOKEN));
             }
             if(brokerSettings.containsKey(ID)){
-                brokerConfiguration.setAccountID(brokerSettings.get(ID));
+                brokerConnector.setAccountID(brokerSettings.get(ID));
             }
         } catch (IOException | RuntimeException e) {
             BadRequestException badRequestException = new BadRequestException();

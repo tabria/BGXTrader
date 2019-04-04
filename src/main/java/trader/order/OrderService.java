@@ -9,8 +9,7 @@ import com.oanda.v20.order.*;
 import com.oanda.v20.order.Order;
 import com.oanda.v20.primitives.DateTime;
 import com.oanda.v20.transaction.TransactionID;
-import trader.connector.ApiConnector;
-import trader.connector.BaseConnector;
+import trader.broker.connector.ApiConnector;
 
 import java.math.BigDecimal;
 

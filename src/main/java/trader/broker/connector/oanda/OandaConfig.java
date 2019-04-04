@@ -1,4 +1,4 @@
-package trader.connector.oanda;
+package trader.broker.connector.oanda;
 
 import com.oanda.v20.account.AccountID;
 

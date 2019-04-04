@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 
-public interface BGXConfiguration {
+public interface TradingStrategyConfiguration {
     List<HashMap<String, String>> getIndicators();
 
     void addIndicator(HashMap<String, String> indicator);

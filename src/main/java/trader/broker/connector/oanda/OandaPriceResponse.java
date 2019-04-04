@@ -1,4 +1,4 @@
-package trader.connector.oanda;
+package trader.broker.connector.oanda;
 
 import com.oanda.v20.Context;
 import com.oanda.v20.ExecuteException;
@@ -17,7 +17,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import static trader.config.Config.INSTRUMEN_T;
-import static trader.connector.oanda.OandaConfig.ACCOUNT_ID;
+import static trader.broker.connector.oanda.OandaConfig.ACCOUNT_ID;
 
 
 public class OandaPriceResponse {
@@ -59,14 +59,14 @@ public class OandaPriceResponse {
 
 
     private PricingGetResponse createPricingGetResponse() {
-        try {
-            Context context = oandaConnector.getContext();
-            return context.pricing.get(pricingGetRequest);
-        } catch (ExecuteException | RequestException e) {
-            Connection.waitToConnect(Config.URL);
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            Context context = oandaConnector.getContext();
+//            return context.pricing.get(pricingGetRequest);
+//        } catch (ExecuteException | RequestException e) {
+//            Connection.waitToConnect(Config.URL);
+//        } catch (RuntimeException e) {
+//            throw new RuntimeException(e);
+//        }
         return null;
     }
 

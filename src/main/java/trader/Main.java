@@ -4,7 +4,7 @@ package trader;
 import com.oanda.v20.Context;
 import com.oanda.v20.ContextBuilder;
 import trader.config.Config;
-import trader.connector.ApiConnector;
+import trader.broker.connector.ApiConnector;
 import trader.strategy.bgxstrategy.BGXStrategyMain;
 import trader.strategy.Strategy;
 import trader.strategy.ThreadedStrategy;
@@ -44,9 +44,9 @@ public class Main {
 
 
 
-        ApiConnector apiConnector = ApiConnector.create("Oanda");
-//        Strategy strategy = new BGXStrategyMain(apiConnector, "bgxStrategyConfig.yaml");
-        Strategy strategy = new BGXStrategyMain(apiConnector);
+      //  ApiConnector apiConnector = ApiConnector.create("Oanda");
+        Strategy strategy = new BGXStrategyMain("Oanda", "bgxStrategyConfig.yaml", "oandaBrokerConfig");
+      //  Strategy strategy = new BGXStrategyMain(apiConnector);
         ThreadedStrategy threadedStrategy = new ThreadedStrategy(strategy);
 
 

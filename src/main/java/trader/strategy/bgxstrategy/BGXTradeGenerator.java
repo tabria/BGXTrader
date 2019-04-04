@@ -1,7 +1,7 @@
 package trader.strategy.bgxstrategy;
 
 
-import trader.connector.BaseConnector;
+import trader.broker.connector.BaseConnector;
 import trader.entity.indicator.Indicator;
 import trader.entity.indicator.ma.MovingAverageBuilder;
 import trader.entity.indicator.rsi.RSIBuilder;
@@ -14,8 +14,6 @@ import trader.trade.service.IntersectionService;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
-
-import static trader.strategy.bgxstrategy.configuration.StrategyConfig.*;
 
 
 /**

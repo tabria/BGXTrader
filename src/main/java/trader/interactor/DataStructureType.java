@@ -2,6 +2,6 @@ package trader.interactor;
 
 public enum DataStructureType {
 
-    INDICATOR, BGXCONFIGURATION
+    INDICATOR, BGXCONFIGURATION, BROKERCONNECTOR
 
 }

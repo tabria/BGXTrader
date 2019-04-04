@@ -1,4 +1,4 @@
-package trader.connector.oanda;
+package trader.broker.connector.oanda;
 
 import com.oanda.v20.ExecuteException;
 import com.oanda.v20.RequestException;
@@ -29,17 +29,17 @@ public class OandaCandlesResponse {
         updateCandlesRequest = createCandlesRequest(UPDATE_CANDLES_QUANTITY);
     }
 
-    List<Candlestick> getInitialCandles(){
-        List<com.oanda.v20.instrument.Candlestick> oandaCandles =
-                getOandaCandles(initialCandlesRequest);
-        return transformToTradeCandlestickList(oandaCandles);
-    }
-
-    Candlestick getUpdateCandle(){
-        List<com.oanda.v20.instrument.Candlestick> oandaCandles =
-                getOandaCandles(updateCandlesRequest);
-        return transformToTradeCandlestickList(oandaCandles).get(0);
-    }
+//    List<Candlestick> getInitialCandles(){
+//        List<com.oanda.v20.instrument.Candlestick> oandaCandles =
+//                getOandaCandles(initialCandlesRequest);
+//        return transformToTradeCandlestickList(oandaCandles);
+//    }
+//
+//    Candlestick getUpdateCandle(){
+//        List<com.oanda.v20.instrument.Candlestick> oandaCandles =
+//                getOandaCandles(updateCandlesRequest);
+//        return transformToTradeCandlestickList(oandaCandles).get(0);
+//    }
 
     private List<Candlestick> transformToTradeCandlestickList(List<com.oanda.v20.instrument.Candlestick> oandaCadles) {
         List<Candlestick> traderCandlestickList = new ArrayList<>(oandaCadles.size());
@@ -71,22 +71,22 @@ public class OandaCandlesResponse {
         return ZonedDateTime.ofInstant(instantDateTime, zoneId);
     }
 
-    private List<com.oanda.v20.instrument.Candlestick> getOandaCandles(InstrumentCandlesRequest request) {
-        InstrumentCandlesResponse response = candlesResponse(request);
-        return response.getCandles();
-    }
+//    private List<com.oanda.v20.instrument.Candlestick> getOandaCandles(InstrumentCandlesRequest request) {
+//        InstrumentCandlesResponse response = candlesResponse(request);
+//        return response.getCandles();
+//    }
 
-    private InstrumentCandlesResponse candlesResponse(InstrumentCandlesRequest request) {
-        try {
-            return getInstrumentContext().candles(request);
-        } catch (RequestException | ExecuteException e) {
-            throw new BadRequestException();
-        }
-    }
+//    private InstrumentCandlesResponse candlesResponse(InstrumentCandlesRequest request) {
+//        try {
+//            return getInstrumentContext().candles(request);
+//        } catch (RequestException | ExecuteException e) {
+//            throw new BadRequestException();
+//        }
+//    }
 
-    private InstrumentContext getInstrumentContext() {
-        return oandaConnector.getContext().instrument;
-    }
+//    private InstrumentContext getInstrumentContext() {
+//        return oandaConnector.getContext().instrument;
+//    }
 
     private InstrumentCandlesRequest createCandlesRequest(long candlesQuantity){
         return new InstrumentCandlesRequest(new InstrumentName(INSTRUMENT_NAME))
