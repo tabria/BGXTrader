@@ -1,6 +1,5 @@
 package trader.interactor;
 
-import org.hamcrest.core.IsEqual;
 import org.hamcrest.core.IsInstanceOf;
 import org.junit.Assert;
 import org.junit.Before;
@@ -12,10 +11,8 @@ import trader.exception.BadRequestException;
 import trader.exception.NullArgumentException;
 import trader.requestor.Request;
 import trader.responder.Response;
-import trader.strategy.bgxstrategy.configuration.BGXConfiguration;
-import trader.strategy.bgxstrategy.configuration.BGXConfigurationImpl;
+import trader.strategy.bgxstrategy.configuration.TradingStrategyConfiguration;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.HashMap;
 
@@ -24,13 +21,13 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class BGXConfigurationUseCaseTest {
+public class AddBGXConfigurationUseCaseTest {
 
-    public static final String DEFAULT_BGX_CONFIG_FILE_LOCATION = "bgxStrategyConfig.yaml";
+    private static final String DEFAULT_BGX_CONFIG_FILE_LOCATION = "bgxStrategyConfig.yaml";
 
-    private BGXConfigurationUseCase bgxConfigurationUseCase;
+    private AddBGXConfigurationUseCase addBgxConfigurationUseCase;
     private Request requestMock;
-    private BGXConfiguration configurationMock;
+    private TradingStrategyConfiguration configurationMock;
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
@@ -38,13 +35,13 @@ public class BGXConfigurationUseCaseTest {
     @Before
     public void setUp() {
         requestMock = mock(Request.class);
-        configurationMock = mock(BGXConfiguration.class);
-        bgxConfigurationUseCase = new BGXConfigurationUseCase();
+        configurationMock = mock(TradingStrategyConfiguration.class);
+        addBgxConfigurationUseCase = new AddBGXConfigurationUseCase();
     }
 
     @Test(expected = NullArgumentException.class)
     public void WhenCallExecuteWithNull_Exception(){
-        bgxConfigurationUseCase.execute(null);
+        addBgxConfigurationUseCase.execute(null);
     }
 
     @Test(expected = NullPointerException.class)
@@ -54,7 +51,7 @@ public class BGXConfigurationUseCaseTest {
         values.put("initial", null);
         quantities.put("candlesQuantity", values);
 
-        bgxConfigurationUseCase.setCandlesQuantities(configurationMock, quantities);
+        addBgxConfigurationUseCase.setCandlesQuantities(configurationMock, quantities);
     }
 
     @Test(expected = NumberFormatException.class)
@@ -64,7 +61,7 @@ public class BGXConfigurationUseCaseTest {
         values.put("update", "");
         quantities.put("candlesQuantity", values);
 
-        bgxConfigurationUseCase.setCandlesQuantities(configurationMock, quantities);
+        addBgxConfigurationUseCase.setCandlesQuantities(configurationMock, quantities);
     }
 
     @Test(expected = NullPointerException.class)
@@ -76,7 +73,7 @@ public class BGXConfigurationUseCaseTest {
         quantities.put("candlesQuantity", values);
         doThrow(NullPointerException.class).when(configurationMock).setInitialCandlesQuantity(expectedInitial);
 
-        bgxConfigurationUseCase.setCandlesQuantities(configurationMock, quantities);
+        addBgxConfigurationUseCase.setCandlesQuantities(configurationMock, quantities);
 
     }
 
@@ -89,7 +86,7 @@ public class BGXConfigurationUseCaseTest {
         quantities.put("candlesQuantity", values);
         doThrow(NullPointerException.class).when(configurationMock).setUpdateCandlesQuantity(expectedUpdate);
 
-        bgxConfigurationUseCase.setCandlesQuantities(configurationMock, quantities);
+        addBgxConfigurationUseCase.setCandlesQuantities(configurationMock, quantities);
 
     }
 
@@ -102,7 +99,7 @@ public class BGXConfigurationUseCaseTest {
         quantities.put("candlesQuantity", values);
         doThrow(NullPointerException.class).when(configurationMock).setInitialCandlesQuantity(expectedInitial);
 
-        bgxConfigurationUseCase.setCandlesQuantities(configurationMock, quantities);
+        addBgxConfigurationUseCase.setCandlesQuantities(configurationMock, quantities);
 
     }
 
@@ -115,7 +112,7 @@ public class BGXConfigurationUseCaseTest {
         quantities.put("candlesQuantity", values);
         doThrow(NullPointerException.class).when(configurationMock).setUpdateCandlesQuantity(expectedUpdate);
 
-        bgxConfigurationUseCase.setCandlesQuantities(configurationMock, quantities);
+        addBgxConfigurationUseCase.setCandlesQuantities(configurationMock, quantities);
 
     }
 
@@ -126,7 +123,7 @@ public class BGXConfigurationUseCaseTest {
         values.put("riskPerTrade", "  ");
         quantities.put("risk", values);
 
-        bgxConfigurationUseCase.setRiskPerTrade(configurationMock, quantities);
+        addBgxConfigurationUseCase.setRiskPerTrade(configurationMock, quantities);
     }
 
     @Test(expected = NullPointerException.class)
@@ -136,7 +133,7 @@ public class BGXConfigurationUseCaseTest {
         values.put("riskPerTrade", null);
         quantities.put("risk", values);
 
-        bgxConfigurationUseCase.setRiskPerTrade(configurationMock, quantities);
+        addBgxConfigurationUseCase.setRiskPerTrade(configurationMock, quantities);
     }
 
     @Test(expected = RuntimeException.class)
@@ -147,7 +144,7 @@ public class BGXConfigurationUseCaseTest {
         quantities.put("risk", values);
 
         doThrow(new RuntimeException()).when(configurationMock).setRiskPerTrade(BigDecimal.valueOf(0.03));
-        bgxConfigurationUseCase.setRiskPerTrade(configurationMock, quantities);
+        addBgxConfigurationUseCase.setRiskPerTrade(configurationMock, quantities);
     }
 
     @Test
@@ -157,16 +154,16 @@ public class BGXConfigurationUseCaseTest {
 
         when(configurationMock.getFileLocation()).thenReturn("ggs.yaml");
         when(requestMock.getRequestDataStructure()).thenReturn(configurationMock);
-        bgxConfigurationUseCase.execute(requestMock);
+        addBgxConfigurationUseCase.execute(requestMock);
     }
 
     @Test
     public void WhenCallExecuteWithCorrectRequest_CorrectResult(){
         when(configurationMock.getFileLocation()).thenReturn(DEFAULT_BGX_CONFIG_FILE_LOCATION);
         when(requestMock.getRequestDataStructure()).thenReturn(configurationMock);
-        Response<BGXConfiguration> bgxConfigurationResponse = bgxConfigurationUseCase.execute(requestMock);
+        Response<TradingStrategyConfiguration> bgxConfigurationResponse = addBgxConfigurationUseCase.execute(requestMock);
 
-        BGXConfiguration configuration = bgxConfigurationResponse.getResponseDataStructure();
+        TradingStrategyConfiguration configuration = bgxConfigurationResponse.getResponseDataStructure();
 
         Assert.assertEquals(configurationMock, configuration);
     }

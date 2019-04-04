@@ -5,7 +5,7 @@ import org.junit.Test;
 import trader.CommonTestClassMembers;
 import trader.entity.candlestick.Candlestick;
 import trader.entity.candlestick.candle.CandlePriceType;
-import trader.connector.BaseConnector;
+import trader.broker.connector.BaseConnector;
 import trader.entity.indicator.Indicator;
 import trader.entity.indicator.IndicatorUpdateHelper;
 import trader.entity.indicator.ma.SimpleMovingAverage;
@@ -497,9 +497,9 @@ public class BGXTradeGeneratorTest {
     }
 
     private void init() {
-        this.indicatorUpdateHelper.fillCandlestickList();
-        addExtraCandlesToTestList(170);
-        when(baseConnector.getInitialCandles()).thenReturn(indicatorUpdateHelper.getCandlestickList());
+//        this.indicatorUpdateHelper.fillCandlestickList();
+//        addExtraCandlesToTestList(170);
+//        when(baseConnector.getInitialCandles()).thenReturn(indicatorUpdateHelper.getCandlestickList());
     }
 
     private void addExtraCandlesToTestList(int quantity) {

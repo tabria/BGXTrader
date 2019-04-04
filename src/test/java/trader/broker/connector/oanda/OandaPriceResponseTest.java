@@ -1,8 +1,7 @@
-package trader.connector.oanda;
+package trader.broker.connector.oanda;
 
 import com.oanda.v20.ExecuteException;
 import com.oanda.v20.RequestException;
-import com.oanda.v20.pricing.PricingGetRequest;
 import org.junit.Before;
 import org.junit.Test;
 import trader.CommonTestClassMembers;
@@ -68,7 +67,7 @@ public class OandaPriceResponseTest {
     @Test
     public void testGetPriceForNullResponse_tradableFalse() throws RequestException, ExecuteException {
         priceResponse = new OandaPriceResponse(mockOandaConnector);
-        when(mockOandaConnector.getContext()).thenReturn(oandaAPIMockPricing.getMockContext());
+ //       when(mockOandaConnector.getContext()).thenReturn(oandaAPIMockPricing.getMockContext());
         commonMembers.changeFieldObject(priceResponse, "pricingGetRequest", oandaAPIMockPricing.getMockPricingGetRequest());
         oandaAPIMockPricing.setMockPricingGetResponse(null);
         Pricing price = priceResponse.getPrice();
@@ -83,7 +82,7 @@ public class OandaPriceResponseTest {
     @Test
     public void testGetPriceForNullClientPrice_tradableFalse() throws RequestException, ExecuteException {
         priceResponse = new OandaPriceResponse(mockOandaConnector);
-        when(mockOandaConnector.getContext()).thenReturn(oandaAPIMockPricing.getMockContext());
+ //       when(mockOandaConnector.getContext()).thenReturn(oandaAPIMockPricing.getMockContext());
         commonMembers.changeFieldObject(priceResponse, "pricingGetRequest", oandaAPIMockPricing.getMockPricingGetRequest());
         Pricing price = priceResponse.getPrice();
 

@@ -21,22 +21,29 @@ public class IndicatorObserverTest {
 
     private Observer mockObserver;
     private Indicator mockMA;
+    private UpdateIndicatorController mockController;
 
     @Before
     public void before(){
 
         this.mockMA = mock(Indicator.class);
-        this.mockObserver = IndicatorObserver.create(this.mockMA);
+        this.mockController = mock(UpdateIndicatorController.class);
+        this.mockObserver = IndicatorObserver.create(this.mockMA, mockController);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void whenCreateIndicatorObserverWithNull_ThrowException(){
-        IndicatorObserver.create(null);
+    @Test(expected = NullArgumentException.class)
+    public void whenCreateIndicatorObserverWithNullIndicator_ThrowException(){
+        IndicatorObserver.create(null, mockController);
+    }
+
+    @Test(expected = NullArgumentException.class)
+    public void WhenCreateIndicatorObserverWithNullUpdateIndicatorController_Exception(){
+        IndicatorObserver.create(mockMA, null);
     }
 
     @Test
     public void whenCreateNewIndicatorObserver_IndicatorsMustMatch() throws NoSuchFieldException, IllegalAccessException {
-        Observer indicatorObserver = IndicatorObserver.create(this.mockMA);
+        Observer indicatorObserver = IndicatorObserver.create(this.mockMA, mockController);
         assertSame(mockMA, extractIndicator(indicatorObserver));
     }
 
@@ -49,7 +56,7 @@ public class IndicatorObserverTest {
     public ExpectedException exception = ExpectedException.none();
 
     @Test
-    public void testUpdateObserver() {
+    public void testUpdateObserverForCorrectExecution() {
         Pricing mockPricing = mock(Pricing.class);
         exception.expect(RuntimeException.class);
         exception.expectMessage("Update OK");

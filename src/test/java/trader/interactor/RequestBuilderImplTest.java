@@ -16,6 +16,8 @@ import static org.junit.Assert.assertEquals;
 public class RequestBuilderImplTest {
 
     private static final String BGX_STRATEGY_CONFIG_FILE_NAME = "bgxStrategyConfig.yaml";
+    private static final String BROKER_CONFIG_FILE_NAME = "oandaBrokerConfig.yaml";
+    private static final String CONNECTOR_NAME = "Oanda";
 
     private RequestBuilder requestBuilder;
     private HashMap<String, String> settings;
@@ -90,9 +92,20 @@ public class RequestBuilderImplTest {
     @Test
     public void whenCallBuildWithBGXConfigurationControllerName_ReturnBGXConfigurationRequest() {
         settings.put("location", BGX_STRATEGY_CONFIG_FILE_NAME);
-        Request<?> bgxConfigurationRequest = requestBuilder.build("BGXConfigurationController", settings);
+        Request<?> bgxConfigurationRequest = requestBuilder.build("AddBGXConfigurationController", settings);
 
         assertEquals(BGXConfigurationImpl.class, bgxConfigurationRequest.getRequestDataStructure().getClass());
+    }
+
+    @Test
+    public void whenCallBuildWithBrokerConfigurationControllerName_ReturnBrokerConfigurationRequest() {
+        settings.put("brokerName", CONNECTOR_NAME);
+        settings.put("location", BROKER_CONFIG_FILE_NAME);
+        Request<?> brokerConnectorRequest = requestBuilder.build("AddBrokerConnectorController", settings);
+        String actual = brokerConnectorRequest.getRequestDataStructure().getClass().getSimpleName();
+        String expected = CONNECTOR_NAME + "Connector";
+
+        assertEquals(expected, actual);
     }
 
 }

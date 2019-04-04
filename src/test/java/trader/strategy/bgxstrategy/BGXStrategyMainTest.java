@@ -1,18 +1,16 @@
 package trader.strategy.bgxstrategy;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import trader.CommonTestClassMembers;
-import trader.connector.ApiConnector;
+import trader.broker.connector.ApiConnector;
+import trader.broker.BrokerConnector;
 import trader.controller.Observer;
 import trader.entity.candlestick.candle.CandleGranularity;
 import trader.entity.candlestick.candle.CandlePriceType;
 import trader.entity.indicator.Indicator;
-import trader.exception.EmptyArgumentException;
 import trader.exception.NullArgumentException;
-import trader.strategy.Observable;
-import trader.strategy.bgxstrategy.configuration.BGXConfiguration;
+import trader.strategy.bgxstrategy.configuration.TradingStrategyConfiguration;
 import trader.strategy.observable.PriceObservable;
 
 import java.math.BigDecimal;
@@ -28,10 +26,13 @@ public class BGXStrategyMainTest {
 
     private static final int CANDLESTICK_LIST_SIZE = 170;
     private static final BigDecimal DEFAULT_PRICE = new BigDecimal(0.00001).setScale(5, BigDecimal.ROUND_HALF_UP);
+    private static final String BROKER_NAME = "Oanda";
+    private static final String BGX_STRATEGY_CONFIG_FILE_NAME = "bgxStrategyConfig.yaml";
+    private static final String BROKER_CONFIG_FILE_NAME = "oandaBrokerConfig.yaml";
 
     private ApiConnector apiConnectorMock;
     private BGXStrategyMain bgxStrategyMain;
-    private BGXConfiguration bgxConfigurationMock;
+    private TradingStrategyConfiguration bgxConfigurationMock;
     private List<HashMap<String, String>> falseIndicators;
     private CommonTestClassMembers commonMembers;
 
@@ -64,21 +65,37 @@ public class BGXStrategyMainTest {
 //        fillCandlestickList();
         commonMembers = new CommonTestClassMembers();
         apiConnectorMock = mock(ApiConnector.class);
-        bgxConfigurationMock = mock(BGXConfiguration.class);
-        bgxStrategyMain = new BGXStrategyMain(apiConnectorMock);
+        bgxConfigurationMock = mock(TradingStrategyConfiguration.class);
         setFalseInitialIndicators();
+        bgxStrategyMain = new BGXStrategyMain(BROKER_NAME, BGX_STRATEGY_CONFIG_FILE_NAME, BROKER_CONFIG_FILE_NAME);
+
     }
 
 
     @Test(expected = NullArgumentException.class)
-    public void WhenApiConnectorIsNull_Exception(){
-        new BGXStrategyMain(null);
+    public void WhenBrokerNameIsNull_Exception(){
+    new BGXStrategyMain(null, BGX_STRATEGY_CONFIG_FILE_NAME, BROKER_CONFIG_FILE_NAME);
+    }
+
+    @Test(expected = NullArgumentException.class)
+    public void WhenStrategyConfigFileNameIsNull_Exception(){
+        new BGXStrategyMain(BROKER_NAME, null, BROKER_CONFIG_FILE_NAME);
+    }
+    @Test(expected = NullArgumentException.class)
+    public void WhenBrokerConfigFileNameIsNull_Exception(){
+        new BGXStrategyMain(BROKER_NAME, BGX_STRATEGY_CONFIG_FILE_NAME, null);
     }
 
     @Test
     public void WhenCreateWithNullConfiguration_Exception(){
-        BGXConfiguration configuration = bgxStrategyMain.getConfiguration();
+        TradingStrategyConfiguration configuration = bgxStrategyMain.getConfiguration();
         assertNotNull(configuration);
+    }
+
+    @Test
+    public void WhenCreateWithNullBrokerConfiguration_Exception(){
+        BrokerConnector brokerConnector = bgxStrategyMain.getBrokerConnector();
+        assertNotNull(brokerConnector);
     }
 
     @Test
@@ -88,6 +105,7 @@ public class BGXStrategyMainTest {
 
     @Test
     public void addIndicatorsToPriceObservable_CorrectResult(){
+        extractObservers().clear();
         bgxStrategyMain.addIndicatorsFromConfiguration(falseIndicators);
         CopyOnWriteArrayList<Observer> observers = extractObservers();
 
@@ -95,7 +113,18 @@ public class BGXStrategyMainTest {
         assertEqualsFalseIndicatorsToObservers(observers);
     }
 
+    @Test
+    public void WhenAddBrokerConnectorWithCorrectInputs_CorrectAdd(){
+        BrokerConnector brokerConnector = (BrokerConnector) commonMembers.extractFieldObject(bgxStrategyMain, "brokerConnector");
 
+        String actual = brokerConnector.getClass().getSimpleName();
+        String expected = BROKER_NAME + "Connector";
+
+        assertEquals(expected, actual);
+        assertNotNull(commonMembers.extractFieldObject(brokerConnector, "url"));
+        assertNotNull(commonMembers.extractFieldObject(brokerConnector, "token"));
+        assertNotNull(commonMembers.extractFieldObject(brokerConnector, "accountID"));
+    }
 
 
 
