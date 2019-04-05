@@ -22,6 +22,7 @@ public class OandaConnector extends BaseConnector {
     private String accountID;
     private Context context;
     private OandaAccountValidator oandaAccountValidator ;
+    private OandaPriceRequest oandaPriceRequest;
     private OandaPriceResponse oandaPriceResponse;
     private OandaCandlesResponse oandaCandlesResponse;
 
@@ -31,6 +32,7 @@ public class OandaConnector extends BaseConnector {
 
     public OandaConnector(){
         oandaAccountValidator = new OandaAccountValidator();
+        oandaPriceRequest = new OandaPriceRequest();
 
 //        initialize();
 //        try {
@@ -96,6 +98,7 @@ public class OandaConnector extends BaseConnector {
     public Pricing getPrice(String instrument) {
     //to make oanda price request object,then call getprice with the request and settings
 
+        PricingGetRequest request = oandaPriceRequest.createRequest(accountID, instrument);
         return oandaPriceResponse.getPrice(instrument);
     }
 
