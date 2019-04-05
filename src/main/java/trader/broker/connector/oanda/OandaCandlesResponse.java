@@ -17,6 +17,9 @@ import java.util.List;
 
 import static trader.strategy.bgxstrategy.configuration.StrategyConfig.*;
 
+
+////To be deleted//////
+
 public class OandaCandlesResponse {
 
     private OandaConnector oandaConnector;

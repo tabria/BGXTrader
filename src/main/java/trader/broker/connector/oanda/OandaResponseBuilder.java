@@ -26,10 +26,10 @@ public class OandaResponseBuilder {
         return null;
     }
 
-    private <T> InstrumentCandlesResponse createCandlesResponse(Context context, String url, Request<T> candlesRequest) {
-        try{
-            InstrumentCandlesRequest request = (InstrumentCandlesRequest) candlesRequest.getRequestDataStructure();
-            return context.instrument.candles(request);
+    private <T> PricingGetResponse createPriceResponse(Context context, String url, Request<T> priceRequest) {
+        try {
+            PricingGetRequest request = (PricingGetRequest) priceRequest.getRequestDataStructure();
+            return context.pricing.get(request);
         } catch (ExecuteException | RequestException e) {
             Connection.waitToConnect(url);
         } catch (RuntimeException e) {
@@ -38,10 +38,10 @@ public class OandaResponseBuilder {
         return null;
     }
 
-    private <T> PricingGetResponse createPriceResponse(Context context, String url, Request<T> priceRequest) {
-        try {
-            PricingGetRequest request = (PricingGetRequest) priceRequest.getRequestDataStructure();
-            return context.pricing.get(request);
+    private <T> InstrumentCandlesResponse createCandlesResponse(Context context, String url, Request<T> candlesRequest) {
+        try{
+            InstrumentCandlesRequest request = (InstrumentCandlesRequest) candlesRequest.getRequestDataStructure();
+            return context.instrument.candles(request);
         } catch (ExecuteException | RequestException e) {
             Connection.waitToConnect(url);
         } catch (RuntimeException e) {
@@ -61,6 +61,8 @@ public class OandaResponseBuilder {
 
     private <E> Response<E> setResponse(E responseValue) {
         Response<E> response = new ResponseImpl<>();
+        if(responseValue == null)
+            return null;
         response.setResponseDataStructure(responseValue);
         return response;
     }

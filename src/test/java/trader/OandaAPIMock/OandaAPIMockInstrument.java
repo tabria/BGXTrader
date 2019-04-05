@@ -147,6 +147,10 @@ public class OandaAPIMockInstrument extends OandaAPIMock {
         }
     }
 
+    public <T extends Throwable> void setMockInstrumentCandlesResponseToThrowException(Class<T> exception) throws ExecuteException, RequestException {
+        when(mockContext.instrument.candles(mockRequest)).thenThrow(exception);
+    }
+
     public void addCandleToOandaCandlestickList(Candlestick candle) {
             candlestickList.add(candle);
     }

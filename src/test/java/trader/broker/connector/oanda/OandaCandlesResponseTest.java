@@ -88,29 +88,6 @@ public class OandaCandlesResponseTest {
     }
 
 
-    @Test(expected = InvocationTargetException.class)
-    public void testCandlesResponseWithNullRequest() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, RequestException, ExecuteException, InstantiationException {
-//       thrown.expect(NullPointerException.class);
-//       Throwable cause = new BadRequestException();
-//       thrown.expectCause(IsEqual.equalTo(cause));
-//        setMockConnectorGetContext();
-
-        oandaInstrument.setExceptionForMockInstrumentContext(null);
-        InstrumentCandlesRequest icr = null;
-        Method getInitialCandlesResponse = getMethodCandlesResponse();
-        getInitialCandlesResponse.invoke(candlesResponse, icr);
-    }
-
-    @Test
-    public void whenCallGetCandlesResponse_ReturnInstrumentCandlesResponse() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        Method getInitialCandlesResponse = getMethodCandlesResponse();
-        InstrumentCandlesResponse invoke =
-                (InstrumentCandlesResponse) getInitialCandlesResponse
-                .invoke(candlesResponse, oandaInstrument.getMockRequest());
-
-        assertSame(invoke.getClass(), InstrumentCandlesResponse.class);
-    }
-
     @SuppressWarnings(value = "unchecked")
     @Test
     public void testGetOandaCandles() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
@@ -123,43 +100,8 @@ public class OandaCandlesResponseTest {
         assertEquals(oandaInstrument.getMockCandlestickList(), candlesticks);
     }
 
-//    @SuppressWarnings(value = "unchecked")
-//    @Test
-//    public void testTransformOandaCandleList() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-//        Method transformToTradeCandlestickList = commonMembers
-//                .getPrivateMethodForTest(candlesResponse, "transformToTradeCandlestickList", List.class);
-//        List<Candlestick> actualList = (List<Candlestick>) transformToTradeCandlestickList
-//                .invoke(candlesResponse, oandaInstrument.getMockCandlestickList());
-//
-//        verifyList(oandaInstrument.getMockCandlestickList().size(), actualList);
-//    }
 
-//    @Test
-//    public void testConvertingOandaCandleToTradeCandle() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-//        Method convertToTradeCandlestick = commonMembers
-//                .getPrivateMethodForTest(candlesResponse, "convertToTradeCandlestick", CANDLESTICK_CLASS);
-//        Candlestick actualCandlestick = (Candlestick) convertToTradeCandlestick
-//                .invoke(candlesResponse, oandaInstrument.getMockCandlestick());
-//
-//        assertCandlestick(actualCandlestick);
-//    }
 
-    @SuppressWarnings(value = "unchecked")
-    @Test
-    public void whenCreateCandlestickList_AddOnlyTradableCandles() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        int amount = 7;
-        oandaInstrument
-                .addNonTradableCandlesticksToOandaCandlestickList(amount);
-
-        Method transformToTradeCandlestickList = commonMembers
-                .getPrivateMethodForTest(candlesResponse, "transformToTradeCandlestickList", List.class);
-        List<Candlestick> actualList = (List<Candlestick>) transformToTradeCandlestickList
-                .invoke(candlesResponse, oandaInstrument.getMockCandlestickList());
-
-        int initialSize = oandaInstrument.getMockCandlestickList().size();
-        assertEquals(initialSize - amount, actualList.size());
-        assertTrue(isAllCandlesTradable(actualList));
-    }
 
     private boolean isAllCandlesTradable(List<Candlestick> actualList) {
         for (Candlestick candlestick:actualList) {

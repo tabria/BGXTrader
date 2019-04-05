@@ -3,6 +3,7 @@ package trader.broker.connector.oanda;
 import com.oanda.v20.Context;
 import com.oanda.v20.ExecuteException;
 import com.oanda.v20.RequestException;
+import com.oanda.v20.instrument.InstrumentCandlesResponse;
 import com.oanda.v20.pricing.PricingGetResponse;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,32 +52,32 @@ public class OandaResponseBuilderTest {
     }
 
     @Test(expected = EmptyArgumentException.class)
-    public void WhenCallGetPriceResponseWithEmptyType_Exception(){
+    public void WhenCallBuildResponseWithEmptyType_Exception(){
         priceResponse.buildResponse(" ",contextMock, URL, requestMock);
     }
 
     @Test(expected = NullArgumentException.class)
-    public void WhenCallGetPriceResponseWithNullContext_Exception(){
+    public void WhenCallBuildResponseWithNullContext_Exception(){
         priceResponse.buildResponse("price", null, URL, requestMock);
     }
 
     @Test(expected = NullArgumentException.class)
-    public void WhenCallGetPriceResponseWithNullURL_Exception(){
+    public void WhenCallBuildResponseWithNullURL_Exception(){
         priceResponse.buildResponse("price",contextMock, null, requestMock);
     }
 
     @Test(expected = NullArgumentException.class)
-    public void WhenCallGetPriceResponseWithNullRequest_Exception(){
+    public void WhenCallBuildResponseWithNullRequest_Exception(){
         priceResponse.buildResponse("price", contextMock, URL, null);
     }
 
     @Test(expected = EmptyArgumentException.class)
-    public void WhenCallGetPriceResponseWithEmptyURL_Exception(){
+    public void WhenCallBuildResponseWithEmptyURL_Exception(){
         priceResponse.buildResponse("price", contextMock, " ", requestMock);
     }
 
     @Test
-    public void WhenCallGetPriceResponseWithCorrectValues_ReturnCorrectResult(){
+    public void WhenCallBuildResponseWithCorrectValues_ReturnCorrectResult(){
         Response<PricingGetResponse> actualResponse = this.priceResponse.buildResponse("price", contextMock, URL, requestMock);
         PricingGetResponse response = actualResponse.getResponseDataStructure();
         PricingGetResponse expectedResponse = oandaAPIMockPricing.getMockPricingGetResponse();
@@ -85,26 +86,35 @@ public class OandaResponseBuilderTest {
     }
 
     @Test
-    public void WhenCallGetPriceResponseThrowExecuteOrRequestExceptions_WaitToReconnect() throws RequestException, ExecuteException {
+    public void WhenBuildResponseThrowExecuteOrRequestExceptions_ResponseIsNull() throws RequestException, ExecuteException {
         oandaAPIMockPricing.setMockPricingGetResponseToThrowException(RequestException.class);
         PowerMockito.mockStatic(Connection.class);
         PowerMockito.when(Connection.waitToConnect(URL)).thenReturn(true);
         Response<PricingGetResponse> actualResponse = this.priceResponse.buildResponse("price", contextMock, URL, requestMock);
-        assertNull(actualResponse.getResponseDataStructure());
+        assertNull(actualResponse);
     }
 
     @Test(expected = RuntimeException.class)
-    public void WhenCallGetPriceResponseThrowUnexpectedException_ThrowRuntimeException() throws RequestException, ExecuteException {
+    public void WhenBuildResponseThrowUnexpectedException_ThrowRuntimeException() throws RequestException, ExecuteException {
         oandaAPIMockPricing.setMockPricingGetResponseToThrowException(RuntimeException.class);
         this.priceResponse.buildResponse("price", contextMock, URL, requestMock);
     }
 
     @Test
-    public void WhenCallMakeResponseWithCandle_CorrectResponse(){
+    public void WhenCallBuildResponseWithCandle_CorrectResponse(){
         when(requestMock.getRequestDataStructure()).thenReturn(oandaAPIMockInstrument.getMockRequest());
         Response response = this.priceResponse.buildResponse("candle", oandaAPIMockInstrument.getContext(), URL, requestMock);
 
         assertEquals(oandaAPIMockInstrument.getMockResponse(), response.getResponseDataStructure());
+    }
 
+    @Test
+    public void WhenBuildResponseForCandleThrowExecuteOrRequestExceptions_ResponseIsNull() throws RequestException, ExecuteException {
+        when(requestMock.getRequestDataStructure()).thenReturn(oandaAPIMockInstrument.getMockRequest());
+        oandaAPIMockInstrument.setMockInstrumentCandlesResponseToThrowException(RequestException.class);
+        PowerMockito.mockStatic(Connection.class);
+        PowerMockito.when(Connection.waitToConnect(URL)).thenReturn(true);
+        Response<InstrumentCandlesResponse> actualResponse = this.priceResponse.buildResponse("candle", oandaAPIMockInstrument.getContext(), URL, requestMock);
+        assertNull(actualResponse);
     }
 }
