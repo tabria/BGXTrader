@@ -6,17 +6,19 @@ import com.oanda.v20.RequestException;
 import com.oanda.v20.pricing.*;
 import trader.connection.Connection;
 import trader.exception.NullArgumentException;
+import trader.requestor.Request;
 
 public class OandaPriceResponse {
 
     OandaPriceResponse(){}
 
-    public PricingGetResponse getPriceResponse(Context context, String url, PricingGetRequest priceRequest) {
+    public PricingGetResponse getPriceResponse(Context context, String url, Request<T> priceRequest) {
         if(context == null || priceRequest == null || url == null)
             throw new NullArgumentException();
 
         try {
-            return context.pricing.get(priceRequest);
+            PricingGetRequest request = (PricingGetRequest) priceRequest.getRequestDataStructure();
+            return context.pricing.get(request);
         } catch (ExecuteException | RequestException e) {
             Connection.waitToConnect(url);
         } catch (RuntimeException e) {

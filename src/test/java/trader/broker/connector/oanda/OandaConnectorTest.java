@@ -6,20 +6,20 @@ import org.junit.Before;
 import org.junit.Test;
 import trader.CommonTestClassMembers;
 import trader.OandaAPIMock.OandaAPIMockAccount;
-import trader.entity.candlestick.Candlestick;
 import trader.broker.connector.BaseConnector;
 import trader.exception.BadRequestException;
 import trader.exception.EmptyArgumentException;
 import trader.exception.NullArgumentException;
 import trader.price.Price;
 import trader.price.PriceImpl;
+import trader.requestor.Request;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
@@ -32,10 +32,10 @@ public class OandaConnectorTest {
     private OandaConnector oandaConnector;
     private OandaAPIMockAccount oandaAPIMockAccount;
     private OandaPriceResponse mockResponse;
-    private OandaPriceRequest mockRequest;
+    private OandaRequestBuilder mockRequest;
     private OandaPriceTransformer mockPriceTransformer;
     private Price mockPrice;
-    private PricingGetRequest pricingRequestMock;
+    private Request requestMock;
     private PricingGetResponse pricingResponseMock;
 
 
@@ -45,14 +45,13 @@ public class OandaConnectorTest {
         commonMembers = new CommonTestClassMembers();
         oandaAPIMockAccount = new OandaAPIMockAccount();
         mockResponse = mock(OandaPriceResponse.class);
-        mockRequest = mock(OandaPriceRequest.class);
+        mockRequest = mock(OandaRequestBuilder.class);
         mockPriceTransformer = mock(OandaPriceTransformer.class);
         mockPrice = mock(PriceImpl.class);
-        pricingRequestMock = mock(PricingGetRequest.class);
+        requestMock = mock(Request.class);
         pricingResponseMock = mock(PricingGetResponse.class);
 
     }
-
 
     @Test(expected = NullArgumentException.class)
     public void WhenCallSetFileLocationWithNull_Exception(){
@@ -157,14 +156,15 @@ public class OandaConnectorTest {
     }
 
     private void setFakePrice() {
-        when(mockRequest.getPriceRequest(anyString(), anyString())).thenReturn(pricingRequestMock);
-        when(mockResponse.getPriceResponse(eq(oandaAPIMockAccount.getContext()), anyString() ,eq(pricingRequestMock))).thenReturn(pricingResponseMock);
+        HashMap<String, String> settings = new HashMap<>();
+        when(mockRequest.build(anyString(), any(HashMap.class))).thenReturn(requestMock);
+        when(mockResponse.getPriceResponse(eq(oandaAPIMockAccount.getContext()), anyString() ,eq(requestMock))).thenReturn(pricingResponseMock);
         when(mockPriceTransformer.transformToPrice(pricingResponseMock)).thenReturn(mockPrice);
 
         commonMembers.changeFieldObject(oandaConnector, "context", oandaAPIMockAccount.getContext());
         commonMembers.changeFieldObject(oandaConnector, "accountID", "ss");
         commonMembers.changeFieldObject(oandaConnector, "url", "dd");
-        commonMembers.changeFieldObject(oandaConnector, "oandaPriceRequest", mockRequest);
+        commonMembers.changeFieldObject(oandaConnector, "oandaRequestBuilder", mockRequest);
         commonMembers.changeFieldObject(oandaConnector, "oandaPriceResponse", mockResponse);
         commonMembers.changeFieldObject(oandaConnector, "oandaPriceTransformer", mockPriceTransformer);
     }

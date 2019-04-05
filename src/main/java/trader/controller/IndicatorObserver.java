@@ -24,6 +24,8 @@ public final class IndicatorObserver implements Observer {
     public void updateObserver(Price price) {
         if (price == null)
             throw new NullArgumentException();
+
+
         this.indicator.updateIndicator();
     }
 }

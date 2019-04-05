@@ -11,7 +11,9 @@ import trader.exception.BadRequestException;
 import trader.exception.EmptyArgumentException;
 import trader.exception.NullArgumentException;
 import trader.price.Price;
+import trader.requestor.Request;
 
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -23,7 +25,7 @@ public class OandaConnector extends BaseConnector {
     private String accountID;
     private Context context;
     private OandaAccountValidator oandaAccountValidator ;
-    private OandaPriceRequest oandaPriceRequest;
+    private OandaRequestBuilder oandaRequestBuilder;
     private OandaPriceResponse oandaPriceResponse;
     private OandaCandlesResponse oandaCandlesResponse;
     private PriceTransformable oandaPriceTransformer;
@@ -34,7 +36,7 @@ public class OandaConnector extends BaseConnector {
 
     public OandaConnector(){
         oandaAccountValidator = new OandaAccountValidator();
-        oandaPriceRequest = new OandaPriceRequest();
+        oandaRequestBuilder = new OandaRequestBuilder();
         oandaPriceResponse = new OandaPriceResponse();
 
 //        initialize();
@@ -99,8 +101,11 @@ public class OandaConnector extends BaseConnector {
 
     @Override
     public Price getPrice(String instrument) {
-        PricingGetRequest request = oandaPriceRequest.getPriceRequest(accountID, instrument);
-        PricingGetResponse priceResponse = oandaPriceResponse.getPriceResponse(context, url, request);
+        HashMap<String, String> settings = new HashMap<>();
+        settings.put("accountID", accountID);
+        settings.put("instrument", instrument);
+        Request<?> priceRequest = oandaRequestBuilder.build("price", settings);
+        PricingGetResponse priceResponse = oandaPriceResponse.getPriceResponse(context, url, priceRequest);
         return oandaPriceTransformer.transformToPrice(priceResponse);
     }
 

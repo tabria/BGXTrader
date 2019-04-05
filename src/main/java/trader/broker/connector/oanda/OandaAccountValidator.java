@@ -9,8 +9,6 @@ import trader.exception.UnableToExecuteRequest;
 
 import java.util.List;
 
-import static trader.broker.connector.oanda.OandaConfig.ACCOUNT_ID;
-
 public class OandaAccountValidator {
 
     private static final double MIN_BALANCE = 1.0D;

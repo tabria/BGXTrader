@@ -14,7 +14,12 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import trader.OandaAPIMock.OandaAPIMockPricing;
 import trader.connection.Connection;
 import trader.exception.NullArgumentException;
+import trader.requestor.Request;
+
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(Connection.class)
@@ -23,7 +28,7 @@ public class OandaPriceResponseTest {
     private static final String URL = "xxx.xxx";
 
     private Context contextMock;
-    private PricingGetRequest requestMock;
+    private Request requestMock;
     private OandaAPIMockPricing oandaAPIMockPricing;
     private OandaPriceResponse priceResponse;
 
@@ -32,7 +37,8 @@ public class OandaPriceResponseTest {
         oandaAPIMockPricing = new OandaAPIMockPricing();
         oandaAPIMockPricing.setMockPricingGetResponse(oandaAPIMockPricing.getMockPricingGetResponse());
         contextMock = oandaAPIMockPricing.getContext();
-        requestMock = oandaAPIMockPricing.getMockPricingGetRequest();
+        requestMock = mock(Request.class);
+        when(requestMock.getRequestDataStructure()).thenReturn(PricingGetRequest.class);
         priceResponse = new OandaPriceResponse();
     }
 
