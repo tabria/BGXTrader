@@ -1,6 +1,5 @@
 package trader.broker.connector.oanda;
 
-import com.oanda.v20.pricing.PricingGetRequest;
 import com.oanda.v20.pricing.PricingGetResponse;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,6 +12,7 @@ import trader.exception.NullArgumentException;
 import trader.price.Price;
 import trader.price.PriceImpl;
 import trader.requestor.Request;
+import trader.responder.Response;
 
 import java.util.HashMap;
 
@@ -31,12 +31,13 @@ public class OandaConnectorTest {
     private CommonTestClassMembers commonMembers;
     private OandaConnector oandaConnector;
     private OandaAPIMockAccount oandaAPIMockAccount;
-    private OandaPriceResponse mockResponse;
+    private OandaResponseBuilder mockResponse;
     private OandaRequestBuilder mockRequest;
     private OandaPriceTransformer mockPriceTransformer;
     private Price mockPrice;
     private Request requestMock;
     private PricingGetResponse pricingResponseMock;
+    private Response responseMock;
 
 
     @Before
@@ -44,12 +45,14 @@ public class OandaConnectorTest {
         oandaConnector = (OandaConnector) BaseConnector.create("Oanda");
         commonMembers = new CommonTestClassMembers();
         oandaAPIMockAccount = new OandaAPIMockAccount();
-        mockResponse = mock(OandaPriceResponse.class);
+        mockResponse = mock(OandaResponseBuilder.class);
         mockRequest = mock(OandaRequestBuilder.class);
         mockPriceTransformer = mock(OandaPriceTransformer.class);
         mockPrice = mock(PriceImpl.class);
         requestMock = mock(Request.class);
         pricingResponseMock = mock(PricingGetResponse.class);
+        responseMock = mock(Response.class);
+        when(responseMock.getResponseDataStructure()).thenReturn(pricingResponseMock);
 
     }
 
@@ -158,14 +161,14 @@ public class OandaConnectorTest {
     private void setFakePrice() {
         HashMap<String, String> settings = new HashMap<>();
         when(mockRequest.build(anyString(), any(HashMap.class))).thenReturn(requestMock);
-        when(mockResponse.getPriceResponse(eq(oandaAPIMockAccount.getContext()), anyString() ,eq(requestMock))).thenReturn(pricingResponseMock);
-        when(mockPriceTransformer.transformToPrice(pricingResponseMock)).thenReturn(mockPrice);
+        when(mockResponse.buildResponse(anyString(),eq(oandaAPIMockAccount.getContext()), anyString() ,eq(requestMock))).thenReturn(responseMock);
+        when(mockPriceTransformer.transformToPrice(responseMock)).thenReturn(mockPrice);
 
         commonMembers.changeFieldObject(oandaConnector, "context", oandaAPIMockAccount.getContext());
         commonMembers.changeFieldObject(oandaConnector, "accountID", "ss");
         commonMembers.changeFieldObject(oandaConnector, "url", "dd");
         commonMembers.changeFieldObject(oandaConnector, "oandaRequestBuilder", mockRequest);
-        commonMembers.changeFieldObject(oandaConnector, "oandaPriceResponse", mockResponse);
+        commonMembers.changeFieldObject(oandaConnector, "oandaResponseBuilder", mockResponse);
         commonMembers.changeFieldObject(oandaConnector, "oandaPriceTransformer", mockPriceTransformer);
     }
 

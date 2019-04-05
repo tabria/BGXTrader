@@ -3,7 +3,6 @@ package trader.broker.connector.oanda;
 import com.oanda.v20.Context;
 import com.oanda.v20.ContextBuilder;
 import com.oanda.v20.account.*;
-import com.oanda.v20.pricing.PricingGetRequest;
 import com.oanda.v20.pricing.PricingGetResponse;
 import trader.broker.connector.BaseConnector;
 import trader.broker.connector.PriceTransformable;
@@ -27,7 +26,7 @@ public class OandaConnector extends BaseConnector {
     private Context context;
     private OandaAccountValidator oandaAccountValidator ;
     private OandaRequestBuilder oandaRequestBuilder;
-    private OandaPriceResponse oandaPriceResponse;
+    private OandaResponseBuilder oandaResponseBuilder;
     private OandaCandlesResponse oandaCandlesResponse;
     private PriceTransformable oandaPriceTransformer;
 
@@ -38,7 +37,7 @@ public class OandaConnector extends BaseConnector {
     public OandaConnector(){
         oandaAccountValidator = new OandaAccountValidator();
         oandaRequestBuilder = new OandaRequestBuilder();
-        oandaPriceResponse = new OandaPriceResponse();
+        oandaResponseBuilder = new OandaResponseBuilder();
 
 //        initialize();
 //        try {
@@ -106,7 +105,7 @@ public class OandaConnector extends BaseConnector {
         settings.put("accountID", accountID);
         settings.put("instrument", instrument);
         Request<?> priceRequest = oandaRequestBuilder.build("price", settings);
-        Response<PricingGetResponse> priceResponse = oandaPriceResponse.getPriceResponse(context, url, priceRequest);
+        Response<PricingGetResponse> priceResponse = oandaResponseBuilder.buildResponse("price", context, url, priceRequest);
         return oandaPriceTransformer.transformToPrice(priceResponse);
     }
 
@@ -181,7 +180,7 @@ public class OandaConnector extends BaseConnector {
 //    }
 //
 //    private void setOandaPriceResponse() {
-//        oandaPriceResponse = new OandaPriceResponse(this);
+//        oandaResponseBuilder = new OandaResponseBuilder(this);
 //    }
 //
 //    private void setOandaCandlesResponse() {

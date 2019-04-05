@@ -52,9 +52,9 @@ public class OandaAPIMockInstrument extends OandaAPIMock {
         return mockRequest;
     }
 
-//    public InstrumentCandlesResponse getMockResponse() {
-//        return mockResponse;
-//    }
+    public InstrumentCandlesResponse getMockResponse() {
+        return mockResponse;
+    }
 
 //    public CandlestickData getMockCandlestickData() {
 //        return mockCandlestickData;

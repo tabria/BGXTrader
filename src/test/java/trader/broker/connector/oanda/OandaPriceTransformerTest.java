@@ -11,6 +11,8 @@ import com.oanda.v20.primitives.DecimalNumber;
 import org.junit.Before;
 import org.junit.Test;
 import trader.price.Price;
+import trader.responder.Response;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.ZonedDateTime;
@@ -35,24 +37,26 @@ public class OandaPriceTransformerTest {
 
     private OandaPriceTransformer priceTransformer;
     private PricingGetResponse responseMock;
+    private Response response;
 
     @Before
     public void setUp(){
         priceTransformer = new OandaPriceTransformer();
         responseMock = mock(PricingGetResponse.class);
+        response = mock(Response.class);
+        when(response.getResponseDataStructure()).thenReturn(responseMock);
     }
 
     @Test
     public void whenCallTransformToPriceWithNull_TransformedPriceIsNotTradable() {
         Price price = priceTransformer.transformToPrice(null);
-
         assertFalse(price.isTradable());
     }
 
     @Test
     public void whenCallTransformToPriceWithNullPriceInsideResponse_TransformedPriceIsNotTradable(){
         when(responseMock.getPrices()).thenReturn(null);
-        Price price = priceTransformer.transformToPrice(responseMock);
+        Price price = priceTransformer.transformToPrice(response);
 
         assertFalse(price.isTradable());
     }
@@ -60,7 +64,7 @@ public class OandaPriceTransformerTest {
     @Test
     public void whenCallTransformToPriceWithEmptyPriceListInsideResponse_TransformedPriceIsNotTradable(){
         when(responseMock.getPrices()).thenReturn(new ArrayList<>());
-        Price price = priceTransformer.transformToPrice(responseMock);
+        Price price = priceTransformer.transformToPrice(response);
 
         assertFalse(price.isTradable());
     }
@@ -70,7 +74,7 @@ public class OandaPriceTransformerTest {
     public void getPriceReturnsCorrectValues(){
         setFakePrice();
 
-        Price price = priceTransformer.transformToPrice(responseMock);
+        Price price = priceTransformer.transformToPrice(response);
 
         assertEquals(price.getAsk(), DEFAULT_ASK);
         assertEquals(price.getBid(), DEFAULT_BID);

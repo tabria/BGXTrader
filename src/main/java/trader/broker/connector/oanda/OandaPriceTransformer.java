@@ -7,6 +7,7 @@ import com.oanda.v20.primitives.DateTime;
 import trader.broker.connector.PriceTransformable;
 import trader.price.Price;
 import trader.price.PriceImpl;
+import trader.responder.Response;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -16,9 +17,11 @@ import java.util.List;
 
 public class OandaPriceTransformer implements PriceTransformable {
     @Override
-    public <T> Price transformToPrice(T response) {
+    public <T> Price transformToPrice(Response<T> response) {
 
-        PricingGetResponse pricingGetResponse = (PricingGetResponse) response;
+        PricingGetResponse pricingGetResponse = null;
+        if(response != null)
+            pricingGetResponse = (PricingGetResponse) response.getResponseDataStructure();
         if(isPriceTradeable(pricingGetResponse))
             return new PriceImpl.PriceBuilder().setIsTradable(false).build();
 

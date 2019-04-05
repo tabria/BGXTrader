@@ -71,15 +71,7 @@ public class OandaCandlesResponseTest {
 //        assertCandlestick(actualCandlestick);
 //    }
 
-    @Test
-    public void testExtractGranularity() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        Method extractGranularity = commonMembers
-                .getPrivateMethodForTest(candlesResponse, "extractGranularity");
-        CandlestickGranularity targetGranularity = (CandlestickGranularity) extractGranularity
-                .invoke(candlesResponse);
 
-        assertEquals(CANDLE_GRANULARITY.toString(), targetGranularity.toString());
-    }
 
     @Test
     public void WhenCreateOandaCandlesResponse_CorrectInitialCandlesRequest() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
@@ -95,15 +87,6 @@ public class OandaCandlesResponseTest {
         assertCandlesRequest(updateCandlesRequest, UPDATE_CANDLES_QUANTITY);
     }
 
-    @Test
-    public void testForCorrectInstrumentContext() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        Method getInstrumentContext = commonMembers
-                .getPrivateMethodForTest(candlesResponse, "getInstrumentContext");
-        InstrumentContext instrumentContext = (InstrumentContext) getInstrumentContext
-                .invoke(candlesResponse);
-
-        assertEquals(oandaInstrument.getMockInstrumentContext(), instrumentContext);
-    }
 
     @Test(expected = InvocationTargetException.class)
     public void testCandlesResponseWithNullRequest() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, RequestException, ExecuteException, InstantiationException {
