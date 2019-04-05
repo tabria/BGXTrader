@@ -6,7 +6,7 @@ import org.junit.Test;
 import trader.entity.indicator.Indicator;
 import trader.exception.BadRequestException;
 import trader.exception.NullArgumentException;
-import trader.interactor.UseCase;
+import trader.requestor.UseCase;
 import trader.requestor.Request;
 import trader.requestor.RequestBuilder;
 import trader.requestor.UseCaseFactory;

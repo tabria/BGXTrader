@@ -1,13 +1,12 @@
 package trader.broker;
 
 import trader.broker.connector.BaseConnector;
+import trader.price.Pricing;
 
 public interface BrokerConnector {
 
 
-//    static BrokerConnector create(String apiName) {
-//        return BaseConnector.create(apiName);
-//    }
+    Pricing getPrice(String instrument);
 
 //    List<Order> getOpenOrders();
 //

@@ -1,4 +1,4 @@
-package trader.interactor;
+package trader.requestor;
 
 import trader.requestor.Request;
 import trader.responder.Response;

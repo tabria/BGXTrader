@@ -2,7 +2,6 @@ package trader.entity.indicator.rsi;
 
 
 import trader.entity.candlestick.candle.CandleGranularity;
-import trader.entity.indicator.CandlesUpdatable;
 import trader.entity.candlestick.candle.CandlePriceType;
 import trader.entity.candlestick.Candlestick;
 import trader.entity.indicator.BaseIndicator;
@@ -10,7 +9,7 @@ import trader.entity.indicator.BaseIndicator;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
-import static trader.strategy.bgxstrategy.configuration.StrategyConfig.*;
+//import static trader.strategy.bgxstrategy.configuration.StrategyConfig.*;
 
 public final class RelativeStrengthIndex extends BaseIndicator {
 
@@ -115,7 +114,7 @@ public final class RelativeStrengthIndex extends BaseIndicator {
         return currentAverage
                 .multiply(BigDecimal.valueOf(this.indicatorPeriod - 1))
                 .add(change)
-                .divide(BigDecimal.valueOf(this.indicatorPeriod), SCALE, BigDecimal.ROUND_HALF_UP);
+                .divide(BigDecimal.valueOf(this.indicatorPeriod), 5, BigDecimal.ROUND_HALF_UP);
     }
 
     private void addRSIValue(BigDecimal currentAverageGains, BigDecimal currentAverageLosses){
@@ -137,19 +136,19 @@ public final class RelativeStrengthIndex extends BaseIndicator {
 
     private BigDecimal calculateRSIValue(BigDecimal averageGains, BigDecimal averageLosses){
         BigDecimal averageResult = averageGains
-                .divide(averageLosses, SCALE, BigDecimal.ROUND_HALF_UP);
+                .divide(averageLosses, 5, BigDecimal.ROUND_HALF_UP);
         BigDecimal divider = BigDecimal.ONE
-                .add(averageResult).setScale(SCALE,BigDecimal.ROUND_HALF_UP);
+                .add(averageResult).setScale(5,BigDecimal.ROUND_HALF_UP);
         BigDecimal divisionResult = RSI_MAX_VALUE
-                .divide(divider, SCALE, BigDecimal.ROUND_HALF_UP);
+                .divide(divider, 5, BigDecimal.ROUND_HALF_UP);
         return RSI_MAX_VALUE.subtract(divisionResult)
-                .setScale(SCALE, BigDecimal.ROUND_HALF_UP);
+                .setScale(5, BigDecimal.ROUND_HALF_UP);
     }
 
     private BigDecimal calculatePriceDifference(Candlestick currentCandle, Candlestick prevCandle) {
         return  obtainPrice(currentCandle)
                 .subtract(obtainPrice(prevCandle))
-                .setScale(SCALE, BigDecimal.ROUND_HALF_UP);
+                .setScale(5, BigDecimal.ROUND_HALF_UP);
     }
 
     private class FirstRelativeStrength {
@@ -164,18 +163,18 @@ public final class RelativeStrengthIndex extends BaseIndicator {
         }
         BigDecimal getAverageGains(){
             return gains
-                    .divide(BigDecimal.valueOf(indicatorPeriod), SCALE, BigDecimal.ROUND_HALF_UP);
+                    .divide(BigDecimal.valueOf(indicatorPeriod), 5, BigDecimal.ROUND_HALF_UP);
         }
         BigDecimal getAverageLosses(){
             return losses
-                    .divide(BigDecimal.valueOf(indicatorPeriod), SCALE, BigDecimal.ROUND_HALF_UP);
+                    .divide(BigDecimal.valueOf(indicatorPeriod), 5, BigDecimal.ROUND_HALF_UP);
         }
         FirstRelativeStrength invoke() {
             for (int candleIndex = 1; candleIndex <= indicatorPeriod; candleIndex++) {
                 BigDecimal priceDifference =
                         calculatePriceDifference(getCurrentCandle(candlesticks, candleIndex), getPrevCandle(candlesticks, candleIndex));
-                gains = isPositive(priceDifference) ? gains.add(priceDifference).setScale(SCALE, BigDecimal.ROUND_HALF_UP) : gains;
-                losses = isNegative(priceDifference) ? losses.subtract(priceDifference).setScale(SCALE, BigDecimal.ROUND_HALF_UP) : losses;
+                gains = isPositive(priceDifference) ? gains.add(priceDifference).setScale(5, BigDecimal.ROUND_HALF_UP) : gains;
+                losses = isNegative(priceDifference) ? losses.subtract(priceDifference).setScale(5, BigDecimal.ROUND_HALF_UP) : losses;
             }
             return this;
         }

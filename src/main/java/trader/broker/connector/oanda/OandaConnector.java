@@ -3,11 +3,14 @@ package trader.broker.connector.oanda;
 import com.oanda.v20.Context;
 import com.oanda.v20.ContextBuilder;
 import com.oanda.v20.account.*;
+import com.oanda.v20.pricing.PricingGetRequest;
 import trader.broker.connector.BaseConnector;
 import trader.exception.BadRequestException;
 import trader.exception.EmptyArgumentException;
 import trader.exception.NullArgumentException;
+import trader.price.Pricing;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -17,7 +20,6 @@ public class OandaConnector extends BaseConnector {
     private String url;
     private String token;
     private String accountID;
-    private String instrument;
     private Context context;
     private OandaAccountValidator oandaAccountValidator ;
     private OandaPriceResponse oandaPriceResponse;
@@ -84,14 +86,21 @@ public class OandaConnector extends BaseConnector {
     }
 
     @Override
-    public String getInstrument() {
-        return instrument;
+    public void validateConnector() {
+        setContext();
+        oandaAccountValidator.validateAccount(this);
+        oandaAccountValidator.validateAccountBalance(this);
     }
 
     @Override
-    public void setInstrument(String instrument) {
-        validateInput(instrument);
-        this.instrument = instrument.trim();
+    public Pricing getPrice(String instrument) {
+    //to make oanda price request object,then call getprice with the request and settings
+
+        return oandaPriceResponse.getPrice(instrument);
+    }
+
+    Context getContext(){
+        return context;
     }
 
     private void validateInputFileLocation(String fileLocation) {
@@ -113,11 +122,13 @@ public class OandaConnector extends BaseConnector {
         return !fileLocation.contains(".yml");
     }
 
+    private void setContext(){
+        context = new ContextBuilder(url)
+                .setToken(token)
+                .setApplication("Context")
+                .build();
+    }
 
-//    @Override
-//    public Pricing getPrice() {
-//        return oandaPriceResponse.getPrice();
-//    }
 //
 //    @Override
 //    public List<Candlestick> getInitialCandles() {
@@ -139,9 +150,7 @@ public class OandaConnector extends BaseConnector {
 //        return null;
 //    }
 
-//    Context getContext(){
-//        return context;
-//    }
+
 
 //    AccountID getAccountID(){
 //        return oandaConfig.getAccountID();
@@ -155,14 +164,6 @@ public class OandaConnector extends BaseConnector {
 //        return oandaConfig.getUrl();
 //    }
 
-
-
-    private void setContext(){
-        context = new ContextBuilder(url)
-                .setToken(token)
-                .setApplication("Context")
-                .build();
-    }
 //
 //    private void setOandaValidator() {
 //        oandaAccountValidator = new OandaAccountValidator();
@@ -176,10 +177,6 @@ public class OandaConnector extends BaseConnector {
 //        oandaCandlesResponse = new OandaCandlesResponse(this);
 //    }
 //
-//    private void validateAccount(){
-//        oandaAccountValidator.validateAccount(this);
-//        oandaAccountValidator.validateAccountBalance(this);
-//    }
 //
 //    private void initialize() {
 //        setContext();

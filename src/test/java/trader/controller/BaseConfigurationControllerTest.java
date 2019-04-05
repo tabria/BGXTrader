@@ -1,7 +1,7 @@
 package trader.controller;
 
 import org.junit.Before;
-import trader.interactor.UseCase;
+import trader.requestor.UseCase;
 import trader.requestor.Request;
 import trader.requestor.RequestBuilder;
 import trader.requestor.UseCaseFactory;

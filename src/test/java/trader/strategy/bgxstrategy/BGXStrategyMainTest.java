@@ -10,7 +10,7 @@ import trader.entity.candlestick.candle.CandleGranularity;
 import trader.entity.candlestick.candle.CandlePriceType;
 import trader.entity.indicator.Indicator;
 import trader.exception.NullArgumentException;
-import trader.strategy.bgxstrategy.configuration.TradingStrategyConfiguration;
+import trader.configuration.TradingStrategyConfiguration;
 import trader.strategy.observable.PriceObservable;
 
 import java.math.BigDecimal;

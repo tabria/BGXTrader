@@ -11,7 +11,7 @@ import trader.exception.BadRequestException;
 import trader.exception.NullArgumentException;
 import trader.requestor.Request;
 import trader.responder.Response;
-import trader.strategy.bgxstrategy.configuration.TradingStrategyConfiguration;
+import trader.configuration.TradingStrategyConfiguration;
 
 import java.math.BigDecimal;
 import java.util.HashMap;

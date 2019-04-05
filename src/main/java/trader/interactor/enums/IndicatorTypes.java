@@ -1,4 +1,4 @@
-package trader.interactor;
+package trader.interactor.enums;
 
 public enum IndicatorTypes {
 

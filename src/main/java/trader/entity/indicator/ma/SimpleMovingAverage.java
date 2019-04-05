@@ -1,15 +1,12 @@
 package trader.entity.indicator.ma;
 
 import trader.entity.candlestick.candle.CandleGranularity;
-import trader.entity.indicator.CandlesUpdatable;
 import trader.entity.candlestick.candle.CandlePriceType;
 import trader.entity.candlestick.Candlestick;
 import trader.entity.indicator.BaseIndicator;
-
 import java.math.BigDecimal;
 import java.util.List;
 
-import static trader.strategy.bgxstrategy.configuration.StrategyConfig.*;
 
 public final class SimpleMovingAverage extends BaseIndicator {
 
@@ -76,6 +73,6 @@ public final class SimpleMovingAverage extends BaseIndicator {
     }
 
     private BigDecimal calculatedSMAValue(BigDecimal commonPrice) {
-        return commonPrice.divide(divisor, SCALE, BigDecimal.ROUND_HALF_UP);
+        return commonPrice.divide(divisor, 5, BigDecimal.ROUND_HALF_UP);
     }
 }

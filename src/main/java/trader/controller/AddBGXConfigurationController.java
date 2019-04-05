@@ -1,16 +1,15 @@
 package trader.controller;
 
 import trader.exception.NullArgumentException;
-import trader.interactor.UseCase;
+import trader.requestor.UseCase;
 import trader.requestor.Request;
 import trader.requestor.RequestBuilder;
 import trader.requestor.UseCaseFactory;
 import trader.responder.Response;
-import trader.strategy.bgxstrategy.configuration.TradingStrategyConfiguration;
 
 import java.util.HashMap;
 
-public class AddBGXConfigurationController {
+public class AddBGXConfigurationController<T> implements TraderController<T> {
 
 
     private RequestBuilder requestBuilder;
@@ -23,7 +22,8 @@ public class AddBGXConfigurationController {
         this.useCaseFactory = useCaseFactory;
     }
 
-    public Response<TradingStrategyConfiguration> execute(HashMap<String, String> settings) {
+    @Override
+    public Response<T> execute(HashMap<String, String> settings) {
         String controllerName = this.getClass().getSimpleName().trim();
         Request<?> request = getRequest(controllerName, settings);
         UseCase useCase = make(controllerName);

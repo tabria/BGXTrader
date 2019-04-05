@@ -4,8 +4,9 @@ import org.yaml.snakeyaml.Yaml;
 import trader.exception.BadRequestException;
 import trader.exception.NullArgumentException;
 import trader.requestor.Request;
+import trader.requestor.UseCase;
 import trader.responder.Response;
-import trader.strategy.bgxstrategy.configuration.TradingStrategyConfiguration;
+import trader.configuration.TradingStrategyConfiguration;
 
 import java.io.IOException;
 import java.io.InputStream;

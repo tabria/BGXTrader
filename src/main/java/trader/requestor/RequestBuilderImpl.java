@@ -1,4 +1,4 @@
-package trader.interactor;
+package trader.requestor;
 
 import trader.broker.connector.SettableBrokerConnector;
 import trader.entity.indicator.Indicator;
@@ -8,10 +8,11 @@ import trader.exception.EmptyArgumentException;
 import trader.exception.NoSuchDataStructureException;
 import trader.exception.NullArgumentException;
 import trader.exception.WrongIndicatorSettingsException;
-import trader.requestor.Request;
-import trader.requestor.RequestBuilder;
-import trader.strategy.bgxstrategy.configuration.TradingStrategyConfiguration;
-import trader.strategy.bgxstrategy.configuration.BGXConfigurationImpl;
+import trader.interactor.enums.DataStructureType;
+import trader.interactor.enums.IndicatorTypes;
+import trader.interactor.RequestImpl;
+import trader.configuration.TradingStrategyConfiguration;
+import trader.configuration.BGXConfigurationImpl;
 import java.util.HashMap;
 
 public class RequestBuilderImpl implements RequestBuilder {
@@ -26,22 +27,28 @@ public class RequestBuilderImpl implements RequestBuilder {
         controllerName = controllerName.trim().toLowerCase();
         if(controllerName.contains(type(DataStructureType.INDICATOR)))
             return buildIndicatorRequest(settings);
-        if(controllerName.contains(type(DataStructureType.BGXCONFIGURATION))) {
-            Request<TradingStrategyConfiguration> request = new RequestImpl<>();
-            BGXConfigurationImpl bgxConfiguration = new BGXConfigurationImpl();
-            bgxConfiguration.setFileLocation(settings.get(LOCATION));
-            request.setRequestDataStructure(bgxConfiguration);
-            return request;
-        }
-        if(controllerName.contains(type(DataStructureType.BROKERCONNECTOR))) {
-            Request<SettableBrokerConnector> request = new RequestImpl<>();
-            SettableBrokerConnector brokerConnector = SettableBrokerConnector.create(settings.get(BROKER_NAME));
-            brokerConnector.setFileLocation(settings.get(LOCATION));
-            request.setRequestDataStructure(brokerConnector);
-            return request;
-        }
+        if(controllerName.contains(type(DataStructureType.BGXCONFIGURATION)))
+            return buildBGXConfigurationRequest(settings);
+        if(controllerName.contains(type(DataStructureType.BROKERCONNECTOR)))
+            return buildBrokerConnector(settings);
 
         throw new NoSuchDataStructureException();
+    }
+
+    private Request<?> buildBrokerConnector(HashMap<String, String> settings) {
+        Request<SettableBrokerConnector> request = new RequestImpl<>();
+        SettableBrokerConnector brokerConnector = SettableBrokerConnector.create(settings.get(BROKER_NAME));
+        brokerConnector.setFileLocation(settings.get(LOCATION));
+        request.setRequestDataStructure(brokerConnector);
+        return request;
+    }
+
+    private Request<?> buildBGXConfigurationRequest(HashMap<String, String> settings) {
+        Request<TradingStrategyConfiguration> request = new RequestImpl<>();
+        BGXConfigurationImpl bgxConfiguration = new BGXConfigurationImpl();
+        bgxConfiguration.setFileLocation(settings.get(LOCATION));
+        request.setRequestDataStructure(bgxConfiguration);
+        return request;
     }
 
     private Request<?> buildIndicatorRequest(HashMap<String, String> settings) {
@@ -50,7 +57,7 @@ public class RequestBuilderImpl implements RequestBuilder {
         if (dataStructureType.contains(indicator(IndicatorTypes.RSI))) {
             request.setRequestDataStructure(new RSIBuilder().build(settings));
             return request;
-        } else if (isMovingAverage(dataStructureType)) {
+        } else if(isMovingAverage(dataStructureType)) {
             request.setRequestDataStructure(new MovingAverageBuilder().build(settings));
             return request;
         }

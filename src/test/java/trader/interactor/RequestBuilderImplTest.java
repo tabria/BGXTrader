@@ -7,7 +7,8 @@ import trader.requestor.Request;
 import trader.requestor.RequestBuilder;
 import trader.entity.indicator.ma.SimpleMovingAverage;
 import trader.entity.indicator.rsi.RelativeStrengthIndex;
-import trader.strategy.bgxstrategy.configuration.BGXConfigurationImpl;
+import trader.configuration.BGXConfigurationImpl;
+import trader.requestor.RequestBuilderImpl;
 
 import java.util.HashMap;
 

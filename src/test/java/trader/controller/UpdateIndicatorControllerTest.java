@@ -6,7 +6,7 @@ import trader.broker.BrokerConnector;
 import trader.exception.NullArgumentException;
 import trader.requestor.RequestBuilder;
 import trader.requestor.UseCaseFactory;
-import trader.strategy.bgxstrategy.configuration.TradingStrategyConfiguration;
+import trader.configuration.TradingStrategyConfiguration;
 
 import static org.mockito.Mockito.mock;
 

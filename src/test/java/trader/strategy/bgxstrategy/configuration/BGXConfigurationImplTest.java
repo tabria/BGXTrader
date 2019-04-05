@@ -2,6 +2,7 @@ package trader.strategy.bgxstrategy.configuration;
 
 import org.junit.Before;
 import org.junit.Test;
+import trader.configuration.BGXConfigurationImpl;
 import trader.exception.BadRequestException;
 import trader.exception.NegativeNumberException;
 import trader.exception.NullArgumentException;

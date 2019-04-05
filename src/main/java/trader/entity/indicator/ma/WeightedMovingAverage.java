@@ -1,15 +1,12 @@
 package trader.entity.indicator.ma;
 
 import trader.entity.candlestick.candle.CandleGranularity;
-import trader.entity.indicator.CandlesUpdatable;
 import trader.entity.candlestick.candle.CandlePriceType;
 import trader.entity.candlestick.Candlestick;
 import trader.entity.indicator.BaseIndicator;
 
 import java.math.BigDecimal;
 import java.util.List;
-
-import static trader.strategy.bgxstrategy.configuration.StrategyConfig.SCALE;
 
 public final class WeightedMovingAverage extends BaseIndicator {
 
@@ -47,8 +44,8 @@ public final class WeightedMovingAverage extends BaseIndicator {
     protected void setDivisor(){
         divisor = BigDecimal.valueOf(indicatorPeriod)
                 .add(BigDecimal.ONE)
-                .divide(BigDecimal.valueOf(2), SCALE, BigDecimal.ROUND_HALF_UP)
-                .multiply(BigDecimal.valueOf(indicatorPeriod)).setScale(SCALE, BigDecimal.ROUND_HALF_UP);
+                .divide(BigDecimal.valueOf(2), 5, BigDecimal.ROUND_HALF_UP)
+                .multiply(BigDecimal.valueOf(indicatorPeriod)).setScale(5, BigDecimal.ROUND_HALF_UP);
     }
 
 //    private void initiateWMAValues() {
@@ -81,10 +78,10 @@ public final class WeightedMovingAverage extends BaseIndicator {
             wmaValue = obtainPrice(candlestickList.get(i))
                     .multiply(BigDecimal.valueOf(wmaPeriod--))
                     .add(wmaValue)
-                    .setScale(SCALE, BigDecimal.ROUND_HALF_UP);
+                    .setScale(5, BigDecimal.ROUND_HALF_UP);
         }
         if (candlestickList.size() > 0 && divisor.compareTo(BigDecimal.ZERO) != 0)
-            return wmaValue.divide(divisor, SCALE, BigDecimal.ROUND_HALF_UP);
+            return wmaValue.divide(divisor, 5, BigDecimal.ROUND_HALF_UP);
         return wmaValue;
     }
 }

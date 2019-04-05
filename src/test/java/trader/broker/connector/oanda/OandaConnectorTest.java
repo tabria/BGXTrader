@@ -18,7 +18,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -122,61 +125,34 @@ public class OandaConnectorTest {
         assertEquals(accountID.trim(),oandaConnector.getAccountID());
     }
 
-    @Test(expected = NullArgumentException.class)
-    public void WhenCallSetInstrumentWithNull_Exception(){
-        oandaConnector.setInstrument(null);
-    }
+    @Test
+    public void WhenCallValidateConnector_ContextMustNotBeNull(){
+        setOandaValidator();
+        oandaConnector.validateConnector();
 
-    @Test(expected = EmptyArgumentException.class)
-    public void WhenCallSetInstrumentWithEmptyString_Exception(){
-        oandaConnector.setInstrument("");
+        assertNotNull(oandaConnector.getContext());
     }
 
     @Test
-    public void WhenCallSetInstrumentWithCorrectUrlContainingSpaces_TrimAndSet(){
-        String instrument = "  EUR_USD ";
-        oandaConnector.setInstrument(instrument);
-        assertEquals(instrument.trim(),oandaConnector.getInstrument());
+    public void getContextReturnCorrectContext(){
+        commonMembers.changeFieldObject(oandaConnector, "context", oandaAPIMockAccount.getContext());
+        assertEquals(oandaConnector.getContext(), oandaAPIMockAccount.getContext());
     }
 
+    @Test
+    public void testGetPriceToReturnCorrectValue(){
+        commonMembers.changeFieldObject(oandaConnector, "oandaPriceResponse", mockResponse);
+        when(oandaConnector.getPrice(anyString())).thenReturn(mockPrice);
+        assertEquals(mockPrice, oandaConnector.getPrice("EUR_USD"));
+    }
 
-//    @Test
-//    public void getContextReturnCorrectContext(){
-//        commonMembers.changeFieldObject(oandaConnector, "context", oandaAPIMockAccount.getContext());
-//        assertEquals(oandaConnector.getContext(), oandaAPIMockAccount.getContext());
-//    }
-//
-//    @Test
-//    public void getAccountIDReturnCorrectAccountID() throws NoSuchFieldException, IllegalAccessException {
-//        commonMembers.changePrivateFinalField(OandaConfig.class, "ACCOUNT_ID", oandaAPIMockAccount.getMockAccountID());
-//
-////        when(mockOandaConfig.getAccountID()).thenReturn(oandaAPIMockAccount.getMockAccountID());
-//        commonMembers.changeFieldObject(oandaConnector, "oandaConfig", mockOandaConfig);
-//   //     assertEquals(oandaConnector.getAccountID(), oandaAPIMockAccount.getMockAccountID());
-//    }
+    private void setOandaValidator() {
+        OandaAccountValidator mockValidator = mock(OandaAccountValidator.class);
+        doNothing().when(mockValidator).validateAccount(oandaConnector);
+        doNothing().when(mockValidator).validateAccountBalance(oandaConnector);
+        commonMembers.changeFieldObject(oandaConnector, "oandaAccountValidator", mockValidator);
+    }
 
-//    @Test
-//    public void getUrlReturnCorrectUrl(){
-//        String expected = "yes.com";
-//        when(mockOandaConfig.getUrl()).thenReturn(expected);
-//        commonMembers.changeFieldObject(oandaConnector, "oandaConfig", mockOandaConfig);
-//        assertEquals(expected, oandaConnector.getUrl());
-//    }
-//
-//    @Test
-//    public void getTokenReturnCorrectToken(){
-//        String expected = "GTSJSDSA-123XD";
-//        when(mockOandaConfig.getToken()).thenReturn(expected);
-//        commonMembers.changeFieldObject(oandaConnector, "oandaConfig", mockOandaConfig);
-//        assertEquals(expected, oandaConnector.getToken());
-//    }
-
-//    @Test
-//    public void testGetPrice(){
-//        commonMembers.changeFieldObject(oandaConnector, "oandaPriceResponse", mockResponse);
-//        when(oandaConnector.getPrice()).thenReturn(mockPrice);
-//        assertEquals(mockPrice, oandaConnector.getPrice());
-//    }
 //
 //    @SuppressWarnings(value = "unchecked")
 //    @Test

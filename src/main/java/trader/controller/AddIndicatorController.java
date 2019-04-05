@@ -1,17 +1,15 @@
 package trader.controller;
-
 import trader.entity.indicator.Indicator;
 import trader.exception.NullArgumentException;
-import trader.interactor.UseCase;
+import trader.requestor.UseCase;
 import trader.requestor.Request;
 import trader.requestor.RequestBuilder;
 import trader.requestor.UseCaseFactory;
 import trader.responder.Response;
 import trader.strategy.Observable;
-import trader.strategy.observable.PriceObservable;
 
 import java.util.HashMap;
-public class AddIndicatorController{
+public class AddIndicatorController<T> implements TraderController<T> {
 
     private RequestBuilder requestBuilder;
     private UseCaseFactory useCaseFactory;
@@ -28,9 +26,10 @@ public class AddIndicatorController{
         this.priceObservable = priceObservable;
     }
 
-    public void execute(HashMap<String, String> settings){
-        Response<Indicator> indicatorResponse = getIndicatorResponse(settings);
+    public Response<T> execute(HashMap<String, String> settings){
+        Response<T> indicatorResponse = getIndicatorResponse(settings);
         priceObservable.registerObserver(transformToIndicatorObserver(indicatorResponse));
+        return indicatorResponse;
     }
 
     Request<?> getRequest(String controllerName, HashMap<String, String> settings){
@@ -41,11 +40,11 @@ public class AddIndicatorController{
         return useCaseFactory.make(controllerName);
     }
 
-    private IndicatorObserver transformToIndicatorObserver(Response<Indicator> indicatorResponse) {
-        return IndicatorObserver.create(indicatorResponse.getResponseDataStructure(), updateIndicatorController);
+    private IndicatorObserver transformToIndicatorObserver(Response<T> indicatorResponse) {
+        return IndicatorObserver.create((Indicator)indicatorResponse.getResponseDataStructure(), updateIndicatorController);
     }
 
-    private Response<Indicator> getIndicatorResponse(HashMap<String, String> settings) {
+    private Response<T> getIndicatorResponse(HashMap<String, String> settings) {
         String controllerName = this.getClass().getSimpleName();
         UseCase useCase = make(controllerName);
         Request<?> request = getRequest(controllerName, settings);

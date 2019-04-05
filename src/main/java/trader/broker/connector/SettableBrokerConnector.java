@@ -18,13 +18,10 @@ public interface SettableBrokerConnector {
 
     void setAccountID(String accountID);
 
-    String getInstrument();
-
-    void setInstrument(String instrument);
+    void validateConnector();
 
     static SettableBrokerConnector create(String apiName) {
         return BaseConnector.create(apiName);
     }
-
 
 }

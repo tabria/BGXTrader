@@ -1,19 +1,18 @@
 package trader.strategy.bgxstrategy;
 
+import trader.controller.TraderController;
 import trader.broker.connector.ApiConnector;
 import trader.broker.BrokerConnector;
-import trader.controller.AddBGXConfigurationController;
-import trader.controller.AddBrokerConnectorController;
-import trader.controller.AddIndicatorController;
-import trader.controller.UpdateIndicatorController;
-import trader.interactor.RequestBuilderImpl;
-import trader.interactor.UseCaseFactoryImpl;
+import trader.controller.*;
+import trader.entity.indicator.Indicator;
+import trader.requestor.RequestBuilderImpl;
+import trader.requestor.UseCaseFactoryImpl;
 import trader.requestor.RequestBuilder;
 import trader.requestor.UseCaseFactory;
 import trader.responder.Response;
 import trader.strategy.Observable;
 import trader.order.OrderStrategy;
-import trader.strategy.bgxstrategy.configuration.TradingStrategyConfiguration;
+import trader.configuration.TradingStrategyConfiguration;
 import trader.strategy.observable.PriceObservable;
 import trader.strategy.Strategy;
 import trader.order.OrderService;
@@ -36,14 +35,14 @@ public final class BGXStrategyMain implements Strategy {
     private UseCaseFactory useCaseFactory;
     private TradingStrategyConfiguration configuration;
     private BrokerConnector brokerConnector;
-
-    private AddBGXConfigurationController configurationController;
-    private AddBrokerConnectorController addBrokerConnectorController;
+    private TraderController<TradingStrategyConfiguration> configurationController;
+    private TraderController<BrokerConnector> addBrokerConnectorController;
     private UpdateIndicatorController updateIndicatorController;
-    private AddIndicatorController addIndicatorController;
+    private TraderController<Indicator> addIndicatorController;
+    private Observable priceObservable;
 
     private ApiConnector apiConnector;
-    private Observable priceObservable;
+
 
 
     private ExitStrategy exitStrategy;
@@ -57,13 +56,13 @@ public final class BGXStrategyMain implements Strategy {
     public BGXStrategyMain(String brokerName, String configurationFileName, String brokerConfigurationFileName) {
         requestBuilder = new RequestBuilderImpl();
         useCaseFactory = new UseCaseFactoryImpl();
-        configurationController = new AddBGXConfigurationController(requestBuilder, useCaseFactory);
-        addBrokerConnectorController = new AddBrokerConnectorController(requestBuilder, useCaseFactory);
+        configurationController = new AddBGXConfigurationController<>(requestBuilder, useCaseFactory);
+        addBrokerConnectorController = new AddBrokerConnectorController<>(requestBuilder, useCaseFactory);
         configuration = setConfiguration(configurationFileName);
         brokerConnector = setBrokerConnector(brokerName, brokerConfigurationFileName);
-        updateIndicatorController = new UpdateIndicatorController(requestBuilder, useCaseFactory, configuration, brokerConnector);
-        priceObservable = PriceObservable.create(apiConnector);
-        addIndicatorController = new AddIndicatorController(requestBuilder, useCaseFactory, updateIndicatorController, priceObservable);
+        updateIndicatorController = new UpdateIndicatorController<>(requestBuilder, useCaseFactory, configuration, brokerConnector);
+        priceObservable = PriceObservable.create(brokerConnector, configuration);
+        addIndicatorController = new AddIndicatorController<>(requestBuilder, useCaseFactory, updateIndicatorController, priceObservable);
 
         // setApiConnector(connector);
 
@@ -102,10 +101,8 @@ public final class BGXStrategyMain implements Strategy {
     }
 
     void addIndicatorsFromConfiguration(List<HashMap<String, String>> indicators){
-
-        for (HashMap<String, String> indicator :indicators) {
+        for (HashMap<String, String> indicator :indicators)
             addIndicatorController.execute(indicator);
-        }
     }
 
     private TradingStrategyConfiguration setConfiguration(String configurationFileName) {
@@ -119,8 +116,8 @@ public final class BGXStrategyMain implements Strategy {
         HashMap<String, String> settings = new HashMap<>();
         settings.put(BROKER_NAME, brokerName);
         settings.put(LOCATION, brokerConfigurationFileName);
-        Response<BrokerConnector> brokerConfigurationResponse = addBrokerConnectorController.execute(settings);
-        return brokerConfigurationResponse.getResponseDataStructure();
+        Response<BrokerConnector> brokerResponse = addBrokerConnectorController.execute(settings);
+        return brokerResponse.getResponseDataStructure();
     }
 
 

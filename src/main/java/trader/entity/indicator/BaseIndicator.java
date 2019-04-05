@@ -10,8 +10,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static trader.strategy.bgxstrategy.configuration.StrategyConfig.SCALE;
-
 public abstract class BaseIndicator implements Indicator{
  //   protected final CandlesUpdatable candlesUpdater;
 
@@ -61,6 +59,6 @@ public abstract class BaseIndicator implements Indicator{
 
     protected BigDecimal obtainPrice(Candlestick candle) {
         return candlePriceType.extractPrice(candle)
-                        .setScale(SCALE, BigDecimal.ROUND_HALF_UP);
+                        .setScale(5, BigDecimal.ROUND_HALF_UP);
     }
 }

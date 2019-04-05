@@ -1,19 +1,17 @@
 package trader.interactor;
 
 import org.yaml.snakeyaml.Yaml;
-import trader.broker.BrokerConnector;
 import trader.broker.connector.SettableBrokerConnector;
 import trader.exception.BadRequestException;
 import trader.exception.NullArgumentException;
 import trader.requestor.Request;
+import trader.requestor.UseCase;
 import trader.responder.Response;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 
 public class AddBrokerConnectorUseCase implements UseCase {
-
 
     private static final String URL = "url";
     private static final String TOKEN = "token";
@@ -25,6 +23,7 @@ public class AddBrokerConnectorUseCase implements UseCase {
             throw new NullArgumentException();
         SettableBrokerConnector brokerConnector = (SettableBrokerConnector) request.getRequestDataStructure();
         setConfigurations(brokerConnector);
+        brokerConnector.validateConnector();
         return setResponse((E) brokerConnector);
     }
 

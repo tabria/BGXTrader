@@ -1,30 +1,34 @@
 package trader.strategy.observable;
 
+import trader.broker.BrokerConnector;
+import trader.configuration.TradingStrategyConfiguration;
 import trader.controller.Observer;
 import trader.exception.NullArgumentException;
 import trader.price.Price;
 import trader.price.Pricing;
 import trader.strategy.Observable;
-import trader.strategy.PriceConnector;
 
+import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 
 public final class PriceObservable implements Observable {
 
     private long threadSleepInterval = 1000L;
-    private PriceConnector priceConnector;
+    private BrokerConnector brokerConnector;
     private Pricing oldPrice;
     private CopyOnWriteArrayList<Observer> observers;
+    private TradingStrategyConfiguration configuration;
 
-    private PriceObservable(PriceConnector priceConnector){
-        this.priceConnector = priceConnector;
+    private PriceObservable(BrokerConnector brokerConnector, TradingStrategyConfiguration configuration){
+        this.brokerConnector = brokerConnector;
         oldPrice = new Price.PriceBuilder().build();
         observers = new CopyOnWriteArrayList<>();
+        this.configuration = configuration;
     }
 
-    public static PriceObservable create(PriceConnector priceConnector){
-        return new PriceObservable(priceConnector);
+    public static PriceObservable create(BrokerConnector brokerConnector, TradingStrategyConfiguration configuration){
+        return new PriceObservable(brokerConnector, configuration);
     }
 
     @Override
@@ -49,7 +53,7 @@ public final class PriceObservable implements Observable {
     @Override
     public void execute() {
         while(true){
-            Pricing newPrice = priceConnector.getPrice();
+            Pricing newPrice = brokerConnector.getPrice(configuration.getInstrument());
             notifyEveryone(newPrice);
             sleepThread(threadSleepInterval);
         }

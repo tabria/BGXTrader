@@ -1,4 +1,4 @@
-package trader.strategy.bgxstrategy.configuration;
+package trader.configuration;
 
 import trader.exception.BadRequestException;
 import trader.exception.NegativeNumberException;

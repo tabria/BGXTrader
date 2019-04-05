@@ -1,4 +1,4 @@
-package trader.strategy.bgxstrategy.configuration;
+package trader.configuration;
 
 import java.math.BigDecimal;
 import java.util.HashMap;

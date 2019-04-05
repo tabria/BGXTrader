@@ -1,10 +1,10 @@
 package trader.interactor;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import trader.exception.NullArgumentException;
 import trader.requestor.Request;
+import trader.requestor.UseCase;
 import trader.responder.Response;
 
 import static org.junit.Assert.*;

@@ -2,14 +2,11 @@ package trader.entity.indicator.ma;
 
 
 import trader.entity.candlestick.candle.CandleGranularity;
-import trader.entity.indicator.CandlesUpdatable;
 import trader.entity.candlestick.candle.CandlePriceType;
 import trader.entity.candlestick.Candlestick;
 import trader.entity.indicator.BaseIndicator;
-
 import java.math.BigDecimal;
 import java.util.List;
-import static trader.strategy.bgxstrategy.configuration.StrategyConfig.*;
 
 public final class ExponentialMovingAverage extends BaseIndicator {
 
@@ -57,12 +54,12 @@ public final class ExponentialMovingAverage extends BaseIndicator {
 
     private void setSmoothFactor(){
         smoothFactor = SMOOTH_FACTOR_CONSTANT.divide(
-                BigDecimal.valueOf(indicatorPeriod + 1L), SCALE, BigDecimal.ROUND_HALF_UP);
+                BigDecimal.valueOf(indicatorPeriod + 1L), 5, BigDecimal.ROUND_HALF_UP);
     }
 
     private void setSmoothMultiplier(){
         smoothMultiplier = BigDecimal.ONE.subtract(smoothFactor)
-                .setScale(SCALE, BigDecimal.ROUND_HALF_UP);
+                .setScale(5, BigDecimal.ROUND_HALF_UP);
     }
 
 //    private void initiateEMAValues() {
@@ -91,7 +88,7 @@ public final class ExponentialMovingAverage extends BaseIndicator {
         for (int candleIndex = 0; candleIndex <= indicatorPeriod -1 ; candleIndex++) {
             smaValue = smaValue.add(obtainPrice(candlestickList.get(candleIndex)));
         }
-        this.indicatorValues.add(smaValue.divide(divisor, SCALE, BigDecimal.ROUND_HALF_UP));
+        this.indicatorValues.add(smaValue.divide(divisor, 5, BigDecimal.ROUND_HALF_UP));
     }
 
     private void setRemainingValues(List<Candlestick> candlestickList) {
@@ -104,13 +101,13 @@ public final class ExponentialMovingAverage extends BaseIndicator {
     private BigDecimal currentPriceSmoothed(Candlestick candlestick) {
         return obtainPrice(candlestick)
                 .multiply(smoothFactor)
-                .setScale(SCALE, BigDecimal.ROUND_HALF_UP);
+                .setScale(5, BigDecimal.ROUND_HALF_UP);
     }
 
     private BigDecimal previousEMASmoothed() {
         int lastIndex = indicatorValues.size()-1;
         return indicatorValues.get(lastIndex)
                 .multiply(smoothMultiplier)
-                .setScale(SCALE, BigDecimal.ROUND_HALF_UP);
+                .setScale(5, BigDecimal.ROUND_HALF_UP);
     }
 }

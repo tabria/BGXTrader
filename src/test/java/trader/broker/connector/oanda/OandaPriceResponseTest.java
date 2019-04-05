@@ -55,7 +55,7 @@ public class OandaPriceResponseTest {
     @Test
     public void getPriceReturnsCorrectValues(){
         ZonedDateTime currentTime = ZonedDateTime.now();
-        Pricing price = priceResponse.getPrice();
+        Pricing price = priceResponse.getPrice("EUR_USD");
 
         assertNotEquals(price.getAsk(), DEFAULT_ASK);
         assertNotEquals(price.getBid(), DEFAULT_BID);
@@ -70,7 +70,7 @@ public class OandaPriceResponseTest {
  //       when(mockOandaConnector.getContext()).thenReturn(oandaAPIMockPricing.getMockContext());
         commonMembers.changeFieldObject(priceResponse, "pricingGetRequest", oandaAPIMockPricing.getMockPricingGetRequest());
         oandaAPIMockPricing.setMockPricingGetResponse(null);
-        Pricing price = priceResponse.getPrice();
+        Pricing price = priceResponse.getPrice("EUR_USD");
 
         assertEquals(price.getAsk(), DEFAULT_ASK);
         assertEquals(price.getBid(), DEFAULT_BID);
@@ -84,7 +84,7 @@ public class OandaPriceResponseTest {
         priceResponse = new OandaPriceResponse(mockOandaConnector);
  //       when(mockOandaConnector.getContext()).thenReturn(oandaAPIMockPricing.getMockContext());
         commonMembers.changeFieldObject(priceResponse, "pricingGetRequest", oandaAPIMockPricing.getMockPricingGetRequest());
-        Pricing price = priceResponse.getPrice();
+        Pricing price = priceResponse.getPrice("EUR_USD");
 
         assertEquals(price.getAsk(), DEFAULT_ASK);
         assertEquals(price.getBid(), DEFAULT_BID);

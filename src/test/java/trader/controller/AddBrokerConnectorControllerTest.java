@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import trader.broker.BrokerConnector;
 import trader.exception.NullArgumentException;
-import trader.interactor.UseCase;
+import trader.requestor.UseCase;
 import trader.requestor.Request;
 import trader.responder.Response;
 import static org.junit.Assert.*;

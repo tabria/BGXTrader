@@ -18,42 +18,44 @@ public class OandaAccountValidator {
     public OandaAccountValidator() {}
 
     public void validateAccount(OandaConnector connector) {
-//        for (AccountProperties account : extractAccounts(connector)) {
-//            if (account.getId().equals(ACCOUNT_ID))
-//                return;
-//        }
-//        throw new AccountDoNotExistException();
+        AccountID accountId = new AccountID(connector.getAccountID());
+        for (AccountProperties account : extractAccounts(connector)) {
+            if (account.getId().equals(accountId))
+                return;
+        }
+        throw new AccountDoNotExistException();
     }
 
-//    public void validateAccountBalance(OandaConnector connector) {
-//        if (isBalanceBelowMinimum(connector))
-//            throw new AccountBalanceBelowMinimum();
-//    }
+    public void validateAccountBalance(OandaConnector connector) {
+        if (isBalanceBelowMinimum(connector))
+            throw new AccountBalanceBelowMinimum();
+    }
 
-//    private List<AccountProperties> extractAccounts(OandaConnector connector) {
-//        try {
-//            AccountListResponse response = getAccountContext(connector).list();
-//            return response.getAccounts();
-//        } catch (NullPointerException | RequestException | ExecuteException e) {
-//            throw new UnableToExecuteRequest();
-//        }
-//    }
+    private List<AccountProperties> extractAccounts(OandaConnector connector) {
+        try {
+            AccountListResponse response = getAccountContext(connector).list();
+            return response.getAccounts();
+        } catch (NullPointerException | RequestException | ExecuteException e) {
+            throw new UnableToExecuteRequest();
+        }
+    }
 
-//    private Account getAccount(OandaConnector connector) {
-//        try {
-//            return  getAccountContext(connector).get(ACCOUNT_ID).getAccount();
-//        } catch (NullPointerException | RequestException | ExecuteException e) {
-//            throw new UnableToExecuteRequest();
-//        }
-//    }
+    private Account getAccount(OandaConnector connector) {
+        try {
+            AccountID accountId = new AccountID(connector.getAccountID());
+            return  getAccountContext(connector).get(accountId).getAccount();
+        } catch (NullPointerException | RequestException | ExecuteException e) {
+            throw new UnableToExecuteRequest();
+        }
+    }
 
-//    private AccountContext getAccountContext(OandaConnector connector) {
-//        return connector.getContext().account;
-//    }
+    private AccountContext getAccountContext(OandaConnector connector) {
+        return connector.getContext().account;
+    }
 
-//    private boolean isBalanceBelowMinimum(OandaConnector connector) {
-//        return getAccount(connector).getBalance().doubleValue() <= MIN_BALANCE;
-//    }
+    private boolean isBalanceBelowMinimum(OandaConnector connector) {
+        return getAccount(connector).getBalance().doubleValue() <= MIN_BALANCE;
+    }
 
 //    private void serverDown(RequestException re) {
 //        if (re.getStatus() == 504 || re.getStatus() == 503){

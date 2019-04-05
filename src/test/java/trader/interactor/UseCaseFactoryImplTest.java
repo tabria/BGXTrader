@@ -5,6 +5,8 @@ import org.junit.Test;
 import trader.exception.EmptyArgumentException;
 import trader.exception.NoSuchUseCaseException;
 import trader.exception.NullArgumentException;
+import trader.requestor.UseCase;
+import trader.requestor.UseCaseFactoryImpl;
 
 import static org.junit.Assert.*;
 

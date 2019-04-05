@@ -4,9 +4,12 @@ import trader.broker.BrokerConnector;
 import trader.exception.NullArgumentException;
 import trader.requestor.RequestBuilder;
 import trader.requestor.UseCaseFactory;
-import trader.strategy.bgxstrategy.configuration.TradingStrategyConfiguration;
+import trader.responder.Response;
+import trader.configuration.TradingStrategyConfiguration;
 
-public class UpdateIndicatorController {
+import java.util.HashMap;
+
+public class UpdateIndicatorController<T> implements TraderController<T> {
 
     private RequestBuilder requestBuilder;
     private UseCaseFactory useCaseFactory;
@@ -27,4 +30,8 @@ public class UpdateIndicatorController {
             throw new NullArgumentException();
     }
 
+    @Override
+    public Response<T> execute(HashMap<String, String> settings) {
+        return null;
+    }
 }

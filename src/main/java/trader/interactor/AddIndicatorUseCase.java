@@ -2,6 +2,7 @@ package trader.interactor;
 
 import trader.exception.NullArgumentException;
 import trader.requestor.Request;
+import trader.requestor.UseCase;
 import trader.responder.Response;
 
 public class AddIndicatorUseCase implements UseCase {

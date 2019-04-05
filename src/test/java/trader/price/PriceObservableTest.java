@@ -2,8 +2,9 @@ package trader.price;
 
 import org.junit.*;
 import trader.CommonTestClassMembers;
+import trader.broker.BrokerConnector;
+import trader.configuration.TradingStrategyConfiguration;
 import trader.exception.BadRequestException;
-import trader.strategy.PriceConnector;
 import trader.controller.Observer;
 import trader.exception.NullArgumentException;
 import trader.strategy.observable.PriceObservable;
@@ -18,35 +19,39 @@ public class PriceObservableTest {
     private PriceObservable priceObservable;
     private Observer observer;
     private CommonTestClassMembers commonMembers;
-    private PriceConnector mockPriceConnector;
+    private BrokerConnector mockBrokerConnector;
+    private TradingStrategyConfiguration configurationMock;
     private Pricing mockPrice;
 
 
     @Before
     public void before() {
         observer = mock(Observer.class);
-        mockPriceConnector = mock(PriceConnector.class);
-        priceObservable = PriceObservable.create(mockPriceConnector);
+        mockBrokerConnector = mock(BrokerConnector.class);
+        configurationMock = mock(TradingStrategyConfiguration.class);
+        priceObservable = PriceObservable.create(mockBrokerConnector, configurationMock);
         commonMembers = new CommonTestClassMembers();
         mockPrice = mock(Pricing.class);
     }
 
     @Test
     public void WhenCreateThenNewPriceObservable_DifferentObjectcs() {
-        PriceObservable priceObservable2 = PriceObservable.create(mockPriceConnector);
+        PriceObservable priceObservable2 = PriceObservable.create(mockBrokerConnector, configurationMock);
 
         assertNotSame(priceObservable, priceObservable2);
     }
 
     @Test
     public void WhenCreateNewObjectThenFieldsMustNotBeNull(){
-        Object priceConnector = commonMembers.extractFieldObject(priceObservable, "priceConnector");
+        Object priceConnector = commonMembers.extractFieldObject(priceObservable, "brokerConnector");
         Object oldPrice = commonMembers.extractFieldObject(priceObservable, "oldPrice");
         Object observers = commonMembers.extractFieldObject(priceObservable, "observers");
+        Object configuration = commonMembers.extractFieldObject(priceObservable, "configuration");
 
         assertNotNull(priceConnector);
         assertNotNull(oldPrice);
         assertNotNull(observers);
+        assertNotNull(configuration);
     }
 
     @Test(expected = NullArgumentException.class)
@@ -108,8 +113,6 @@ public class PriceObservableTest {
         assertNotEquals(oldPrice, mockPrice);
     }
 
-
-
     @Test
     public void WhenCallNotifyEveryoneWithTradablePriceEqualToTheOldOne_NoCallToNotifyObservers() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         PriceObservable spyObservable = spy(priceObservable);
@@ -144,8 +147,10 @@ public class PriceObservableTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testExecuteForCorrectActions() {
+        String instrument = "EUR_USD";
         when(mockPrice.isTradable()).thenReturn(true);
-        when(mockPriceConnector.getPrice()).thenReturn(mockPrice);
+        when(configurationMock.getInstrument()).thenReturn(instrument);
+        when(mockBrokerConnector.getPrice(instrument)).thenReturn(mockPrice);
         commonMembers.changeFieldObject(priceObservable,"threadSleepInterval",-1L);
         priceObservable.execute();
     }

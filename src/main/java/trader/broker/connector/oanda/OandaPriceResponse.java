@@ -32,7 +32,7 @@ public class OandaPriceResponse {
         createPricingRequest();
     }
 
-    public Pricing getPrice(){
+    public Pricing getPrice(String instrument){
 
         PricingGetResponse pricingGetResponse = createPricingGetResponse();
         if(isPriceTradeable(pricingGetResponse))

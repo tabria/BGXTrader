@@ -11,6 +11,7 @@ import com.oanda.v20.trade.TradeSummary;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -82,6 +83,11 @@ public class OandaAPIMockAccount extends OandaAPIMock {
     public void setMockAccountPropertiesGetIdToReturnNewMock(){
         when( mockAccountProperties.getId())
                 .thenReturn(mock(AccountID.class));
+    }
+
+    public void setMockAccountPropertiesGetIdToReturnNewMock(String id){
+        when( mockAccountProperties.getId())
+                .thenReturn(new AccountID(id));
     }
 
     public void setMockAccountTradeSummary(List<TradeSummary> tradeSummaries){
