@@ -48,6 +48,10 @@ public class OandaAPIMockPricing extends OandaAPIMock {
         when(mockContext.pricing.get(mockPricingGetRequest)).thenReturn(response);
     }
 
+    public <T extends Throwable> void setMockPricingGetResponseToThrowException(Class<T> exception) throws ExecuteException, RequestException {
+        when(mockContext.pricing.get(mockPricingGetRequest)).thenThrow(exception);
+    }
+
     private void init(){
         try {
             when(mockContext.pricing.get(mockPricingGetRequest))
@@ -57,5 +61,4 @@ public class OandaAPIMockPricing extends OandaAPIMock {
             throw new RuntimeException();
         }
     }
-
 }

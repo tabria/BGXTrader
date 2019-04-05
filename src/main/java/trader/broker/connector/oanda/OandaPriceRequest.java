@@ -7,9 +7,9 @@ import trader.exception.NullArgumentException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OandaPriceRequest {
+class OandaPriceRequest {
 
-    public PricingGetRequest createRequest(String accountID, String instrument) {
+    PricingGetRequest getPriceRequest(String accountID, String instrument) {
         if(accountID == null || instrument == null)
             throw new NullArgumentException();
         List<String> instruments = new ArrayList<>();

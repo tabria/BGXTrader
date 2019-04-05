@@ -71,8 +71,8 @@ public final class ExponentialMovingAverage extends BaseIndicator {
      * Calculation Formula:
      * {@code
      *
-     * Initial SMA: sum(Price) / indicatorPeriod  -> this is the start point of the EMA
-     * EMA = Price(t) * k + EMA(y) * (1 – k)
+     * Initial SMA: sum(PriceImpl) / indicatorPeriod  -> this is the start point of the EMA
+     * EMA = PriceImpl(t) * k + EMA(y) * (1 – k)
      * t = current, y = yesterday, N = indicator period , k = 2/(N+1) smoothFactor
      *
      * }

@@ -10,7 +10,7 @@ import java.util.Objects;
 
 import static org.junit.Assert.*;
 
-public class PriceTest {
+public class PriceImplTest {
 
     private static final BigDecimal DEFAULT_ASK = new BigDecimal(0.01)
             .setScale(5, RoundingMode.HALF_UP);
@@ -18,20 +18,20 @@ public class PriceTest {
             .setScale(5, RoundingMode.HALF_UP);
     private static final ZonedDateTime DEFAULT_DATE_TIME = ZonedDateTime.parse("2012-06-30T12:30:40Z[UTC]");
 
-    private Price price;
+    private PriceImpl priceImpl;
 
     @Before
     public void setUp() {
-        price = new Price.PriceBuilder().build();
+        priceImpl = new PriceImpl.PriceBuilder().build();
     }
 
     @Test
     public void createPriceWithDefaultValues(){
 
-        assertEquals(price.getAsk(), DEFAULT_ASK);
-        assertEquals(price.getBid(), DEFAULT_BID);
-        assertEquals(price.getDateTime(), DEFAULT_DATE_TIME);
-        assertTrue(price.isTradable());
+        assertEquals(priceImpl.getAsk(), DEFAULT_ASK);
+        assertEquals(priceImpl.getBid(), DEFAULT_BID);
+        assertEquals(priceImpl.getDateTime(), DEFAULT_DATE_TIME);
+        assertTrue(priceImpl.isTradable());
 
     }
 
@@ -39,99 +39,99 @@ public class PriceTest {
     public void createPriceNoDefaults(){
         BigDecimal askBidPrice = new BigDecimal(1.1).setScale(5, RoundingMode.HALF_UP);
         ZonedDateTime currentTime = ZonedDateTime.now();
-        Price price = new Price.PriceBuilder()
+        PriceImpl priceImpl = new PriceImpl.PriceBuilder()
                 .setAsk(askBidPrice)
                 .setBid(askBidPrice)
                 .setDateTime(currentTime)
                 .setIsTradable(false)
                 .build();
 
-        assertEquals(askBidPrice, price.getAsk());
-        assertEquals(askBidPrice, price.getBid());
-        assertEquals(currentTime, price.getDateTime());
-        assertFalse(price.isTradable());
+        assertEquals(askBidPrice, priceImpl.getAsk());
+        assertEquals(askBidPrice, priceImpl.getBid());
+        assertEquals(currentTime, priceImpl.getDateTime());
+        assertFalse(priceImpl.isTradable());
     }
 
     @Test
     public void testEqualsWithSameObject(){
-        assertEquals(price, price);
+        assertEquals(priceImpl, priceImpl);
     }
 
     @Test
     public void testEqualsWithNull(){
-        assertFalse(price.equals(null));
+        assertFalse(priceImpl.equals(null));
     }
 
     @Test
     public void testEqualsWithEqualObject(){
-        Price equalPrice = new Price.PriceBuilder().build();
-        assertEquals(price, equalPrice);
+        PriceImpl equalPriceImpl = new PriceImpl.PriceBuilder().build();
+        assertEquals(priceImpl, equalPriceImpl);
     }
 
     @Test
     public void testEqualsWithNotEqualAskPrice(){
-        Price notEqualPrice = new Price.PriceBuilder()
+        PriceImpl notEqualPriceImpl = new PriceImpl.PriceBuilder()
                 .setAsk(BigDecimal.TEN)
                 .build();
-        assertNotEquals(price, notEqualPrice);
+        assertNotEquals(priceImpl, notEqualPriceImpl);
     }
 
     @Test
     public void testEqualsWithNotEqualBidPrice(){
-        Price notEqualPrice = new Price.PriceBuilder()
+        PriceImpl notEqualPriceImpl = new PriceImpl.PriceBuilder()
                 .setBid(BigDecimal.TEN)
                 .build();
-        assertNotEquals(price, notEqualPrice);
+        assertNotEquals(priceImpl, notEqualPriceImpl);
     }
 
     @Test
     public void testEqualsWithNotEqualTradable(){
-        Price notEqualPrice = new Price.PriceBuilder()
+        PriceImpl notEqualPriceImpl = new PriceImpl.PriceBuilder()
                 .setIsTradable(false)
                 .build();
-        assertNotEquals(price, notEqualPrice);
+        assertNotEquals(priceImpl, notEqualPriceImpl);
     }
 
     @Test
     public void testEqualsWithNotEqualDateTime(){
-        Price notEqualPrice = new Price.PriceBuilder()
+        PriceImpl notEqualPriceImpl = new PriceImpl.PriceBuilder()
                 .setDateTime(ZonedDateTime.now())
                 .build();
-        assertNotEquals(price, notEqualPrice);
+        assertNotEquals(priceImpl, notEqualPriceImpl);
     }
 
     @Test
     public void testEqualsWithNotEqualUnits(){
-        Price notEqualPrice = new Price.PriceBuilder()
+        PriceImpl notEqualPriceImpl = new PriceImpl.PriceBuilder()
                 .setAvailableUnits(BigDecimal.TEN)
                 .build();
-        assertNotEquals(price, notEqualPrice);
+        assertNotEquals(priceImpl, notEqualPriceImpl);
     }
 
     @Test
     public void testEqualsWithFullyNotEqualObject(){
-        Price notEqualPrice = new Price.PriceBuilder()
+        PriceImpl notEqualPriceImpl = new PriceImpl.PriceBuilder()
                 .setAsk(BigDecimal.TEN)
                 .setBid(BigDecimal.TEN)
                 .setIsTradable(false)
                 .setDateTime(ZonedDateTime.now())
                 .setAvailableUnits(BigDecimal.TEN)
                 .build();
-        assertNotEquals(price, notEqualPrice);
+        assertNotEquals(priceImpl, notEqualPriceImpl);
     }
 
     @Test
     public void testHashCode(){
-        int expected = Objects.hash(price.getAsk(), price.getBid(), price.getDateTime(), price.isTradable(), price.getAvailableUnits());
+        int expected = Objects.hash(priceImpl.getAsk(), priceImpl.getBid(), priceImpl.getDateTime(), priceImpl.isTradable(), priceImpl.getAvailableUnits());
 
-        assertEquals(expected, price.hashCode());
+        assertEquals(expected, priceImpl.hashCode());
     }
 
     @Test
     public void testToString(){
-        String expected = "Price{ask=0.01000, bid=0.02000, dateTime=2012-06-30T12:30:40Z[UTC], isTradable=true, availableUnits=0}";
+        String expected = "PriceImpl{ask=0.01000, bid=0.02000, dateTime=2012-06-30T12:30:40Z[UTC], isTradable=true, availableUnits=0}";
 
-        assertEquals(expected, price.toString());
+        assertEquals(expected, priceImpl.toString());
     }
 
 }

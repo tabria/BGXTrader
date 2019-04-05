@@ -1,5 +1,7 @@
 package trader.broker.connector.oanda;
 
+import com.oanda.v20.pricing.PricingGetRequest;
+import com.oanda.v20.pricing.PricingGetResponse;
 import org.junit.Before;
 import org.junit.Test;
 import trader.CommonTestClassMembers;
@@ -10,10 +12,8 @@ import trader.exception.BadRequestException;
 import trader.exception.EmptyArgumentException;
 import trader.exception.NullArgumentException;
 import trader.price.Price;
-import trader.price.Pricing;
+import trader.price.PriceImpl;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +21,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -30,12 +31,12 @@ public class OandaConnectorTest {
     private CommonTestClassMembers commonMembers;
     private OandaConnector oandaConnector;
     private OandaAPIMockAccount oandaAPIMockAccount;
-    private OandaConfig mockOandaConfig;
     private OandaPriceResponse mockResponse;
-    private OandaCandlesResponse mockCandlesResponse;
-    private Pricing mockPrice;
-    private Candlestick mockCandle;
-    private List<Candlestick> candlesticks;
+    private OandaPriceRequest mockRequest;
+    private OandaPriceTransformer mockPriceTransformer;
+    private Price mockPrice;
+    private PricingGetRequest pricingRequestMock;
+    private PricingGetResponse pricingResponseMock;
 
 
     @Before
@@ -43,12 +44,13 @@ public class OandaConnectorTest {
         oandaConnector = (OandaConnector) BaseConnector.create("Oanda");
         commonMembers = new CommonTestClassMembers();
         oandaAPIMockAccount = new OandaAPIMockAccount();
-        mockOandaConfig = mock(OandaConfig.class);
         mockResponse = mock(OandaPriceResponse.class);
-        mockCandlesResponse = mock(OandaCandlesResponse.class);
-        mockPrice = mock(Price.class);
-        mockCandle = mock(Candlestick.class);
-        candlesticks = new ArrayList<>();
+        mockRequest = mock(OandaPriceRequest.class);
+        mockPriceTransformer = mock(OandaPriceTransformer.class);
+        mockPrice = mock(PriceImpl.class);
+        pricingRequestMock = mock(PricingGetRequest.class);
+        pricingResponseMock = mock(PricingGetResponse.class);
+
     }
 
 
@@ -141,9 +143,10 @@ public class OandaConnectorTest {
 
     @Test
     public void testGetPriceToReturnCorrectValue(){
-        commonMembers.changeFieldObject(oandaConnector, "oandaPriceResponse", mockResponse);
-        when(oandaConnector.getPrice(anyString())).thenReturn(mockPrice);
-        assertEquals(mockPrice, oandaConnector.getPrice("EUR_USD"));
+        setFakePrice();
+        Price actualPrice = oandaConnector.getPrice("EUR_USD");
+
+        assertEquals(mockPrice, actualPrice);
     }
 
     private void setOandaValidator() {
@@ -151,6 +154,19 @@ public class OandaConnectorTest {
         doNothing().when(mockValidator).validateAccount(oandaConnector);
         doNothing().when(mockValidator).validateAccountBalance(oandaConnector);
         commonMembers.changeFieldObject(oandaConnector, "oandaAccountValidator", mockValidator);
+    }
+
+    private void setFakePrice() {
+        when(mockRequest.getPriceRequest(anyString(), anyString())).thenReturn(pricingRequestMock);
+        when(mockResponse.getPriceResponse(eq(oandaAPIMockAccount.getContext()), anyString() ,eq(pricingRequestMock))).thenReturn(pricingResponseMock);
+        when(mockPriceTransformer.transformToPrice(pricingResponseMock)).thenReturn(mockPrice);
+
+        commonMembers.changeFieldObject(oandaConnector, "context", oandaAPIMockAccount.getContext());
+        commonMembers.changeFieldObject(oandaConnector, "accountID", "ss");
+        commonMembers.changeFieldObject(oandaConnector, "url", "dd");
+        commonMembers.changeFieldObject(oandaConnector, "oandaPriceRequest", mockRequest);
+        commonMembers.changeFieldObject(oandaConnector, "oandaPriceResponse", mockResponse);
+        commonMembers.changeFieldObject(oandaConnector, "oandaPriceTransformer", mockPriceTransformer);
     }
 
 //

@@ -66,7 +66,7 @@ public final class WeightedMovingAverage extends BaseIndicator {
     /**
      This method calculate Weighted Moving Average(WMA) based on the formula
      * {@code
-     * WMA: (Period*Price) + (Period-1)*PrevPrice + ... + Price(Period-1)*1)/(Period*(Period + 1)/2)
+     * WMA: (Period*PriceImpl) + (Period-1)*PrevPrice + ... + PriceImpl(Period-1)*1)/(Period*(Period + 1)/2)
      * }
      * @param candlestickList list of available candlesticks
      * @return {@link BigDecimal} current WMA value

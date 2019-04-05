@@ -8,15 +8,15 @@ public class Connection {
     private static final int BEGIN_INDEX = 8;
     private static String message = "";
 
-    private Connection() {
-    }
+   // private Connection() { }
 
-    public static void waitToConnect(String url) {
+    public static boolean waitToConnect(String url) {
         while (true){
             if (verifyHostIpExistence(url, DEFAULT_SLEEP_TIME_MILLIS))
                 break;
         }
         MessagePrinter.printMessage("Connected");
+        return true;
     }
 
     private static boolean verifyHostIpExistence (String url, long sleepInterval) {

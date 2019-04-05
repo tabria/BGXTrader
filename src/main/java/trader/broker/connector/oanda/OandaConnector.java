@@ -4,13 +4,14 @@ import com.oanda.v20.Context;
 import com.oanda.v20.ContextBuilder;
 import com.oanda.v20.account.*;
 import com.oanda.v20.pricing.PricingGetRequest;
+import com.oanda.v20.pricing.PricingGetResponse;
 import trader.broker.connector.BaseConnector;
+import trader.broker.connector.PriceTransformable;
 import trader.exception.BadRequestException;
 import trader.exception.EmptyArgumentException;
 import trader.exception.NullArgumentException;
-import trader.price.Pricing;
+import trader.price.Price;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -25,6 +26,7 @@ public class OandaConnector extends BaseConnector {
     private OandaPriceRequest oandaPriceRequest;
     private OandaPriceResponse oandaPriceResponse;
     private OandaCandlesResponse oandaCandlesResponse;
+    private PriceTransformable oandaPriceTransformer;
 
 
     List<AccountProperties> accountProperties;
@@ -33,6 +35,7 @@ public class OandaConnector extends BaseConnector {
     public OandaConnector(){
         oandaAccountValidator = new OandaAccountValidator();
         oandaPriceRequest = new OandaPriceRequest();
+        oandaPriceResponse = new OandaPriceResponse();
 
 //        initialize();
 //        try {
@@ -95,11 +98,10 @@ public class OandaConnector extends BaseConnector {
     }
 
     @Override
-    public Pricing getPrice(String instrument) {
-    //to make oanda price request object,then call getprice with the request and settings
-
-        PricingGetRequest request = oandaPriceRequest.createRequest(accountID, instrument);
-        return oandaPriceResponse.getPrice(instrument);
+    public Price getPrice(String instrument) {
+        PricingGetRequest request = oandaPriceRequest.getPriceRequest(accountID, instrument);
+        PricingGetResponse priceResponse = oandaPriceResponse.getPriceResponse(context, url, request);
+        return oandaPriceTransformer.transformToPrice(priceResponse);
     }
 
     Context getContext(){

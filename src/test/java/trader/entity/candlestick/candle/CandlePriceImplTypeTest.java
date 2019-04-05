@@ -12,7 +12,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static trader.strategy.bgxstrategy.configuration.StrategyConfig.SCALE;
 
-public class CandlePriceTypeTest {
+public class CandlePriceImplTypeTest {
 
     private static final BigDecimal CANDLE_OPEN_PRICE = new BigDecimal(1.16796);
     private static final BigDecimal CANDLE_CLOSE_PRICE = new BigDecimal(1.17245);

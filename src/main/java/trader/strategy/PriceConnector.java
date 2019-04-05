@@ -1,9 +1,9 @@
 package trader.strategy;
 
-import trader.price.Pricing;
+import trader.price.Price;
 
 public interface PriceConnector {
 
-    Pricing getPrice();
+    Price getPrice();
 
 }

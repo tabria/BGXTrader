@@ -1,96 +1,76 @@
 package trader.broker.connector.oanda;
 
+import com.oanda.v20.Context;
 import com.oanda.v20.ExecuteException;
 import com.oanda.v20.RequestException;
+import com.oanda.v20.pricing.PricingGetRequest;
+import com.oanda.v20.pricing.PricingGetResponse;
 import org.junit.Before;
 import org.junit.Test;
-import trader.CommonTestClassMembers;
-import trader.OandaAPIMock.OandaAPIMockAccount;
+import org.junit.runner.RunWith;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import trader.OandaAPIMock.OandaAPIMockPricing;
-import trader.price.Pricing;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.time.ZonedDateTime;
-
+import trader.connection.Connection;
+import trader.exception.NullArgumentException;
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(Connection.class)
 public class OandaPriceResponseTest {
 
-    private static final ZonedDateTime DEFAULT_DATE_TIME = ZonedDateTime.parse("2012-06-30T12:30:40Z[UTC]");
-    private static final BigDecimal DEFAULT_ASK = new BigDecimal(0.01)
-            .setScale(5, RoundingMode.HALF_UP);
-    private static final BigDecimal DEFAULT_BID = new BigDecimal(0.02)
-            .setScale(5, RoundingMode.HALF_UP);
+    private static final String URL = "xxx.xxx";
 
+    private Context contextMock;
+    private PricingGetRequest requestMock;
     private OandaAPIMockPricing oandaAPIMockPricing;
-    private OandaAPIMockAccount oandaAPIMockAccount;
     private OandaPriceResponse priceResponse;
-    private CommonTestClassMembers commonMembers;
-    private OandaConnector oandaConnector;
-    private OandaConnector mockOandaConnector;
 
     @Before
     public void setUp() throws RequestException, ExecuteException {
         oandaAPIMockPricing = new OandaAPIMockPricing();
-        oandaAPIMockAccount = new OandaAPIMockAccount();
-        oandaConnector = (OandaConnector) oandaConnector.create("Oanda");
-        mockOandaConnector = mock(OandaConnector.class);
         oandaAPIMockPricing.setMockPricingGetResponse(oandaAPIMockPricing.getMockPricingGetResponse());
-        priceResponse = new OandaPriceResponse(oandaConnector);
-        commonMembers = new CommonTestClassMembers();
+        contextMock = oandaAPIMockPricing.getContext();
+        requestMock = oandaAPIMockPricing.getMockPricingGetRequest();
+        priceResponse = new OandaPriceResponse();
     }
 
-//    @Test
-//    public void getCorrectPriceRequest(){
-//        commonMembers.changeFieldObject(priceResponse, "oandaConnector", mockOandaConnector);
-//        when(mockOandaConnector.getAccountID()).thenReturn(oandaAPIMockAccount.getMockAccountID());
-//        priceResponse = new OandaPriceResponse(mockOandaConnector);
-//        PricingGetRequest priceRequest = (PricingGetRequest) commonMembers.extractFieldObject(priceResponse, "pricingGetRequest");
-//
-//        assertTrue(priceRequest.getPathParams().containsValue(oandaAPIMockAccount.getMockAccountID()));
-//    }
+    @Test(expected = NullArgumentException.class)
+    public void WhenCallGetPriceResponseWithNullContext_Exception(){
+        priceResponse.getPriceResponse(null, URL, requestMock);
+    }
 
-    @Test
-    public void getPriceReturnsCorrectValues(){
-        ZonedDateTime currentTime = ZonedDateTime.now();
-        Pricing price = priceResponse.getPrice("EUR_USD");
+    @Test(expected = NullArgumentException.class)
+    public void WhenCallGetPriceResponseWithNullURL_Exception(){
+        priceResponse.getPriceResponse(contextMock, null, requestMock);
+    }
 
-        assertNotEquals(price.getAsk(), DEFAULT_ASK);
-        assertNotEquals(price.getBid(), DEFAULT_BID);
-//        assertTrue(price.isTradable());
-        assertNotEquals(price.getDateTime(),DEFAULT_DATE_TIME);
-        assertNotEquals(price.getAvailableUnits(), BigDecimal.ZERO);
+    @Test(expected = NullArgumentException.class)
+    public void WhenCallGetPriceResponseWithNullRequest_Exception(){
+        priceResponse.getPriceResponse(contextMock, URL, null);
     }
 
     @Test
-    public void testGetPriceForNullResponse_tradableFalse() throws RequestException, ExecuteException {
-        priceResponse = new OandaPriceResponse(mockOandaConnector);
- //       when(mockOandaConnector.getContext()).thenReturn(oandaAPIMockPricing.getMockContext());
-        commonMembers.changeFieldObject(priceResponse, "pricingGetRequest", oandaAPIMockPricing.getMockPricingGetRequest());
-        oandaAPIMockPricing.setMockPricingGetResponse(null);
-        Pricing price = priceResponse.getPrice("EUR_USD");
+    public void WhenCallGetPriceResponseWithCorrectValues_ReturnCorrectResult(){
+        PricingGetResponse actualResponse = this.priceResponse.getPriceResponse(contextMock, URL, requestMock);
+        PricingGetResponse expectedResponse = oandaAPIMockPricing.getMockPricingGetResponse();
 
-        assertEquals(price.getAsk(), DEFAULT_ASK);
-        assertEquals(price.getBid(), DEFAULT_BID);
-        assertFalse(price.isTradable());
-        assertEquals(price.getDateTime(),DEFAULT_DATE_TIME);
-        assertEquals(price.getAvailableUnits(), BigDecimal.ZERO);
+        assertEquals(expectedResponse, actualResponse);
     }
 
     @Test
-    public void testGetPriceForNullClientPrice_tradableFalse() throws RequestException, ExecuteException {
-        priceResponse = new OandaPriceResponse(mockOandaConnector);
- //       when(mockOandaConnector.getContext()).thenReturn(oandaAPIMockPricing.getMockContext());
-        commonMembers.changeFieldObject(priceResponse, "pricingGetRequest", oandaAPIMockPricing.getMockPricingGetRequest());
-        Pricing price = priceResponse.getPrice("EUR_USD");
-
-        assertEquals(price.getAsk(), DEFAULT_ASK);
-        assertEquals(price.getBid(), DEFAULT_BID);
-        assertFalse(price.isTradable());
-        assertEquals(price.getDateTime(),DEFAULT_DATE_TIME);
-        assertEquals(price.getAvailableUnits(), BigDecimal.ZERO);
+    public void WhenCallGetPriceResponseThrowExecuteOrRequestExceptions_WaitToReconnect() throws RequestException, ExecuteException {
+        oandaAPIMockPricing.setMockPricingGetResponseToThrowException(RequestException.class);
+        PowerMockito.mockStatic(Connection.class);
+        PowerMockito.when(Connection.waitToConnect(URL)).thenReturn(true);
+        PricingGetResponse actualResponse = this.priceResponse.getPriceResponse(contextMock, URL, requestMock);
+        assertNull(actualResponse);
     }
 
+    @Test(expected = RuntimeException.class)
+    public void WhenCallGetPriceResponseThrowUnexpectedException_ThrowRuntimeException() throws RequestException, ExecuteException {
+        oandaAPIMockPricing.setMockPricingGetResponseToThrowException(RuntimeException.class);
+        this.priceResponse.getPriceResponse(contextMock, URL, requestMock);
+    }
 }

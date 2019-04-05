@@ -7,9 +7,8 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import trader.entity.indicator.Indicator;
 import trader.exception.NullArgumentException;
-import trader.controller.IndicatorObserver;
-import trader.controller.Observer;
-import trader.price.Pricing;
+import trader.price.Price;
+
 import java.lang.reflect.Field;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -57,12 +56,12 @@ public class IndicatorObserverTest {
 
     @Test
     public void testUpdateObserverForCorrectExecution() {
-        Pricing mockPricing = mock(Pricing.class);
+        Price mockPrice = mock(Price.class);
         exception.expect(RuntimeException.class);
         exception.expectMessage("Update OK");
 
         doThrow(new RuntimeException("Update OK")).when(mockMA).updateIndicator();
-        mockObserver.updateObserver(mockPricing);
+        mockObserver.updateObserver(mockPrice);
     }
 
     private Indicator extractIndicator(Observer indicatorObserver) throws NoSuchFieldException, IllegalAccessException {

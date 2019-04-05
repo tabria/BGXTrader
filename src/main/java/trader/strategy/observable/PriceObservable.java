@@ -5,10 +5,9 @@ import trader.configuration.TradingStrategyConfiguration;
 import trader.controller.Observer;
 import trader.exception.NullArgumentException;
 import trader.price.Price;
-import trader.price.Pricing;
+import trader.price.PriceImpl;
 import trader.strategy.Observable;
 
-import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 
@@ -16,13 +15,13 @@ public final class PriceObservable implements Observable {
 
     private long threadSleepInterval = 1000L;
     private BrokerConnector brokerConnector;
-    private Pricing oldPrice;
+    private Price oldPrice;
     private CopyOnWriteArrayList<Observer> observers;
     private TradingStrategyConfiguration configuration;
 
     private PriceObservable(BrokerConnector brokerConnector, TradingStrategyConfiguration configuration){
         this.brokerConnector = brokerConnector;
-        oldPrice = new Price.PriceBuilder().build();
+        oldPrice = new PriceImpl.PriceBuilder().build();
         observers = new CopyOnWriteArrayList<>();
         this.configuration = configuration;
     }
@@ -45,7 +44,7 @@ public final class PriceObservable implements Observable {
     }
 
     @Override
-    public void notifyObservers(Pricing price) {
+    public void notifyObservers(Price price) {
         for (Observer observer : this.observers)
             observer.updateObserver(price);
     }
@@ -53,13 +52,13 @@ public final class PriceObservable implements Observable {
     @Override
     public void execute() {
         while(true){
-            Pricing newPrice = brokerConnector.getPrice(configuration.getInstrument());
+            Price newPrice = brokerConnector.getPrice(configuration.getInstrument());
             notifyEveryone(newPrice);
             sleepThread(threadSleepInterval);
         }
     }
 
-    private void notifyEveryone(Pricing newPrice) {
+    private void notifyEveryone(Price newPrice) {
         if (newPrice.isTradable() && !newPrice.equals(oldPrice)) {
             oldPrice = newPrice;
             this.notifyObservers(newPrice);

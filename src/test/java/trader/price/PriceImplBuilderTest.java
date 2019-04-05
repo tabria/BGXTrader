@@ -11,9 +11,9 @@ import java.math.RoundingMode;
 import java.time.ZonedDateTime;
 
 import static org.junit.Assert.*;
-import static trader.price.Price.*;
+import static trader.price.PriceImpl.*;
 
-public class PriceBuilderTest {
+public class PriceImplBuilderTest {
 
     private static final BigDecimal DEFAULT_ASK = new BigDecimal(0.01)
             .setScale(5, RoundingMode.HALF_UP);
@@ -37,7 +37,7 @@ public class PriceBuilderTest {
     @Test
     public void buildMustReturnPriceObject(){
         String actual = priceBuilder.build().getClass().getSimpleName();
-        assertEquals("Price", actual);
+        assertEquals("PriceImpl", actual);
     }
 
     @Test

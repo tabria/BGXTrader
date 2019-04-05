@@ -22,22 +22,22 @@ public class OandaPriceRequestTest {
 
     @Test(expected = NullArgumentException.class)
     public void WhenCallCreateRequestWithNullSettings_Exception(){
-        request.createRequest(null, null);
+        request.getPriceRequest(null, null);
     }
 
     @Test(expected = NullArgumentException.class)
     public void WhenCallCreateRequestWithAccountIdKeyNameNull_Exception(){
-        request.createRequest(null, EXPECTED_INSTRUMENT);
+        request.getPriceRequest(null, EXPECTED_INSTRUMENT);
     }
 
     @Test(expected = NullArgumentException.class)
     public void WhenCallCreateRequestWithInstrumentKeyNameNull_Exception(){
-        request.createRequest(EXPECTED_ACCOUNT_ID,null);
+        request.getPriceRequest(EXPECTED_ACCOUNT_ID,null);
     }
 
     @Test
     public void getCorrectPriceRequest(){
-        PricingGetRequest pricingRequest = this.request.createRequest(EXPECTED_ACCOUNT_ID, EXPECTED_INSTRUMENT);
+        PricingGetRequest pricingRequest = this.request.getPriceRequest(EXPECTED_ACCOUNT_ID, EXPECTED_INSTRUMENT);
 
         assertEquals(PricingGetRequest.class, getRequestClass(pricingRequest));
         assertEquals(EXPECTED_ACCOUNT_ID, getRequestAccount(pricingRequest));

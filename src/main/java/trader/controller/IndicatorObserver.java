@@ -2,7 +2,7 @@ package trader.controller;
 
 import trader.exception.NullArgumentException;
 import trader.entity.indicator.Indicator;
-import trader.price.Pricing;
+import trader.price.Price;
 
 public final class IndicatorObserver implements Observer {
 
@@ -21,7 +21,7 @@ public final class IndicatorObserver implements Observer {
     }
 
     @Override
-    public void updateObserver(Pricing price) {
+    public void updateObserver(Price price) {
         if (price == null)
             throw new NullArgumentException();
         this.indicator.updateIndicator();

@@ -21,7 +21,7 @@ public class PriceObservableTest {
     private CommonTestClassMembers commonMembers;
     private BrokerConnector mockBrokerConnector;
     private TradingStrategyConfiguration configurationMock;
-    private Pricing mockPrice;
+    private Price mockPrice;
 
 
     @Before
@@ -31,7 +31,7 @@ public class PriceObservableTest {
         configurationMock = mock(TradingStrategyConfiguration.class);
         priceObservable = PriceObservable.create(mockBrokerConnector, configurationMock);
         commonMembers = new CommonTestClassMembers();
-        mockPrice = mock(Pricing.class);
+        mockPrice = mock(Price.class);
     }
 
     @Test
@@ -95,7 +95,7 @@ public class PriceObservableTest {
 
     @Test(expected = MockedObserverException.class)
     public void WhenCallNotifyObserversThenObserversAreUpdated() {
-        Pricing mockPrice = mock(Pricing.class);
+        Price mockPrice = mock(Price.class);
         doThrow(new MockedObserverException())
                 .when(observer).updateObserver(mockPrice);
         priceObservable.registerObserver(observer);
@@ -108,7 +108,7 @@ public class PriceObservableTest {
         when(mockPrice.isTradable()).thenReturn(false);
         Method notifyEveryone = extractNotify(priceObservable);
         notifyEveryone.invoke(priceObservable, mockPrice);
-        Pricing oldPrice = extractPrice(priceObservable);
+        Price oldPrice = extractPrice(priceObservable);
 
         assertNotEquals(oldPrice, mockPrice);
     }
@@ -116,11 +116,11 @@ public class PriceObservableTest {
     @Test
     public void WhenCallNotifyEveryoneWithTradablePriceEqualToTheOldOne_NoCallToNotifyObservers() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         PriceObservable spyObservable = spy(priceObservable);
-        Pricing expected = extractPrice(spyObservable);
+        Price expected = extractPrice(spyObservable);
         doThrow(BadRequestException.class).when(spyObservable).notifyObservers(expected);
         Method notifyEveryone = extractNotify(spyObservable);
         notifyEveryone.invoke(spyObservable, expected);
-        Pricing oldPrice = extractPrice(spyObservable);
+        Price oldPrice = extractPrice(spyObservable);
 
         assertEquals(expected, oldPrice);
     }
@@ -129,10 +129,10 @@ public class PriceObservableTest {
     public void WhenCallNotifyEveryoneWithDifferentTradablePrice_CallNotifyObservers() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 
         when(mockPrice.isTradable()).thenReturn(true);
-        Pricing oldPrice = extractPrice(priceObservable);
+        Price oldPrice = extractPrice(priceObservable);
         Method notifyEveryone = extractNotify(priceObservable);
         notifyEveryone.invoke(priceObservable, mockPrice);
-        Pricing newPrice = extractPrice(priceObservable);
+        Price newPrice = extractPrice(priceObservable);
 
         assertNotEquals(oldPrice, newPrice);
         assertEquals(mockPrice, newPrice);
@@ -156,11 +156,11 @@ public class PriceObservableTest {
     }
 
     private Method extractNotify(PriceObservable observable) throws NoSuchMethodException {
-        return commonMembers.getPrivateMethodForTest(observable,"notifyEveryone", Pricing.class);
+        return commonMembers.getPrivateMethodForTest(observable,"notifyEveryone", Price.class);
     }
 
-    private Pricing extractPrice(PriceObservable spyObservable) {
-        return (Pricing) commonMembers.extractFieldObject(spyObservable,
+    private Price extractPrice(PriceObservable spyObservable) {
+        return (Price) commonMembers.extractFieldObject(spyObservable,
                 "oldPrice");
     }
 

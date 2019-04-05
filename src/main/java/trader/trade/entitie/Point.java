@@ -89,11 +89,11 @@ public final class Point {
          */
         private void setPrice(BigDecimal price){
             if (price == null){
-                throw new NullPointerException("Price must not be null");
+                throw new NullPointerException("PriceImpl must not be null");
             }
             int result = price.compareTo(BigDecimal.ZERO);
             if (result <= 0 ){
-                throw new IllegalArgumentException("Price must be bigger than Zero");
+                throw new IllegalArgumentException("PriceImpl must be bigger than Zero");
             }
             this.price = price;
         }
