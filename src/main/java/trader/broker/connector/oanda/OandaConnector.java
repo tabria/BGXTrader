@@ -12,6 +12,7 @@ import trader.exception.EmptyArgumentException;
 import trader.exception.NullArgumentException;
 import trader.price.Price;
 import trader.requestor.Request;
+import trader.responder.Response;
 
 import java.util.HashMap;
 import java.util.List;
@@ -105,7 +106,7 @@ public class OandaConnector extends BaseConnector {
         settings.put("accountID", accountID);
         settings.put("instrument", instrument);
         Request<?> priceRequest = oandaRequestBuilder.build("price", settings);
-        PricingGetResponse priceResponse = oandaPriceResponse.getPriceResponse(context, url, priceRequest);
+        Response<PricingGetResponse> priceResponse = oandaPriceResponse.getPriceResponse(context, url, priceRequest);
         return oandaPriceTransformer.transformToPrice(priceResponse);
     }
 

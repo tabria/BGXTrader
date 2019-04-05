@@ -15,6 +15,7 @@ import trader.OandaAPIMock.OandaAPIMockPricing;
 import trader.connection.Connection;
 import trader.exception.NullArgumentException;
 import trader.requestor.Request;
+import trader.responder.Response;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
@@ -38,7 +39,7 @@ public class OandaPriceResponseTest {
         oandaAPIMockPricing.setMockPricingGetResponse(oandaAPIMockPricing.getMockPricingGetResponse());
         contextMock = oandaAPIMockPricing.getContext();
         requestMock = mock(Request.class);
-        when(requestMock.getRequestDataStructure()).thenReturn(PricingGetRequest.class);
+        when(requestMock.getRequestDataStructure()).thenReturn(oandaAPIMockPricing.getMockPricingGetRequest());
         priceResponse = new OandaPriceResponse();
     }
 
@@ -59,10 +60,11 @@ public class OandaPriceResponseTest {
 
     @Test
     public void WhenCallGetPriceResponseWithCorrectValues_ReturnCorrectResult(){
-        PricingGetResponse actualResponse = this.priceResponse.getPriceResponse(contextMock, URL, requestMock);
+        Response<PricingGetResponse> actualResponse = this.priceResponse.getPriceResponse(contextMock, URL, requestMock);
+        PricingGetResponse response = actualResponse.getResponseDataStructure();
         PricingGetResponse expectedResponse = oandaAPIMockPricing.getMockPricingGetResponse();
 
-        assertEquals(expectedResponse, actualResponse);
+        assertEquals(expectedResponse, response);
     }
 
     @Test
@@ -70,7 +72,7 @@ public class OandaPriceResponseTest {
         oandaAPIMockPricing.setMockPricingGetResponseToThrowException(RequestException.class);
         PowerMockito.mockStatic(Connection.class);
         PowerMockito.when(Connection.waitToConnect(URL)).thenReturn(true);
-        PricingGetResponse actualResponse = this.priceResponse.getPriceResponse(contextMock, URL, requestMock);
+        Response<PricingGetResponse> actualResponse = this.priceResponse.getPriceResponse(contextMock, URL, requestMock);
         assertNull(actualResponse);
     }
 

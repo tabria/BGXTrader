@@ -22,15 +22,6 @@ class OandaRequestBuilder implements RequestBuilder {
     private static final String QUANTITY = "quantity";
     private static final String GRANULARITY = "granularity";
 
-//    PricingGetRequest getPriceRequest(String accountID, String instrument) {
-//        if(accountID == null || instrument == null)
-//            throw new NullArgumentException();
-//        List<String> instruments = new ArrayList<>();
-//        instruments.add(instrument);
-//        AccountID accountId = new AccountID(accountID);
-//        return new PricingGetRequest(accountId, instruments);
-//    }
-
     @Override
     public Request<?> build(String requestType, HashMap<String, String> settings) {
         initialInputValidation(requestType, settings);
