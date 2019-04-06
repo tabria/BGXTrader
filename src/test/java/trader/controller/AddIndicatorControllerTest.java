@@ -32,7 +32,6 @@ public class AddIndicatorControllerTest {
     private Request requestMock;
     private RequestBuilder requestBuilderMock;
     private UseCaseFactory useCaseFactoryMock;
-    private UpdateIndicatorController updateIndicatorController;
     private HashMap<String, String> settings;
     private AddIndicatorController addIndicatorController;
 
@@ -45,34 +44,28 @@ public class AddIndicatorControllerTest {
         requestMock = mock(Request.class);
         requestBuilderMock = mock(RequestBuilder.class);
         useCaseFactoryMock = mock(UseCaseFactory.class);
-        updateIndicatorController = mock(UpdateIndicatorController.class);
         settings = new HashMap<>();
-        addIndicatorController = new AddIndicatorController(requestBuilderMock, useCaseFactoryMock, updateIndicatorController, priceObservableMock, configurationMock);
+        addIndicatorController = new AddIndicatorController(requestBuilderMock, useCaseFactoryMock, priceObservableMock, configurationMock);
     }
 
     @Test(expected = NullArgumentException.class)
     public void WhenCreateControllerWithNullRequestBuilder_Exception(){
-        new AddIndicatorController(null, useCaseFactoryMock, updateIndicatorController, priceObservableMock, configurationMock);
+        new AddIndicatorController(null, useCaseFactoryMock, priceObservableMock, configurationMock);
     }
 
     @Test(expected = NullArgumentException.class)
     public void WhenCreateControllerWithNullUserCaseFactory_Exception(){
-        new AddIndicatorController(requestBuilderMock, null, updateIndicatorController, priceObservableMock, configurationMock);
-    }
-
-    @Test(expected = NullArgumentException.class)
-    public void WhenCreateControllerWithNullIndicatorUpdateController_Exception(){
-        new AddIndicatorController(requestBuilderMock, useCaseFactoryMock, null, priceObservableMock, configurationMock);
+        new AddIndicatorController(requestBuilderMock, null, priceObservableMock, configurationMock);
     }
 
     @Test(expected = NullArgumentException.class)
     public void WhenCreateControllerWithNullObservable_Exception(){
-        new AddIndicatorController(requestBuilderMock, useCaseFactoryMock, updateIndicatorController, null, configurationMock);
+        new AddIndicatorController(requestBuilderMock, useCaseFactoryMock, null, configurationMock);
     }
 
     @Test(expected = NullArgumentException.class)
     public void WhenCreateControllerWithNullConfiguration_Exception(){
-        new AddIndicatorController(requestBuilderMock, useCaseFactoryMock, updateIndicatorController, priceObservableMock, null);
+        new AddIndicatorController(requestBuilderMock, useCaseFactoryMock, priceObservableMock, null);
     }
 
     @Test

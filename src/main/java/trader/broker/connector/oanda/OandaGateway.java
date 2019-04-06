@@ -23,7 +23,7 @@ public class OandaGateway extends BaseGateway {
     private static final String CANDLE = "candle";
 
     private Context context;
-    private BrokerConnector oandaConnector;
+    private BrokerConnector connector;
     private OandaAccountValidator oandaAccountValidator ;
     private OandaRequestBuilder oandaRequestBuilder;
     private OandaResponseBuilder oandaResponseBuilder;
@@ -37,7 +37,7 @@ public class OandaGateway extends BaseGateway {
 
 
     private OandaGateway(BrokerConnector connector){
-        oandaConnector = connector;
+        this.connector = connector;
         oandaAccountValidator = new OandaAccountValidator();
         oandaRequestBuilder = new OandaRequestBuilder();
         oandaResponseBuilder = new OandaResponseBuilder();
@@ -59,7 +59,7 @@ public class OandaGateway extends BaseGateway {
     public Price getPrice(String instrument) {
         priceSettings.put(INSTRUMENT, instrument);
         Request<?> priceRequest = oandaRequestBuilder.build(PRICE, priceSettings);
-        Response<PricingGetResponse> priceResponse = oandaResponseBuilder.buildResponse(PRICE, context, oandaConnector.getUrl(), priceRequest);
+        Response<PricingGetResponse> priceResponse = oandaResponseBuilder.buildResponse(PRICE, context, connector.getUrl(), priceRequest);
         return oandaPriceTransformer.transformToPrice(priceResponse);
     }
 
@@ -67,15 +67,15 @@ public class OandaGateway extends BaseGateway {
     @Override
     public List<Candlestick> getCandles(HashMap<String, String> settings) {
         Request<?> candleRequest = oandaRequestBuilder.build(CANDLE, settings);
-        Response<InstrumentCandlesResponse> candlesResponse = oandaResponseBuilder.buildResponse(CANDLE, context, oandaConnector.getUrl(),candleRequest);
+        Response<InstrumentCandlesResponse> candlesResponse = oandaResponseBuilder.buildResponse(CANDLE, context, connector.getUrl(),candleRequest);
         return oandaCandlesTransformer.transformCandlesticks(candlesResponse);
     }
 
     @Override
     public void validateConnector() {
         setContext();
-        oandaAccountValidator.validateAccount(oandaConnector, context);
-        oandaAccountValidator.validateAccountBalance(oandaConnector, context);
+        oandaAccountValidator.validateAccount(connector, context);
+        oandaAccountValidator.validateAccountBalance(connector, context);
     }
 
     Context getContext(){
@@ -102,15 +102,15 @@ public class OandaGateway extends BaseGateway {
 //    }
 
     private void setContext(){
-        context = new ContextBuilder(oandaConnector.getUrl())
-                .setToken(oandaConnector.getToken())
+        context = new ContextBuilder(connector.getUrl())
+                .setToken(connector.getToken())
                 .setApplication("Context")
                 .build();
     }
 
     private HashMap<String,String> setPriceSettings() {
         HashMap<String, String> settings = new HashMap<>();
-        settings.put(ACCOUNT_ID, oandaConnector.getAccountID());
+        settings.put(ACCOUNT_ID, connector.getAccountID());
         return settings;
     }
 

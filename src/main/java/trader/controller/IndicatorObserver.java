@@ -15,24 +15,22 @@ public final class IndicatorObserver implements Observer {
     private static final String QUANTITY = SettingsFieldNames.QUANTITY.toString();
     private static final String GRANULARITY = SettingsFieldNames.GRANULARITY.toString();
     private final Indicator indicator;
-    private final UpdateIndicatorController controller;
     private final TradingStrategyConfiguration configuration;
     private HashMap<String, String> settings;
 
     //to be tested
     private BrokerGateway connector;
 
-    private IndicatorObserver(Indicator indicator, UpdateIndicatorController controller , TradingStrategyConfiguration configuration){
-        if(indicator == null || controller == null || configuration == null)
+    private IndicatorObserver(Indicator indicator, TradingStrategyConfiguration configuration){
+        if(indicator == null || configuration == null)
             throw new NullArgumentException();
         this.indicator = indicator;
-        this.controller = controller;
         this.configuration = configuration;
         this.settings = initializeSettings();
     }
 
-    public static IndicatorObserver create(Indicator indicator, UpdateIndicatorController controller, TradingStrategyConfiguration configuration){
-        return new IndicatorObserver(indicator, controller, configuration);
+    public static IndicatorObserver create(Indicator indicator, TradingStrategyConfiguration configuration){
+        return new IndicatorObserver(indicator, configuration);
     }
 
     @Override
@@ -41,7 +39,7 @@ public final class IndicatorObserver implements Observer {
             throw new NullArgumentException();
         setUpdateQuantityInSettings();
         //call connector to get list of candles
-        controller.execute(settings);
+       // controller.execute(settings);
     }
 
     private void setUpdateQuantityInSettings() {

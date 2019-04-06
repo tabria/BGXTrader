@@ -9,12 +9,12 @@ import trader.responder.Response;
 
 import java.util.HashMap;
 
-public class AddBrokerGatewayController<T> implements TraderController<T> {
+public class AddBrokerConnectorController<T> implements TraderController<T> {
 
     private RequestBuilder requestBuilder;
     private UseCaseFactory useCaseFactory;
 
-    public AddBrokerGatewayController(RequestBuilder requestBuilder, UseCaseFactory useCaseFactory) {
+    public AddBrokerConnectorController(RequestBuilder requestBuilder, UseCaseFactory useCaseFactory) {
         if(requestBuilder == null || useCaseFactory == null)
             throw new NullArgumentException();
         this.requestBuilder = requestBuilder;

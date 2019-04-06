@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 
-public class AddBrokerGatewayUseCase implements UseCase {
+public class AddBrokerConnectorUseCase implements UseCase {
 
     private static final String URL = "url";
     private static final String TOKEN = "token";
@@ -23,7 +23,6 @@ public class AddBrokerGatewayUseCase implements UseCase {
             throw new NullArgumentException();
         BrokerConnector brokerConnector = (BrokerConnector) request.getRequestDataStructure();
         setConfigurations(brokerConnector);
-  //      brokerConnector.validateConnector();
         return setResponse((E) brokerConnector);
     }
 

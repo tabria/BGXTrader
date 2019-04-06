@@ -114,16 +114,14 @@ public class BGXStrategyMainTest {
     }
 
     @Test
-    public void WhenAddBrokerConnectorWithCorrectInputs_CorrectAdd(){
+    public void WhenAddBrokerGatewayWithCorrectInputs_CorrectAdd(){
         BrokerGateway brokerGateway = (BrokerGateway) commonMembers.extractFieldObject(bgxStrategyMain, "brokerGateway");
 
         String actual = brokerGateway.getClass().getSimpleName();
         String expected = BROKER_NAME + "Gateway";
 
         assertEquals(expected, actual);
-        assertNotNull(commonMembers.extractFieldObject(brokerGateway, "url"));
-        assertNotNull(commonMembers.extractFieldObject(brokerGateway, "token"));
-        assertNotNull(commonMembers.extractFieldObject(brokerGateway, "accountID"));
+        assertNotNull(commonMembers.extractFieldObject(brokerGateway, "connector"));
     }
 
 

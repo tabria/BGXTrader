@@ -15,13 +15,13 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.powermock.api.mockito.PowerMockito.when;
 
-public class AddBrokerGatewayUseCaseTest {
+public class AddBrokerConnectorUseCaseTest {
 
     private static final String TEST_BROKER_CONFIG_FILE_LOCATION = "oandaBrokerConfig.yaml";
 
     private BrokerConnector configurationMock;
     private Request requestMock;
-    private AddBrokerGatewayUseCase addBrokerGatewayUseCase;
+    private AddBrokerConnectorUseCase addBrokerConnectorUseCase;
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
@@ -30,12 +30,12 @@ public class AddBrokerGatewayUseCaseTest {
     public void setUp() throws Exception {
         configurationMock = mock(BrokerConnector.class);
         requestMock = mock(Request.class);
-        addBrokerGatewayUseCase = new AddBrokerGatewayUseCase();
+        addBrokerConnectorUseCase = new AddBrokerConnectorUseCase();
     }
 
     @Test(expected = NullArgumentException.class)
     public void WhenCallExecuteWithNull_Exception(){
-        addBrokerGatewayUseCase.execute(null);
+        addBrokerConnectorUseCase.execute(null);
     }
     @Test
     public void whenCallExecuteWithBadFileLocation_Exception(){
@@ -44,14 +44,14 @@ public class AddBrokerGatewayUseCaseTest {
 
         when(configurationMock.getFileLocation()).thenReturn("broker.yaml");
         when(requestMock.getRequestDataStructure()).thenReturn(configurationMock);
-        addBrokerGatewayUseCase.execute(requestMock);
+        addBrokerConnectorUseCase.execute(requestMock);
     }
 
     @Test
     public void WhenCallExecuteWithCorrectRequest_CorrectResult(){
         when(configurationMock.getFileLocation()).thenReturn(TEST_BROKER_CONFIG_FILE_LOCATION);
         when(requestMock.getRequestDataStructure()).thenReturn(configurationMock);
-        Response<BrokerConnector> brokerConnectorResponse = addBrokerGatewayUseCase.execute(requestMock);
+        Response<BrokerConnector> brokerConnectorResponse = addBrokerConnectorUseCase.execute(requestMock);
 
         BrokerConnector configuration = brokerConnectorResponse.getResponseDataStructure();
 

@@ -9,10 +9,10 @@ public enum DataStructureType {
             return "bgxConfiguration";
         }
     },
-    BROKER_GATEWAY{
+    BROKER_CONNECTOR{
         @Override
         public String toString() {
-            return "brokerGateway";
+            return "brokerConnector";
         }
     }
 

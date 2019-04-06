@@ -29,7 +29,7 @@ public class RequestBuilderImpl implements RequestBuilder {
             return buildIndicatorRequest(settings);
         if(controllerName.contains(type(DataStructureType.BGX_CONFIGURATION)))
             return buildBGXConfigurationRequest(settings);
-        if(controllerName.contains(type(DataStructureType.BROKER_GATEWAY)))
+        if(controllerName.contains(type(DataStructureType.BROKER_CONNECTOR)))
             return buildBrokerConnector(settings);
 
         throw new NoSuchDataStructureException();

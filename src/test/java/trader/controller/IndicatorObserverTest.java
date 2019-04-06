@@ -34,7 +34,6 @@ public class IndicatorObserverTest {
 
     private Observer observer;
     private Indicator mockMA;
-    private UpdateIndicatorController mockController;
     private TradingStrategyConfiguration mockConfiguration;
     private Price mockPrice;
     private CommonTestClassMembers commonTestMembers;
@@ -44,30 +43,21 @@ public class IndicatorObserverTest {
 
         this.mockMA = mock(Indicator.class);
         setMockMA();
-        this.mockController = mock(UpdateIndicatorController.class);
         this.mockConfiguration = mock(TradingStrategyConfiguration.class);
         setConfiguration();
-        this.observer = IndicatorObserver.create(this.mockMA, mockController, mockConfiguration);
+        this.observer = IndicatorObserver.create(this.mockMA, mockConfiguration);
         mockPrice = mock(Price.class);
         commonTestMembers = new CommonTestClassMembers();
     }
 
     @Test(expected = NullArgumentException.class)
     public void whenCreateIndicatorObserverWithNullIndicator_ThrowException(){
-        IndicatorObserver.create(null, mockController, mockConfiguration);
-
-
-
-    }
-
-    @Test(expected = NullArgumentException.class)
-    public void WhenCreateIndicatorObserverWithNullUpdateIndicatorController_Exception(){
-        IndicatorObserver.create(mockMA, null, mockConfiguration);
+        IndicatorObserver.create(null, mockConfiguration);
     }
 
     @Test(expected = NullArgumentException.class)
     public void WhenCreateIndicatorObserverWithNullConfiguration_Exception(){
-        IndicatorObserver.create(mockMA, mockController, null);
+        IndicatorObserver.create(mockMA, null);
     }
 
     @Test
@@ -89,7 +79,6 @@ public class IndicatorObserverTest {
         exception.expect(RuntimeException.class);
         exception.expectMessage("Update OK");
 
-        doThrow(new RuntimeException("Update OK")).when(mockController).execute(any(HashMap.class));
         observer.updateObserver(mockPrice);
     }
 
@@ -130,12 +119,7 @@ public class IndicatorObserverTest {
     private List<BigDecimal> makeMockMAToHaveValues(BigDecimal... values){
         List<BigDecimal> mockMAValues = new ArrayList<>(Arrays.asList(values));
         when(mockMA.getValues()).thenReturn(mockMAValues);
-        setControllerToReturnNull();
         return mockMAValues;
-    }
-
-    private void setControllerToReturnNull() {
-        when(mockController.execute(any(HashMap.class))).thenReturn(null);
     }
 
     private void assertInitialSettingsCorrectness(HashMap<String, String> settings) {
