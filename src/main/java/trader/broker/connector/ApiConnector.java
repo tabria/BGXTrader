@@ -10,7 +10,7 @@ import java.util.List;
 public interface ApiConnector extends CandlesUpdaterConnector, PriceConnector {
 
 //    static ApiConnector create(String apiName) {
-//        return BaseConnector.create(apiName);
+//        return BaseGateway.create(apiName);
 //    }
 
     List<Order> getOpenOrders();

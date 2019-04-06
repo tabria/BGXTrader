@@ -3,9 +3,9 @@ package trader.trade.generator;
 import org.junit.Before;
 import org.junit.Test;
 import trader.CommonTestClassMembers;
+import trader.broker.connector.BaseGateway;
 import trader.entity.candlestick.Candlestick;
 import trader.entity.candlestick.candle.CandlePriceType;
-import trader.broker.connector.BaseConnector;
 import trader.entity.indicator.Indicator;
 import trader.entity.indicator.IndicatorUpdateHelper;
 import trader.entity.indicator.ma.SimpleMovingAverage;
@@ -30,7 +30,7 @@ public class BGXTradeGeneratorTest {
 
     private BGXTradeGenerator signalGenerator;
     private CommonTestClassMembers commonMembers;
-    private BaseConnector baseConnector;
+    private BaseGateway baseGateway;
     private CandlePriceType candlePriceType = CandlePriceType.CLOSE;
     private IndicatorUpdateHelper indicatorUpdateHelper;
     private Indicator mockSlowWma;
@@ -51,7 +51,7 @@ public class BGXTradeGeneratorTest {
         this.mockDailySma = mock(SimpleMovingAverage.class);
         this.mockRsi = mock(RelativeStrengthIndex.class);
 
-        this.baseConnector = mock(BaseConnector.class);
+        this.baseGateway = mock(BaseGateway.class);
         this.indicatorUpdateHelper = new IndicatorUpdateHelper(this.candlePriceType);
         init();
         this.commonMembers = new CommonTestClassMembers();
@@ -66,7 +66,7 @@ public class BGXTradeGeneratorTest {
     @Test
     public void WhenInstantiateBGXTraderGenaratorThenGenerateIndicators(){
 
-        this.signalGenerator = new BGXTradeGenerator(baseConnector);
+        this.signalGenerator = new BGXTradeGenerator(baseGateway);
         Indicator fastWMA = (Indicator) commonMembers.extractFieldObject(this.signalGenerator, "fastWMA");
         Indicator middleWMA = (Indicator) commonMembers.extractFieldObject(this.signalGenerator, "middleWMA");
         Indicator slowWMA = (Indicator) commonMembers.extractFieldObject(this.signalGenerator, "slowWMA");
@@ -499,7 +499,7 @@ public class BGXTradeGeneratorTest {
     private void init() {
 //        this.indicatorUpdateHelper.fillCandlestickList();
 //        addExtraCandlesToTestList(170);
-//        when(baseConnector.getInitialCandles()).thenReturn(indicatorUpdateHelper.getCandlestickList());
+//        when(baseGateway.getInitialCandles()).thenReturn(indicatorUpdateHelper.getCandlestickList());
     }
 
     private void addExtraCandlesToTestList(int quantity) {

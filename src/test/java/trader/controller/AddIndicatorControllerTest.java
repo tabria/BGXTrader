@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import trader.configuration.TradingStrategyConfiguration;
+import trader.entity.candlestick.candle.CandleGranularity;
 import trader.entity.indicator.Indicator;
 import trader.exception.BadRequestException;
 import trader.exception.NullArgumentException;
@@ -105,6 +106,9 @@ public class AddIndicatorControllerTest {
         when(useCaseFactoryMock.make(anyString())).thenReturn(useCaseMock);
         when(useCaseMock.execute(requestMock)).thenReturn(responseMock);
         when(requestBuilderMock.build(ADD_INDICATOR_CONTROLLER_NAME, settings)).thenReturn(requestMock);
+        when(configurationMock.getInstrument()).thenReturn("EUR_USD");
+        when(configurationMock.getInitialCandlesQuantity()).thenReturn(12L);
+        when(indicatorMock.getGranularity()).thenReturn(CandleGranularity.H1);
         doThrow(BadRequestException.class).when(priceObservableMock).registerObserver(any(Observer.class));
     }
 

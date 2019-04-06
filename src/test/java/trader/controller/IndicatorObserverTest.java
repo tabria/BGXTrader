@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import trader.CommonTestClassMembers;
 import trader.configuration.TradingStrategyConfiguration;
+import trader.controller.enums.SettingsFieldNames;
 import trader.entity.candlestick.candle.CandleGranularity;
 import trader.entity.indicator.Indicator;
 import trader.exception.NullArgumentException;
@@ -54,6 +55,9 @@ public class IndicatorObserverTest {
     @Test(expected = NullArgumentException.class)
     public void whenCreateIndicatorObserverWithNullIndicator_ThrowException(){
         IndicatorObserver.create(null, mockController, mockConfiguration);
+
+
+
     }
 
     @Test(expected = NullArgumentException.class)

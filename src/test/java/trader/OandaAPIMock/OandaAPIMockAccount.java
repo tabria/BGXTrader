@@ -99,6 +99,10 @@ public class OandaAPIMockAccount extends OandaAPIMock {
                 .thenReturn(orders);
     }
 
+    public void setMockAccountGetResponseToThrowException(){
+        when(mockAccountGetResponse.getAccount()).thenThrow(NullPointerException.class);
+    }
+
     private void init() throws ExecuteException, RequestException {
         when(mockAccountGetResponse.getAccount())
                 .thenReturn(mockAccount);

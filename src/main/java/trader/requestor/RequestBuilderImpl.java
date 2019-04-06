@@ -1,6 +1,6 @@
 package trader.requestor;
 
-import trader.broker.connector.SettableBrokerConnector;
+import trader.broker.connector.BrokerConnector;
 import trader.entity.indicator.Indicator;
 import trader.entity.indicator.ma.MovingAverageBuilder;
 import trader.entity.indicator.rsi.RSIBuilder;
@@ -27,17 +27,17 @@ public class RequestBuilderImpl implements RequestBuilder {
         controllerName = controllerName.trim().toLowerCase();
         if(controllerName.contains(type(DataStructureType.INDICATOR)))
             return buildIndicatorRequest(settings);
-        if(controllerName.contains(type(DataStructureType.BGXCONFIGURATION)))
+        if(controllerName.contains(type(DataStructureType.BGX_CONFIGURATION)))
             return buildBGXConfigurationRequest(settings);
-        if(controllerName.contains(type(DataStructureType.BROKERCONNECTOR)))
+        if(controllerName.contains(type(DataStructureType.BROKER_GATEWAY)))
             return buildBrokerConnector(settings);
 
         throw new NoSuchDataStructureException();
     }
 
     private Request<?> buildBrokerConnector(HashMap<String, String> settings) {
-        Request<SettableBrokerConnector> request = new RequestImpl<>();
-        SettableBrokerConnector brokerConnector = SettableBrokerConnector.create(settings.get(BROKER_NAME));
+        Request<BrokerConnector> request = new RequestImpl<>();
+        BrokerConnector brokerConnector = BrokerConnector.create(settings.get(BROKER_NAME));
         brokerConnector.setFileLocation(settings.get(LOCATION));
         request.setRequestDataStructure(brokerConnector);
         return request;

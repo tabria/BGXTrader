@@ -1,7 +1,7 @@
 package trader.strategy.bgxstrategy;
 
 
-import trader.broker.connector.BaseConnector;
+import trader.broker.connector.BaseGateway;
 import trader.entity.indicator.Indicator;
 import trader.entity.indicator.ma.MovingAverageBuilder;
 import trader.entity.indicator.rsi.RSIBuilder;
@@ -55,13 +55,13 @@ public final class BGXTradeGenerator {
         this.setDefaultTrade();
     }
 
-    public BGXTradeGenerator(BaseConnector baseConnector) {
-//        fastWMA = new MovingAverageBuilder(baseConnector).build(FAST_WMA_SETTINGS);
-//        middleWMA = new MovingAverageBuilder(baseConnector).build(MIDDLE_WMA_SETTINGS);
-//        priceSma = new MovingAverageBuilder(baseConnector).build( PRICE_SMA_SETTINGS);
-//        dailySMA = new MovingAverageBuilder(baseConnector).build(DAILY_SMA_SETTINGS);
-//        slowWMA = new MovingAverageBuilder(baseConnector).build(SLOW_WMA_SETTINGS);
- //       rsi = new RSIBuilder(baseConnector).build(RSI_SETTINGS);
+    public BGXTradeGenerator(BaseGateway baseGateway) {
+//        fastWMA = new MovingAverageBuilder(baseGateway).build(FAST_WMA_SETTINGS);
+//        middleWMA = new MovingAverageBuilder(baseGateway).build(MIDDLE_WMA_SETTINGS);
+//        priceSma = new MovingAverageBuilder(baseGateway).build( PRICE_SMA_SETTINGS);
+//        dailySMA = new MovingAverageBuilder(baseGateway).build(DAILY_SMA_SETTINGS);
+//        slowWMA = new MovingAverageBuilder(baseGateway).build(SLOW_WMA_SETTINGS);
+ //       rsi = new RSIBuilder(baseGateway).build(RSI_SETTINGS);
         fastWMA = new MovingAverageBuilder().build(new HashMap<>());
         middleWMA = new MovingAverageBuilder().build(new HashMap<>());
         priceSma = new MovingAverageBuilder().build( new HashMap<>());

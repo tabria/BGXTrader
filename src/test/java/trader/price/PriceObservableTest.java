@@ -2,7 +2,7 @@ package trader.price;
 
 import org.junit.*;
 import trader.CommonTestClassMembers;
-import trader.broker.BrokerConnector;
+import trader.broker.BrokerGateway;
 import trader.configuration.TradingStrategyConfiguration;
 import trader.exception.BadRequestException;
 import trader.controller.Observer;
@@ -19,7 +19,7 @@ public class PriceObservableTest {
     private PriceObservable priceObservable;
     private Observer observer;
     private CommonTestClassMembers commonMembers;
-    private BrokerConnector mockBrokerConnector;
+    private BrokerGateway mockBrokerGateway;
     private TradingStrategyConfiguration configurationMock;
     private Price mockPrice;
 
@@ -27,23 +27,23 @@ public class PriceObservableTest {
     @Before
     public void before() {
         observer = mock(Observer.class);
-        mockBrokerConnector = mock(BrokerConnector.class);
+        mockBrokerGateway = mock(BrokerGateway.class);
         configurationMock = mock(TradingStrategyConfiguration.class);
-        priceObservable = PriceObservable.create(mockBrokerConnector, configurationMock);
+        priceObservable = PriceObservable.create(mockBrokerGateway, configurationMock);
         commonMembers = new CommonTestClassMembers();
         mockPrice = mock(Price.class);
     }
 
     @Test
     public void WhenCreateThenNewPriceObservable_DifferentObjectcs() {
-        PriceObservable priceObservable2 = PriceObservable.create(mockBrokerConnector, configurationMock);
+        PriceObservable priceObservable2 = PriceObservable.create(mockBrokerGateway, configurationMock);
 
         assertNotSame(priceObservable, priceObservable2);
     }
 
     @Test
     public void WhenCreateNewObjectThenFieldsMustNotBeNull(){
-        Object priceConnector = commonMembers.extractFieldObject(priceObservable, "brokerConnector");
+        Object priceConnector = commonMembers.extractFieldObject(priceObservable, "brokerGateway");
         Object oldPrice = commonMembers.extractFieldObject(priceObservable, "oldPrice");
         Object observers = commonMembers.extractFieldObject(priceObservable, "observers");
         Object configuration = commonMembers.extractFieldObject(priceObservable, "configuration");
@@ -150,7 +150,7 @@ public class PriceObservableTest {
         String instrument = "EUR_USD";
         when(mockPrice.isTradable()).thenReturn(true);
         when(configurationMock.getInstrument()).thenReturn(instrument);
-        when(mockBrokerConnector.getPrice(instrument)).thenReturn(mockPrice);
+        when(mockBrokerGateway.getPrice(instrument)).thenReturn(mockPrice);
         commonMembers.changeFieldObject(priceObservable,"threadSleepInterval",-1L);
         priceObservable.execute();
     }

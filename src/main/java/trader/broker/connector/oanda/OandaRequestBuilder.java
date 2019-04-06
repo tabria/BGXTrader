@@ -5,6 +5,7 @@ import com.oanda.v20.instrument.CandlestickGranularity;
 import com.oanda.v20.instrument.InstrumentCandlesRequest;
 import com.oanda.v20.pricing.PricingGetRequest;
 import com.oanda.v20.primitives.InstrumentName;
+import trader.controller.enums.SettingsFieldNames;
 import trader.entity.candlestick.candle.CandleGranularity;
 import trader.exception.*;
 import trader.interactor.RequestImpl;
@@ -18,9 +19,9 @@ import java.util.List;
 class OandaRequestBuilder implements RequestBuilder {
 
     private static final String ACCOUNT_ID = "accountID";
-    private static final String INSTRUMENT = "instrument";
-    private static final String QUANTITY = "quantity";
-    private static final String GRANULARITY = "granularity";
+    private static final String INSTRUMENT = SettingsFieldNames.INSTRUMENT.toString();
+    private static final String QUANTITY = SettingsFieldNames.QUANTITY.toString();
+    private static final String GRANULARITY = SettingsFieldNames.GRANULARITY.toString();
 
     @Override
     public Request<?> build(String requestType, HashMap<String, String> settings) {
@@ -103,8 +104,6 @@ class OandaRequestBuilder implements RequestBuilder {
             throw new BadRequestException();
         }
     }
-
-
 
     private CandlestickGranularity extractGranularity(String granularity) {
         return CandlestickGranularity.valueOf(granularity);

@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import trader.CommonTestClassMembers;
 import trader.broker.connector.ApiConnector;
-import trader.broker.BrokerConnector;
+import trader.broker.BrokerGateway;
 import trader.controller.Observer;
 import trader.entity.candlestick.candle.CandleGranularity;
 import trader.entity.candlestick.candle.CandlePriceType;
@@ -94,8 +94,8 @@ public class BGXStrategyMainTest {
 
     @Test
     public void WhenCreateWithNullBrokerConfiguration_Exception(){
-        BrokerConnector brokerConnector = bgxStrategyMain.getBrokerConnector();
-        assertNotNull(brokerConnector);
+        BrokerGateway brokerGateway = bgxStrategyMain.getBrokerGateway();
+        assertNotNull(brokerGateway);
     }
 
     @Test
@@ -115,15 +115,15 @@ public class BGXStrategyMainTest {
 
     @Test
     public void WhenAddBrokerConnectorWithCorrectInputs_CorrectAdd(){
-        BrokerConnector brokerConnector = (BrokerConnector) commonMembers.extractFieldObject(bgxStrategyMain, "brokerConnector");
+        BrokerGateway brokerGateway = (BrokerGateway) commonMembers.extractFieldObject(bgxStrategyMain, "brokerGateway");
 
-        String actual = brokerConnector.getClass().getSimpleName();
-        String expected = BROKER_NAME + "Connector";
+        String actual = brokerGateway.getClass().getSimpleName();
+        String expected = BROKER_NAME + "Gateway";
 
         assertEquals(expected, actual);
-        assertNotNull(commonMembers.extractFieldObject(brokerConnector, "url"));
-        assertNotNull(commonMembers.extractFieldObject(brokerConnector, "token"));
-        assertNotNull(commonMembers.extractFieldObject(brokerConnector, "accountID"));
+        assertNotNull(commonMembers.extractFieldObject(brokerGateway, "url"));
+        assertNotNull(commonMembers.extractFieldObject(brokerGateway, "token"));
+        assertNotNull(commonMembers.extractFieldObject(brokerGateway, "accountID"));
     }
 
 

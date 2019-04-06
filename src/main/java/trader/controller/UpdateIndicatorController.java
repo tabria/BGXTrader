@@ -1,6 +1,6 @@
 package trader.controller;
 
-import trader.broker.BrokerConnector;
+import trader.broker.BrokerGateway;
 import trader.exception.NullArgumentException;
 import trader.requestor.RequestBuilder;
 import trader.requestor.UseCaseFactory;
@@ -9,22 +9,24 @@ import trader.configuration.TradingStrategyConfiguration;
 
 import java.util.HashMap;
 
+//to be removed
+
 public class UpdateIndicatorController<T> implements TraderController<T> {
 
     private RequestBuilder requestBuilder;
     private UseCaseFactory useCaseFactory;
     private TradingStrategyConfiguration tradingStrategyConfiguration;
-    private BrokerConnector brokerConnector;
+    private BrokerGateway brokerGateway;
 
-    public UpdateIndicatorController(RequestBuilder requestBuilder, UseCaseFactory useCaseFactory, TradingStrategyConfiguration configuration, BrokerConnector connector) {
+    public UpdateIndicatorController(RequestBuilder requestBuilder, UseCaseFactory useCaseFactory, TradingStrategyConfiguration configuration, BrokerGateway connector) {
         verifyInput(requestBuilder, useCaseFactory, configuration, connector);
         this.requestBuilder = requestBuilder;
         this.useCaseFactory = useCaseFactory;
         this.tradingStrategyConfiguration = configuration;
-        this.brokerConnector = connector;
+        this.brokerGateway = connector;
     }
 
-    private void verifyInput(RequestBuilder requestBuilder, UseCaseFactory useCaseFactory, TradingStrategyConfiguration configuration, BrokerConnector connector) {
+    private void verifyInput(RequestBuilder requestBuilder, UseCaseFactory useCaseFactory, TradingStrategyConfiguration configuration, BrokerGateway connector) {
         if(requestBuilder == null || useCaseFactory == null ||
                 configuration == null || connector == null)
             throw new NullArgumentException();

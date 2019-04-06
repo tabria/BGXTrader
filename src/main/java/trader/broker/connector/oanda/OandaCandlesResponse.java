@@ -1,13 +1,10 @@
 package trader.broker.connector.oanda;
 
-import com.oanda.v20.ExecuteException;
-import com.oanda.v20.RequestException;
 import com.oanda.v20.instrument.*;
 import com.oanda.v20.primitives.DateTime;
 import com.oanda.v20.primitives.InstrumentName;
 import trader.entity.candlestick.candle.Candle;
 import trader.entity.candlestick.Candlestick;
-import trader.exception.BadRequestException;
 
 import java.time.Instant;
 import java.time.ZoneId;
@@ -22,11 +19,11 @@ import static trader.strategy.bgxstrategy.configuration.StrategyConfig.*;
 
 public class OandaCandlesResponse {
 
-    private OandaConnector oandaConnector;
+    private OandaGateway oandaConnector;
     private InstrumentCandlesRequest initialCandlesRequest;
     private InstrumentCandlesRequest updateCandlesRequest;
 
-    OandaCandlesResponse(OandaConnector connector){
+    OandaCandlesResponse(OandaGateway connector){
         oandaConnector = connector;
         initialCandlesRequest = createCandlesRequest(INITIAL_CANDLES_QUANTITY);
         updateCandlesRequest = createCandlesRequest(UPDATE_CANDLES_QUANTITY);

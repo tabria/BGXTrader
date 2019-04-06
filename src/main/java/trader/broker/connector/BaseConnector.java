@@ -1,20 +1,22 @@
 package trader.broker.connector;
 
-import trader.broker.BrokerConnector;
+import trader.exception.EmptyArgumentException;
 import trader.exception.NoSuchConnectorException;
 import trader.exception.NullArgumentException;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-public abstract class BaseConnector implements BrokerConnector, SettableBrokerConnector {
+public abstract class BaseConnector implements BrokerConnector {
 
     private static final String CONNECTOR_LOCATION = "trader.broker.connector.";//oanda.";
     private static final String CONNECTOR_SUFFIX = "Connector";
 
     public static BaseConnector create(String connectorName){
-        if(connectorName == null){
+        if(connectorName == null)
             throw new NullArgumentException();
-        }
+        if(connectorName.trim().isEmpty())
+            throw new EmptyArgumentException();
         return createInstance(connectorName);
     }
 

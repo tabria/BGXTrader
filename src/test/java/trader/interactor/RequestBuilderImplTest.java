@@ -102,9 +102,9 @@ public class RequestBuilderImplTest {
     public void whenCallBuildWithBrokerConfigurationControllerName_ReturnBrokerConfigurationRequest() {
         settings.put("brokerName", CONNECTOR_NAME);
         settings.put("location", BROKER_CONFIG_FILE_NAME);
-        Request<?> brokerConnectorRequest = requestBuilder.build("AddBrokerConnectorController", settings);
+        Request<?> brokerConnectorRequest = requestBuilder.build("AddBrokerGatewayController", settings);
         String actual = brokerConnectorRequest.getRequestDataStructure().getClass().getSimpleName();
-        String expected = CONNECTOR_NAME + "Connector";
+        String expected = CONNECTOR_NAME + "Gateway";
 
         assertEquals(expected, actual);
     }

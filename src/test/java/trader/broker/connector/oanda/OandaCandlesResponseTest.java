@@ -1,7 +1,5 @@
 package trader.broker.connector.oanda;
 
-import com.oanda.v20.ExecuteException;
-import com.oanda.v20.RequestException;
 import com.oanda.v20.instrument.*;
 import org.junit.Before;
 import org.junit.Rule;
@@ -14,13 +12,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.List;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static trader.strategy.bgxstrategy.configuration.StrategyConfig.*;
 
 public class OandaCandlesResponseTest {
@@ -37,13 +32,13 @@ public class OandaCandlesResponseTest {
     private CommonTestClassMembers commonMembers;
     private OandaCandlesResponse candlesResponse;
     private OandaAPIMockInstrument oandaInstrument;
-    private OandaConnector oandaConnector;
+    private OandaGateway oandaConnector;
 
     @Before
     public void setUp()  {
         commonMembers = new CommonTestClassMembers();
         oandaInstrument = new OandaAPIMockInstrument(7);
-        oandaConnector = mock(OandaConnector.class);
+        oandaConnector = mock(OandaGateway.class);
         candlesResponse = new OandaCandlesResponse(oandaConnector);
         oandaInstrument.init(3);
  //       setMockContextToOandaConnector();

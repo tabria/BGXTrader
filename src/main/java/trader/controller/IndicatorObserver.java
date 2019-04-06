@@ -1,6 +1,8 @@
 package trader.controller;
 
+import trader.broker.BrokerGateway;
 import trader.configuration.TradingStrategyConfiguration;
+import trader.controller.enums.SettingsFieldNames;
 import trader.exception.NullArgumentException;
 import trader.entity.indicator.Indicator;
 import trader.price.Price;
@@ -9,13 +11,16 @@ import java.util.HashMap;
 
 public final class IndicatorObserver implements Observer {
 
-    private static final String INSTRUMENT = "instrument";
-    private static final String QUANTITY = "quantity";
-    private static final String GRANULARITY = "granularity";
+    private static final String INSTRUMENT = SettingsFieldNames.INSTRUMENT.toString();
+    private static final String QUANTITY = SettingsFieldNames.QUANTITY.toString();
+    private static final String GRANULARITY = SettingsFieldNames.GRANULARITY.toString();
     private final Indicator indicator;
     private final UpdateIndicatorController controller;
-    private TradingStrategyConfiguration configuration;
+    private final TradingStrategyConfiguration configuration;
     private HashMap<String, String> settings;
+
+    //to be tested
+    private BrokerGateway connector;
 
     private IndicatorObserver(Indicator indicator, UpdateIndicatorController controller , TradingStrategyConfiguration configuration){
         if(indicator == null || controller == null || configuration == null)
@@ -35,6 +40,7 @@ public final class IndicatorObserver implements Observer {
         if (price == null)
             throw new NullArgumentException();
         setUpdateQuantityInSettings();
+        //call connector to get list of candles
         controller.execute(settings);
     }
 

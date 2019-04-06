@@ -2,7 +2,7 @@ package trader.controller;
 
 import org.junit.Before;
 import org.junit.Test;
-import trader.broker.BrokerConnector;
+import trader.broker.BrokerGateway;
 import trader.exception.NullArgumentException;
 import trader.requestor.UseCase;
 import trader.requestor.Request;
@@ -11,34 +11,34 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class AddBrokerConnectorControllerTest extends BaseConfigurationControllerTest<BrokerConnector> {
+public class AddBrokerGatewayControllerTest extends BaseConfigurationControllerTest<BrokerGateway> {
 
-    private static final String BROKER_CONFIGURATION_CONTROLLER = "AddBrokerConnectorController";
+    private static final String BROKER_CONFIGURATION_CONTROLLER = "AddBrokerGatewayController";
 
-    private AddBrokerConnectorController addBrokerConnectorController;
+    private AddBrokerGatewayController addBrokerGatewayController;
 
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        setConfigurationMock(mock(BrokerConnector.class));
-        addBrokerConnectorController = new AddBrokerConnectorController(requestBuilderMock, useCaseFactoryMock);
+        setConfigurationMock(mock(BrokerGateway.class));
+        addBrokerGatewayController = new AddBrokerGatewayController(requestBuilderMock, useCaseFactoryMock);
     }
 
     @Test(expected = NullArgumentException.class)
     public void WhenCreateControllerWithNullRequestBuilder_Exception(){
-        new AddBrokerConnectorController(null, useCaseFactoryMock);
+        new AddBrokerGatewayController(null, useCaseFactoryMock);
     }
 
     @Test(expected = NullArgumentException.class)
     public void WhenCreateControllerWithNullUserCaseFactory_Exception(){
-        new AddBrokerConnectorController(requestBuilderMock, null);
+        new AddBrokerGatewayController(requestBuilderMock, null);
     }
 
     @Test
     public void WhenCallGetRequestWithCorrectSettings_ReturnCorrectResult(){
         when(requestMock.getRequestDataStructure()).thenReturn(configurationMock);
         when(requestBuilderMock.build(BROKER_CONFIGURATION_CONTROLLER, settings)).thenReturn(requestMock);
-        Request<?> configurationRequest = addBrokerConnectorController.getRequest(BROKER_CONFIGURATION_CONTROLLER, settings);
+        Request<?> configurationRequest = addBrokerGatewayController.getRequest(BROKER_CONFIGURATION_CONTROLLER, settings);
 
         assertEquals(configurationMock, configurationRequest.getRequestDataStructure());
     }
@@ -46,7 +46,7 @@ public class AddBrokerConnectorControllerTest extends BaseConfigurationControlle
     @Test
     public void WhenCallMakeWithCorrectSetting_CorrectResult(){
         when(useCaseFactoryMock.make(BROKER_CONFIGURATION_CONTROLLER)).thenReturn(useCaseMock);
-        UseCase useCase = addBrokerConnectorController.make(BROKER_CONFIGURATION_CONTROLLER);
+        UseCase useCase = addBrokerGatewayController.make(BROKER_CONFIGURATION_CONTROLLER);
 
         assertEquals(useCaseMock, useCase);
     }
@@ -54,7 +54,7 @@ public class AddBrokerConnectorControllerTest extends BaseConfigurationControlle
     @Test
     public void WhenCallExecuteWithCorrectSettings_CorrectResponse(){
         setExecuteSettings(BROKER_CONFIGURATION_CONTROLLER);
-        Response<BrokerConnector> brokerConfigurationResponse = addBrokerConnectorController.execute(settings);
+        Response<BrokerGateway> brokerConfigurationResponse = addBrokerGatewayController.execute(settings);
 
         assertEquals(configurationMock, brokerConfigurationResponse.getResponseDataStructure());
     }

@@ -1,22 +1,9 @@
 package trader.broker.connector.oanda;
 
-import com.oanda.v20.Context;
-import com.oanda.v20.ContextBuilder;
-import com.oanda.v20.account.*;
-import com.oanda.v20.pricing.PricingGetResponse;
 import trader.broker.connector.BaseConnector;
-import trader.broker.connector.PriceTransformable;
-import trader.entity.candlestick.Candlestick;
 import trader.exception.BadRequestException;
 import trader.exception.EmptyArgumentException;
 import trader.exception.NullArgumentException;
-import trader.price.Price;
-import trader.requestor.Request;
-import trader.responder.Response;
-
-import java.util.HashMap;
-import java.util.List;
-
 
 public class OandaConnector extends BaseConnector {
 
@@ -24,30 +11,8 @@ public class OandaConnector extends BaseConnector {
     private String url;
     private String token;
     private String accountID;
-    private Context context;
-    private OandaAccountValidator oandaAccountValidator ;
-    private OandaRequestBuilder oandaRequestBuilder;
-    private OandaResponseBuilder oandaResponseBuilder;
-    private OandaCandlesResponse oandaCandlesResponse;
-    private PriceTransformable oandaPriceTransformer;
 
-
-    List<AccountProperties> accountProperties;
-
-
-    public OandaConnector(){
-        oandaAccountValidator = new OandaAccountValidator();
-        oandaRequestBuilder = new OandaRequestBuilder();
-        oandaResponseBuilder = new OandaResponseBuilder();
-
-//        initialize();
-//        try {
-//            accountProperties = context.account.list().getAccounts();
-//        } catch (RequestException | ExecuteException e) {
-//            e.printStackTrace();
-//        }
-
-    }
+    private OandaConnector(){ }
 
     @Override
     public String getFileLocation() {
@@ -93,27 +58,6 @@ public class OandaConnector extends BaseConnector {
         this.accountID = accountId.trim();
     }
 
-    @Override
-    public void validateConnector() {
-        setContext();
-        oandaAccountValidator.validateAccount(this);
-        oandaAccountValidator.validateAccountBalance(this);
-    }
-
-    @Override
-    public Price getPrice(String instrument) {
-        HashMap<String, String> settings = new HashMap<>();
-        settings.put("accountID", accountID);
-        settings.put("instrument", instrument);
-        Request<?> priceRequest = oandaRequestBuilder.build("price", settings);
-        Response<PricingGetResponse> priceResponse = oandaResponseBuilder.buildResponse("price", context, url, priceRequest);
-        return oandaPriceTransformer.transformToPrice(priceResponse);
-    }
-
-    Context getContext(){
-        return context;
-    }
-
     private void validateInputFileLocation(String fileLocation) {
         validateInput(fileLocation);
         if(isNotYamlFile(fileLocation))
@@ -132,69 +76,4 @@ public class OandaConnector extends BaseConnector {
             return false;
         return !fileLocation.contains(".yml");
     }
-
-    private void setContext(){
-        context = new ContextBuilder(url)
-                .setToken(token)
-                .setApplication("Context")
-                .build();
-    }
-
-
-//    @Override
-//    public List<Candlestick> getInitialCandles() {
-//        return oandaCandlesResponse.getInitialCandles();
-//    }
-//
-//    @Override
-//    public Candlestick updateCandle(){
-//        return oandaCandlesResponse.getUpdateCandle();
-//    }
-//
-//    @Override
-//    public List<Order> getOpenOrders() {
-//        return null;
-//    }
-//
-//    @Override
-//    public List<Trade> getOpenTrades() {
-//        return null;
-//    }
-
-
-
-//    AccountID getAccountID(){
-//        return oandaConfig.getAccountID();
-//    }
-//
-//    String getToken(){
-//        return oandaConfig.getToken();
-//    }
-//
-//    String getUrl(){
-//        return oandaConfig.getUrl();
-//    }
-
-//
-//    private void setOandaValidator() {
-//        oandaAccountValidator = new OandaAccountValidator();
-//    }
-//
-//    private void setOandaPriceResponse() {
-//        oandaResponseBuilder = new OandaResponseBuilder(this);
-//    }
-//
-//    private void setOandaCandlesResponse() {
-//        oandaCandlesResponse = new OandaCandlesResponse(this);
-//    }
-//
-//
-//    private void initialize() {
-//        setContext();
-//        setOandaValidator();
-//        validateAccount();
-//        setOandaPriceResponse();
-//        setOandaCandlesResponse();
-//    }
-
 }

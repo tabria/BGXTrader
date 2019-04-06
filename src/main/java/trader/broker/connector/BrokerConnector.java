@@ -1,6 +1,6 @@
 package trader.broker.connector;
 
-public interface SettableBrokerConnector {
+public interface BrokerConnector {
 
     String getFileLocation();
 
@@ -18,9 +18,7 @@ public interface SettableBrokerConnector {
 
     void setAccountID(String accountID);
 
-    void validateConnector();
-
-    static SettableBrokerConnector create(String apiName) {
+    static BaseConnector create(String apiName) {
         return BaseConnector.create(apiName);
     }
 

@@ -6,8 +6,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.yaml.snakeyaml.error.YAMLException;
-import trader.broker.BrokerConnector;
-import trader.broker.connector.SettableBrokerConnector;
+import trader.broker.connector.BrokerConnector;
 import trader.exception.BadRequestException;
 import trader.exception.NullArgumentException;
 import trader.requestor.Request;
@@ -16,27 +15,27 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.powermock.api.mockito.PowerMockito.when;
 
-public class AddBrokerConnectorUseCaseTest {
+public class AddBrokerGatewayUseCaseTest {
 
     private static final String TEST_BROKER_CONFIG_FILE_LOCATION = "oandaBrokerConfig.yaml";
 
-    private SettableBrokerConnector configurationMock;
+    private BrokerConnector configurationMock;
     private Request requestMock;
-    private AddBrokerConnectorUseCase addBrokerConnectorUseCase;
+    private AddBrokerGatewayUseCase addBrokerGatewayUseCase;
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
 
     @Before
     public void setUp() throws Exception {
-        configurationMock = mock(SettableBrokerConnector.class);
+        configurationMock = mock(BrokerConnector.class);
         requestMock = mock(Request.class);
-        addBrokerConnectorUseCase = new AddBrokerConnectorUseCase();
+        addBrokerGatewayUseCase = new AddBrokerGatewayUseCase();
     }
 
     @Test(expected = NullArgumentException.class)
     public void WhenCallExecuteWithNull_Exception(){
-        addBrokerConnectorUseCase.execute(null);
+        addBrokerGatewayUseCase.execute(null);
     }
     @Test
     public void whenCallExecuteWithBadFileLocation_Exception(){
@@ -45,16 +44,16 @@ public class AddBrokerConnectorUseCaseTest {
 
         when(configurationMock.getFileLocation()).thenReturn("broker.yaml");
         when(requestMock.getRequestDataStructure()).thenReturn(configurationMock);
-        addBrokerConnectorUseCase.execute(requestMock);
+        addBrokerGatewayUseCase.execute(requestMock);
     }
 
     @Test
     public void WhenCallExecuteWithCorrectRequest_CorrectResult(){
         when(configurationMock.getFileLocation()).thenReturn(TEST_BROKER_CONFIG_FILE_LOCATION);
         when(requestMock.getRequestDataStructure()).thenReturn(configurationMock);
-        Response<SettableBrokerConnector> brokerConnectorResponse = addBrokerConnectorUseCase.execute(requestMock);
+        Response<BrokerConnector> brokerConnectorResponse = addBrokerGatewayUseCase.execute(requestMock);
 
-        SettableBrokerConnector configuration = brokerConnectorResponse.getResponseDataStructure();
+        BrokerConnector configuration = brokerConnectorResponse.getResponseDataStructure();
 
         assertEquals(configurationMock, configuration);
     }
