@@ -26,6 +26,11 @@ public class WeightedMovingAverageTest extends BaseIndicatorTest {
         this.wma = new WeightedMovingAverage(period, candlePriceType, this.granularity) ;
     }
 
+    @Override
+    public void WhenCallGetGranularity_CorrectResult() {
+        assertEquals(granularity, wma.getGranularity());
+    }
+
     @Test
     public void WhenCreatedThenGetMAValuesReturnEmptyList() {
         assertEquals(0, wma.getValues().size());

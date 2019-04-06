@@ -4,20 +4,15 @@ import com.oanda.v20.instrument.CandlestickData;
 import com.oanda.v20.instrument.InstrumentCandlesResponse;
 import com.oanda.v20.pricing_common.PriceValue;
 import com.oanda.v20.primitives.DateTime;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import trader.entity.candlestick.Candlestick;
 import trader.responder.Response;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
-
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

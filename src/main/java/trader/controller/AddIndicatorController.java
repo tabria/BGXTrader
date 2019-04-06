@@ -1,4 +1,5 @@
 package trader.controller;
+import trader.configuration.TradingStrategyConfiguration;
 import trader.entity.indicator.Indicator;
 import trader.exception.NullArgumentException;
 import trader.requestor.UseCase;
@@ -15,15 +16,17 @@ public class AddIndicatorController<T> implements TraderController<T> {
     private UseCaseFactory useCaseFactory;
     private UpdateIndicatorController updateIndicatorController;
     private Observable priceObservable;
+    private TradingStrategyConfiguration configuration;
 
-    public AddIndicatorController(RequestBuilder requestBuilder, UseCaseFactory useCaseFactory, UpdateIndicatorController updateIndicatorController, Observable priceObservable) {
-        if(requestBuilder == null || useCaseFactory == null
-                || updateIndicatorController == null || priceObservable == null)
+    public AddIndicatorController(RequestBuilder requestBuilder, UseCaseFactory useCaseFactory, UpdateIndicatorController updateIndicatorController, Observable priceObservable, TradingStrategyConfiguration configuration) {
+        if(requestBuilder == null || useCaseFactory == null  || updateIndicatorController == null
+                || priceObservable == null || configuration == null)
             throw new NullArgumentException();
         this.requestBuilder = requestBuilder;
         this.useCaseFactory = useCaseFactory;
         this.updateIndicatorController = updateIndicatorController;
         this.priceObservable = priceObservable;
+        this.configuration = configuration;
     }
 
     public Response<T> execute(HashMap<String, String> settings){
@@ -41,7 +44,7 @@ public class AddIndicatorController<T> implements TraderController<T> {
     }
 
     private IndicatorObserver transformToIndicatorObserver(Response<T> indicatorResponse) {
-        return IndicatorObserver.create((Indicator)indicatorResponse.getResponseDataStructure(), updateIndicatorController);
+        return IndicatorObserver.create((Indicator)indicatorResponse.getResponseDataStructure(), updateIndicatorController, configuration);
     }
 
     private Response<T> getIndicatorResponse(HashMap<String, String> settings) {

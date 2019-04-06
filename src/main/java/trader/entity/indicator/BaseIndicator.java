@@ -8,6 +8,7 @@ import trader.exception.IndicatorPeriodTooBigException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 public abstract class BaseIndicator implements Indicator{
@@ -42,10 +43,17 @@ public abstract class BaseIndicator implements Indicator{
         this.candlestickList = new ArrayList<>();
     }
 
+    @Override
     public List<BigDecimal> getValues() {
         return Collections.unmodifiableList(indicatorValues);
     }
 
+    @Override
+    public CandleGranularity getGranularity(){
+        return granularity;
+    }
+
+    @Override
     public abstract void updateIndicator();
 
     protected abstract void setDivisor();

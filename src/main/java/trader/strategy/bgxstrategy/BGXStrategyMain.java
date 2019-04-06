@@ -62,7 +62,7 @@ public final class BGXStrategyMain implements Strategy {
         brokerConnector = setBrokerConnector(brokerName, brokerConfigurationFileName);
         updateIndicatorController = new UpdateIndicatorController<>(requestBuilder, useCaseFactory, configuration, brokerConnector);
         priceObservable = PriceObservable.create(brokerConnector, configuration);
-        addIndicatorController = new AddIndicatorController<>(requestBuilder, useCaseFactory, updateIndicatorController, priceObservable);
+        addIndicatorController = new AddIndicatorController<>(requestBuilder, useCaseFactory, updateIndicatorController, priceObservable, configuration);
 
         // setApiConnector(connector);
 

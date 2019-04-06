@@ -6,6 +6,7 @@ import com.oanda.v20.account.*;
 import com.oanda.v20.pricing.PricingGetResponse;
 import trader.broker.connector.BaseConnector;
 import trader.broker.connector.PriceTransformable;
+import trader.entity.candlestick.Candlestick;
 import trader.exception.BadRequestException;
 import trader.exception.EmptyArgumentException;
 import trader.exception.NullArgumentException;
@@ -139,7 +140,7 @@ public class OandaConnector extends BaseConnector {
                 .build();
     }
 
-//
+
 //    @Override
 //    public List<Candlestick> getInitialCandles() {
 //        return oandaCandlesResponse.getInitialCandles();

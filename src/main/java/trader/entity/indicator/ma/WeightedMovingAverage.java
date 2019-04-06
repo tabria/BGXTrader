@@ -6,6 +6,7 @@ import trader.entity.candlestick.Candlestick;
 import trader.entity.indicator.BaseIndicator;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 
 public final class WeightedMovingAverage extends BaseIndicator {

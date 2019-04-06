@@ -23,6 +23,11 @@ public class SimpleMovingAverageTest extends BaseIndicatorTest {
         this.sma = new SimpleMovingAverage(this.period, this.candlePriceType,  this.granularity);
     }
 
+    @Override
+    public void WhenCallGetGranularity_CorrectResult() {
+        assertEquals(granularity, sma.getGranularity());
+    }
+
     @Test
     public void WhenCreatedThenGetMAValuesReturnEmptyList() {
         assertEquals(0, sma.getValues().size());

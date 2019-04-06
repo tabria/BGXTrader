@@ -1,5 +1,6 @@
 package trader.entity.indicator;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import trader.entity.candlestick.candle.CandleGranularity;
@@ -11,6 +12,8 @@ import java.math.BigDecimal;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
+
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 public abstract class BaseIndicatorTest {
@@ -39,6 +42,9 @@ public abstract class BaseIndicatorTest {
         setPeriod();
         setCandlesUpdater();
     }
+
+    @Test
+    public abstract void WhenCallGetGranularity_CorrectResult();
 
     @Test(expected = UnsupportedOperationException.class )
     public abstract void getValuesReturnImmutableResult();

@@ -21,6 +21,11 @@ public class RelativeStrengthIndexTest extends BaseIndicatorTest {
         this.rsi = new RelativeStrengthIndex(this.period, this.candlePriceType, this.granularity);
     }
 
+    @Override
+    public void WhenCallGetGranularity_CorrectResult() {
+        assertEquals(granularity, rsi.getGranularity());
+    }
+
     @Test
     public void WhenCreateRSI_ThenNoValues(){
         assertEquals(0, rsi.getValues().size());
