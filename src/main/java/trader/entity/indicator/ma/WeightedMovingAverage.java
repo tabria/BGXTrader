@@ -25,7 +25,7 @@ public final class WeightedMovingAverage extends BaseIndicator {
 
 
     @Override
-    public void updateIndicator() {
+    public void updateIndicator(List<Candlestick> candles) {
 //        candlesUpdater.getUpdatedCandle();
 //        List<Candlestick> candles = candlesUpdater.getCandles();
 //        indicatorValues.add(calculateWMAValue(candles, candles.size() - 1));
