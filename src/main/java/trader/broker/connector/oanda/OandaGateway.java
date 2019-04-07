@@ -2,18 +2,14 @@ package trader.broker.connector.oanda;
 
 import com.oanda.v20.Context;
 import com.oanda.v20.ContextBuilder;
-import com.oanda.v20.ExecuteException;
-import com.oanda.v20.RequestException;
 import com.oanda.v20.account.*;
 import com.oanda.v20.instrument.InstrumentCandlesResponse;
 import com.oanda.v20.pricing.PricingGetResponse;
 import trader.broker.connector.*;
 import trader.entity.candlestick.Candlestick;
-import trader.exception.BadRequestException;
 import trader.price.Price;
 import trader.requestor.Request;
 import trader.responder.Response;
-import trader.trade.entitie.Trade;
 
 import java.util.HashMap;
 import java.util.List;
@@ -51,14 +47,6 @@ public class OandaGateway extends BaseGateway {
         oandaCandlesTransformer = new OandaCandleTransformer();
         priceSettings = setAccount();
         accountSettings = setAccount();
-
-//        initialize();
-//        try {
-//            accountProperties = context.account.list().getAccounts();
-//        } catch (RequestException | ExecuteException e) {
-//            e.printStackTrace();
-//        }
-
     }
 
     @Override
@@ -84,29 +72,25 @@ public class OandaGateway extends BaseGateway {
     }
 
     @Override
-    public int totalTradesSize() {
-        Request<?> accountRequest = oandaRequestBuilder.build(ACCOUNT_ID, accountSettings);
-        Response<Account> accountResponse = oandaResponseBuilder.buildResponse(ACCOUNT_ID, accountRequest);
-        Account account = accountResponse.getResponseDataStructure();
+    public int totalOpenTradesSize() {
+        Account account = getAccount();
         return account.getTrades().size();
+    }
 
-
-//
-//        int size = 0;
-//        AccountID accountID = new AccountID(connector.getAccountID());
-//        try {
-//            Account account = this.context.account.get(accountID).getAccount();
-//            size = account.getTrades().size();
-//        } catch (RequestException | ExecuteException e) {
-//            throw new BadRequestException();
-//        } catch (NullPointerException e) {
-//            throw e;
-//        }
-//        return size;
+    @Override
+    public int totalOpenOrdersSize() {
+        Account account = getAccount();
+        return account.getOrders().size();
     }
 
     Context getContext(){
         return context;
+    }
+
+    private Account getAccount(){
+        Request<?> accountRequest = oandaRequestBuilder.build(ACCOUNT_ID, accountSettings);
+        Response<Account> accountResponse = oandaResponseBuilder.buildResponse(ACCOUNT_ID, accountRequest);
+        return accountResponse.getResponseDataStructure();
     }
 
     private void setContext(){

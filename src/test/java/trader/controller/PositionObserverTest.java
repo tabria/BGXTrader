@@ -1,6 +1,5 @@
 package trader.controller;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import trader.CommonTestClassMembers;
@@ -29,7 +28,7 @@ public class PositionObserverTest {
 
     @Test(expected = NullArgumentException.class)
     public void WhenCreatePositionObserverWithNullBrokerGateway_Exception(){
-        PositionObserver positionObserver = new PositionObserver(null);
+        new PositionObserver(null);
     }
 
     @Test
@@ -39,7 +38,8 @@ public class PositionObserverTest {
 
     @Test
     public void WhenNoOpenTradesAndNoOpenOrders_CallTradeController(){
-       // when(brokerGatewayMock.numberOfOpenTrades())
+        when(brokerGatewayMock.totalOpenTradesSize()).thenReturn(0);
+        when(brokerGatewayMock.totalOpenOrdersSize()).thenReturn(0);
     }
 
 }

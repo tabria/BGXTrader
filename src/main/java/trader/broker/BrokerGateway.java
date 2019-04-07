@@ -13,7 +13,8 @@ public interface BrokerGateway {
     Price getPrice(String instrument);
     List<Candlestick> getCandles(HashMap<String, String> settings);
     void validateConnector();
-    int totalTradesSize();
+    int totalOpenTradesSize();
+    int totalOpenOrdersSize();
 //    List<Trade> getOpenTrades();
 
 //    List<Order> getOpenOrders();

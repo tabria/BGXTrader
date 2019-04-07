@@ -2,12 +2,10 @@ package trader.broker.connector.oanda;
 
 import com.oanda.v20.Context;
 import com.oanda.v20.account.Account;
-import com.oanda.v20.pricing.PricingGetResponse;
 import com.oanda.v20.trade.TradeSummary;
 import org.junit.Before;
 import org.junit.Test;
 import trader.CommonTestClassMembers;
-import trader.OandaAPIMock.OandaAPIMockAccount;
 import trader.broker.connector.BaseGateway;
 import trader.broker.connector.BrokerConnector;
 import trader.entity.candlestick.Candlestick;
@@ -100,17 +98,26 @@ public class OandaGatewayTest {
     }
 
     @Test
-    public void WhenCallTotalTradesSize_CorrectReturnValue(){
+    public void WhenCallTotalOpenTradesSize_CorrectReturnValue(){
         List<TradeSummary> trades = new ArrayList<>();
-        setFakeContext();
-        setFakeBuilders();
         setFakeTradeSummary(trades);
 
-        assertEquals(0,  oandaGateway.totalTradesSize());
+        assertEquals(0,  oandaGateway.totalOpenTradesSize());
     }
+
+    @Test
+    public void WhenCallTotalOpenOrdersSize_CorrectReturnValue(){
+        List<TradeSummary> trades = new ArrayList<>();
+        setFakeTradeSummary(trades);
+
+        assertEquals(0,  oandaGateway.totalOpenOrdersSize());
+    }
+
 
     private void setFakeTradeSummary(List<TradeSummary> trades) {
         Account accountMock = mock(Account.class);
+        setFakeContext();
+        setFakeBuilders();
         when(responseMock.getResponseDataStructure()).thenReturn(accountMock);
         when(accountMock.getTrades()).thenReturn(trades);
     }
