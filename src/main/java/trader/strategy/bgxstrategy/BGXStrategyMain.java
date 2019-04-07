@@ -7,6 +7,8 @@ import trader.controller.TraderController;
 import trader.broker.connector.ApiConnector;
 import trader.controller.*;
 import trader.entity.indicator.Indicator;
+import trader.observer.Observer;
+import trader.observer.UpdateIndicatorObserver;
 import trader.requestor.RequestBuilderImpl;
 import trader.requestor.UseCaseFactoryImpl;
 import trader.requestor.RequestBuilder;
@@ -22,6 +24,7 @@ import trader.exit.exit_strategie.BaseExitStrategy;
 import trader.exit.ExitStrategy;
 import trader.strategy.observable.PricePull;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -35,6 +38,7 @@ public final class BGXStrategyMain implements Strategy {
 
     private RequestBuilder requestBuilder;
     private UseCaseFactory useCaseFactory;
+    private List<Indicator> indicatorList;
     private TradingStrategyConfiguration configuration;
     private BrokerGateway brokerGateway;
     private Observable priceObservable;
@@ -52,16 +56,16 @@ public final class BGXStrategyMain implements Strategy {
         configuration = setConfiguration(configurationFileName);
         brokerGateway = setBrokerGateway(brokerName, brokerConfigurationFileName);
         priceObservable = PriceObservable.create(brokerGateway, configuration);
-        addIndicatorsFromConfiguration(configuration.getIndicators());
+        indicatorList = createIndicatorsFromConfiguration(configuration.getIndicators());
 
 
         orderStrategy = new OrderService(apiConnector);
         exitStrategy = BaseExitStrategy.createInstance();
-     //   init();
     }
 
     @Override
     public void execute() {
+        addIndicatorsToObservable(priceObservable, indicatorList);
         new PricePull("PricePull", priceObservable);
 
 
@@ -86,11 +90,35 @@ public final class BGXStrategyMain implements Strategy {
         return brokerGateway;
     }
 
-    void addIndicatorsFromConfiguration(List<HashMap<String, String>> indicators){
-        TraderController<Indicator> addIndicatorController = new AddIndicatorController<>(requestBuilder, useCaseFactory, priceObservable, configuration, brokerGateway);
-        for (HashMap<String, String> indicator :indicators)
-            addIndicatorController.execute(indicator);
+//    void addIndicatorsFromConfiguration(List<HashMap<String, String>> indicators){
+//        TraderController<Indicator> addIndicatorController = new CreateIndicatorController<>(requestBuilder, useCaseFactory, priceObservable, configuration, brokerGateway);
+//        for (HashMap<String, String> indicator :indicators)
+//            addIndicatorController.execute(indicator);
+//    }
+
+
+    List<Indicator> createIndicatorsFromConfiguration(List<HashMap<String, String>> indicators){
+        TraderController<Indicator> addIndicatorController = new CreateIndicatorController<>(requestBuilder, useCaseFactory);
+        List<Indicator> indicatorList = new ArrayList<>();
+        for (HashMap<String, String> indicator :indicators) {
+            Response<Indicator> indicatorResponse = addIndicatorController.execute(indicator);
+            indicatorList.add(indicatorResponse.getResponseDataStructure());
+        }
+        return indicatorList;
     }
+
+    // not tested/////////
+    void addIndicatorsToObservable(Observable observable, List<Indicator> indicators){
+        for (Indicator indicator:indicators) {
+            observable.registerObserver(
+            new UpdateIndicatorObserver(indicator, configuration, brokerGateway));
+        }
+    }
+
+    private void addIndicatorsToBGXGenerator(){
+
+    }
+///// not tested//////////////
 
     private TradingStrategyConfiguration setConfiguration(String configurationFileName) {
         HashMap<String, String> settings = new HashMap<>();

@@ -2,7 +2,7 @@ package trader.observer;
 
 import org.junit.Before;
 import org.junit.Test;
-import trader.controller.AddIndicatorController;
+import trader.controller.CreateIndicatorController;
 import trader.controller.AddTradeController;
 import trader.controller.TraderController;
 import trader.exception.NullArgumentException;
@@ -21,7 +21,7 @@ public class PositionObserverTest extends BaseObserverTest {
     @Before
     public void setUp(){
         super.before();
-        addTradeControllerMock = mock(AddIndicatorController.class);
+        addTradeControllerMock = mock(CreateIndicatorController.class);
         positionObserver = new PositionObserver(mockConfiguration, brokerGatewayMock);
 
     }

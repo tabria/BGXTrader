@@ -11,7 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class AddBGXControllerTest extends BaseControllerTest<TradingStrategyConfiguration> {
+public class AddBGXConfigurationControllerTest extends BaseControllerTest<TradingStrategyConfiguration> {
 
     private static final String BGX_CONFIGURATION_CONTROLLER = "AddBGXConfigurationController";
 

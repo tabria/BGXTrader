@@ -5,7 +5,7 @@ import trader.requestor.Request;
 import trader.requestor.UseCase;
 import trader.responder.Response;
 
-public class AddIndicatorUseCase implements UseCase {
+public class CreateIndicatorUseCase implements UseCase {
 
 
     @Override

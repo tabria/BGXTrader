@@ -11,14 +11,14 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class AddIndicatorUseCaseTest {
+public class CreateIndicatorUseCaseTest {
 
     private UseCase addIndicatorUseCase;
     private Request request;
     
     @Before
     public void setUp() throws Exception {
-        addIndicatorUseCase = new AddIndicatorUseCase();
+        addIndicatorUseCase = new CreateIndicatorUseCase();
         request = mock(Request.class);
     }
 

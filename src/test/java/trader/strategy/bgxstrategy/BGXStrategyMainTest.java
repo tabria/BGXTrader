@@ -10,6 +10,7 @@ import trader.entity.candlestick.candle.CandlePriceType;
 import trader.entity.indicator.Indicator;
 import trader.exception.NullArgumentException;
 import trader.configuration.TradingStrategyConfiguration;
+import trader.strategy.Observable;
 import trader.strategy.observable.PriceObservable;
 
 import java.math.BigDecimal;
@@ -100,10 +101,20 @@ public class BGXStrategyMainTest {
     }
 
     @Test
+    public void WhenCallCreateIndicatorsFromConfiguration_CorrectResult(){
+        List<Indicator> indicatorsFromConfiguration = bgxStrategyMain.createIndicatorsFromConfiguration(falseIndicators);
+
+        assertEquals(falseIndicators.size(), indicatorsFromConfiguration.size());
+        assertIndicatorsEquality(indicatorsFromConfiguration);
+    }
+
+    @Test
     public void addIndicatorsToPriceObservable_CorrectResult(){
-        extractObservers().clear();
-        bgxStrategyMain.addIndicatorsFromConfiguration(falseIndicators);
-        CopyOnWriteArrayList<Observer> observers = extractObservers();
+        PriceObservable priceObservable = extractPriceObservable();
+        extractObservers(priceObservable).clear();
+        List<Indicator> indicatorsFromConfiguration = bgxStrategyMain.createIndicatorsFromConfiguration(falseIndicators);
+        bgxStrategyMain.addIndicatorsToObservable(priceObservable, indicatorsFromConfiguration);
+        CopyOnWriteArrayList<Observer> observers = extractObservers(priceObservable);
 
         assertEquals(falseIndicators.size(), observers.size());
         assertEqualsFalseIndicatorsToObservers(observers);
@@ -121,23 +132,34 @@ public class BGXStrategyMainTest {
         assertNotNull(commonMembers.extractFieldObject(brokerGateway, "context"));
     }
 
-
-
-
     private void assertEqualsFalseIndicatorsToObservers(CopyOnWriteArrayList<Observer> observers) {
         for (int i = 0; i <falseIndicators.size() ; i++) {
             HashMap<String, String> falseIndicator = falseIndicators.get(i);
             Indicator indicator = (Indicator) commonMembers.extractFieldObject(observers.get(i), "indicator");
-            assertPeriod(falseIndicator, indicator);
-            assertCandlePriceType(falseIndicator, indicator);
-            assertGranularity(falseIndicator, indicator);
+            assertEqualsFalseIndicatorToReal(falseIndicator, indicator);
         }
     }
 
+    private void assertIndicatorsEquality(List<Indicator> indicators) {
+        for (int i = 0; i <falseIndicators.size() ; i++) {
+            HashMap<String, String> falseIndicator = falseIndicators.get(i);
+            assertEqualsFalseIndicatorToReal(falseIndicator, indicators.get(i));
+        }
+    }
+
+    private void assertEqualsFalseIndicatorToReal(HashMap<String, String> falseIndicator, Indicator indicator) {
+        assertPeriod(falseIndicator, indicator);
+        assertCandlePriceType(falseIndicator, indicator);
+        assertGranularity(falseIndicator, indicator);
+    }
+
     @SuppressWarnings("unchecked")
-    private CopyOnWriteArrayList<Observer> extractObservers() {
-        PriceObservable priceObservable = (PriceObservable) commonMembers.extractFieldObject(bgxStrategyMain, "priceObservable");
-        return (CopyOnWriteArrayList<Observer>) commonMembers.extractFieldObject(priceObservable, "observers");
+    private CopyOnWriteArrayList<Observer> extractObservers(Observable observable) {
+        return (CopyOnWriteArrayList<Observer>) commonMembers.extractFieldObject(observable, "observers");
+    }
+
+    private PriceObservable extractPriceObservable() {
+        return (PriceObservable) commonMembers.extractFieldObject(bgxStrategyMain, "priceObservable");
     }
 
     private void assertGranularity(HashMap<String, String> falseIndicator, Indicator indicator) {

@@ -52,31 +52,31 @@ public class RequestBuilderImplTest {
 
     @Test(expected = EmptyArgumentException.class)
     public void whenBuildIndicatorWithZeroLengthSettings_Exception(){
-        requestBuilder.build("AddIndicatorController", settings);
+        requestBuilder.build("CreateIndicatorController", settings);
     }
 
     @Test(expected = WrongIndicatorSettingsException.class)
     public void whenBuildIndicatorWithoutTypeInSettings_Exception(){
         settings.put("ro", "ds");
-        requestBuilder.build("AddIndicatorController", settings);
+        requestBuilder.build("CreateIndicatorController", settings);
     }
 
     @Test(expected = WrongIndicatorSettingsException.class)
     public void WhenBuildIndicatorWithNullTypeValue_Exception(){
         settings.put("type", null);
-        requestBuilder.build("AddIndicatorController", settings);
+        requestBuilder.build("CreateIndicatorController", settings);
     }
 
     @Test(expected = WrongIndicatorSettingsException.class)
     public void WhenBuildIndicatorWithEmptyTypeValue_Exception(){
         settings.put("type", "");
-        requestBuilder.build("AddIndicatorController", settings);
+        requestBuilder.build("CreateIndicatorController", settings);
     }
 
     @Test
     public void whenCallBuildWithRSIIndicatorDataStructureName_ReturnRSIRequest(){
         settings.put("type", "rsi");
-        Request<?> rsiIndicatorRequest = requestBuilder.build("AddIndicatorController", settings);
+        Request<?> rsiIndicatorRequest = requestBuilder.build("CreateIndicatorController", settings);
 
         assertEquals(RelativeStrengthIndex.class, rsiIndicatorRequest.getRequestDataStructure().getClass());
     }
@@ -85,7 +85,7 @@ public class RequestBuilderImplTest {
     @Test
     public void whenCallBuildWithMovingAverageIndicatorDataStructureName_ReturnMARequest(){
         settings.put("type", "sma");
-        Request<?> smaIndicator = requestBuilder.build("AddIndicatorController", settings);
+        Request<?> smaIndicator = requestBuilder.build("CreateIndicatorController", settings);
 
         assertEquals(SimpleMovingAverage.class, smaIndicator.getRequestDataStructure().getClass());
     }

@@ -41,10 +41,10 @@ public class UseCaseFactoryImplTest {
 
     @Test
     public void WhenCallWithCorrectUseCaseName_ReturnCorrectObject(){
-        UseCase useCase = useCaseFactory.make("AddIndicatorController");
-        UseCase spacedUseCase = useCaseFactory.make("   AddIndicatorController   ");
+        UseCase useCase = useCaseFactory.make("CreateIndicatorController");
+        UseCase spacedUseCase = useCaseFactory.make("   CreateIndicatorController   ");
 
-        assertEquals(AddIndicatorUseCase.class, useCase.getClass());
-        assertEquals(AddIndicatorUseCase.class, spacedUseCase.getClass());
+        assertEquals(CreateIndicatorUseCase.class, useCase.getClass());
+        assertEquals(CreateIndicatorUseCase.class, spacedUseCase.getClass());
     }
 }

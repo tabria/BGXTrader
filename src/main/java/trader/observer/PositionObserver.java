@@ -12,7 +12,7 @@ public class PositionObserver extends BaseObserver {
 
     public PositionObserver(TradingStrategyConfiguration configuration, BrokerGateway brokerGateway){
         super(configuration, brokerGateway);
-        addTradeController = new AddTradeController<>();
+        addTradeController = new AddTradeController<>(brokerGateway, configuration);
     }
 
 //    private Context context;
