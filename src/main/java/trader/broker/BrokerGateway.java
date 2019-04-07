@@ -2,7 +2,6 @@ package trader.broker;
 
 import trader.entity.candlestick.Candlestick;
 import trader.price.Price;
-import trader.trade.entitie.Trade;
 
 import java.util.HashMap;
 import java.util.List;

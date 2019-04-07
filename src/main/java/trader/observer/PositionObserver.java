@@ -1,18 +1,14 @@
-package trader.controller;
+package trader.observer;
 
 import trader.broker.BrokerGateway;
-import trader.exception.NullArgumentException;
+import trader.configuration.TradingStrategyConfiguration;
 import trader.price.Price;
 
-public class PositionObserver implements Observer {
-
-    private BrokerGateway brokerGateway;
+public class PositionObserver extends BaseObserver {
 
 
-    public PositionObserver(BrokerGateway brokerGateway){
-        if(brokerGateway == null)
-            throw new NullArgumentException();
-        this.brokerGateway = brokerGateway;
+    public PositionObserver(TradingStrategyConfiguration configuration, BrokerGateway brokerGateway){
+        super(configuration, brokerGateway);
     }
 
 //    private Context context;
@@ -42,7 +38,10 @@ public class PositionObserver implements Observer {
 //
     @Override
     public void updateObserver(Price price) {
-
+        if(brokerGateway.totalOpenTradesSize() == 0 &&
+                brokerGateway.totalOpenOrdersSize() == 0){
+          //  tradeController.execute(price);
+        }
     }
 
     BrokerGateway getBrokerGateway() {

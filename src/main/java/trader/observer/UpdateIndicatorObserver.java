@@ -1,4 +1,4 @@
-package trader.controller;
+package trader.observer;
 
 import trader.broker.BrokerGateway;
 import trader.configuration.TradingStrategyConfiguration;
@@ -11,36 +11,41 @@ import trader.price.Price;
 import java.util.HashMap;
 import java.util.List;
 
-public final class UpdateIndicatorObserver implements Observer {
+public final class UpdateIndicatorObserver extends BaseObserver {
 
     private static final String INSTRUMENT = SettingsFieldNames.INSTRUMENT.toString();
     private static final String QUANTITY = SettingsFieldNames.QUANTITY.toString();
     private static final String GRANULARITY = SettingsFieldNames.GRANULARITY.toString();
+
     private final Indicator indicator;
-    private final TradingStrategyConfiguration configuration;
-    private BrokerGateway gateway;
     private HashMap<String, String> settings;
 
+//    private UpdateIndicatorObserver(Indicator indicator, TradingStrategyConfiguration configuration, BrokerGateway gateway){
+//        super(configuration, gateway);
+//        if(indicator == null)
+//            throw new NullArgumentException();
+//        this.indicator = indicator;
+//        this.settings = initializeSettings();
+//    }
 
-    private UpdateIndicatorObserver(Indicator indicator, TradingStrategyConfiguration configuration, BrokerGateway gateway){
-        if(indicator == null || configuration == null || gateway == null)
+    public UpdateIndicatorObserver(Indicator indicator, TradingStrategyConfiguration configuration, BrokerGateway gateway){
+        super(configuration, gateway);
+        if(indicator == null)
             throw new NullArgumentException();
         this.indicator = indicator;
-        this.configuration = configuration;
-        this.gateway = gateway;
         this.settings = initializeSettings();
     }
 
-    public static UpdateIndicatorObserver create(Indicator indicator, TradingStrategyConfiguration configuration, BrokerGateway gateway){
-        return new UpdateIndicatorObserver(indicator, configuration, gateway);
-    }
+//    public static UpdateIndicatorObserver create(Indicator indicator, TradingStrategyConfiguration configuration, BrokerGateway gateway){
+//        return new UpdateIndicatorObserver(indicator, configuration, gateway);
+//    }
 
     @Override
     public void updateObserver(Price price) {
         if (price == null)
             throw new NullArgumentException();
         setUpdateQuantityInSettings();
-        List<Candlestick> candles = gateway.getCandles(settings);
+        List<Candlestick> candles = brokerGateway.getCandles(settings);
         indicator.updateIndicator(candles);
     }
 

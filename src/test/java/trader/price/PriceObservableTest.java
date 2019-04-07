@@ -5,7 +5,7 @@ import trader.CommonTestClassMembers;
 import trader.broker.BrokerGateway;
 import trader.configuration.TradingStrategyConfiguration;
 import trader.exception.BadRequestException;
-import trader.controller.Observer;
+import trader.observer.Observer;
 import trader.exception.NullArgumentException;
 import trader.strategy.observable.PriceObservable;
 import java.lang.reflect.InvocationTargetException;

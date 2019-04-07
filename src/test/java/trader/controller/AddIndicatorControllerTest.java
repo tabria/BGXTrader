@@ -9,6 +9,7 @@ import trader.entity.candlestick.candle.CandleGranularity;
 import trader.entity.indicator.Indicator;
 import trader.exception.BadRequestException;
 import trader.exception.NullArgumentException;
+import trader.observer.Observer;
 import trader.requestor.UseCase;
 import trader.requestor.Request;
 import trader.requestor.RequestBuilder;

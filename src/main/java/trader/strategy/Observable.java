@@ -1,6 +1,6 @@
 package trader.strategy;
 
-import trader.controller.Observer;
+import trader.observer.Observer;
 import trader.price.Price;
 
 public interface Observable {

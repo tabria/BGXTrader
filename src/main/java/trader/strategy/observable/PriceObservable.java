@@ -2,7 +2,7 @@ package trader.strategy.observable;
 
 import trader.broker.BrokerGateway;
 import trader.configuration.TradingStrategyConfiguration;
-import trader.controller.Observer;
+import trader.observer.Observer;
 import trader.exception.NullArgumentException;
 import trader.price.Price;
 import trader.price.PriceImpl;

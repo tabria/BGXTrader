@@ -4,10 +4,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import trader.exception.EmptyArgumentException;
-import trader.exception.NoSuchConnectorException;
+import trader.exception.NoSuchGatewayException;
 import trader.exception.NullArgumentException;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class BaseGatewayTest {
 
@@ -18,6 +19,7 @@ public class BaseGatewayTest {
     @Before
     public void setUp() throws Exception {
         connectorMock = mock(BrokerConnector.class);
+        when(connectorMock.getUrl()).thenReturn("xxx.como");
     }
 
     @Test (expected = NullArgumentException.class)
@@ -52,7 +54,7 @@ public class BaseGatewayTest {
     }
 
 
-   @Test(expected = NoSuchConnectorException.class)
+   @Test(expected = NoSuchGatewayException.class)
    public void createBrokerGatewayWithNotExistingName(){
        BaseGateway.create("KRAMBA", connectorMock);
    }

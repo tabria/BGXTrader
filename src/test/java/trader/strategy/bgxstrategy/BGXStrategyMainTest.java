@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import trader.CommonTestClassMembers;
 import trader.broker.BrokerGateway;
-import trader.controller.Observer;
+import trader.observer.Observer;
 import trader.entity.candlestick.candle.CandleGranularity;
 import trader.entity.candlestick.candle.CandlePriceType;
 import trader.entity.indicator.Indicator;

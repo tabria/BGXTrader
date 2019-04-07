@@ -108,7 +108,7 @@ public class Main {
 
  //       Observable priceObserver = PriceObservable.create(context);
 
-//        //create observers
+//        //create observer
 //        Observer smaPriceObserver = UpdateIndicatorObserver.create(smaPrice);
 //        Observer dailyPriceObserver = UpdateIndicatorObserver.create(dailyPrice);
 //        Observer wmaFastObserver = UpdateIndicatorObserver.create(wmaFast);

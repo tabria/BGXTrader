@@ -3,6 +3,7 @@ import trader.broker.BrokerGateway;
 import trader.configuration.TradingStrategyConfiguration;
 import trader.entity.indicator.Indicator;
 import trader.exception.NullArgumentException;
+import trader.observer.UpdateIndicatorObserver;
 import trader.requestor.UseCase;
 import trader.requestor.Request;
 import trader.requestor.RequestBuilder;
@@ -45,7 +46,7 @@ public class AddIndicatorController<T> implements TraderController<T> {
     }
 
     private UpdateIndicatorObserver transformToIndicatorObserver(Response<T> indicatorResponse) {
-        return UpdateIndicatorObserver.create((Indicator)indicatorResponse.getResponseDataStructure(), configuration, gateway);
+        return new UpdateIndicatorObserver((Indicator)indicatorResponse.getResponseDataStructure(), configuration, gateway);
     }
 
     private Response<T> getIndicatorResponse(HashMap<String, String> settings) {
