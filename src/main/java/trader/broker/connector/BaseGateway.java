@@ -3,9 +3,13 @@ package trader.broker.connector;
 import trader.broker.BrokerGateway;
 import trader.exception.EmptyArgumentException;
 import trader.exception.NoSuchConnectorException;
+import trader.exception.NoSuchGatewayException;
 import trader.exception.NullArgumentException;
+import trader.trade.entitie.Trade;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 
 public abstract class BaseGateway implements BrokerGateway {
 
@@ -28,7 +32,7 @@ public abstract class BaseGateway implements BrokerGateway {
             return (BaseGateway) gatewayConstructor.newInstance(brokerConnector);
 
         } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
-            throw new NoSuchConnectorException();
+            throw new NoSuchGatewayException();
         }
     }
 

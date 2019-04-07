@@ -1,5 +1,4 @@
 package trader.controller;
-import com.sun.corba.se.pept.broker.Broker;
 import trader.broker.BrokerGateway;
 import trader.configuration.TradingStrategyConfiguration;
 import trader.entity.indicator.Indicator;
@@ -45,8 +44,8 @@ public class AddIndicatorController<T> implements TraderController<T> {
         return useCaseFactory.make(controllerName);
     }
 
-    private UpdateIndicatorController transformToIndicatorObserver(Response<T> indicatorResponse) {
-        return UpdateIndicatorController.create((Indicator)indicatorResponse.getResponseDataStructure(), configuration, gateway);
+    private UpdateIndicatorObserver transformToIndicatorObserver(Response<T> indicatorResponse) {
+        return UpdateIndicatorObserver.create((Indicator)indicatorResponse.getResponseDataStructure(), configuration, gateway);
     }
 
     private Response<T> getIndicatorResponse(HashMap<String, String> settings) {

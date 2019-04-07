@@ -2,14 +2,18 @@ package trader.broker.connector.oanda;
 
 import com.oanda.v20.Context;
 import com.oanda.v20.ContextBuilder;
+import com.oanda.v20.ExecuteException;
+import com.oanda.v20.RequestException;
 import com.oanda.v20.account.*;
 import com.oanda.v20.instrument.InstrumentCandlesResponse;
 import com.oanda.v20.pricing.PricingGetResponse;
 import trader.broker.connector.*;
 import trader.entity.candlestick.Candlestick;
+import trader.exception.BadRequestException;
 import trader.price.Price;
 import trader.requestor.Request;
 import trader.responder.Response;
+import trader.trade.entitie.Trade;
 
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +34,7 @@ public class OandaGateway extends BaseGateway {
     private PriceTransformable oandaPriceTransformer;
     private CandlestickTransformable oandaCandlesTransformer;
     private HashMap<String, String> priceSettings;
+    private HashMap<String, String> accountSettings;
 
 
 
@@ -38,13 +43,14 @@ public class OandaGateway extends BaseGateway {
 
     private OandaGateway(BrokerConnector connector){
         this.connector = connector;
+        setContext();
         oandaAccountValidator = new OandaAccountValidator();
         oandaRequestBuilder = new OandaRequestBuilder();
-        oandaResponseBuilder = new OandaResponseBuilder();
-        //to be tested
+        oandaResponseBuilder = new OandaResponseBuilder(context, connector.getUrl());
         oandaPriceTransformer = new OandaPriceTransformer();
         oandaCandlesTransformer = new OandaCandleTransformer();
-        priceSettings = setPriceSettings();
+        priceSettings = setAccount();
+        accountSettings = setAccount();
 
 //        initialize();
 //        try {
@@ -59,7 +65,7 @@ public class OandaGateway extends BaseGateway {
     public Price getPrice(String instrument) {
         priceSettings.put(INSTRUMENT, instrument);
         Request<?> priceRequest = oandaRequestBuilder.build(PRICE, priceSettings);
-        Response<PricingGetResponse> priceResponse = oandaResponseBuilder.buildResponse(PRICE, context, connector.getUrl(), priceRequest);
+        Response<PricingGetResponse> priceResponse = oandaResponseBuilder.buildResponse(PRICE, priceRequest);
         return oandaPriceTransformer.transformToPrice(priceResponse);
     }
 
@@ -67,39 +73,41 @@ public class OandaGateway extends BaseGateway {
     @Override
     public List<Candlestick> getCandles(HashMap<String, String> settings) {
         Request<?> candleRequest = oandaRequestBuilder.build(CANDLE, settings);
-        Response<InstrumentCandlesResponse> candlesResponse = oandaResponseBuilder.buildResponse(CANDLE, context, connector.getUrl(),candleRequest);
+        Response<InstrumentCandlesResponse> candlesResponse = oandaResponseBuilder.buildResponse(CANDLE,candleRequest);
         return oandaCandlesTransformer.transformCandlesticks(candlesResponse);
     }
 
     @Override
     public void validateConnector() {
-        setContext();
         oandaAccountValidator.validateAccount(connector, context);
         oandaAccountValidator.validateAccountBalance(connector, context);
+    }
+
+    @Override
+    public int totalTradesSize() {
+        Request<?> accountRequest = oandaRequestBuilder.build(ACCOUNT_ID, accountSettings);
+        Response<Account> accountResponse = oandaResponseBuilder.buildResponse(ACCOUNT_ID, accountRequest);
+        Account account = accountResponse.getResponseDataStructure();
+        return account.getTrades().size();
+
+
+//
+//        int size = 0;
+//        AccountID accountID = new AccountID(connector.getAccountID());
+//        try {
+//            Account account = this.context.account.get(accountID).getAccount();
+//            size = account.getTrades().size();
+//        } catch (RequestException | ExecuteException e) {
+//            throw new BadRequestException();
+//        } catch (NullPointerException e) {
+//            throw e;
+//        }
+//        return size;
     }
 
     Context getContext(){
         return context;
     }
-
-//    private void validateInputFileLocation(String fileLocation) {
-//        validateInput(fileLocation);
-//        if(isNotYamlFile(fileLocation))
-//            throw new BadRequestException();
-//    }
-//
-//    private void validateInput(String input) {
-//        if(input == null)
-//            throw new NullArgumentException();
-//        if(input.isEmpty())
-//            throw new EmptyArgumentException();
-//    }
-//
-//    private boolean isNotYamlFile(String fileLocation) {
-//        if(fileLocation.contains(".yaml"))
-//            return false;
-//        return !fileLocation.contains(".yml");
-//    }
 
     private void setContext(){
         context = new ContextBuilder(connector.getUrl())
@@ -108,7 +116,7 @@ public class OandaGateway extends BaseGateway {
                 .build();
     }
 
-    private HashMap<String,String> setPriceSettings() {
+    private HashMap<String,String> setAccount() {
         HashMap<String, String> settings = new HashMap<>();
         settings.put(ACCOUNT_ID, connector.getAccountID());
         return settings;
@@ -131,11 +139,11 @@ public class OandaGateway extends BaseGateway {
 //        return null;
 //    }
 //
+//
 //    @Override
 //    public List<Trade> getOpenTrades() {
 //        return null;
 //    }
-
 
 
 //    AccountID getAccountID(){

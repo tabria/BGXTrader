@@ -49,6 +49,10 @@ public class OandaAPIMockAccount extends OandaAPIMock {
         }
     }
 
+    public AccountContext getMockAccountContext() {
+        return mockAccountContext;
+    }
+
     public AccountID getMockAccountID(){
         return mockAccountID;
     }
@@ -97,6 +101,14 @@ public class OandaAPIMockAccount extends OandaAPIMock {
     public void setMockAccountOrders(List<Order> orders){
         when(mockAccount.getOrders())
                 .thenReturn(orders);
+    }
+
+    public void setMockAccountContextGetToThrowExecuteException(){
+        try {
+            when(mockAccountContext.get(any(AccountID.class))).thenThrow(ExecuteException.class);
+        } catch (RequestException | ExecuteException e) {
+            e.printStackTrace();
+        }
     }
 
     public void setMockAccountGetResponseToThrowException(){

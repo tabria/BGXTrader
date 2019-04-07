@@ -15,10 +15,17 @@ import trader.responder.Response;
 
 public class OandaResponseBuilder {
 
-    OandaResponseBuilder(){}
+    private Context context;
+    private String url;
 
-    public <T, E> Response<E> buildResponse(String type, Context context, String url, Request<T> request) {
-        verifyInput(type, context, url, request);
+    OandaResponseBuilder(Context context, String url){
+        verifyInput(context, url);
+        this.context = context;
+        this.url = url.trim();
+    }
+
+    public <T, E> Response<E> buildResponse(String type, Request<T> request) {
+        verifyInput(request, type);
         if(type.trim().equalsIgnoreCase("price"))
             return setResponse((E) createPriceResponse(context, url, request));
         if(type.trim().equalsIgnoreCase("candle"))
@@ -50,14 +57,12 @@ public class OandaResponseBuilder {
         return null;
     }
 
-    private <T> void verifyInput(String type, Context context, String url, Request<T> priceRequest) {
-        if(type == null || context == null || priceRequest == null || url == null)
+    private void verifyInput(Object object, String str) {
+        if(object == null || str == null)
             throw new NullArgumentException();
-        if(type.trim().isEmpty() || url.trim().isEmpty())
+        if(str.trim().isEmpty())
             throw new EmptyArgumentException();
     }
-
-
 
     private <E> Response<E> setResponse(E responseValue) {
         Response<E> response = new ResponseImpl<>();

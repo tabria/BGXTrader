@@ -109,12 +109,12 @@ public class Main {
  //       Observable priceObserver = PriceObservable.create(context);
 
 //        //create observers
-//        Observer smaPriceObserver = UpdateIndicatorController.create(smaPrice);
-//        Observer dailyPriceObserver = UpdateIndicatorController.create(dailyPrice);
-//        Observer wmaFastObserver = UpdateIndicatorController.create(wmaFast);
-//        Observer wmaMiddleObserver = UpdateIndicatorController.create(wmaMiddle);
-//        Observer wmaSlowObserver = UpdateIndicatorController.create(wmaSlow);
-//        Observer rsiObserver = UpdateIndicatorController.create(rsi);
+//        Observer smaPriceObserver = UpdateIndicatorObserver.create(smaPrice);
+//        Observer dailyPriceObserver = UpdateIndicatorObserver.create(dailyPrice);
+//        Observer wmaFastObserver = UpdateIndicatorObserver.create(wmaFast);
+//        Observer wmaMiddleObserver = UpdateIndicatorObserver.create(wmaMiddle);
+//        Observer wmaSlowObserver = UpdateIndicatorObserver.create(wmaSlow);
+//        Observer rsiObserver = UpdateIndicatorObserver.create(rsi);
 
         //create trade service
    //     NewTradeService newTradeService = new NewTradeService(context, signalGenerator);

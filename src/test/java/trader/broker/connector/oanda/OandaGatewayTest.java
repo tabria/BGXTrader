@@ -1,37 +1,39 @@
 package trader.broker.connector.oanda;
 
+import com.oanda.v20.Context;
+import com.oanda.v20.account.Account;
 import com.oanda.v20.pricing.PricingGetResponse;
+import com.oanda.v20.trade.TradeSummary;
 import org.junit.Before;
 import org.junit.Test;
 import trader.CommonTestClassMembers;
 import trader.OandaAPIMock.OandaAPIMockAccount;
 import trader.broker.connector.BaseGateway;
 import trader.broker.connector.BrokerConnector;
+import trader.entity.candlestick.Candlestick;
 import trader.price.Price;
 import trader.price.PriceImpl;
 import trader.requestor.Request;
 import trader.responder.Response;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+
+import static junit.framework.TestCase.assertSame;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class OandaGatewayTest {
 
+    private static final String URL = "xxx.com";
     private CommonTestClassMembers commonMembers;
     private OandaGateway oandaGateway;
-    private OandaAPIMockAccount oandaAPIMockAccount;
-    private OandaResponseBuilder mockResponse;
-    private OandaRequestBuilder mockRequest;
-    private OandaPriceTransformer mockPriceTransformer;
+    private Context contextMock;
     private Price mockPrice;
-    private Request requestMock;
-    private PricingGetResponse pricingResponseMock;
     private Response responseMock;
     private BrokerConnector connectorMock;
 
@@ -39,16 +41,11 @@ public class OandaGatewayTest {
     @Before
     public void setUp() {
         commonMembers = new CommonTestClassMembers();
-        oandaAPIMockAccount = new OandaAPIMockAccount();
-        mockResponse = mock(OandaResponseBuilder.class);
-        mockRequest = mock(OandaRequestBuilder.class);
-        mockPriceTransformer = mock(OandaPriceTransformer.class);
+        contextMock = mock(Context.class);
         mockPrice = mock(PriceImpl.class);
-        requestMock = mock(Request.class);
-        pricingResponseMock = mock(PricingGetResponse.class);
         responseMock = mock(Response.class);
-        when(responseMock.getResponseDataStructure()).thenReturn(pricingResponseMock);
         connectorMock = mock(BrokerConnector.class);
+        when(connectorMock.getUrl()).thenReturn(URL);
         oandaGateway = (OandaGateway) BaseGateway.create("Oanda", connectorMock);
     }
 
@@ -62,8 +59,8 @@ public class OandaGatewayTest {
 
     @Test
     public void getContextReturnCorrectContext(){
-        commonMembers.changeFieldObject(oandaGateway, "context", oandaAPIMockAccount.getContext());
-        assertEquals(oandaGateway.getContext(), oandaAPIMockAccount.getContext());
+        setFakeContext();
+        assertEquals(oandaGateway.getContext(), contextMock);
     }
 
     @Test
@@ -74,6 +71,18 @@ public class OandaGatewayTest {
         assertEquals(mockPrice, actualPrice);
     }
 
+    @Test
+    public void testGetCandlesToReturnCorrectValue(){
+        List<Candlestick> candles = new ArrayList<>();
+        HashMap<String, String> settings = new HashMap<>();
+        setFakeContext();
+        setFakeBuilders();
+        setFakeCandlestickList(candles);
+        List<Candlestick> actualCandles = oandaGateway.getCandles(settings);
+
+        assertSame(candles, actualCandles);
+    }
+
     @SuppressWarnings("unchecked")
     @Test
     public void WhenCreatedThenPriceSettingsMustNotBeNull(){
@@ -82,25 +91,72 @@ public class OandaGatewayTest {
         assertNotNull(priceSettings);
     }
 
+    @SuppressWarnings("unchecked")
+    @Test
+    public void WhenCreatedThenAccountSettingsMustNotBeNull(){
+        HashMap<String, String> accountSettings = (HashMap<String, String>) commonMembers.extractFieldObject(oandaGateway, "accountSettings");
+
+        assertNotNull(accountSettings);
+    }
+
+    @Test
+    public void WhenCallTotalTradesSize_CorrectReturnValue(){
+        List<TradeSummary> trades = new ArrayList<>();
+        setFakeContext();
+        setFakeBuilders();
+        setFakeTradeSummary(trades);
+
+        assertEquals(0,  oandaGateway.totalTradesSize());
+    }
+
+    private void setFakeTradeSummary(List<TradeSummary> trades) {
+        Account accountMock = mock(Account.class);
+        when(responseMock.getResponseDataStructure()).thenReturn(accountMock);
+        when(accountMock.getTrades()).thenReturn(trades);
+    }
+
+    private void setFakeContext() {
+        commonMembers.changeFieldObject(oandaGateway, "context", contextMock);
+    }
+
     private void setOandaValidator() {
         OandaAccountValidator mockValidator = mock(OandaAccountValidator.class);
-        doNothing().when(mockValidator).validateAccount(connectorMock, oandaAPIMockAccount.getContext());
-        doNothing().when(mockValidator).validateAccountBalance(connectorMock, oandaAPIMockAccount.getContext());
+        doNothing().when(mockValidator).validateAccount(connectorMock, contextMock);
+        doNothing().when(mockValidator).validateAccountBalance(connectorMock, contextMock);
         commonMembers.changeFieldObject(oandaGateway, "oandaAccountValidator", mockValidator);
     }
 
     @SuppressWarnings("unchecked")
     private void setFakePrice() {
-        HashMap<String, String> settings = new HashMap<>();
-        when(mockRequest.build(anyString(), any(HashMap.class))).thenReturn(requestMock);
-        when(mockResponse.buildResponse(anyString(),eq(oandaAPIMockAccount.getContext()), anyString() ,eq(requestMock))).thenReturn(responseMock);
-        when(mockPriceTransformer.transformToPrice(responseMock)).thenReturn(mockPrice);
+        setFakeContext();
+        setFakeBuilders();
+        setFakePriceTransformer();
         when(connectorMock.getUrl()).thenReturn("dd");
+    }
 
-        commonMembers.changeFieldObject(oandaGateway, "context", oandaAPIMockAccount.getContext());
-        commonMembers.changeFieldObject(oandaGateway, "oandaRequestBuilder", mockRequest);
-        commonMembers.changeFieldObject(oandaGateway, "oandaResponseBuilder", mockResponse);
+    @SuppressWarnings("unchecked")
+    private void setFakePriceTransformer() {
+        OandaPriceTransformer mockPriceTransformer = mockPriceTransformer = mock(OandaPriceTransformer.class);
         commonMembers.changeFieldObject(oandaGateway, "oandaPriceTransformer", mockPriceTransformer);
+        when(mockPriceTransformer.transformToPrice(responseMock)).thenReturn(mockPrice);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void setFakeCandlestickList(List<Candlestick> candles) {
+        OandaCandleTransformer candleTransformerMock = mock(OandaCandleTransformer.class);
+        commonMembers.changeFieldObject(oandaGateway, "oandaCandlesTransformer", candleTransformerMock);
+        when(candleTransformerMock.transformCandlesticks(responseMock)).thenReturn(candles);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void setFakeBuilders() {
+        OandaResponseBuilder mockResponseBuilder = mock(OandaResponseBuilder.class);
+        OandaRequestBuilder mockRequestBuilder = mock(OandaRequestBuilder.class);
+        Request requestMock = mock(Request.class);
+        commonMembers.changeFieldObject(oandaGateway, "oandaRequestBuilder", mockRequestBuilder);
+        commonMembers.changeFieldObject(oandaGateway, "oandaResponseBuilder", mockResponseBuilder);
+        when(mockRequestBuilder.build(anyString(), any(HashMap.class))).thenReturn(requestMock);
+        when(mockResponseBuilder.buildResponse(anyString(), eq(requestMock))).thenReturn(responseMock);
     }
 
 //

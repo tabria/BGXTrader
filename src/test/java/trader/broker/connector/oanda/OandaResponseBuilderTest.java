@@ -11,6 +11,7 @@ import org.junit.runner.RunWith;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import trader.CommonTestClassMembers;
 import trader.OandaAPIMock.OandaAPIMockInstrument;
 import trader.OandaAPIMock.OandaAPIMockPricing;
 import trader.connection.Connection;
@@ -33,7 +34,8 @@ public class OandaResponseBuilderTest {
     private Request requestMock;
     private OandaAPIMockPricing oandaAPIMockPricing;
     private OandaAPIMockInstrument oandaAPIMockInstrument;
-    private OandaResponseBuilder priceResponse;
+    private OandaResponseBuilder responseBuilder;
+    private CommonTestClassMembers commonMembers;
 
     @Before
     public void setUp() throws RequestException, ExecuteException {
@@ -42,43 +44,60 @@ public class OandaResponseBuilderTest {
         oandaAPIMockPricing.setMockPricingGetResponse(oandaAPIMockPricing.getMockPricingGetResponse());
         contextMock = oandaAPIMockPricing.getContext();
         requestMock = mock(Request.class);
+        commonMembers = new CommonTestClassMembers();
         when(requestMock.getRequestDataStructure()).thenReturn(oandaAPIMockPricing.getMockPricingGetRequest());
-        priceResponse = new OandaResponseBuilder();
+        responseBuilder = new OandaResponseBuilder(contextMock, URL);
+    }
+
+    @Test(expected = NullArgumentException.class)
+    public void WhenCreatedThenContextMustNotBeNull(){
+        new OandaResponseBuilder(null, "url");
+    }
+
+    @Test
+    public void WhenCreatedThenContextMusttBeWithCorrectValue(){
+        Context context = (Context) commonMembers.extractFieldObject(responseBuilder, "context");
+
+        assertEquals(contextMock, context);
+    }
+
+    @Test(expected = NullArgumentException.class)
+    public void WhenCreatedWithNullURL_Exception(){
+        new OandaResponseBuilder(contextMock, null);
+    }
+
+    @Test(expected = EmptyArgumentException.class)
+    public void WhenCreatedWithEmptyURL_Exception(){
+        new OandaResponseBuilder(contextMock, "  ");
+    }
+
+    @Test
+    public void WhenCreatedWithCorrectURLWithExtraSpaces_CorrectResult(){
+        String testUrl = "  xxx.com   ";
+        OandaResponseBuilder oandaResponseBuilder = new OandaResponseBuilder(contextMock, testUrl );
+        String url = (String) commonMembers.extractFieldObject(oandaResponseBuilder, "url");
+
+        assertEquals(testUrl.trim(), url);
     }
 
     @Test(expected = NullArgumentException.class)
     public void WhenCallGetPriceResponseWithNullType_Exception(){
-        priceResponse.buildResponse(null,contextMock, URL, requestMock);
+        responseBuilder.buildResponse(null, requestMock);
     }
 
     @Test(expected = EmptyArgumentException.class)
     public void WhenCallBuildResponseWithEmptyType_Exception(){
-        priceResponse.buildResponse(" ",contextMock, URL, requestMock);
-    }
-
-    @Test(expected = NullArgumentException.class)
-    public void WhenCallBuildResponseWithNullContext_Exception(){
-        priceResponse.buildResponse("price", null, URL, requestMock);
-    }
-
-    @Test(expected = NullArgumentException.class)
-    public void WhenCallBuildResponseWithNullURL_Exception(){
-        priceResponse.buildResponse("price",contextMock, null, requestMock);
+        responseBuilder.buildResponse(" ", requestMock);
     }
 
     @Test(expected = NullArgumentException.class)
     public void WhenCallBuildResponseWithNullRequest_Exception(){
-        priceResponse.buildResponse("price", contextMock, URL, null);
-    }
-
-    @Test(expected = EmptyArgumentException.class)
-    public void WhenCallBuildResponseWithEmptyURL_Exception(){
-        priceResponse.buildResponse("price", contextMock, " ", requestMock);
+        responseBuilder.buildResponse("price", null);
     }
 
     @Test
     public void WhenCallBuildResponseWithCorrectValues_ReturnCorrectResult(){
-        Response<PricingGetResponse> actualResponse = this.priceResponse.buildResponse("price", contextMock, URL, requestMock);
+        Response<PricingGetResponse> actualResponse = this.responseBuilder.buildResponse("price", requestMock);
         PricingGetResponse response = actualResponse.getResponseDataStructure();
         PricingGetResponse expectedResponse = oandaAPIMockPricing.getMockPricingGetResponse();
 
@@ -90,31 +109,34 @@ public class OandaResponseBuilderTest {
         oandaAPIMockPricing.setMockPricingGetResponseToThrowException(RequestException.class);
         PowerMockito.mockStatic(Connection.class);
         PowerMockito.when(Connection.waitToConnect(URL)).thenReturn(true);
-        Response<PricingGetResponse> actualResponse = this.priceResponse.buildResponse("price", contextMock, URL, requestMock);
+        Response<PricingGetResponse> actualResponse = this.responseBuilder.buildResponse("price", requestMock);
         assertNull(actualResponse);
     }
 
     @Test(expected = RuntimeException.class)
     public void WhenBuildResponseThrowUnexpectedException_ThrowRuntimeException() throws RequestException, ExecuteException {
         oandaAPIMockPricing.setMockPricingGetResponseToThrowException(RuntimeException.class);
-        this.priceResponse.buildResponse("price", contextMock, URL, requestMock);
+        this.responseBuilder.buildResponse("price", requestMock);
     }
 
     @Test
     public void WhenCallBuildResponseWithCandle_CorrectResponse(){
+        OandaResponseBuilder responseBuilder = new OandaResponseBuilder(oandaAPIMockInstrument.getContext(), URL);
         when(requestMock.getRequestDataStructure()).thenReturn(oandaAPIMockInstrument.getMockRequest());
-        Response response = this.priceResponse.buildResponse("candle", oandaAPIMockInstrument.getContext(), URL, requestMock);
+        Response response = responseBuilder.buildResponse("candle", requestMock);
 
         assertEquals(oandaAPIMockInstrument.getMockResponse(), response.getResponseDataStructure());
     }
 
     @Test
     public void WhenBuildResponseForCandleThrowExecuteOrRequestExceptions_ResponseIsNull() throws RequestException, ExecuteException {
+        OandaResponseBuilder responseBuilder = new OandaResponseBuilder(oandaAPIMockInstrument.getContext(), URL);
         when(requestMock.getRequestDataStructure()).thenReturn(oandaAPIMockInstrument.getMockRequest());
         oandaAPIMockInstrument.setMockInstrumentCandlesResponseToThrowException(RequestException.class);
         PowerMockito.mockStatic(Connection.class);
         PowerMockito.when(Connection.waitToConnect(URL)).thenReturn(true);
-        Response<InstrumentCandlesResponse> actualResponse = this.priceResponse.buildResponse("candle", oandaAPIMockInstrument.getContext(), URL, requestMock);
+        Response<InstrumentCandlesResponse> actualResponse = responseBuilder.buildResponse("candle", requestMock);
+
         assertNull(actualResponse);
     }
 }

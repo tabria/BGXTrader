@@ -1,5 +1,6 @@
 package trader.broker.connector.oanda;
 
+import com.oanda.v20.account.Account;
 import com.oanda.v20.account.AccountID;
 import com.oanda.v20.instrument.CandlestickGranularity;
 import com.oanda.v20.instrument.InstrumentCandlesRequest;
@@ -36,6 +37,13 @@ class OandaRequestBuilder implements RequestBuilder {
             long quantity = parseQuantity(settings);
             return buildCandlesRequest(settings.get(INSTRUMENT), quantity ,settings.get(GRANULARITY));
         }
+        if(requestType.trim().equalsIgnoreCase(ACCOUNT_ID)){
+            validateRequestInput(settings, ACCOUNT_ID);
+            Request<AccountID> accountIDRequest = new RequestImpl<>();
+            accountIDRequest.setRequestDataStructure(new AccountID(settings.get(ACCOUNT_ID)));
+            return accountIDRequest;
+        }
+
         throw new NoSuchDataStructureException();
     }
 

@@ -21,7 +21,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 
-public class UpdateIndicatorControllerTest {
+public class UpdateIndicatorObserverTest {
 
     private static final String QUANTITY = "quantity";
     private static final String INDICATOR = "indicator";
@@ -49,23 +49,23 @@ public class UpdateIndicatorControllerTest {
         setConfiguration();
         brokerGatewayMock = mock(BrokerGateway.class);
         mockPrice = mock(Price.class);
-        this.observer = UpdateIndicatorController.create(this.mockMA, mockConfiguration, brokerGatewayMock);
+        this.observer = UpdateIndicatorObserver.create(this.mockMA, mockConfiguration, brokerGatewayMock);
         commonTestMembers = new CommonTestClassMembers();
     }
 
     @Test(expected = NullArgumentException.class)
     public void whenCreateUpdateIndicatorControllerWithNullIndicator_ThrowException(){
-        UpdateIndicatorController.create(null, mockConfiguration, brokerGatewayMock);
+        UpdateIndicatorObserver.create(null, mockConfiguration, brokerGatewayMock);
     }
 
     @Test(expected = NullArgumentException.class)
     public void WhenCreateUpdateIndicatorControllerWithNullConfiguration_Exception(){
-        UpdateIndicatorController.create(mockMA, null, brokerGatewayMock);
+        UpdateIndicatorObserver.create(mockMA, null, brokerGatewayMock);
     }
 
     @Test(expected = NullArgumentException.class)
     public void WhenCreateUpdateIndicatorControllerWithNullBrokerGateway_Exception(){
-        UpdateIndicatorController.create(mockMA, mockConfiguration, null);
+        UpdateIndicatorObserver.create(mockMA, mockConfiguration, null);
     }
 
     @Test

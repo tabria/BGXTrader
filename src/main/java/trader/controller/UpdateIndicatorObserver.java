@@ -11,7 +11,7 @@ import trader.price.Price;
 import java.util.HashMap;
 import java.util.List;
 
-public final class UpdateIndicatorController implements Observer {
+public final class UpdateIndicatorObserver implements Observer {
 
     private static final String INSTRUMENT = SettingsFieldNames.INSTRUMENT.toString();
     private static final String QUANTITY = SettingsFieldNames.QUANTITY.toString();
@@ -22,7 +22,7 @@ public final class UpdateIndicatorController implements Observer {
     private HashMap<String, String> settings;
 
 
-    private UpdateIndicatorController(Indicator indicator, TradingStrategyConfiguration configuration, BrokerGateway gateway){
+    private UpdateIndicatorObserver(Indicator indicator, TradingStrategyConfiguration configuration, BrokerGateway gateway){
         if(indicator == null || configuration == null || gateway == null)
             throw new NullArgumentException();
         this.indicator = indicator;
@@ -31,8 +31,8 @@ public final class UpdateIndicatorController implements Observer {
         this.settings = initializeSettings();
     }
 
-    public static UpdateIndicatorController create(Indicator indicator, TradingStrategyConfiguration configuration, BrokerGateway gateway){
-        return new UpdateIndicatorController(indicator, configuration, gateway);
+    public static UpdateIndicatorObserver create(Indicator indicator, TradingStrategyConfiguration configuration, BrokerGateway gateway){
+        return new UpdateIndicatorObserver(indicator, configuration, gateway);
     }
 
     @Override

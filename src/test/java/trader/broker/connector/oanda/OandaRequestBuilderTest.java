@@ -1,5 +1,6 @@
 package trader.broker.connector.oanda;
 
+import com.oanda.v20.account.AccountID;
 import com.oanda.v20.instrument.InstrumentCandlesRequest;
 import com.oanda.v20.pricing.PricingGetRequest;
 import org.junit.Before;
@@ -19,8 +20,8 @@ public class OandaRequestBuilderTest {
     private static final String EXPECTED_INSTRUMENT = "EUR_USD";
     private static final String QUANTITY = "quantity";
     private static final String EXPECTED_QUANTITY = "5";
-    public static final String GRANULARITY = "granularity";
-    public static final String EXPECTED_GRANULARITY = "M30";
+    private static final String GRANULARITY = "granularity";
+    private static final String EXPECTED_GRANULARITY = "M30";
 
     private OandaRequestBuilder request;
     private HashMap<String, String> settings;
@@ -37,6 +38,12 @@ public class OandaRequestBuilderTest {
         request.build(null, null);
     }
 
+    @Test(expected = NoSuchDataStructureException.class)
+    public void WhenCreateRequestWithEmptyType_Exception(){
+        settings.put("aa", "aa");
+        request.build(" ", settings);
+    }
+
     @Test(expected = EmptyArgumentException.class)
     public void WhenCreateRequestWithEmptySettings_Exception(){
         request.build("price", new HashMap<>());
@@ -44,55 +51,55 @@ public class OandaRequestBuilderTest {
 
     @Test(expected = BadRequestException.class)
     public void WhenCreatingPriceRequestOnlyWithAccountID_Exception(){
-        settings.put("accountID", "xxx");
+        settings.put(ACCOUNT_ID, "xxx");
         request.build("price", settings);
     }
 
     @Test(expected = BadRequestException.class)
     public void WhenCreatingPriceRequestOnlyWithInstrument_Exception(){
-        settings.put("instrument", "EUR");
+        settings.put(INSTRUMENT, "EUR");
         request.build("price", settings);
     }
 
 
     @Test(expected = NullArgumentException.class)
     public void WhenCreatingPriceRequestWithNullAccountID_Exception(){
-        settings.put("accountID", null);
-        settings.put("instrument", "EUR");
+        settings.put(ACCOUNT_ID, null);
+        settings.put(INSTRUMENT, "EUR");
         request.build("price", settings);
     }
 
     @Test(expected = NullArgumentException.class)
     public void WhenCreatingPriceRequestWithNullInstrument_Exception(){
-        settings.put("accountID", "xxx");
-        settings.put("instrument", null);
+        settings.put(ACCOUNT_ID, "xxx");
+        settings.put(INSTRUMENT, null);
         request.build("price", settings);
     }
 
     @Test(expected = EmptyArgumentException.class)
     public void WhenCreatingPriceRequestWithEmptyAccountID_Exception(){
-        settings.put("accountID", " ");
-        settings.put("instrument", "EUR");
+        settings.put(ACCOUNT_ID, " ");
+        settings.put(INSTRUMENT, "EUR");
         request.build("price", settings);
     }
 
     @Test(expected = EmptyArgumentException.class)
     public void WhenCreatingPriceRequestWithEmptyInstrument_Exception(){
-        settings.put("accountID", "xxx");
-        settings.put("instrument", "  ");
+        settings.put(ACCOUNT_ID, "xxx");
+        settings.put(INSTRUMENT, "  ");
         request.build("price", settings);
     }
 
     @Test(expected = BadRequestException.class)
     public void WhenCreatingPriceRequestWithWrongAccountIDKeyName_Exception(){
         settings.put("accot", "xxx");
-        settings.put("instrument", "EUR");
+        settings.put(INSTRUMENT, "EUR");
         request.build("price", settings);
     }
 
     @Test(expected = BadRequestException.class)
     public void WhenCreatingPriceRequestWithWrongInstrumentKeyName_Exception(){
-        settings.put("accountID", "xxx");
+        settings.put(ACCOUNT_ID, "xxx");
         settings.put("ind", "EUR");
         request.build("price", settings);
     }
@@ -100,8 +107,8 @@ public class OandaRequestBuilderTest {
     @Test
     public void getCorrectPriceRequest(){
 
-        settings.put("accountID",EXPECTED_ACCOUNT_ID);
-        settings.put("instrument", EXPECTED_INSTRUMENT);
+        settings.put(ACCOUNT_ID,EXPECTED_ACCOUNT_ID);
+        settings.put(INSTRUMENT, EXPECTED_INSTRUMENT);
         Request<?> price = this.request.build("price", settings);
         PricingGetRequest pricingRequest = (PricingGetRequest) price.getRequestDataStructure();
 
@@ -222,6 +229,40 @@ public class OandaRequestBuilderTest {
 
     }
 
+    @Test(expected = EmptyArgumentException.class)
+    public void WhenCallBuildForAccountIDWithEmptySettings_Exception(){
+        this.request.build(ACCOUNT_ID, settings);
+    }
+
+    @Test(expected = BadRequestException.class)
+    public void WhenCallBuildForAccountIDWithWrongKeyName_Exception(){
+        settings.put("xxx", "xxx");
+        this.request.build(ACCOUNT_ID, settings);
+    }
+
+    @Test(expected = NullArgumentException.class)
+    public void WhenCallBuildForAccountIDWithNullSettingsValue_Exception(){
+        settings.put(ACCOUNT_ID, null);
+        this.request.build(ACCOUNT_ID, settings);
+    }
+
+    @Test(expected = EmptyArgumentException.class)
+    public void WhenCallBuildForAccountIDWithEmptySettingsValue_Exception(){
+        settings.put(ACCOUNT_ID, "  ");
+        this.request.build(ACCOUNT_ID, settings);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void WhenCallBuildForAccountIDWithCorrectSetting_CorrectResult(){
+        String accountId = "17";
+        settings.put(ACCOUNT_ID, accountId);
+        Request<AccountID> accountIDRequest = (Request<AccountID>) request.build(ACCOUNT_ID, settings);
+        AccountID requestDataStructure = accountIDRequest.getRequestDataStructure();
+
+        assertEquals(accountId, requestDataStructure.toString());
+
+    }
 
     private Class<? extends PricingGetRequest> getRequestClass(PricingGetRequest request) {
         return request.getClass();
