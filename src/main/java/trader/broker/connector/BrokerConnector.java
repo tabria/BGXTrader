@@ -18,6 +18,10 @@ public interface BrokerConnector {
 
     void setAccountID(String accountID);
 
+    String getLeverage();
+
+    void setLeverage(String leverage);
+
     static BaseConnector create(String apiName) {
         return BaseConnector.create(apiName);
     }

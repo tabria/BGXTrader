@@ -2,13 +2,17 @@ package trader.observer;
 
 import trader.broker.BrokerGateway;
 import trader.configuration.TradingStrategyConfiguration;
+import trader.controller.AddTradeController;
+import trader.controller.TraderController;
 import trader.price.Price;
 
 public class PositionObserver extends BaseObserver {
 
+    private TraderController<Object> addTradeController;
 
     public PositionObserver(TradingStrategyConfiguration configuration, BrokerGateway brokerGateway){
         super(configuration, brokerGateway);
+        addTradeController = new AddTradeController<>();
     }
 
 //    private Context context;
@@ -40,7 +44,7 @@ public class PositionObserver extends BaseObserver {
     public void updateObserver(Price price) {
         if(brokerGateway.totalOpenTradesSize() == 0 &&
                 brokerGateway.totalOpenOrdersSize() == 0){
-          //  tradeController.execute(price);
+            //addTradeController.execute(price);
         }
     }
 

@@ -91,4 +91,20 @@ public class OandaConnectorTest {
         assertEquals(accountID.trim(), connector.getAccountID());
     }
 
+    @Test(expected = NullArgumentException.class)
+    public void WhenCallSetLeverageWithNull_Exception(){
+        connector.setLeverage(null);
+    }
+
+    @Test(expected = EmptyArgumentException.class)
+    public void WhenCallSetLeverageWithEmptyString_Exception(){
+        connector.setLeverage("");
+    }
+
+    @Test
+    public void WhenCallSetLeverageWithCorrectLeverageContainingSpaces_TrimAndSet() {
+        String leverage = "  12   ";
+        connector.setLeverage(leverage);
+        assertEquals(leverage.trim(), connector.getLeverage());
+    }
 }

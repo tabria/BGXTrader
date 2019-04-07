@@ -16,6 +16,7 @@ public class AddBrokerConnectorUseCase implements UseCase {
     private static final String URL = "url";
     private static final String TOKEN = "token";
     private static final String ID = "id";
+    private static final String LEVERAGE = "leverage";
 
     @Override
     public <T, E> Response<E> execute(Request<T> request) {
@@ -45,6 +46,9 @@ public class AddBrokerConnectorUseCase implements UseCase {
             }
             if(brokerSettings.containsKey(ID)){
                 brokerConnector.setAccountID(brokerSettings.get(ID));
+            }
+            if(brokerSettings.containsKey(LEVERAGE)){
+                brokerConnector.setLeverage(brokerSettings.get(LEVERAGE));
             }
         } catch (IOException | RuntimeException e) {
             BadRequestException badRequestException = new BadRequestException();

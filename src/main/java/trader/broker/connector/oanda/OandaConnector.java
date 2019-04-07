@@ -11,6 +11,7 @@ public class OandaConnector extends BaseConnector {
     private String url;
     private String token;
     private String accountID;
+    private String leverage;
 
     private OandaConnector(){ }
 
@@ -56,6 +57,17 @@ public class OandaConnector extends BaseConnector {
     public void setAccountID(String accountId) {
         validateInput(accountId);
         this.accountID = accountId.trim();
+    }
+
+    @Override
+    public String getLeverage() {
+        return leverage;
+    }
+
+    @Override
+    public void setLeverage(String leverage) {
+        validateInput(leverage);
+        this.leverage = leverage.trim();
     }
 
     private void validateInputFileLocation(String fileLocation) {
