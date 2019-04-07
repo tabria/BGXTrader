@@ -11,7 +11,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class AddBrokerConnectorControllerTest extends BaseConfigurationControllerTest<BrokerGateway> {
+public class AddBrokerConnectorControllerTest extends BaseControllerTest<BrokerGateway> {
 
     private static final String BROKER_CONFIGURATION_CONTROLLER = "AddBrokerConnectorController";
 
