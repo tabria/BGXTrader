@@ -3,6 +3,7 @@ package trader.entity.indicator;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import trader.CommonTestClassMembers;
 import trader.entity.candlestick.candle.CandleGranularity;
 import trader.entity.candlestick.candle.CandlePriceType;
 import trader.entity.candlestick.Candlestick;
@@ -11,6 +12,7 @@ import trader.entity.indicator.updater.*;
 import java.math.BigDecimal;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -23,24 +25,19 @@ public abstract class BaseIndicatorTest {
     private static final String NEW_PRICE_ENTRY = "1.16814";
     private static final String NEW_DATETIME_ENTRY = "2018-08-01T09:53:00Z";
 
-    protected CandlesUpdatable candlesUpdater;
-    protected IndicatorUpdateHelper indicatorUpdateHelper;
 
+    protected IndicatorUpdateHelper indicatorUpdateHelper;
     protected long period;
     protected CandlePriceType candlePriceType = CandlePriceType.CLOSE;
     protected CandleGranularity granularity = CandleGranularity.M30;
-
-    protected Candlestick newCandle;
+    protected CommonTestClassMembers commonMembers;
 
     @Before
     public void before() {
-        this.candlesUpdater = mock(CandlesUpdater.class);
-        this.indicatorUpdateHelper = new IndicatorUpdateHelper(this.candlePriceType);
+        commonMembers = new CommonTestClassMembers();
+        this.indicatorUpdateHelper = new IndicatorUpdateHelper();
         this.indicatorUpdateHelper.fillCandlestickList();
-        this.newCandle = mock(Candlestick.class);
-        setNewCandle();
         setPeriod();
-        setCandlesUpdater();
     }
 
     @Test
@@ -50,27 +47,19 @@ public abstract class BaseIndicatorTest {
     public abstract void getValuesReturnImmutableResult();
 
     @Test
-    public abstract void getMAValuesReturnCorrectResult();
-
-    @Test
-    public abstract void testSuccessfulUpdate();
-
-    @Test
     public abstract void TestToString();
 
     protected abstract BigDecimal getLastCandlestickPrice();
 
-    protected void updateCandlestickListInSuper() {
-        this.indicatorUpdateHelper.fillCandlestickList();
-        List<Candlestick> candlestickList = this.indicatorUpdateHelper.getCandlestickList();
-        when(this.candlesUpdater.getCandles()).thenReturn(candlestickList);
-    }
-
-    private void setNewCandle(){
+    public List<Candlestick> getListWithSingleNewCandle(){
+        Candlestick newCandle =mock(Candlestick.class);
+        ZonedDateTime candleDateTime = ZonedDateTime
+                .parse(NEW_DATETIME_ENTRY).withZoneSameInstant(ZoneId.of("UTC"));
         when(newCandle.getClosePrice()).thenReturn(new BigDecimal(NEW_PRICE_ENTRY));
-        when(newCandle.getDateTime())
-                .thenReturn(ZonedDateTime.parse(NEW_DATETIME_ENTRY).withZoneSameInstant(ZoneId.of("UTC")));
-        when(candlesUpdater.getUpdatedCandle()).thenReturn(newCandle);
+        when(newCandle.getDateTime()).thenReturn(candleDateTime);
+        List<Candlestick> candles = new ArrayList<>();
+        candles.add(newCandle);
+        return candles;
     }
 
     private void setPeriod(){
@@ -81,8 +70,21 @@ public abstract class BaseIndicatorTest {
         this.period = period;
     }
 
-    private void setCandlesUpdater() {
-        List<Candlestick> candlestickList = this.indicatorUpdateHelper.getCandlestickList();
-        doReturn(candlestickList).when(this.candlesUpdater).getCandles();
+    protected void updateCandlestickList(Indicator indicator){
+        int initialSize = getIndicatorCandlestickListSize(indicator);
+        indicator.updateIndicator(indicatorUpdateHelper.getFakeCandlestickListFullOfMock());
+        int sizeAfterFirstUpdate = getIndicatorCandlestickListSize(indicator);
+        indicator.updateIndicator(getListWithSingleNewCandle());
+        int sizeAfterSingleCandleUpdate = getIndicatorCandlestickListSize(indicator);
+
+        assertNotEquals(initialSize, sizeAfterFirstUpdate);
+        assertEquals(indicatorUpdateHelper.getFakeCandlestickListFullOfMock().size(), sizeAfterFirstUpdate);
+        assertEquals(sizeAfterFirstUpdate + 1, sizeAfterSingleCandleUpdate);
+    }
+
+    @SuppressWarnings("unchecked")
+    private int getIndicatorCandlestickListSize(Indicator indicator) {
+        List<Candlestick> candlestickList = (List<Candlestick>) commonMembers.extractFieldObject(indicator, "candlestickList");
+        return candlestickList.size();
     }
 }

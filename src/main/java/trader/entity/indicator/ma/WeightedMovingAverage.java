@@ -6,29 +6,25 @@ import trader.entity.candlestick.Candlestick;
 import trader.entity.indicator.BaseIndicator;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.List;
 
 public final class WeightedMovingAverage extends BaseIndicator {
 
-//    WeightedMovingAverage(long indicatorPeriod, CandlePriceType candlePriceType, CandlesUpdatable updater) {
-//        super(indicatorPeriod, candlePriceType, updater);
-//        setDivisor();
-//        initiateWMAValues();
-//    }
-
     WeightedMovingAverage(long indicatorPeriod, CandlePriceType candlePriceType, CandleGranularity granularity) {
         super(indicatorPeriod, candlePriceType, granularity);
         setDivisor();
-  //      initiateWMAValues();
     }
 
 
     @Override
     public void updateIndicator(List<Candlestick> candles) {
-//        candlesUpdater.getUpdatedCandle();
-//        List<Candlestick> candles = candlesUpdater.getCandles();
-//        indicatorValues.add(calculateWMAValue(candles, candles.size() - 1));
+        if(indicatorValues.size() == 0){
+            candlestickList.addAll(candles);
+            setWMAValues(candles);
+        } else {
+            candlestickList.add(candles.get(candles.size()-1));
+            indicatorValues.add(calculateWMAValue(candlestickList, candlestickList.size() - 1));
+        }
     }
 
     @Override
@@ -48,11 +44,6 @@ public final class WeightedMovingAverage extends BaseIndicator {
                 .divide(BigDecimal.valueOf(2), 5, BigDecimal.ROUND_HALF_UP)
                 .multiply(BigDecimal.valueOf(indicatorPeriod)).setScale(5, BigDecimal.ROUND_HALF_UP);
     }
-
-//    private void initiateWMAValues() {
-//        List<Candlestick> candles = candlesUpdater.getCandles();
-//        setWMAValues(candles);
-//    }
 
     private void setWMAValues(List<Candlestick> candlestickList){
         verifyCalculationInput(candlestickList);

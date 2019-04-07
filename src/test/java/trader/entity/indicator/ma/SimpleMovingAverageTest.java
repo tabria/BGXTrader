@@ -3,6 +3,7 @@ package trader.entity.indicator.ma;
 import org.junit.Before;
 import org.junit.Test;
 import trader.entity.candlestick.Candlestick;
+import trader.entity.candlestick.candle.Candle;
 import trader.exception.BadRequestException;
 import trader.exception.IndicatorPeriodTooBigException;
 import trader.entity.indicator.BaseIndicatorTest;
@@ -52,45 +53,45 @@ public class SimpleMovingAverageTest extends BaseIndicatorTest {
         assertEquals(expected, result);
     }
 
-    @Override
-    public void getMAValuesReturnCorrectResult() {
-
-    }
-
-    @Override
     @Test
-    public void testSuccessfulUpdate() {
-//        int oldSize = this.sma.getValues().size();
-//        BigDecimal oldLastValue = this.sma.getValues().get(oldSize-1);
-//        updateCandlestickListInSuper();
-//        this.sma.updateIndicator();
-//        int newSize = this.sma.getValues().size();
-//        BigDecimal newNextToLastValue = this.sma.getValues().get(newSize-2);
-//
-//        assertEquals(oldSize + 1, newSize);
-//        assertEquals(oldLastValue, newNextToLastValue);
+    public void WhenCallUpdateIndicatorCandlesticksListIsUpdated(){
+        updateCandlestickList(sma);
     }
 
-//    @Test
-//    public void testInitializingSMAValues(){
-//        List<BigDecimal> values = this.sma.getValues();
-//
-//        assertTrue(values.size()> 0);
-//    }
+    @Test
+    public void WhenCallUpdateIndicatorAndValuesCountIsZero_CorrectUpdate() {
+        sma.updateIndicator(indicatorUpdateHelper.getFakeCandlestickListFullOfMock());
+        List<BigDecimal> values = sma.getValues();
 
-//    @Test(expected = BadRequestException.class)
-//    public void testCreatingEMAWithZeroCandles(){
-//        when(candlesUpdater.getCandles()).thenReturn(new ArrayList<>());
-//        new SimpleMovingAverage(this.period,
-//                this.candlePriceType, this.candlesUpdater);
-//    }
-//
-//    @Test(expected = IndicatorPeriodTooBigException.class)
-//    public void testPeriodBiggerThanCandlesCount(){
-//        this.period = 200;
-//        new SimpleMovingAverage(this.period,
-//                this.candlePriceType, this.candlesUpdater);
-//    }
+        assertEquals(BigDecimal.valueOf(1.16357), values.get(values.size()-1));
+    }
+
+    @Test
+    public void WhenCallUpdateIndicatorAndValuesCountIsNotZero_SuccessfulUpdateWithSingleCandle() {
+        this.sma.updateIndicator(indicatorUpdateHelper.getFakeCandlestickListFullOfMock());
+        int oldSize = this.sma.getValues().size();
+        BigDecimal oldLastValue = this.sma.getValues().get(oldSize-1);
+        this.sma.updateIndicator(getListWithSingleNewCandle());
+        int newSize = this.sma.getValues().size();
+        BigDecimal newNextToLastValue = this.sma.getValues().get(newSize-2);
+
+        assertEquals(oldSize + 1, newSize);
+        assertEquals(oldLastValue, newNextToLastValue);
+    }
+
+
+    @Test(expected = IndicatorPeriodTooBigException.class)
+    public void testPeriodBiggerThanCandlesCount(){
+        this.period = 200;
+        SimpleMovingAverage simpleMovingAverage = new SimpleMovingAverage(this.period,
+                this.candlePriceType, this.granularity);
+        simpleMovingAverage.updateIndicator(indicatorUpdateHelper.getFakeCandlestickListFullOfMock());
+    }
+
+    @Test(expected = BadRequestException.class)
+    public void testCreatingEMAWithZeroCandles(){
+        sma.updateIndicator(new ArrayList<>());
+    }
 
     @Override
     protected BigDecimal getLastCandlestickPrice() {

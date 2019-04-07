@@ -2,6 +2,8 @@ package trader.entity.indicator.rsi;
 
 import org.junit.Before;
 import org.junit.Test;
+import trader.entity.candlestick.Candlestick;
+import trader.entity.indicator.IndicatorUpdateHelper;
 import trader.exception.BadRequestException;
 import trader.exception.IndicatorPeriodTooBigException;
 import trader.entity.indicator.BaseIndicatorTest;
@@ -47,62 +49,53 @@ public class RelativeStrengthIndexTest extends BaseIndicatorTest {
         assertEquals(expected, result);
     }
 
-//    @Test
-//    public void testInitializingEMAValues(){
-//        List<BigDecimal> values = this.rsi.getValues();
-//
-//        assertTrue(values.size()> 0);
-//    }
-
-
-    @Override
     @Test
-    public void getMAValuesReturnCorrectResult() {
-//        assertEquals(0, BigDecimal.valueOf(32.49993).compareTo(getLastCandlestickPrice()));
+    public void WhenCallUpdateIndicatorCandlesticksListIsUpdated(){
+        updateCandlestickList(rsi);
     }
 
-    @Override
     @Test
-    public void testSuccessfulUpdate() {
-//        int oldSize = this.rsi.getValues().size();
-//        BigDecimal oldLastValue = this.rsi.getValues().get(oldSize-1);
-//        updateCandlestickListInSuper();
-//        this.rsi.updateIndicator();
-//        int newSize = this.rsi.getValues().size();
-//        BigDecimal newNextToLastValue = this.rsi.getValues().get(newSize-2);
-//
-//        assertEquals(oldSize + 1, newSize);
-//        assertEquals(oldLastValue, newNextToLastValue);
+    public void WhenCallUpdateIndicatorAndValuesCountIsZero_CorrectUpdate() {
+        rsi.updateIndicator(indicatorUpdateHelper.getFakeCandlestickListFullOfMock());
+
+        assertEquals(0, BigDecimal.valueOf(32.49993).compareTo(getLastCandlestickPrice()));
     }
 
-//    @Test
-//    public void testRSIWithZeroAverageGainsAndZeroAverageLosses() {
-//
-//        indicatorUpdateHelper.fillCandlestickListWithZeros();
-//        when(this.candlesUpdater.getCandles()).thenReturn(indicatorUpdateHelper.getCandlestickList());
-//        RelativeStrengthIndex newRsi = new RelativeStrengthIndex(this.period, this.candlePriceType, this.candlesUpdater);
-//        int newSize = newRsi.getValues().size();
-//        BigDecimal lastValue = newRsi.getValues().get(newSize-1);
-//
-//        assertEquals(7, newSize);
-//        assertEquals(BigDecimal.valueOf(50), lastValue);
-//    }
+    @Test
+    public void WhenCallUpdateIndicatorAndValuesCountIsNotZero_SuccessfulUpdateWithSingleCandle() {
+        this.rsi.updateIndicator(indicatorUpdateHelper.getFakeCandlestickListFullOfMock());
+        int oldSize = this.rsi.getValues().size();
+        BigDecimal oldLastValue = this.rsi.getValues().get(oldSize-1);
+        this.rsi.updateIndicator(indicatorUpdateHelper.getFakeCandlestickListFullOfMock());
+        int newSize = this.rsi.getValues().size();
+        BigDecimal newNextToLastValue = this.rsi.getValues().get(newSize-2);
 
+        assertEquals(oldSize + 1, newSize);
+        assertEquals(oldLastValue, newNextToLastValue);
+    }
 
+    @Test
+    public void testRSIWithZeroAverageGainsAndZeroAverageLosses() {
+        rsi.updateIndicator(indicatorUpdateHelper.getFakeCandlestickListFullOfZeros());
+        int size = rsi.getValues().size();
 
-//    @Test(expected = IndicatorPeriodTooBigException.class)
-//    public void testPeriodBiggerThanCandlesCount(){
-//        this.period = 200;
-//        new RelativeStrengthIndex(this.period,
-//                this.candlePriceType, new ArrayList<>(), this.granularity);
-//    }
+        assertEquals(7,size);
+        assertEquals(BigDecimal.valueOf(50), rsi.getValues().get(size-1));
+    }
 
-//    @Test(expected = BadRequestException.class)
-//    public void testCreatingEMAWithZeroCandles(){
-//        when(candlesUpdater.getCandles()).thenReturn(new ArrayList<>());
-//        new RelativeStrengthIndex(this.period,
-//                this.candlePriceType, this.candlesUpdater);
-//    }
+    @Test(expected = IndicatorPeriodTooBigException.class)
+    public void testPeriodBiggerThanCandlesCount(){
+        this.period = 200;
+        RelativeStrengthIndex relativeStrengthIndex = new RelativeStrengthIndex(this.period,
+                this.candlePriceType, this.granularity);
+        relativeStrengthIndex.updateIndicator(indicatorUpdateHelper.getFakeCandlestickListFullOfMock());
+
+    }
+
+    @Test(expected = BadRequestException.class)
+    public void testCreatingIndicatorWithZeroCandles(){
+        rsi.updateIndicator(new ArrayList<>());
+    }
 
     @Override
     protected BigDecimal getLastCandlestickPrice() {

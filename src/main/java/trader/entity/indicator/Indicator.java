@@ -1,5 +1,6 @@
 package trader.entity.indicator;
 
+import trader.entity.candlestick.Candlestick;
 import trader.entity.candlestick.candle.CandleGranularity;
 
 import java.math.BigDecimal;
@@ -11,6 +12,6 @@ public interface Indicator {
 
     CandleGranularity getGranularity();
 
-    void updateIndicator();
+    void updateIndicator(List<Candlestick> candles);
 
 }

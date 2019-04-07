@@ -4,7 +4,6 @@ package trader;
 import com.oanda.v20.Context;
 import com.oanda.v20.ContextBuilder;
 import trader.config.Config;
-import trader.broker.connector.ApiConnector;
 import trader.strategy.bgxstrategy.BGXStrategyMain;
 import trader.strategy.Strategy;
 import trader.strategy.ThreadedStrategy;
@@ -110,15 +109,15 @@ public class Main {
  //       Observable priceObserver = PriceObservable.create(context);
 
 //        //create observers
-//        Observer smaPriceObserver = IndicatorObserver.create(smaPrice);
-//        Observer dailyPriceObserver = IndicatorObserver.create(dailyPrice);
-//        Observer wmaFastObserver = IndicatorObserver.create(wmaFast);
-//        Observer wmaMiddleObserver = IndicatorObserver.create(wmaMiddle);
-//        Observer wmaSlowObserver = IndicatorObserver.create(wmaSlow);
-//        Observer rsiObserver = IndicatorObserver.create(rsi);
+//        Observer smaPriceObserver = UpdateIndicatorController.create(smaPrice);
+//        Observer dailyPriceObserver = UpdateIndicatorController.create(dailyPrice);
+//        Observer wmaFastObserver = UpdateIndicatorController.create(wmaFast);
+//        Observer wmaMiddleObserver = UpdateIndicatorController.create(wmaMiddle);
+//        Observer wmaSlowObserver = UpdateIndicatorController.create(wmaSlow);
+//        Observer rsiObserver = UpdateIndicatorController.create(rsi);
 
         //create trade service
- //       NewTradeService newTradeService = new NewTradeService(context, signalGenerator);
+   //     NewTradeService newTradeService = new NewTradeService(context, signalGenerator);
         ExitStrategy exitStrategy = new FullCloseStrategy(context, Config.TIME_FRAME);
         OrderService orderService = new OrderService(context);
 

@@ -14,27 +14,25 @@ public final class ExponentialMovingAverage extends BaseIndicator {
 
     private BigDecimal smoothFactor;
     private BigDecimal smoothMultiplier;
-//////////////////remove////////////////////////////////
-//    ExponentialMovingAverage(long indicatorPeriod, CandlePriceType candlePriceType, CandlesUpdatable updater) {
-//        super(indicatorPeriod, candlePriceType, updater);
-//        setDivisor();
-//        setSmoothFactor();
-//        setSmoothMultiplier();
-//        initiateEMAValues();
-//    }
-////////////////////// remove ///////////////////////////////////////
+
     ExponentialMovingAverage(long indicatorPeriod, CandlePriceType candlePriceType, CandleGranularity granularity) {
         super(indicatorPeriod, candlePriceType, granularity);
-//        setDivisor();
-//        setSmoothFactor();
-//        setSmoothMultiplier();
-//        initiateEMAValues();
+        setDivisor();
+        setSmoothFactor();
+        setSmoothMultiplier();
+
     }
 
     @Override
-    public void updateIndicator() {
-//        Candlestick candlestick = candlesUpdater.getUpdatedCandle();
-//        indicatorValues.add(currentPriceSmoothed(candlestick).add(previousEMASmoothed()));
+    public void updateIndicator(List<Candlestick> candles) {
+        if(indicatorValues.size() == 0){
+            candlestickList.addAll(candles);
+            setEMAValues(candles);
+        } else {
+            Candlestick candlestick = candles.get(candles.size()-1);
+            candlestickList.add(candlestick);
+            indicatorValues.add(currentPriceSmoothed(candlestick).add(previousEMASmoothed()));
+        }
     }
 
     @Override
@@ -61,11 +59,6 @@ public final class ExponentialMovingAverage extends BaseIndicator {
         smoothMultiplier = BigDecimal.ONE.subtract(smoothFactor)
                 .setScale(5, BigDecimal.ROUND_HALF_UP);
     }
-
-//    private void initiateEMAValues() {
-//        List<Candlestick> candles = candlesUpdater.getCandles();
-//        setEMAValues(candles);
-//    }
 
     /**
      * Calculation Formula:

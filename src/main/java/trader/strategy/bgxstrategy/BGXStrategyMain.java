@@ -37,33 +37,21 @@ public final class BGXStrategyMain implements Strategy {
     private UseCaseFactory useCaseFactory;
     private TradingStrategyConfiguration configuration;
     private BrokerGateway brokerGateway;
-    private TraderController<TradingStrategyConfiguration> configurationController;
     private Observable priceObservable;
 
     private ApiConnector apiConnector;
-
 
 
     private ExitStrategy exitStrategy;
     private OrderStrategy orderStrategy;
 
 
-//    public BGXStrategyMain(String brokerName) {
-//        this(brokerName, BGX_STRATEGY_CONFIG_FILE_NAME, BROKER_CONFIG_FILE_NAME);
-//    }
-
     public BGXStrategyMain(String brokerName, String configurationFileName, String brokerConfigurationFileName) {
         requestBuilder = new RequestBuilderImpl();
         useCaseFactory = new UseCaseFactoryImpl();
-        configurationController = new AddBGXConfigurationController<>(requestBuilder, useCaseFactory);
-
         configuration = setConfiguration(configurationFileName);
         brokerGateway = setBrokerGateway(brokerName, brokerConfigurationFileName);
         priceObservable = PriceObservable.create(brokerGateway, configuration);
-
-
-        // setApiConnector(connector);
-
         addIndicatorsFromConfiguration(configuration.getIndicators());
 
 
@@ -99,7 +87,7 @@ public final class BGXStrategyMain implements Strategy {
     }
 
     void addIndicatorsFromConfiguration(List<HashMap<String, String>> indicators){
-        TraderController<Indicator> addIndicatorController = new AddIndicatorController<>(requestBuilder, useCaseFactory, priceObservable, configuration);
+        TraderController<Indicator> addIndicatorController = new AddIndicatorController<>(requestBuilder, useCaseFactory, priceObservable, configuration, brokerGateway);
         for (HashMap<String, String> indicator :indicators)
             addIndicatorController.execute(indicator);
     }
@@ -116,19 +104,14 @@ public final class BGXStrategyMain implements Strategy {
         HashMap<String, String> settings = new HashMap<>();
         settings.put(BROKER_NAME, brokerName);
         settings.put(LOCATION, brokerConfigurationFileName);
-        TraderController<BrokerGateway> controller =new AddBrokerConnectorController<>(requestBuilder, useCaseFactory);
+        TraderController<BrokerGateway> controller = new AddBrokerConnectorController<>(requestBuilder, useCaseFactory);
         Response<BrokerGateway> brokerResponse = controller.execute(settings);
         BrokerConnector connector = (BrokerConnector) brokerResponse.getResponseDataStructure();
-        return BaseGateway.create(brokerName, connector);
+        BrokerGateway brokerGateway = BaseGateway.create(brokerName, connector);
+        brokerGateway.validateConnector();
+        return brokerGateway;
     }
 
-
-//    private void setApiConnector(ApiConnector connector) {
-//        if(connector == null){
-//            throw new NullArgumentException();
-//        }
-//        this.apiConnector = connector;
-//    }
 
 
     private boolean haveOpenOrders() {

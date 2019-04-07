@@ -59,63 +59,61 @@ public class ExponentialMovingAverageTest extends BaseIndicatorTest {
         assertEquals(expected, result);
     }
 
-//    @Test
-//    public void testInitializingEMAValues(){
-//        List<BigDecimal> values = this.ema.getValues();
-//
-//        assertTrue(values.size()> 0);
-//    }
-
-
-
-    @Override
     @Test
-    public void getMAValuesReturnCorrectResult() {
-//        List<BigDecimal> values = this.ema.getValues();
-//        assertEquals(LAST_EMA_VALUE, values.get(values.size()-1));
+    public void WhenCallUpdateIndicatorCandlesticksListIsUpdated(){
+        updateCandlestickList(ema);
+    }
+
+    private int getIndicatorCandlestickListSize() {
+        List<Candlestick> candlestickList = (List<Candlestick>) commonMembers.extractFieldObject(ema, "candlestickList");
+        return candlestickList.size();
     }
 
     @Test
-    public void testSMACalculation() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-//        commonMembers.changeFieldObject(ema, "indicatorValues", new ArrayList<Candlestick>());
-//        Method setSMAValue = commonMembers
-//                .getPrivateMethodForTest(ema, "setSMAValue", List.class);
-//        setSMAValue.invoke(ema, candlesUpdater.getCandles());
-//
-//        assertEquals(1, ema.getValues().size());
-//        assertEquals(BigDecimal.valueOf(1.16414).setScale(SCALE,
-//                BigDecimal.ROUND_HALF_UP), ema.getValues().get(0));
+    public void WhenCallUpdateIndicatorAndValuesCountIsZero_CorrectUpdate() {
+        ema.updateIndicator(indicatorUpdateHelper.getFakeCandlestickListFullOfMock());
+        List<BigDecimal> values = ema.getValues();
+
+        assertEquals(LAST_EMA_VALUE, values.get(values.size()-1));
     }
 
-    @Override
     @Test
-    public void testSuccessfulUpdate() {
+    public void testSMACalculationForCorrectness() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        commonMembers.changeFieldObject(ema, "indicatorValues", new ArrayList<Candlestick>());
+        Method setSMAValue = commonMembers
+                .getPrivateMethodForTest(ema, "setSMAValue", List.class);
+        setSMAValue.invoke(ema, indicatorUpdateHelper.getFakeCandlestickListFullOfMock());
 
-//        int oldSize = this.ema.getValues().size();
-//        BigDecimal oldLastValue = this.ema.getValues().get(oldSize-1);
-//        updateCandlestickListInSuper();
-//        this.ema.updateIndicator();
-//        int newSize = this.ema.getValues().size();
-//        BigDecimal newNextToLastValue = this.ema.getValues().get(newSize-2);
-//
-//        assertEquals(oldSize + 1, newSize);
-//        assertEquals(oldLastValue, newNextToLastValue);
+        assertEquals(1, ema.getValues().size());
+        assertEquals(BigDecimal.valueOf(1.16414).setScale(SCALE,
+                BigDecimal.ROUND_HALF_UP), ema.getValues().get(0));
     }
 
+    @Test
+    public void WhenCallUpdateIndicatorAndValuesCountIsNotZero_SuccessfulUpdateWithSingleCandle() {
+        this.ema.updateIndicator(indicatorUpdateHelper.getFakeCandlestickListFullOfMock());
+        int oldSize = this.ema.getValues().size();
+        BigDecimal oldLastValue = this.ema.getValues().get(oldSize-1);
+        this.ema.updateIndicator(indicatorUpdateHelper.getFakeCandlestickListFullOfMock());
+        int newSize = this.ema.getValues().size();
+        BigDecimal newNextToLastValue = this.ema.getValues().get(newSize-2);
 
-//    @Test(expected = IndicatorPeriodTooBigException.class)
-//    public void testPeriodBiggerThanCandlesCount(){
-//        this.period = 200;
-//        new ExponentialMovingAverage(this.period,
-//                this.candlePriceType, this.candlesUpdater);
-//    }
-//
-//    @Test(expected = BadRequestException.class)
-//    public void testCreatingEMAWithZeroCandles(){
-//        when(candlesUpdater.getCandles()).thenReturn(new ArrayList<>());
-//        new ExponentialMovingAverage(this.period,
-//                this.candlePriceType, this.candlesUpdater);
-//    }
+        assertEquals(oldSize + 1, newSize);
+        assertEquals(oldLastValue, newNextToLastValue);
+    }
+
+    @Test(expected = IndicatorPeriodTooBigException.class)
+    public void testPeriodBiggerThanCandlesCount(){
+        this.period = 200;
+        ExponentialMovingAverage exponentialMovingAverage = new ExponentialMovingAverage(this.period,
+                this.candlePriceType, this.granularity);
+        exponentialMovingAverage.updateIndicator(indicatorUpdateHelper.getFakeCandlestickListFullOfMock());
+    }
+
+    @Test(expected = BadRequestException.class)
+    public void testCreatingEMAWithZeroCandles(){
+        ema.updateIndicator(new ArrayList<>());
+    }
 
     @Override
     protected BigDecimal getLastCandlestickPrice() {

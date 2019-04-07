@@ -3,6 +3,7 @@ package trader.controller;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import trader.broker.BrokerGateway;
 import trader.configuration.TradingStrategyConfiguration;
 import trader.entity.candlestick.candle.CandleGranularity;
 import trader.entity.indicator.Indicator;
@@ -34,6 +35,7 @@ public class AddIndicatorControllerTest {
     private UseCaseFactory useCaseFactoryMock;
     private HashMap<String, String> settings;
     private AddIndicatorController addIndicatorController;
+    private BrokerGateway gatewayMock;
 
     @Before
     public void setUp() {
@@ -44,28 +46,34 @@ public class AddIndicatorControllerTest {
         requestMock = mock(Request.class);
         requestBuilderMock = mock(RequestBuilder.class);
         useCaseFactoryMock = mock(UseCaseFactory.class);
+        gatewayMock = mock(BrokerGateway.class);
         settings = new HashMap<>();
-        addIndicatorController = new AddIndicatorController(requestBuilderMock, useCaseFactoryMock, priceObservableMock, configurationMock);
+        addIndicatorController = new AddIndicatorController(requestBuilderMock, useCaseFactoryMock, priceObservableMock, configurationMock, gatewayMock);
     }
 
     @Test(expected = NullArgumentException.class)
     public void WhenCreateControllerWithNullRequestBuilder_Exception(){
-        new AddIndicatorController(null, useCaseFactoryMock, priceObservableMock, configurationMock);
+        new AddIndicatorController(null, useCaseFactoryMock, priceObservableMock, configurationMock, gatewayMock);
     }
 
     @Test(expected = NullArgumentException.class)
     public void WhenCreateControllerWithNullUserCaseFactory_Exception(){
-        new AddIndicatorController(requestBuilderMock, null, priceObservableMock, configurationMock);
+        new AddIndicatorController(requestBuilderMock, null, priceObservableMock, configurationMock, gatewayMock);
     }
 
     @Test(expected = NullArgumentException.class)
     public void WhenCreateControllerWithNullObservable_Exception(){
-        new AddIndicatorController(requestBuilderMock, useCaseFactoryMock, null, configurationMock);
+        new AddIndicatorController(requestBuilderMock, useCaseFactoryMock, null, configurationMock, gatewayMock);
     }
 
     @Test(expected = NullArgumentException.class)
     public void WhenCreateControllerWithNullConfiguration_Exception(){
-        new AddIndicatorController(requestBuilderMock, useCaseFactoryMock, priceObservableMock, null);
+        new AddIndicatorController(requestBuilderMock, useCaseFactoryMock, priceObservableMock, null, gatewayMock);
+    }
+
+    @Test(expected = NullArgumentException.class)
+    public void WhenCreateControllerWithNullBrokerGateway_Exception(){
+        new AddIndicatorController(requestBuilderMock, useCaseFactoryMock, priceObservableMock, configurationMock, null);
     }
 
     @Test

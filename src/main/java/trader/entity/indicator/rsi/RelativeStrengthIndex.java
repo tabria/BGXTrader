@@ -5,11 +5,9 @@ import trader.entity.candlestick.candle.CandleGranularity;
 import trader.entity.candlestick.candle.CandlePriceType;
 import trader.entity.candlestick.Candlestick;
 import trader.entity.indicator.BaseIndicator;
-
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
-//import static trader.strategy.bgxstrategy.configuration.StrategyConfig.*;
 
 public final class RelativeStrengthIndex extends BaseIndicator {
 
@@ -19,16 +17,6 @@ public final class RelativeStrengthIndex extends BaseIndicator {
 
     private BigDecimal averageGains;
     private BigDecimal averageLosses;
-
-    ////////////////////////remove///////////////////////////////////
-
-//    RelativeStrengthIndex(long indicatorPeriod, CandlePriceType candlePriceType, CandlesUpdatable candlesUpdater){
-//        super(indicatorPeriod, candlePriceType, candlesUpdater);
-//        averageGains = BigDecimal.ZERO;
-//        averageLosses = BigDecimal.ZERO;
-//        initiateRSIValues();
-//    }
-    ////////////////////////remove/////////////////////////
 
     RelativeStrengthIndex(long indicatorPeriod, CandlePriceType candlePriceType, CandleGranularity granularity){
         super(indicatorPeriod, candlePriceType, granularity);
@@ -43,12 +31,25 @@ public final class RelativeStrengthIndex extends BaseIndicator {
     }
 
     @Override
-    public void updateIndicator() {
-//        Candlestick candlestick = candlesUpdater.getUpdatedCandle();
-//        List<Candlestick> candles = candlesUpdater.getCandles();
-//        Candlestick prevCandle = getCurrentCandle(candles, candles.size() - 1);
-//        insertRemainingRSIValues(candlestick, prevCandle);
+    public void updateIndicator(List<Candlestick> candles) {
+        if(indicatorValues.size()== 0) {
+            candlestickList.addAll(candles);
+            setRSIValues(candles);
+        } else {
+            Candlestick candlestick = candles.get(candles.size()-1);
+            Candlestick prevCandle = getCurrentCandle(candlestickList, candlestickList.size() - 1);
+            insertRemainingRSIValues(candlestick, prevCandle);
+            candlestickList.add(candlestick);
+        }
     }
+
+//    @Override
+//    public void updateIndicator() {
+////        Candlestick candlestick = candlesUpdater.getUpdatedCandle();
+////        List<Candlestick> candles = candlesUpdater.getCandles();
+////        Candlestick prevCandle = getCurrentCandle(candles, candles.size() - 1);
+////        insertRemainingRSIValues(candlestick, prevCandle);
+//    }
 
     @Override
     protected void setDivisor() {}
@@ -62,11 +63,6 @@ public final class RelativeStrengthIndex extends BaseIndicator {
                 ", rsiValues=" + indicatorValues.toString() +
                 '}';
     }
-
-//    private void initiateRSIValues() {
-//        List<Candlestick> candles = candlesUpdater.getCandles();
-//        setRSIValues(candles);
-//    }
 
     private void setRSIValues(List<Candlestick> candlestickList) {
         verifyCalculationInput(candlestickList);

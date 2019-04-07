@@ -25,14 +25,17 @@ public final class SimpleMovingAverage extends BaseIndicator {
 
 
     @Override
-    public void updateIndicator() {
-//        candlesUpdater.getUpdatedCandle();
-//        List<Candlestick> candles = candlesUpdater.getCandles();
-//        BigDecimal smaValue = BigDecimal.ZERO;
-//        for (int i = candles.size()-1; i >indicatorPeriod ; i--) {
-//            smaValue = smaValue.add(obtainPrice(candles.get(i)));
-//        }
-//        indicatorValues.add(smaValue.divide(divisor, SCALE, BigDecimal.ROUND_HALF_UP));
+    public void updateIndicator(List<Candlestick> candles) {
+        candlestickList.addAll(candles);
+        if(indicatorValues.size() == 0){
+            calculateSMAValue(candles);
+        } else {
+            BigDecimal smaValue = BigDecimal.ZERO;
+            for (int i = candlestickList.size()-1; i >indicatorPeriod ; i--) {
+                smaValue = smaValue.add(obtainPrice(candlestickList.get(i)));
+            }
+            indicatorValues.add(smaValue.divide(divisor, 5, BigDecimal.ROUND_HALF_UP));
+        }
     }
     
     @Override

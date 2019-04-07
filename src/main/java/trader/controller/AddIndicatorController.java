@@ -1,4 +1,6 @@
 package trader.controller;
+import com.sun.corba.se.pept.broker.Broker;
+import trader.broker.BrokerGateway;
 import trader.configuration.TradingStrategyConfiguration;
 import trader.entity.indicator.Indicator;
 import trader.exception.NullArgumentException;
@@ -16,15 +18,17 @@ public class AddIndicatorController<T> implements TraderController<T> {
     private UseCaseFactory useCaseFactory;
     private Observable priceObservable;
     private TradingStrategyConfiguration configuration;
+    private BrokerGateway gateway;
 
-    public AddIndicatorController(RequestBuilder requestBuilder, UseCaseFactory useCaseFactory, Observable priceObservable, TradingStrategyConfiguration configuration) {
-        if(requestBuilder == null || useCaseFactory == null  ||
-                priceObservable == null || configuration == null)
+    public AddIndicatorController(RequestBuilder requestBuilder, UseCaseFactory useCaseFactory, Observable priceObservable, TradingStrategyConfiguration configuration, BrokerGateway gateway) {
+        if(requestBuilder == null || useCaseFactory == null  || priceObservable == null
+                || configuration == null || gateway == null)
             throw new NullArgumentException();
         this.requestBuilder = requestBuilder;
         this.useCaseFactory = useCaseFactory;
         this.priceObservable = priceObservable;
         this.configuration = configuration;
+        this.gateway = gateway;
     }
 
     public Response<T> execute(HashMap<String, String> settings){
@@ -41,8 +45,8 @@ public class AddIndicatorController<T> implements TraderController<T> {
         return useCaseFactory.make(controllerName);
     }
 
-    private IndicatorObserver transformToIndicatorObserver(Response<T> indicatorResponse) {
-        return IndicatorObserver.create((Indicator)indicatorResponse.getResponseDataStructure(), configuration);
+    private UpdateIndicatorController transformToIndicatorObserver(Response<T> indicatorResponse) {
+        return UpdateIndicatorController.create((Indicator)indicatorResponse.getResponseDataStructure(), configuration, gateway);
     }
 
     private Response<T> getIndicatorResponse(HashMap<String, String> settings) {

@@ -8,12 +8,9 @@ import trader.exception.IndicatorPeriodTooBigException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 public abstract class BaseIndicator implements Indicator{
- //   protected final CandlesUpdatable candlesUpdater;
-
 
     protected long indicatorPeriod;
     protected CandlePriceType candlePriceType;
@@ -22,23 +19,11 @@ public abstract class BaseIndicator implements Indicator{
     protected List<BigDecimal> indicatorValues;
     protected BigDecimal divisor;
 
-    //////////////////////////// to remove ///////////////////////////////////////////
-//    public BaseIndicator(long indicatorPeriod, CandlePriceType candlePriceType, CandlesUpdatable candlesUpdater) {
-//        this.indicatorPeriod = indicatorPeriod;
-//        this.candlePriceType = candlePriceType;
-//        this.candlesUpdater = candlesUpdater;
-//        this.indicatorValues = new ArrayList<>();
-//        this.candlestickList = new ArrayList<>();
-//    }
-
-    //////////////////to remove -/////////////////////////////////
-
 
     public BaseIndicator(long indicatorPeriod, CandlePriceType candlePriceType, CandleGranularity granularity) {
         this.indicatorPeriod = indicatorPeriod;
         this.candlePriceType = candlePriceType;
         this.granularity = granularity;
-//        this.candlesUpdater = null; //to be removed
         this.indicatorValues = new ArrayList<>();
         this.candlestickList = new ArrayList<>();
     }
@@ -54,7 +39,7 @@ public abstract class BaseIndicator implements Indicator{
     }
 
     @Override
-    public abstract void updateIndicator();
+    public abstract void updateIndicator(List<Candlestick> candles);
 
     protected abstract void setDivisor();
 

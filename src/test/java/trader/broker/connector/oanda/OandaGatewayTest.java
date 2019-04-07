@@ -38,7 +38,6 @@ public class OandaGatewayTest {
 
     @Before
     public void setUp() {
-
         commonMembers = new CommonTestClassMembers();
         oandaAPIMockAccount = new OandaAPIMockAccount();
         mockResponse = mock(OandaResponseBuilder.class);
@@ -51,10 +50,7 @@ public class OandaGatewayTest {
         when(responseMock.getResponseDataStructure()).thenReturn(pricingResponseMock);
         connectorMock = mock(BrokerConnector.class);
         oandaGateway = (OandaGateway) BaseGateway.create("Oanda", connectorMock);
-
     }
-
-
 
     @Test
     public void WhenCallValidateConnector_ContextMustNotBeNull(){

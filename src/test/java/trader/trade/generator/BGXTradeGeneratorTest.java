@@ -52,7 +52,8 @@ public class BGXTradeGeneratorTest {
         this.mockRsi = mock(RelativeStrengthIndex.class);
 
         this.baseGateway = mock(BaseGateway.class);
-        this.indicatorUpdateHelper = new IndicatorUpdateHelper(this.candlePriceType);
+       // this.indicatorUpdateHelper = new IndicatorUpdateHelper(this.candlePriceType);
+        this.indicatorUpdateHelper = new IndicatorUpdateHelper();
         init();
         this.commonMembers = new CommonTestClassMembers();
 

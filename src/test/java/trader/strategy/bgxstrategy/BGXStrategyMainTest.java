@@ -3,7 +3,6 @@ package trader.strategy.bgxstrategy;
 import org.junit.Before;
 import org.junit.Test;
 import trader.CommonTestClassMembers;
-import trader.broker.connector.ApiConnector;
 import trader.broker.BrokerGateway;
 import trader.controller.Observer;
 import trader.entity.candlestick.candle.CandleGranularity;
@@ -30,7 +29,6 @@ public class BGXStrategyMainTest {
     private static final String BGX_STRATEGY_CONFIG_FILE_NAME = "bgxStrategyConfig.yaml";
     private static final String BROKER_CONFIG_FILE_NAME = "oandaBrokerConfig.yaml";
 
-    private ApiConnector apiConnectorMock;
     private BGXStrategyMain bgxStrategyMain;
     private TradingStrategyConfiguration bgxConfigurationMock;
     private List<HashMap<String, String>> falseIndicators;
@@ -64,13 +62,11 @@ public class BGXStrategyMainTest {
 //        applySettings();
 //        fillCandlestickList();
         commonMembers = new CommonTestClassMembers();
-        apiConnectorMock = mock(ApiConnector.class);
         bgxConfigurationMock = mock(TradingStrategyConfiguration.class);
         setFalseInitialIndicators();
         bgxStrategyMain = new BGXStrategyMain(BROKER_NAME, BGX_STRATEGY_CONFIG_FILE_NAME, BROKER_CONFIG_FILE_NAME);
 
     }
-
 
     @Test(expected = NullArgumentException.class)
     public void WhenBrokerNameIsNull_Exception(){
@@ -122,6 +118,7 @@ public class BGXStrategyMainTest {
 
         assertEquals(expected, actual);
         assertNotNull(commonMembers.extractFieldObject(brokerGateway, "connector"));
+        assertNotNull(commonMembers.extractFieldObject(brokerGateway, "context"));
     }
 
 
