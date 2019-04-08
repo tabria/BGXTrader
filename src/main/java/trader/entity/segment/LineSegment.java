@@ -1,11 +1,12 @@
 package trader.entity.segment;
 
-import trader.entity.point.PointImpl;
+
+import trader.entity.point.Point;
 
 public interface LineSegment {
-    PointImpl getPointA();
+    Point getPointA();
 
-    PointImpl getPointB();
+    Point getPointB();
 
     boolean equals(Object obj);
 }

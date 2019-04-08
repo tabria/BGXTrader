@@ -1,6 +1,6 @@
 package trader.entity.trade;
 
-import trader.entity.point.PointImpl;
+import trader.entity.point.Point;
 
 import java.math.BigDecimal;
 
@@ -28,7 +28,7 @@ public final class TradeImpl {
      * @param direction trade direction
      * @param dailyOpenPrice daily open price
      */
-    public TradeImpl(PointImpl intersectionPoint, Direction direction, BigDecimal dailyOpenPrice) {
+    public TradeImpl(Point intersectionPoint, Direction direction, BigDecimal dailyOpenPrice) {
         this.direction = direction;
         this.setEntryPrice(intersectionPoint, direction);
         this.setStopLossPrice(intersectionPoint, direction);
@@ -81,7 +81,7 @@ public final class TradeImpl {
      * @param dailyOpenPrice daily open price
      * @throws NullPointerException when some of the arguments is null
      */
-    private void setTradable(PointImpl intersectionPoint, Direction direction, BigDecimal dailyOpenPrice) {
+    private void setTradable(Point intersectionPoint, Direction direction, BigDecimal dailyOpenPrice) {
 
         if (intersectionPoint == null || direction == null || dailyOpenPrice == null){
             throw new NullPointerException("Arguments mut not be null");
@@ -107,7 +107,7 @@ public final class TradeImpl {
      * @param direction trade direction
      * @throws NullPointerException when some of the arguments is null
      */
-    private void setEntryPrice(PointImpl intersectionPoint, Direction direction) {
+    private void setEntryPrice(Point intersectionPoint, Direction direction) {
         if (intersectionPoint == null || direction == null){
             throw new NullPointerException("Arguments must not be null");
         }
@@ -125,7 +125,7 @@ public final class TradeImpl {
      * @param direction trade direction
      * @throws NullPointerException when some of the arguments is null
      */
-    private void setStopLossPrice(PointImpl intersectionPoint, Direction direction) {
+    private void setStopLossPrice(Point intersectionPoint, Direction direction) {
         if (intersectionPoint == null || direction == null){
             throw new NullPointerException("Arguments must not be null");
         }

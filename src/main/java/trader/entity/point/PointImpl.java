@@ -16,7 +16,7 @@ public final class PointImpl implements Point {
         this.time = builder.time;
     }
 
-    public PointImpl(PointImpl point){
+    public PointImpl(Point point){
         if (point == null)
             throw new NullArgumentException();
         this.price = point.getPrice();
@@ -43,7 +43,7 @@ public final class PointImpl implements Point {
             return this;
         }
 
-        public PointImpl build(){
+        public Point build(){
             return new PointImpl(this);
         }
 

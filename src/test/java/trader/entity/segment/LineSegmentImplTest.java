@@ -2,6 +2,7 @@ package trader.entity.segment;
 
 import org.junit.Before;
 import org.junit.Test;
+import trader.entity.point.Point;
 import trader.entity.point.PointImpl;
 import trader.exception.NullArgumentException;
 
@@ -56,7 +57,7 @@ public class LineSegmentImplTest {
         when(this.mockPointY.getTime()).thenReturn(BigDecimal.valueOf(3));
         when(this.mockPointY.getPrice()).thenReturn(BigDecimal.valueOf(1.1677));
         this.lineSegment = new LineSegmentImpl(this.mockPointX, this.mockPointY);
-         PointImpl pointA = this.lineSegment.getPointA();
+         Point pointA = this.lineSegment.getPointA();
         int comparePrice = pointA.getPrice().compareTo(BigDecimal.valueOf(1.1678));
         int compareTime = pointA.getTime().compareTo(BigDecimal.valueOf(2));
 
@@ -74,7 +75,7 @@ public class LineSegmentImplTest {
         when(this.mockPointY.getPrice()).thenReturn(BigDecimal.valueOf(1.1677));
 
         this.lineSegment = new LineSegmentImpl(this.mockPointX, this.mockPointY);
-        PointImpl pointB = this.lineSegment.getPointB();
+        Point pointB = this.lineSegment.getPointB();
 
         int comparePrice = pointB.getPrice().compareTo(BigDecimal.valueOf(1.1677));
         int compareTime = pointB.getTime().compareTo(BigDecimal.valueOf(3));

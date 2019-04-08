@@ -1,6 +1,7 @@
 package trader.entry;
 
 import trader.entity.indicator.Indicator;
+import trader.entity.point.Point;
 import trader.entity.segment.LineSegment;
 import trader.entity.segment.LineSegmentImpl;
 import trader.entity.trade.TradeImpl;
@@ -92,7 +93,7 @@ public final class StandardEntryStrategy {
 
     private TradeImpl generateTradeAfterIntersection(LineSegment fastSegment, LineSegment middleSegment){
 
-        PointImpl intersectionPoint = IntersectionService.calculateIntersectionPoint(fastSegment, middleSegment);
+        Point intersectionPoint = IntersectionService.calculateIntersectionPoint(fastSegment, middleSegment);
         List<BigDecimal> dailyValues = this.dailySMA.getValues();
 
         if (direction.equals(Direction.UP) && isAbove(this.fastWMA, this.slowWMA) && isAbove(this.middleWMA, this.slowWMA)){
@@ -130,8 +131,8 @@ public final class StandardEntryStrategy {
         List<BigDecimal> indicatorValues = indicator.getValues();
         BigDecimal pointAPrice = indicatorValues.get(indicatorValues.size()-START_OFFSET);
         BigDecimal pointBPrice = indicatorValues.get(indicatorValues.size()-END_OFFSET);
-        PointImpl pointA = new PointImpl.PointBuilder(pointAPrice).build();
-        PointImpl pointB = new PointImpl.PointBuilder(pointBPrice).setTime(BigDecimal.valueOf(2)).build();
+        Point pointA = new PointImpl.PointBuilder(pointAPrice).build();
+        Point pointB = new PointImpl.PointBuilder(pointBPrice).setTime(BigDecimal.valueOf(2)).build();
 
         return new LineSegmentImpl(pointA, pointB);
     }

@@ -2,8 +2,11 @@ package trader.entry.service;
 
 import org.junit.Before;
 import org.junit.Test;
+import trader.entity.point.Point;
 import trader.entity.point.PointImpl;
+import trader.entity.segment.LineSegment;
 import trader.entity.segment.LineSegmentImpl;
+import trader.exception.NullArgumentException;
 
 import java.math.BigDecimal;
 import static org.junit.Assert.assertEquals;
@@ -14,12 +17,12 @@ import static org.mockito.Mockito.when;
 
 public class IntersectionServiceTest {
 
-    private PointImpl mockAPointA;
-    private PointImpl mockAPointB;
-    private PointImpl mockBPointA;
-    private PointImpl mockBPointB;
-    private LineSegmentImpl mockSegmentA;
-    private LineSegmentImpl mockSegmentB;
+    private Point mockAPointA;
+    private Point mockAPointB;
+    private Point mockBPointA;
+    private Point mockBPointB;
+    private LineSegment mockSegmentA;
+    private LineSegment mockSegmentB;
 
     @Before
     public void before(){
@@ -32,29 +35,24 @@ public class IntersectionServiceTest {
         this.mockBPointB = mock(PointImpl.class);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = NullArgumentException.class)
     public void WhenCallDoLineSegmentIntersectWithNullSegmentAThenException() {
         IntersectionService.doLineSegmentsIntersect(null, this.mockSegmentB);
-
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = NullArgumentException.class)
     public void WhenCallLineSegmentIntersectWithNullSegmentBThenException() {
         IntersectionService.doLineSegmentsIntersect(this.mockSegmentA, null);
-
     }
 
     @Test
     public void WhenFastWMAIntersectMiddleWMAFromBelowDoLineSegmentsIntersectReturnsTrue(){
-
         //fast ma must intersect middle ma
         setSegmentA(BigDecimal.valueOf(1.23439), BigDecimal.valueOf(1), BigDecimal.valueOf(1.23307), BigDecimal.valueOf(2));
         setSegmentB(BigDecimal.valueOf(1.23358), BigDecimal.valueOf(1), BigDecimal.valueOf(1.23342), BigDecimal.valueOf(2));
-
         boolean result = IntersectionService.doLineSegmentsIntersect(this.mockSegmentA, this.mockSegmentB);
 
         assertTrue(result);
-
     }
 
     @Test
@@ -67,7 +65,6 @@ public class IntersectionServiceTest {
         boolean result = IntersectionService.doLineSegmentsIntersect(this.mockSegmentA, this.mockSegmentB);
 
         assertTrue(result);
-
     }
 
     @Test
@@ -80,7 +77,6 @@ public class IntersectionServiceTest {
         boolean result = IntersectionService.doLineSegmentsIntersect(this.mockSegmentA, this.mockSegmentB);
 
         assertFalse(result);
-
     }
  //If check for collinearity is active this test must be active too
 //    @Test
@@ -107,7 +103,6 @@ public class IntersectionServiceTest {
         boolean result = IntersectionService.doLineSegmentsIntersect(this.mockSegmentA, this.mockSegmentB);
 
         assertFalse(result);
-
     }
 
     @Test
@@ -120,7 +115,6 @@ public class IntersectionServiceTest {
         boolean result = IntersectionService.doLineSegmentsIntersect(this.mockSegmentA, this.mockSegmentB);
 
         assertTrue(result);
-
     }
 
     @Test
@@ -135,12 +129,12 @@ public class IntersectionServiceTest {
         assertFalse(result);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = NullArgumentException.class)
     public void WhenCalculateIntersectionPointWithNullSegmentAThenException(){
         IntersectionService.calculateIntersectionPoint(null, this.mockSegmentB);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = NullArgumentException.class)
     public void WhenCalculateIntersectionPointWithNullSegmentBThenException(){
         IntersectionService.calculateIntersectionPoint(this.mockSegmentA, null);
     }
@@ -155,7 +149,7 @@ public class IntersectionServiceTest {
 //        setSegmentA(BigDecimal.valueOf(1.22537), BigDecimal.valueOf(1), BigDecimal.valueOf(1.22622), BigDecimal.valueOf(2));
 //        setSegmentB(BigDecimal.valueOf(1.22606), BigDecimal.valueOf(1), BigDecimal.valueOf(1.22615), BigDecimal.valueOf(2));
 
-        PointImpl resultPoint = IntersectionService.calculateIntersectionPoint(this.mockSegmentA, this.mockSegmentB);
+        Point resultPoint = IntersectionService.calculateIntersectionPoint(this.mockSegmentA, this.mockSegmentB);
 
         BigDecimal resultPrice = resultPoint.getPrice();
 

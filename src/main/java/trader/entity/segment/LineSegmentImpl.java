@@ -1,5 +1,6 @@
 package trader.entity.segment;
 
+import trader.entity.point.Point;
 import trader.entity.point.PointImpl;
 import trader.exception.NullArgumentException;
 
@@ -7,21 +8,21 @@ import java.math.BigDecimal;
 
 public final class LineSegmentImpl implements LineSegment {
 
-    private PointImpl pointA;
-    private PointImpl pointB;
+    private Point pointA;
+    private Point pointB;
 
-    public LineSegmentImpl(PointImpl a, PointImpl b) {
+    public LineSegmentImpl(Point a, Point b) {
         this.setPointA(a);
         this.setPointB(b);
     }
 
     @Override
-    public PointImpl getPointA(){
+    public Point getPointA(){
         return new PointImpl(this.pointA);
     }
 
     @Override
-    public PointImpl getPointB(){
+    public Point getPointB(){
         return new PointImpl(this.pointB);
     }
 
@@ -52,7 +53,7 @@ public final class LineSegmentImpl implements LineSegment {
                 '}';
     }
 
-    private void setPointA(PointImpl a){
+    private void setPointA(Point a){
         if(a == null){
             throw new NullArgumentException();
         }
@@ -63,7 +64,7 @@ public final class LineSegmentImpl implements LineSegment {
         this.pointA = new PointImpl.PointBuilder(priceA).build();
     }
 
-    private void setPointB(PointImpl b){
+    private void setPointB(Point b){
         if(b == null)
             throw new NullArgumentException();
         int result = this.pointA.getTime().compareTo(b.getTime());
