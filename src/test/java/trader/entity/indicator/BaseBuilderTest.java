@@ -23,6 +23,7 @@ public abstract class BaseBuilderTest {
     protected static final String PERIOD = "period";
     protected static final String CANDLE_PRICE_TYPE = "candlePriceType";
     protected static final String CANDLE_GRANULARITY = "granularity";
+    protected static final String POSITION = "position";
 
     protected CommonTestClassMembers commonMembers;
     protected HashMap<String, String> settings;
@@ -192,7 +193,6 @@ public abstract class BaseBuilderTest {
 
         assertEquals("h4".toUpperCase(), getActualGranularity(builder).toString());
     }
-
 
     @SuppressWarnings("unchecked")
     protected List<Candlestick> getActualCandlestickList(Object object) {

@@ -14,12 +14,13 @@ public final class RelativeStrengthIndex extends BaseIndicator {
     private static final BigDecimal RSI_MAX_VALUE = BigDecimal.valueOf(100);
     private static final BigDecimal RSI_MIDDLE_VALUE = BigDecimal.valueOf(50);
     private static final BigDecimal ZERO = BigDecimal.ZERO;
+    private static final String DEFAULT_POSITION = "rsi";
 
     private BigDecimal averageGains;
     private BigDecimal averageLosses;
 
     RelativeStrengthIndex(long indicatorPeriod, CandlePriceType candlePriceType, CandleGranularity granularity){
-        super(indicatorPeriod, candlePriceType, granularity);
+        super(indicatorPeriod, candlePriceType, granularity, DEFAULT_POSITION);
         averageGains = BigDecimal.ZERO;
         averageLosses = BigDecimal.ZERO;
     }

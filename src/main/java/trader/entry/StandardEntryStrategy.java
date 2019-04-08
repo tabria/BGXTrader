@@ -2,10 +2,12 @@ package trader.entry;
 
 
 import trader.broker.connector.BaseGateway;
+import trader.entity.candlestick.candle.CandleGranularity;
 import trader.entity.indicator.Indicator;
 import trader.entity.indicator.ma.MovingAverageBuilder;
 import trader.entity.indicator.rsi.RSIBuilder;
 import trader.entity.trade.TradeImpl;
+import trader.exception.NoSuchStrategyException;
 import trader.trade.entitie.LineSegment;
 import trader.trade.entitie.Point;
 import trader.entity.trade.Direction;
@@ -25,7 +27,7 @@ import java.util.List;
  */
 
 
-public final class BGXTradeGenerator {
+public final class StandardEntryStrategy {
 
 //    private static final BigDecimal OFFSET_FAST_WMA = BigDecimal.valueOf(0.0005);
 //    private static final BigDecimal OFFSET_MIDDLE_WMA = BigDecimal.valueOf(0.0005);
@@ -33,19 +35,54 @@ public final class BGXTradeGenerator {
 //    private static final BigDecimal OFFSET_PRICE_SMA = BigDecimal.valueOf(0.0005);
     private static final BigDecimal RSI_FILTER = BigDecimal.valueOf(50);
 
+    private static final int INDICATORS_COUNT = 6;
 
-    private final Indicator fastWMA;
+    private Indicator fastWMA;
     private final Indicator middleWMA;
     private final Indicator slowWMA;
-    private final Indicator dailySMA;
+    private Indicator dailySMA;
     private final Indicator priceSma;
-    private final Indicator rsi;
+    private Indicator rsi;
     private Direction direction;
     private TradeImpl defaultTradeImpl;
 
+    public StandardEntryStrategy(List<Indicator> indicators) {
+        if(indicators == null || indicators.size() != INDICATORS_COUNT)
+            throw new NoSuchStrategyException();
+//        long slow = 0L;
+//        for (Indicator indicator:indicators) {
+//            if(rsi == null && indicator.getClass().getSimpleName().equals("RelativeStrengthIndex")){
+//                rsi = indicator;
+//            }  else if (dailySMA == null && indicator.getGranularity().equals(CandleGranularity.D)) {
+//                dailySMA = indicator;
+//            } else {
+//                if(slow == 0){
+//                    fastWMA = indicator;
+//                    slow = indicator.getPeriod();
+//                } else if(slow != 0 && slow < indicator.getPeriod()){
+//
+//                }
+//
+//                slow = indicator.getPeriod();
+//            }
+//
+//
+//            Class<? extends Indicator> aClass = indicator.getClass();
+//            String a = "";
+//        }
+        direction = Direction.FLAT;
+        this.fastWMA = null; //fastWMA;
+        this.middleWMA = null; //middleWMA;
+        this.slowWMA = null; //slowWMA;
+        this.priceSma = null; //priceClose;
+        this.dailySMA = null; //dailySMA;
+        this.rsi = null;//rsi;
+        //this.setDefaultTrade();
+    }
 
-    public BGXTradeGenerator(Indicator fastWMA, Indicator middleWMA, Indicator slowWMA,
-                             Indicator priceClose,Indicator dailySMA, Indicator rsi) {
+
+    public StandardEntryStrategy(Indicator fastWMA, Indicator middleWMA, Indicator slowWMA,
+                                 Indicator priceClose, Indicator dailySMA, Indicator rsi) {
         this.fastWMA = fastWMA;
         this.middleWMA = middleWMA;
         this.slowWMA = slowWMA;
@@ -55,7 +92,7 @@ public final class BGXTradeGenerator {
         this.setDefaultTrade();
     }
 
-    public BGXTradeGenerator(BaseGateway baseGateway) {
+    public StandardEntryStrategy(BaseGateway baseGateway) {
 //        fastWMA = new MovingAverageBuilder(baseGateway).build(FAST_WMA_SETTINGS);
 //        middleWMA = new MovingAverageBuilder(baseGateway).build(MIDDLE_WMA_SETTINGS);
 //        priceSma = new MovingAverageBuilder(baseGateway).build( PRICE_SMA_SETTINGS);

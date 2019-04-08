@@ -10,8 +10,8 @@ import java.util.List;
 
 public final class WeightedMovingAverage extends BaseIndicator {
 
-    WeightedMovingAverage(long indicatorPeriod, CandlePriceType candlePriceType, CandleGranularity granularity) {
-        super(indicatorPeriod, candlePriceType, granularity);
+    WeightedMovingAverage(long indicatorPeriod, CandlePriceType candlePriceType, CandleGranularity granularity, String position) {
+        super(indicatorPeriod, candlePriceType, granularity, position);
         setDivisor();
     }
 

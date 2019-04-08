@@ -193,10 +193,11 @@ public class BGXStrategyMainTest {
     private void setFalseInitialIndicators() {
         falseIndicators = new ArrayList<>();
         falseIndicators.add(createFalseIndicator("rsi", "9", "Close", "m30"));
-        falseIndicators.add(createFalseIndicator("sma", "16", "Open", "m15", "Simple"));
-        falseIndicators.add(createFalseIndicator("wma", "22", "Low", "m10", "Weighted"));
-        falseIndicators.add(createFalseIndicator("ema", "50", "High", "m5", "Exponential"));
-        falseIndicators.add(createFalseIndicator("sma", "2", "Median", "m30", "SIMPLE"));
+        falseIndicators.add(createFalseIndicator("Simple", "16", "Open", "m15", "price"));
+        falseIndicators.add(createFalseIndicator("Weighted", "22", "Low", "m10", "slow"));
+        falseIndicators.add(createFalseIndicator("Weighted", "50", "High", "m5", "fast"));
+        falseIndicators.add(createFalseIndicator("SIMPLE", "2", "Median", "m30", "daily"));
+        falseIndicators.add(createFalseIndicator("Exponential", "17", "Low", "m10", "middle"));
     }
 
     private HashMap<String, String> createFalseIndicator(String... args) {
@@ -205,8 +206,8 @@ public class BGXStrategyMainTest {
         indicator.put("period", args[1]);
         indicator.put("candlePriceType", args[2]);
         indicator.put("granularity", args[3]);
-        if(args[0].toLowerCase().trim().contains("ma")){
-            indicator.put("maType", args[4]);
+        if(!args[0].toLowerCase().trim().contains("rsi")){
+            indicator.put("position", args[4]);
         }
         return indicator;
     }

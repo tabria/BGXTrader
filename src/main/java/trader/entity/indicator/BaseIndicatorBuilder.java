@@ -19,11 +19,13 @@ public abstract class BaseIndicatorBuilder {
     private static final String SETTINGS_PERIOD_KEY_NAME = "period";
     private static final String SETTINGS_CANDLE_PRICE_TYPE_KEY_NAME = "candlePriceType";
     private static final String SETTINGS_GRANULARITY_NAME = "granularity";
+    private static final String SETTINGS_POSITION_NAME = "position";
 
     protected List<Candlestick> candlestickList;
     protected long indicatorPeriod;
     protected CandlePriceType candlePriceType;
     protected CandleGranularity granularity;
+    protected String position;
 
     public BaseIndicatorBuilder() {
         this.candlestickList = new ArrayList<>();
@@ -43,6 +45,12 @@ public abstract class BaseIndicatorBuilder {
 
     public BaseIndicatorBuilder setGranularity(HashMap<String, String> settings){
         this.granularity = parseGranularity(settings);
+        return this;
+    }
+
+    public BaseIndicatorBuilder setPosition(HashMap<String,String> settings){
+        verifyPositionExistence(settings);
+        this.position = settings.get(SETTINGS_POSITION_NAME);
         return this;
     }
 
@@ -71,6 +79,14 @@ public abstract class BaseIndicatorBuilder {
             throw  new OutOfBoundaryException();
     }
 
+    private void verifyPositionExistence(HashMap<String, String> settings) {
+        if (settings == null ||
+                !settings.containsKey(SETTINGS_POSITION_NAME) ||
+                settings.get(SETTINGS_POSITION_NAME) == null ||
+                settings.get(SETTINGS_POSITION_NAME).trim().isEmpty())
+            throw new WrongIndicatorSettingsException();
+    }
+
     private CandlePriceType parseCandlePriceType(HashMap<String, String> settings) {
         if (isNotDefault(settings, SETTINGS_CANDLE_PRICE_TYPE_KEY_NAME)) {
             try {
@@ -92,5 +108,4 @@ public abstract class BaseIndicatorBuilder {
         }
         return DEFAULT_GRANULARITY;
     }
-
 }

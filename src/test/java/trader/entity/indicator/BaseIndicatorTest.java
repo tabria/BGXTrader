@@ -28,6 +28,7 @@ public abstract class BaseIndicatorTest {
 
     protected IndicatorUpdateHelper indicatorUpdateHelper;
     protected long period;
+    protected String position;
     protected CandlePriceType candlePriceType = CandlePriceType.CLOSE;
     protected CandleGranularity granularity = CandleGranularity.M30;
     protected CommonTestClassMembers commonMembers;

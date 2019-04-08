@@ -12,7 +12,7 @@ import com.oanda.v20.transaction.TransactionID;
 import trader.config.Config;
 import trader.entity.trade.TradeImpl;
 import trader.entity.trade.Direction;
-import trader.entry.BGXTradeGenerator;
+import trader.entry.StandardEntryStrategy;
 
 import java.math.BigDecimal;
 
@@ -27,16 +27,16 @@ public final class NewTradeService {
     private static final BigDecimal PIP_MULTIPLIER = BigDecimal.valueOf(10_000);
 
     private Context context;
-    private BGXTradeGenerator tradeGenerator;
+    private StandardEntryStrategy tradeGenerator;
     private OrderCreateResponse orderCreateResponse;
 
 
     /**
      * Constructor
      * @param tradeGenerator generator for new trade
-     * @see BGXTradeGenerator
+     * @see StandardEntryStrategy
      */
-    public NewTradeService(Context context, BGXTradeGenerator tradeGenerator){
+    public NewTradeService(Context context, StandardEntryStrategy tradeGenerator){
         this.setContext(context);
         this.setTradeGenerator(tradeGenerator);
         this.orderCreateResponse = null;
@@ -107,9 +107,9 @@ public final class NewTradeService {
      * Set trade generator
      * @param tradeGenerator trade generator object
      * @throws NullPointerException when tradeGenerator is null
-     * @see BGXTradeGenerator
+     * @see StandardEntryStrategy
      */
-    private void setTradeGenerator(BGXTradeGenerator tradeGenerator){
+    private void setTradeGenerator(StandardEntryStrategy tradeGenerator){
         if (tradeGenerator == null){
             throw  new NullPointerException("TradeImpl Generator must not be null");
         }

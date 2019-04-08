@@ -29,7 +29,7 @@ public class ExponentialMovingAverageTest extends BaseIndicatorTest {
         super.before();
         commonMembers = new CommonTestClassMembers();
         this.ema = new ExponentialMovingAverage(this.period,
-                this.candlePriceType, this.granularity);
+                this.candlePriceType, this.granularity, this.position);
     }
 
     @Override
@@ -106,7 +106,7 @@ public class ExponentialMovingAverageTest extends BaseIndicatorTest {
     public void testPeriodBiggerThanCandlesCount(){
         this.period = 200;
         ExponentialMovingAverage exponentialMovingAverage = new ExponentialMovingAverage(this.period,
-                this.candlePriceType, this.granularity);
+                this.candlePriceType, this.granularity, this.position);
         exponentialMovingAverage.updateIndicator(indicatorUpdateHelper.getFakeCandlestickListFullOfMock());
     }
 

@@ -22,7 +22,7 @@ public class WeightedMovingAverageTest extends BaseIndicatorTest {
     @Before
     public void before()  {
         super.before();
-        this.wma = new WeightedMovingAverage(period, candlePriceType, this.granularity) ;
+        this.wma = new WeightedMovingAverage(period, candlePriceType, this.granularity, this.position) ;
     }
 
     @Override
@@ -82,7 +82,7 @@ public class WeightedMovingAverageTest extends BaseIndicatorTest {
     public void testPeriodBiggerThanCandlesCount(){
         this.period = 200;
         WeightedMovingAverage weightedMovingAverage = new WeightedMovingAverage(this.period,
-                this.candlePriceType, this.granularity);
+                this.candlePriceType, this.granularity, this.position);
         weightedMovingAverage.updateIndicator(indicatorUpdateHelper.getFakeCandlestickListFullOfMock());
     }
 

@@ -15,15 +15,17 @@ public abstract class BaseIndicator implements Indicator{
     protected long indicatorPeriod;
     protected CandlePriceType candlePriceType;
     protected CandleGranularity granularity;
+    protected String position;
     protected List<Candlestick> candlestickList;
     protected List<BigDecimal> indicatorValues;
     protected BigDecimal divisor;
 
 
-    public BaseIndicator(long indicatorPeriod, CandlePriceType candlePriceType, CandleGranularity granularity) {
+    public BaseIndicator(long indicatorPeriod, CandlePriceType candlePriceType, CandleGranularity granularity, String position) {
         this.indicatorPeriod = indicatorPeriod;
         this.candlePriceType = candlePriceType;
         this.granularity = granularity;
+        this.position = position;
         this.indicatorValues = new ArrayList<>();
         this.candlestickList = new ArrayList<>();
     }
@@ -37,6 +39,9 @@ public abstract class BaseIndicator implements Indicator{
     public CandleGranularity getGranularity(){
         return granularity;
     }
+
+    @Override
+    public String getPosition(){return position;}
 
     @Override
     public abstract void updateIndicator(List<Candlestick> candles);

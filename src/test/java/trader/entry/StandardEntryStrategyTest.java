@@ -1,18 +1,22 @@
-package trader.trade.generator;
+package trader.entry;
 
 import org.junit.Before;
 import org.junit.Test;
 import trader.CommonTestClassMembers;
 import trader.broker.connector.BaseGateway;
 import trader.entity.candlestick.Candlestick;
+import trader.entity.candlestick.candle.CandleGranularity;
 import trader.entity.candlestick.candle.CandlePriceType;
 import trader.entity.indicator.Indicator;
 import trader.entity.indicator.IndicatorUpdateHelper;
 import trader.entity.indicator.ma.SimpleMovingAverage;
 import trader.entity.indicator.ma.WeightedMovingAverage;
 import trader.entity.indicator.rsi.RelativeStrengthIndex;
+import trader.entity.trade.Direction;
 import trader.entity.trade.TradeImpl;
-import trader.entry.BGXTradeGenerator;
+import trader.entry.StandardEntryStrategy;
+import trader.exception.EmptyArgumentException;
+import trader.exception.NoSuchStrategyException;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -20,15 +24,16 @@ import java.util.List;
 
 import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class BGXTradeImplGeneratorTest {
+public class StandardEntryStrategyTest {
 
 
-
-    private BGXTradeGenerator signalGenerator;
+    public static final int INDICATOR_COUNT = 6;
+    private StandardEntryStrategy signalGenerator;
     private CommonTestClassMembers commonMembers;
     private BaseGateway baseGateway;
     private CandlePriceType candlePriceType = CandlePriceType.CLOSE;
@@ -39,6 +44,16 @@ public class BGXTradeImplGeneratorTest {
     private Indicator mockPriceSma;
     private Indicator mockDailySma;
     private Indicator mockRsi;
+
+
+    List<BigDecimal> fastWMAValues = createIndicatorValues(1.22889, 1.23339, 1.23339);
+    List<BigDecimal> middleWMAValues = createIndicatorValues(1.23119,1.23196, 1.23196);
+    List<BigDecimal> slowWMAValues = createIndicatorValues(1.22889, 1.22739, 1.22639);
+    List<BigDecimal> dailyValues = createIndicatorValues(1.5656, 1.5656, 1.5656);
+    List<BigDecimal> rsiValues = createIndicatorValues(49, 50, 22);
+
+    private List<Indicator> indicators;
+    private StandardEntryStrategy standardEntryStrategy;
 
 
     @Before
@@ -55,19 +70,69 @@ public class BGXTradeImplGeneratorTest {
        // this.indicatorUpdateHelper = new IndicatorUpdateHelper(this.candlePriceType);
         this.indicatorUpdateHelper = new IndicatorUpdateHelper();
         init();
-        this.commonMembers = new CommonTestClassMembers();
 
-        this.signalGenerator = new BGXTradeGenerator(this.mockFastWma, this.mockMiddleWma, this.mockSlowWma, this.mockPriceSma, this.mockDailySma, this.mockRsi);
+        indicators = createFalseListOfIndicators(INDICATOR_COUNT);
+        commonMembers = new CommonTestClassMembers();
+        standardEntryStrategy = new StandardEntryStrategy(indicators);
 
+
+        this.signalGenerator = new StandardEntryStrategy(this.mockFastWma, this.mockMiddleWma, this.mockSlowWma, this.mockPriceSma, this.mockDailySma, this.mockRsi);
+
+    }
+
+    @Test
+    public void WhenInstantiateThenDirectionMustBeFlat(){
+        Direction direction = (Direction) commonMembers.extractFieldObject(standardEntryStrategy, "direction");
+
+        assertNotNull(direction);
+        assertEquals(Direction.FLAT, direction);
+    }
+
+    @Test(expected = NoSuchStrategyException.class)
+    public void WhenInstantiateWithIndicatorsListSizeAboveRequired_Exception(){
+        new StandardEntryStrategy(createFalseListOfIndicators(7));
+    }
+
+    @Test(expected = NoSuchStrategyException.class)
+    public void WhenInstantiateWithIndicatorListSizeBelowRequired_Exception(){
+        new StandardEntryStrategy(createFalseListOfIndicators(5));
+    }
+
+
+    @Test
+    public void WhenInstantiateThenFillIndicators(){
+        Indicator falseFastWMA = createFalseIndicator(5L, "M30", fastWMAValues);
+    }
+
+    private void createClass(Class<? extends StandardEntryStrategy> aClass) {
+    }
+
+    private List<Indicator> createFalseListOfIndicators(int size){
+        List<Indicator> indicatorList = new ArrayList<>(size);
+        for (int i = 0; i <size ; i++) {
+         //   indicatorList.add(createFalseIndicator("rsi"));
+        }
+        Indicator indicator = indicatorList.get(0);
+        String simpleName = indicator.getClass().getSimpleName();
+        return  indicatorList;
     }
 
 
 
 
+
+    private Indicator createFalseIndicator(long period, String granularity, List<BigDecimal> indicatorValues){
+        Indicator indicator = mock(Indicator.class);
+    //    when(indicator.getPeriod()).thenReturn(period);
+        when(indicator.getGranularity()).thenReturn(CandleGranularity.valueOf(granularity));
+        when(indicator.getValues()).thenReturn(indicatorValues);
+        return mock(Indicator.class);
+    }
+
     @Test
     public void WhenInstantiateBGXTraderGenaratorThenGenerateIndicators(){
 
-        this.signalGenerator = new BGXTradeGenerator(baseGateway);
+        this.signalGenerator = new StandardEntryStrategy(baseGateway);
         Indicator fastWMA = (Indicator) commonMembers.extractFieldObject(this.signalGenerator, "fastWMA");
         Indicator middleWMA = (Indicator) commonMembers.extractFieldObject(this.signalGenerator, "middleWMA");
         Indicator slowWMA = (Indicator) commonMembers.extractFieldObject(this.signalGenerator, "slowWMA");

@@ -3,6 +3,7 @@ package trader.requestor;
 import trader.broker.connector.BrokerConnector;
 import trader.entity.indicator.Indicator;
 import trader.entity.indicator.ma.MovingAverageBuilder;
+import trader.entity.indicator.ma.enums.MAType;
 import trader.entity.indicator.rsi.RSIBuilder;
 import trader.exception.EmptyArgumentException;
 import trader.exception.NoSuchDataStructureException;
@@ -53,8 +54,8 @@ public class RequestBuilderImpl implements RequestBuilder {
 
     private Request<?> buildIndicatorRequest(HashMap<String, String> settings) {
         Request<Indicator> request = new RequestImpl<>();
-        String dataStructureType = getDataStructureType(settings);
-        if (dataStructureType.contains(indicator(IndicatorTypes.RSI))) {
+        String dataStructureType = getDataStructureType(settings).toLowerCase();
+        if (dataStructureType.contains("rsi")) {
             request.setRequestDataStructure(new RSIBuilder().build(settings));
             return request;
         } else if(isMovingAverage(dataStructureType)) {
@@ -76,9 +77,9 @@ public class RequestBuilderImpl implements RequestBuilder {
     }
 
     private boolean isMovingAverage(String dataStructureName) {
-        return dataStructureName.contains(indicator(IndicatorTypes.SMA)) ||
-                dataStructureName.contains(indicator(IndicatorTypes.WMA)) ||
-                dataStructureName.contains(indicator(IndicatorTypes.EMA));
+        return dataStructureName.contains(indicator(MAType.SIMPLE)) ||
+                dataStructureName.contains(indicator(MAType.WEIGHTED)) ||
+                dataStructureName.contains(indicator(MAType.EXPONENTIAL));
     }
 
     private void verifyInput(String controllerName, HashMap<String, String> settings) {
@@ -88,7 +89,7 @@ public class RequestBuilderImpl implements RequestBuilder {
             throw new EmptyArgumentException();
     }
 
-    private String indicator(IndicatorTypes name){
+    private String indicator(MAType name){
         return name.toString().trim().toLowerCase();
     }
 

@@ -2,6 +2,7 @@ package trader.entity.indicator.rsi;
 
 import org.junit.Before;
 import org.junit.Test;
+import trader.entity.indicator.BaseIndicatorBuilder;
 import trader.exception.WrongIndicatorSettingsException;
 import trader.entity.indicator.BaseBuilderTest;
 import trader.entity.indicator.Indicator;
@@ -15,6 +16,11 @@ public class RSIBuilderTest extends BaseBuilderTest {
     public void before(){
         builder = new RSIBuilder();
         setBuilder(builder);
+    }
+
+    @Test(expected = WrongIndicatorSettingsException.class)
+    public void WhenCallBuildWithNullSettings_Exception(){
+        builder.build(null);
     }
 
     @Test
@@ -53,6 +59,13 @@ public class RSIBuilderTest extends BaseBuilderTest {
         assertEquals(DEFAULT_GRANULARITY, getActualGranularity(indicator));
     }
 
+    @Test
+    public void WhenCallSetPositionWithAnyString_Default(){
+        Indicator indicator = builder.build(settings);
+        String position = indicator.getPosition();
+
+        assertEquals("rsi", position);
+    }
 
     @Test
     public void WhenCallBuildWithCustomSettings_SuccessfulBuildWithCustomSettings(){

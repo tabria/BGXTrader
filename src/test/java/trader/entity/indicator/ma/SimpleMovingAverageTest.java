@@ -21,7 +21,7 @@ public class SimpleMovingAverageTest extends BaseIndicatorTest {
     @Before
     public void before() {
         super.before();
-        this.sma = new SimpleMovingAverage(this.period, this.candlePriceType,  this.granularity);
+        this.sma = new SimpleMovingAverage(this.period, this.candlePriceType,  this.granularity, this.position);
     }
 
     @Override
@@ -84,7 +84,7 @@ public class SimpleMovingAverageTest extends BaseIndicatorTest {
     public void testPeriodBiggerThanCandlesCount(){
         this.period = 200;
         SimpleMovingAverage simpleMovingAverage = new SimpleMovingAverage(this.period,
-                this.candlePriceType, this.granularity);
+                this.candlePriceType, this.granularity, this.position);
         simpleMovingAverage.updateIndicator(indicatorUpdateHelper.getFakeCandlestickListFullOfMock());
     }
 

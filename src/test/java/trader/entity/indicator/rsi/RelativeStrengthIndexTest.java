@@ -15,6 +15,8 @@ import static org.mockito.Mockito.when;
 
 public class RelativeStrengthIndexTest extends BaseIndicatorTest {
 
+    private static final String DEFAULT_POSITION = "rsi";
+
     private RelativeStrengthIndex rsi;
 
     @Before
@@ -31,6 +33,11 @@ public class RelativeStrengthIndexTest extends BaseIndicatorTest {
     @Test
     public void WhenCreateRSI_ThenNoValues(){
         assertEquals(0, rsi.getValues().size());
+    }
+
+    @Test
+    public void WhenCreateRSI_PositionMustHaveDefaultValue(){
+        assertEquals(DEFAULT_POSITION, rsi.getPosition());
     }
 
     @Override

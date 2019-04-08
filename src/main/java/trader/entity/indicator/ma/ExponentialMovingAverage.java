@@ -15,8 +15,8 @@ public final class ExponentialMovingAverage extends BaseIndicator {
     private BigDecimal smoothFactor;
     private BigDecimal smoothMultiplier;
 
-    ExponentialMovingAverage(long indicatorPeriod, CandlePriceType candlePriceType, CandleGranularity granularity) {
-        super(indicatorPeriod, candlePriceType, granularity);
+    ExponentialMovingAverage(long indicatorPeriod, CandlePriceType candlePriceType, CandleGranularity granularity, String position) {
+        super(indicatorPeriod, candlePriceType, granularity, position);
         setDivisor();
         setSmoothFactor();
         setSmoothMultiplier();

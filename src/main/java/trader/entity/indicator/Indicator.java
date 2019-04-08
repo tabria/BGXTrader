@@ -12,6 +12,8 @@ public interface Indicator {
 
     CandleGranularity getGranularity();
 
+    String getPosition();
+
     void updateIndicator(List<Candlestick> candles);
 
 }

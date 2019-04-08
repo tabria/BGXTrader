@@ -11,8 +11,8 @@ import com.oanda.v20.transaction.TransactionID;
 import org.junit.Before;
 import org.junit.Test;
 import trader.entity.trade.TradeImpl;
+import trader.entry.StandardEntryStrategy;
 import trader.order.NewTradeService;
-import trader.entry.BGXTradeGenerator;
 import trader.entity.trade.Direction;
 
 import java.lang.reflect.Field;
@@ -32,7 +32,7 @@ public class NewTradeServiceTest {
     private static final String DATE_TIME = "11:11:11T01:01:01Z";
 
     private Context mockContext;
-    private BGXTradeGenerator mockBGXTradeGenerator;
+    private StandardEntryStrategy mockStandardEntryStrategy;
     private Order mockOrder;
     private TradeSummary mockTradeSummary;
     private List<Order> orderList;
@@ -75,9 +75,9 @@ public class NewTradeServiceTest {
         when(this.mockTradeImpl.getDirection()).thenReturn(Direction.DOWN);
         when(this.mockTradeImpl.getTradable()).thenReturn(true);
 
-        this.mockBGXTradeGenerator = mock(BGXTradeGenerator.class);
-        when(this.mockBGXTradeGenerator.generateTrade()).thenReturn(this.mockTradeImpl);
-        when(this.mockBGXTradeGenerator.isGenerated()).thenReturn(false);
+        this.mockStandardEntryStrategy = mock(StandardEntryStrategy.class);
+        when(this.mockStandardEntryStrategy.generateTrade()).thenReturn(this.mockTradeImpl);
+        when(this.mockStandardEntryStrategy.isGenerated()).thenReturn(false);
 
         this.mockOrder = mock(Order.class);
         this.orderList = fillOrderList(OrderType.STOP_LOSS, 3);
@@ -103,7 +103,7 @@ public class NewTradeServiceTest {
 
         this.bid = BigDecimal.valueOf(1.14064);
 
-        this.newTradeService = new NewTradeService(this.mockContext, this.mockBGXTradeGenerator);
+        this.newTradeService = new NewTradeService(this.mockContext, this.mockStandardEntryStrategy);
 
     }
 
@@ -115,7 +115,7 @@ public class NewTradeServiceTest {
 
     @Test(expected = NullPointerException.class)
     public void WhenCreateNewTradeManagerWithContextThenException(){
-        new NewTradeService(null, this.mockBGXTradeGenerator);
+        new NewTradeService(null, this.mockStandardEntryStrategy);
     }
 
 
@@ -159,7 +159,7 @@ public class NewTradeServiceTest {
 
         OrderCreateResponse previous = this.getOrderResponse();
 
-        when(this.mockBGXTradeGenerator.isGenerated()).thenReturn(true);
+        when(this.mockStandardEntryStrategy.isGenerated()).thenReturn(true);
 
         this.newTradeService.sendNewTradeOrder(mockAccount, bid);
         OrderCreateResponse current = this.getOrderResponse();

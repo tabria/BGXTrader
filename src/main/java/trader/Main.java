@@ -104,7 +104,7 @@ public class Main {
 //                .build();
 
 
-//        BGXTradeGenerator signalGenerator = new BGXTradeGenerator(wmaFast, wmaMiddle, wmaSlow, smaPrice, dailyPrice, rsi);
+//        StandardEntryStrategy signalGenerator = new StandardEntryStrategy(wmaFast, wmaMiddle, wmaSlow, smaPrice, dailyPrice, rsi);
 
  //       Observable priceObserver = PriceObservable.create(context);
 

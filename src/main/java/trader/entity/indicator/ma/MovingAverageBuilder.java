@@ -27,6 +27,7 @@ public final class MovingAverageBuilder extends BaseIndicatorBuilder {
         setCandlePriceType(settings);
         setGranularity(settings);
         setMAType(settings);
+        setPosition(settings);
         return instantiatesIndicator();
     }
 
@@ -49,8 +50,8 @@ public final class MovingAverageBuilder extends BaseIndicatorBuilder {
     private Indicator instantiatesIndicator()  {
         try {
             Class<?> indicatorClass = Class.forName(MA_LOCATION + composeIndicatorClassName());
-            Constructor<?> indicatorConstructor = indicatorClass.getDeclaredConstructor(long.class, CandlePriceType.class, CandleGranularity.class);
-            return (Indicator) indicatorConstructor.newInstance(indicatorPeriod, candlePriceType, granularity);
+            Constructor<?> indicatorConstructor = indicatorClass.getDeclaredConstructor(long.class, CandlePriceType.class, CandleGranularity.class, String.class);
+            return (Indicator) indicatorConstructor.newInstance(indicatorPeriod, candlePriceType, granularity, position);
         }
         catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             throw new RuntimeException(e);

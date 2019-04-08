@@ -84,7 +84,8 @@ public class RequestBuilderImplTest {
     //sma
     @Test
     public void whenCallBuildWithMovingAverageIndicatorDataStructureName_ReturnMARequest(){
-        settings.put("type", "sma");
+        settings.put("type", "simple");
+        settings.put("position", "middle");
         Request<?> smaIndicator = requestBuilder.build("CreateIndicatorController", settings);
 
         assertEquals(SimpleMovingAverage.class, smaIndicator.getRequestDataStructure().getClass());

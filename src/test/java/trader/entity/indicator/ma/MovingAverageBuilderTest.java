@@ -21,6 +21,42 @@ public class MovingAverageBuilderTest extends BaseBuilderTest {
         setBuilder(builder);
     }
 
+    @Test(expected = WrongIndicatorSettingsException.class)
+    public void WhenCallBuildWIthNull_Exception(){
+        builder.build(null);
+    }
+
+    @Test(expected = WrongIndicatorSettingsException.class)
+    public void WhenCallSetPositionWithNull_Exception(){
+        builder.setPosition(null);
+    }
+
+    @Test(expected = WrongIndicatorSettingsException.class)
+    public void WhenCallSetPositionWithBadKeyValueInSettings_Exception(){
+        settings.put("xxxx", null);
+        builder.setPosition(settings);
+    }
+
+    @Test(expected = WrongIndicatorSettingsException.class)
+    public void WhenCallSetPositionWithNullValueInSettings_Exception(){
+        settings.put(POSITION, null);
+        builder.setPosition(settings);
+    }
+
+    @Test(expected = WrongIndicatorSettingsException.class)
+    public void WhenCallSetPositionWithEmptyValueInSettings_Exception(){
+        settings.put(POSITION, "    ");
+        builder.setPosition(settings);
+    }
+
+    @Test
+    public void WhenCallSetPositionWithCorrectValueInSettings_CorrectResult(){
+        settings.put(POSITION, "slow");
+        builder.setPosition(settings);
+
+        assertEquals("slow", getActualPosition(builder));
+    }
+
     @Test
     public void WhenCallSetMAType_ReturnCurrentObject(){
         settings.put(MA_TYPE, "Exponential");
@@ -66,7 +102,8 @@ public class MovingAverageBuilderTest extends BaseBuilderTest {
     }
 
     @Test
-    public void WhenCallBuildWithZeroSettings_DefaultSettings(){
+    public void testForAllDefaultSettings(){
+        settings.put(POSITION, "slow");
         Indicator indicator = builder.build(settings);
         String indicatorName = indicator.getClass().getSimpleName();
 
@@ -77,27 +114,30 @@ public class MovingAverageBuilderTest extends BaseBuilderTest {
     }
 
     @Test
-    public void WhenCallBuildOnlyWithGranularityAndCandlePriceType_DefaultForPeriod(){
+    public void testDefaultForPeriod(){
         settings.put(CANDLE_GRANULARITY, "M5");
         settings.put(CANDLE_PRICE_TYPE, "median");
+        settings.put(POSITION, "fast");
         Indicator indicator = builder.build(settings);
 
         assertEquals(DEFAULT_INDICATOR_PERIOD, getActualPeriod(indicator));
     }
 
     @Test
-    public void WhenCallBuildOnlyWithPeriodAndGranularity_DefaultForCandlePriceType(){
+    public void testDefaultForCandlePriceType(){
         settings.put(PERIOD, "16");
         settings.put(CANDLE_GRANULARITY, "M5");
+        settings.put(POSITION, "slow");
         Indicator indicator = builder.build(settings);
 
         assertEquals(DEFAULT_CANDLESTICK_PRICE_TYPE, getActualCandlePriceType(indicator));
     }
 
     @Test
-    public void WhenCallBuildOnlyWithPeriodAndCandlePriceType_DefaultForGranularity(){
+    public void testDefaultValueForGranularity(){
         settings.put(PERIOD, "13");
         settings.put(CANDLE_PRICE_TYPE, "median");
+        settings.put(POSITION, "fast");
         Indicator indicator = builder.build(settings);
 
         assertEquals(DEFAULT_GRANULARITY, getActualGranularity(indicator));
@@ -110,6 +150,7 @@ public class MovingAverageBuilderTest extends BaseBuilderTest {
         settings.put(CANDLE_PRICE_TYPE, "median");
         settings.put(CANDLE_GRANULARITY, "h4");
         settings.put(MA_TYPE, "weighted");
+        settings.put(POSITION, "slow");
         Indicator indicator = builder.build(settings);
 
         assertEquals("WeightedMovingAverage", indicator.getClass().getSimpleName());
@@ -117,6 +158,11 @@ public class MovingAverageBuilderTest extends BaseBuilderTest {
         assertEquals("median".toUpperCase(), getActualCandlePriceType(indicator).toString());
         assertEquals(9L, getActualPeriod(indicator));
         assertEquals("h4".toUpperCase(), getActualGranularity(indicator).toString());
+        assertEquals("slow", getActualPosition(indicator));
+    }
+
+    protected String getActualPosition(Object object) {
+        return (String) commonMembers.extractFieldObject(object, "position");
     }
 
     protected MAType getActualMAType(Object object) {
