@@ -1,6 +1,6 @@
-package trader.trade.entitie;
+package trader.entity.trade;
 
-import trader.trade.enums.Direction;
+import trader.trade.entitie.Point;
 
 import java.math.BigDecimal;
 
@@ -8,7 +8,7 @@ import java.math.BigDecimal;
  * Class will create signal object. This object will be used as base for creating and placing Trades
  */
 
-public final class Trade {
+public final class TradeImpl {
 
     private static final BigDecimal DEFAULT_SPREAD = BigDecimal.valueOf(0.0002);
     //unoptimized value 0.0025
@@ -28,7 +28,7 @@ public final class Trade {
      * @param direction trade direction
      * @param dailyOpenPrice daily open price
      */
-    public Trade(Point intersectionPoint, Direction direction, BigDecimal dailyOpenPrice) {
+    public TradeImpl(Point intersectionPoint, Direction direction, BigDecimal dailyOpenPrice) {
         this.direction = direction;
         this.setEntryPrice(intersectionPoint, direction);
         this.setStopLossPrice(intersectionPoint, direction);
@@ -65,7 +65,7 @@ public final class Trade {
 
     @Override
     public String toString() {
-        return "Trade{" +
+        return "TradeImpl{" +
                 "entryPrice=" + entryPrice .toString() +
                 ", stopLossPrice=" + stopLossPrice.toString() +
                 ", tradable=" + tradable +

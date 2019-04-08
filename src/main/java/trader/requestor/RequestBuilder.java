@@ -1,5 +1,7 @@
 package trader.requestor;
 
+import trader.exception.NotImplementedException;
+
 import java.util.HashMap;
 
 public interface RequestBuilder {

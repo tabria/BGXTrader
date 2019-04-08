@@ -125,7 +125,7 @@ public class OandaGateway extends BaseGateway {
 //
 //
 //    @Override
-//    public List<Trade> getOpenTrades() {
+//    public List<TradeImpl> getOpenTrades() {
 //        return null;
 //    }
 

@@ -1,4 +1,4 @@
-package trader.trade.enums;
+package trader.entity.trade;
 
 public enum Direction {
 

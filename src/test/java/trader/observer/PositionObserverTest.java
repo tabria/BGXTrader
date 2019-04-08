@@ -22,19 +22,18 @@ public class PositionObserverTest extends BaseObserverTest {
     public void setUp(){
         super.before();
         addTradeControllerMock = mock(CreateIndicatorController.class);
-        positionObserver = new PositionObserver(mockConfiguration, brokerGatewayMock);
-
+        positionObserver = new PositionObserver(brokerGatewayMock, addTradeControllerMock);
     }
 
 
     @Test(expected = NullArgumentException.class)
     public void WhenCreatePositionObserverWithNullBrokerGateway_Exception(){
-        new PositionObserver(mockConfiguration, null);
+        new PositionObserver( null, addTradeControllerMock);
     }
 
     @Test(expected = NullArgumentException.class)
-    public void WhenCreatePositionObserverWithNullConfiguration_Exception(){
-        new PositionObserver(null, brokerGatewayMock);
+    public void WhenCreatePositionObserverWithNullTradeController_Exception(){
+        new PositionObserver( brokerGatewayMock, null);
     }
 
     @Test
@@ -43,16 +42,11 @@ public class PositionObserverTest extends BaseObserverTest {
     }
 
     @Test
-    public void TestIfConfigurationIsSet(){
-        assertEquals(mockConfiguration, commonTestMembers.extractFieldObject(positionObserver, "configuration"));
-    }
-
-    @Test
     public void TestIfTradeControllerIsSet(){
         Object addTradeController = commonTestMembers.extractFieldObject(positionObserver, "addTradeController");
 
         assertNotNull(commonTestMembers.extractFieldObject(positionObserver, "addTradeController"));
-        assertEquals(AddTradeController.class, addTradeController.getClass() );
+        assertEquals(addTradeControllerMock, addTradeController);
     }
 
 

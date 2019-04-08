@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import trader.CommonTestClassMembers;
 import trader.broker.BrokerGateway;
+import trader.controller.AddTradeController;
 import trader.observer.Observer;
 import trader.entity.candlestick.candle.CandleGranularity;
 import trader.entity.candlestick.candle.CandlePriceType;
@@ -35,12 +36,12 @@ public class BGXStrategyMainTest {
     private List<HashMap<String, String>> falseIndicators;
     private CommonTestClassMembers commonMembers;
 
-//    private List<Trade> trades;
+//    private List<TradeImpl> trades;
 //    private List<Order> orders;
 //    private Order mockOrder;
 //    private ApiConnector apiConnector;
 
-//    private Trade mockTrade;
+//    private TradeImpl mockTrade;
 
 //    private OrderService mockOrderService;
 //    private ExitStrategy mockExitStrategy;
@@ -57,7 +58,7 @@ public class BGXStrategyMainTest {
 //        mockExitStrategy = mock(ExitStrategy.class);
 
 //        mockOrder = mock(Order.class);
-//        mockTrade = mock(Trade.class);
+//        mockTrade = mock(TradeImpl.class);
 //        timeNow = ZonedDateTime.now().withZoneSameInstant(ZoneId.of("UTC"));
 //        candlesticks = new ArrayList<>();
 //        applySettings();
@@ -130,6 +131,15 @@ public class BGXStrategyMainTest {
         assertEquals(expected, actual);
         assertNotNull(commonMembers.extractFieldObject(brokerGateway, "connector"));
         assertNotNull(commonMembers.extractFieldObject(brokerGateway, "context"));
+    }
+
+    @Test
+    public void WhenCallSetPositionObserverThenHeMustHaveAddTradeController(){
+        Observer observer = bgxStrategyMain.setPositionObserver();
+        Object addTradeController = commonMembers.extractFieldObject(observer, "addTradeController");
+
+        assertNotNull(addTradeController);
+        assertEquals(AddTradeController.class, addTradeController.getClass());
     }
 
     private void assertEqualsFalseIndicatorsToObservers(CopyOnWriteArrayList<Observer> observers) {

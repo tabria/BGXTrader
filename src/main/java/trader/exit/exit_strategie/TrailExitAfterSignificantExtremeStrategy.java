@@ -221,7 +221,7 @@ public final class TrailExitAfterSignificantExtremeStrategy implements ExitStrat
      */
     private void printTransaction(BigDecimal stopPrice){
         TransactionID lastTransactionID = this.tradeSetDependentOrdersResponse.getLastTransactionID();
-        System.out.println("Trade with id: " + lastTransactionID+" StopLoss moved to: " + stopPrice);
+        System.out.println("TradeImpl with id: " + lastTransactionID+" StopLoss moved to: " + stopPrice);
     }
 
 }

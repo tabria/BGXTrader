@@ -14,7 +14,7 @@ public interface BrokerGateway {
     void validateConnector();
     int totalOpenTradesSize();
     int totalOpenOrdersSize();
-//    List<Trade> getOpenTrades();
+//    List<TradeImpl> getOpenTrades();
 
 //    List<Order> getOpenOrders();
 

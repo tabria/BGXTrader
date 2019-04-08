@@ -8,6 +8,7 @@ import trader.broker.connector.ApiConnector;
 import trader.controller.*;
 import trader.entity.indicator.Indicator;
 import trader.observer.Observer;
+import trader.observer.PositionObserver;
 import trader.observer.UpdateIndicatorObserver;
 import trader.requestor.RequestBuilderImpl;
 import trader.requestor.UseCaseFactoryImpl;
@@ -42,6 +43,8 @@ public final class BGXStrategyMain implements Strategy {
     private TradingStrategyConfiguration configuration;
     private BrokerGateway brokerGateway;
     private Observable priceObservable;
+
+    private Observer positionObserver;
 
     private ApiConnector apiConnector;
 
@@ -90,13 +93,6 @@ public final class BGXStrategyMain implements Strategy {
         return brokerGateway;
     }
 
-//    void addIndicatorsFromConfiguration(List<HashMap<String, String>> indicators){
-//        TraderController<Indicator> addIndicatorController = new CreateIndicatorController<>(requestBuilder, useCaseFactory, priceObservable, configuration, brokerGateway);
-//        for (HashMap<String, String> indicator :indicators)
-//            addIndicatorController.execute(indicator);
-//    }
-
-
     List<Indicator> createIndicatorsFromConfiguration(List<HashMap<String, String>> indicators){
         TraderController<Indicator> addIndicatorController = new CreateIndicatorController<>(requestBuilder, useCaseFactory);
         List<Indicator> indicatorList = new ArrayList<>();
@@ -107,14 +103,22 @@ public final class BGXStrategyMain implements Strategy {
         return indicatorList;
     }
 
-    // not tested/////////
     void addIndicatorsToObservable(Observable observable, List<Indicator> indicators){
         for (Indicator indicator:indicators) {
             observable.registerObserver(
-            new UpdateIndicatorObserver(indicator, configuration, brokerGateway));
+                    new UpdateIndicatorObserver(indicator, configuration, brokerGateway));
         }
     }
 
+
+
+    Observer setPositionObserver(){
+
+        TraderController<Object> addTradeController = new AddTradeController<>(brokerGateway, configuration);
+       return new PositionObserver(brokerGateway, addTradeController);
+    }
+
+///////////////////////////// not tested/////////
     private void addIndicatorsToBGXGenerator(){
 
     }

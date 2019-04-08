@@ -145,6 +145,6 @@ public final class FullCloseStrategy implements ExitStrategy {
      */
     private void printInformation(BigDecimal newStopLoss){
         TransactionID lastTransactionID = this.tradeSetDependentOrdersResponse.getLastTransactionID();
-        System.out.println("Trade with id: " + lastTransactionID+" StopLoss moved to: " + newStopLoss);
+        System.out.println("TradeImpl with id: " + lastTransactionID+" StopLoss moved to: " + newStopLoss);
     }
 }

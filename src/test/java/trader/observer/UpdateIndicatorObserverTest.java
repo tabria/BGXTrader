@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import trader.configuration.TradingStrategyConfiguration;
 import trader.entity.candlestick.Candlestick;
 import trader.entity.candlestick.candle.CandleGranularity;
 import trader.entity.indicator.Indicator;
@@ -26,12 +27,15 @@ public class UpdateIndicatorObserverTest extends BaseObserverTest {
     private static final String SETTINGS = "settings";
 
     private Observer observer;
+    private TradingStrategyConfiguration mockConfiguration;
     private Indicator mockMA;
     private Price mockPrice;
 
     @Before
     public void before(){
         super.before();
+        this.mockConfiguration = mock(TradingStrategyConfiguration.class);
+        setConfiguration();
         this.mockMA = mock(Indicator.class);
         setMockMA();
         mockPrice = mock(Price.class);
@@ -110,6 +114,12 @@ public class UpdateIndicatorObserverTest extends BaseObserverTest {
         HashMap<String, String> newSettings = (HashMap<String, String>) commonTestMembers.extractFieldObject(observer, SETTINGS);
 
         assertEquals(String.valueOf(UPDATE_QUANTITY), newSettings.get(QUANTITY));
+    }
+
+    private void setConfiguration() {
+        when(mockConfiguration.getInstrument()).thenReturn(INSTRUMENT_VALUE);
+        when(mockConfiguration.getInitialCandlesQuantity()).thenReturn(INITIAL_QUANTITY);
+        when(mockConfiguration.getUpdateCandlesQuantity()).thenReturn(UPDATE_QUANTITY);
     }
 
     private List<BigDecimal> makeMockMAToHaveValues(BigDecimal... values){

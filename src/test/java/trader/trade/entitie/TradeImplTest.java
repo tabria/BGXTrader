@@ -2,7 +2,8 @@ package trader.trade.entitie;
 
 import org.junit.Before;
 import org.junit.Test;
-import trader.trade.enums.Direction;
+import trader.entity.trade.Direction;
+import trader.entity.trade.TradeImpl;
 
 import java.math.BigDecimal;
 
@@ -10,7 +11,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class TradeTest {
+public class TradeImplTest {
 
 
     private static final BigDecimal DEFAULT_SPREAD = BigDecimal.valueOf(0.0002);
@@ -18,7 +19,7 @@ public class TradeTest {
     private static final BigDecimal DEFAULT_STOP_LOSS_FILTER = BigDecimal.valueOf(0.0005);
     private static final BigDecimal FIRST_TARGET = BigDecimal.valueOf(0.0050);
 
-    private Trade trade;
+    private TradeImpl tradeImpl;
     private Point mockPoint;
 
     @Before
@@ -30,32 +31,32 @@ public class TradeTest {
 
     @Test(expected = NullPointerException.class)
     public void WhenCreateNewSignalWithNullPointThenException(){
-        this.trade = new Trade(null, Direction.DOWN, BigDecimal.ONE);
+        this.tradeImpl = new TradeImpl(null, Direction.DOWN, BigDecimal.ONE);
     }
 
     @Test(expected = NullPointerException.class)
     public void WhenCreateNewSignalWithNullDirectionThenException(){
-        this.trade = new Trade(new Point.PointBuilder(BigDecimal.ONE).build(), null, BigDecimal.ONE);
+        this.tradeImpl = new TradeImpl(new Point.PointBuilder(BigDecimal.ONE).build(), null, BigDecimal.ONE);
     }
 
     @Test(expected = NullPointerException.class)
     public void WhenCreateNewSignalWithNullDailyOpenThenException(){
-        this.trade = new Trade(new Point.PointBuilder(BigDecimal.ONE).build(), null, BigDecimal.ONE);
+        this.tradeImpl = new TradeImpl(new Point.PointBuilder(BigDecimal.ONE).build(), null, BigDecimal.ONE);
     }
 
     @Test
     public void WhenCreateTradeWithDirectionDownThenStopLossMustBeCalculatedCorrectly(){
-        //stop loss if trade is down is equal to intersectionPointValue + Spread + StopLossFilter
+        //stop loss if tradeImpl is down is equal to intersectionPointValue + Spread + StopLossFilter
 
         BigDecimal intersectionPrice = BigDecimal.valueOf(1.12345);
         when(this.mockPoint.getPrice()).thenReturn(intersectionPrice);
         BigDecimal dailyOpen = BigDecimal.valueOf(1.54321);
-        Trade trade = new Trade(this.mockPoint, Direction.DOWN, dailyOpen);
+        TradeImpl tradeImpl = new TradeImpl(this.mockPoint, Direction.DOWN, dailyOpen);
 
         BigDecimal expected = intersectionPrice.add(DEFAULT_SPREAD).setScale(5, BigDecimal.ROUND_HALF_UP);
         expected = expected.add(DEFAULT_STOP_LOSS_FILTER).setScale(5, BigDecimal.ROUND_HALF_UP);
 
-        BigDecimal stopLoss = trade.getStopLossPrice();
+        BigDecimal stopLoss = tradeImpl.getStopLossPrice();
         int compare = expected.compareTo(stopLoss);
         assertEquals(0, compare);
 
@@ -63,16 +64,16 @@ public class TradeTest {
 
     @Test
     public void WhenCreateTradeWithDirectionUpThenStopLossMustBeCalculatedCorrectly(){
-        //stop loss if trade is down is equal to intersectionPointValue + Spread + StopLossFilter
+        //stop loss if tradeImpl is down is equal to intersectionPointValue + Spread + StopLossFilter
 
         BigDecimal intersectionPrice = BigDecimal.valueOf(1.12345);
         when(this.mockPoint.getPrice()).thenReturn(intersectionPrice);
         BigDecimal dailyOpen = BigDecimal.valueOf(1.54321);
-        Trade trade = new Trade(this.mockPoint, Direction.UP, dailyOpen);
+        TradeImpl tradeImpl = new TradeImpl(this.mockPoint, Direction.UP, dailyOpen);
 
         BigDecimal expected = intersectionPrice.subtract(DEFAULT_STOP_LOSS_FILTER).setScale(5, BigDecimal.ROUND_HALF_UP);
 
-        BigDecimal stopLoss = trade.getStopLossPrice();
+        BigDecimal stopLoss = tradeImpl.getStopLossPrice();
         int compare = expected.compareTo(stopLoss);
         assertEquals(0, compare);
 
@@ -84,12 +85,12 @@ public class TradeTest {
         BigDecimal intersectionPrice = BigDecimal.valueOf(1.12345);
         when(this.mockPoint.getPrice()).thenReturn(intersectionPrice);
         BigDecimal dailyOpen = BigDecimal.valueOf(1.54321);
-        Trade trade = new Trade(this.mockPoint, Direction.UP, dailyOpen);
+        TradeImpl tradeImpl = new TradeImpl(this.mockPoint, Direction.UP, dailyOpen);
 
         BigDecimal expected = intersectionPrice.add(DEFAULT_SPREAD).setScale(5, BigDecimal.ROUND_HALF_UP);
         expected = expected.add(DEFAULT_FILTER).setScale(5, BigDecimal.ROUND_HALF_UP);
 
-        BigDecimal entryPrice = trade.getEntryPrice();
+        BigDecimal entryPrice = tradeImpl.getEntryPrice();
         int compare = expected.compareTo(entryPrice);
         assertEquals(0, compare);
     }
@@ -100,11 +101,11 @@ public class TradeTest {
         BigDecimal intersectionPrice = BigDecimal.valueOf(1.12345);
         when(this.mockPoint.getPrice()).thenReturn(intersectionPrice);
         BigDecimal dailyOpen = BigDecimal.valueOf(1.54321);
-        Trade trade = new Trade(this.mockPoint, Direction.DOWN, dailyOpen);
+        TradeImpl tradeImpl = new TradeImpl(this.mockPoint, Direction.DOWN, dailyOpen);
 
         BigDecimal expected = intersectionPrice.subtract(DEFAULT_FILTER).setScale(5, BigDecimal.ROUND_HALF_UP);
 
-        BigDecimal entryPrice = trade.getEntryPrice();
+        BigDecimal entryPrice = tradeImpl.getEntryPrice();
         int compare = expected.compareTo(entryPrice);
         assertEquals(0, compare);
     }
@@ -116,9 +117,9 @@ public class TradeTest {
         BigDecimal intersectionPrice = BigDecimal.valueOf(1.12345);
         when(this.mockPoint.getPrice()).thenReturn(intersectionPrice);
         BigDecimal dailyOpen = BigDecimal.valueOf(1.11595);
-        Trade trade = new Trade(this.mockPoint, Direction.DOWN, dailyOpen);
+        TradeImpl tradeImpl = new TradeImpl(this.mockPoint, Direction.DOWN, dailyOpen);
 
-       assertTrue(trade.getTradable());
+       assertTrue(tradeImpl.getTradable());
 
     }
     @Test
@@ -127,9 +128,9 @@ public class TradeTest {
         BigDecimal intersectionPrice = BigDecimal.valueOf(1.12345);
         when(this.mockPoint.getPrice()).thenReturn(intersectionPrice);
         BigDecimal dailyOpen = BigDecimal.valueOf(1.13115);
-        Trade trade = new Trade(this.mockPoint, Direction.UP, dailyOpen);
+        TradeImpl tradeImpl = new TradeImpl(this.mockPoint, Direction.UP, dailyOpen);
 
-        assertTrue(trade.getTradable());
+        assertTrue(tradeImpl.getTradable());
 
     }
 
@@ -140,9 +141,9 @@ public class TradeTest {
         BigDecimal intersectionPrice = BigDecimal.valueOf(1.12345);
         when(this.mockPoint.getPrice()).thenReturn(intersectionPrice);
         BigDecimal dailyOpen = BigDecimal.valueOf(1.11696);
-        Trade trade = new Trade(this.mockPoint, Direction.DOWN, dailyOpen);
+        TradeImpl tradeImpl = new TradeImpl(this.mockPoint, Direction.DOWN, dailyOpen);
 
-        assertFalse(trade.getTradable());
+        assertFalse(tradeImpl.getTradable());
 
     }
     @Test
@@ -151,9 +152,9 @@ public class TradeTest {
         BigDecimal intersectionPrice = BigDecimal.valueOf(1.12345);
         when(this.mockPoint.getPrice()).thenReturn(intersectionPrice);
         BigDecimal dailyOpen = BigDecimal.valueOf(1.12745);
-        Trade trade = new Trade(this.mockPoint, Direction.UP, dailyOpen);
+        TradeImpl tradeImpl = new TradeImpl(this.mockPoint, Direction.UP, dailyOpen);
 
-        assertFalse(trade.getTradable());
+        assertFalse(tradeImpl.getTradable());
 
     }
 
@@ -165,9 +166,9 @@ public class TradeTest {
         when(this.mockPoint.getPrice()).thenReturn(intersectionPrice);
         //daily Open must be above filter intersectionPrice - DEFAULT_ENTRY_FILTER
         BigDecimal dailyOpen = BigDecimal.valueOf(1.12146);
-        Trade trade = new Trade(this.mockPoint, Direction.DOWN, dailyOpen);
+        TradeImpl tradeImpl = new TradeImpl(this.mockPoint, Direction.DOWN, dailyOpen);
 
-        assertTrue(trade.getTradable());
+        assertTrue(tradeImpl.getTradable());
 
     }
     @Test
@@ -176,9 +177,9 @@ public class TradeTest {
         BigDecimal intersectionPrice = BigDecimal.valueOf(1.12345);
         when(this.mockPoint.getPrice()).thenReturn(intersectionPrice);
         BigDecimal dailyOpen = BigDecimal.valueOf(1.12535);
-        Trade trade = new Trade(this.mockPoint, Direction.UP, dailyOpen);
+        TradeImpl tradeImpl = new TradeImpl(this.mockPoint, Direction.UP, dailyOpen);
 
-        assertTrue(trade.getTradable());
+        assertTrue(tradeImpl.getTradable());
 
     }
 
@@ -189,9 +190,9 @@ public class TradeTest {
         BigDecimal intersectionPrice = BigDecimal.valueOf(1.12345);
         when(this.mockPoint.getPrice()).thenReturn(intersectionPrice);
         BigDecimal dailyOpen = BigDecimal.valueOf(1.12346);
-        Trade trade = new Trade(this.mockPoint, Direction.DOWN, dailyOpen);
+        TradeImpl tradeImpl = new TradeImpl(this.mockPoint, Direction.DOWN, dailyOpen);
 
-        assertTrue(trade.getTradable());
+        assertTrue(tradeImpl.getTradable());
 
     }
     @Test
@@ -200,9 +201,9 @@ public class TradeTest {
         BigDecimal intersectionPrice = BigDecimal.valueOf(1.12345);
         when(this.mockPoint.getPrice()).thenReturn(intersectionPrice);
         BigDecimal dailyOpen = BigDecimal.valueOf(1.12344);
-        Trade trade = new Trade(this.mockPoint, Direction.UP, dailyOpen);
+        TradeImpl tradeImpl = new TradeImpl(this.mockPoint, Direction.UP, dailyOpen);
 
-        assertTrue(trade.getTradable());
+        assertTrue(tradeImpl.getTradable());
 
     }
 
@@ -212,9 +213,9 @@ public class TradeTest {
         BigDecimal intersectionPrice = BigDecimal.valueOf(1.12345);
         when(this.mockPoint.getPrice()).thenReturn(intersectionPrice);
         BigDecimal dailyOpen = BigDecimal.valueOf(1.13114);
-        Trade trade = new Trade(new Point.PointBuilder(BigDecimal.ONE).build(), Direction.FLAT, BigDecimal.ONE);
+        TradeImpl tradeImpl = new TradeImpl(new Point.PointBuilder(BigDecimal.ONE).build(), Direction.FLAT, BigDecimal.ONE);
 
-        assertFalse(trade.getTradable());
+        assertFalse(tradeImpl.getTradable());
 
     }
 

@@ -11,8 +11,8 @@ import trader.entity.indicator.IndicatorUpdateHelper;
 import trader.entity.indicator.ma.SimpleMovingAverage;
 import trader.entity.indicator.ma.WeightedMovingAverage;
 import trader.entity.indicator.rsi.RelativeStrengthIndex;
-import trader.strategy.bgxstrategy.BGXTradeGenerator;
-import trader.trade.entitie.Trade;
+import trader.entity.trade.TradeImpl;
+import trader.entry.BGXTradeGenerator;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class BGXTradeGeneratorTest {
+public class BGXTradeImplGeneratorTest {
 
 
 
@@ -100,15 +100,15 @@ public class BGXTradeGeneratorTest {
         when(this.mockSlowWma.getValues()).thenReturn(slowWMAValues);
         when(this.mockPriceSma.getValues()).thenReturn(middleWMAValues);
 
-        Trade trade = this.signalGenerator.generateTrade();
+        TradeImpl tradeImpl = this.signalGenerator.generateTrade();
 
-        BigDecimal entryPrice = trade.getEntryPrice();
+        BigDecimal entryPrice = tradeImpl.getEntryPrice();
         int compareEntry = BigDecimal.valueOf(1.23386).compareTo(entryPrice);
 
-        BigDecimal stopLossPrice = trade.getStopLossPrice();
+        BigDecimal stopLossPrice = tradeImpl.getStopLossPrice();
         int compareStopLoss = BigDecimal.valueOf(1.23116).compareTo(stopLossPrice);
 
-        assertTrue("Trade must be tradable", trade.getTradable());
+        assertTrue("TradeImpl must be tradable", tradeImpl.getTradable());
         assertEquals(0, compareEntry);
         assertEquals(0, compareStopLoss);
 
@@ -131,15 +131,15 @@ public class BGXTradeGeneratorTest {
         when(this.mockSlowWma.getValues()).thenReturn(slowWMAValues);
         when(this.mockPriceSma.getValues()).thenReturn(middleWMAValues);
 
-        Trade trade = this.signalGenerator.generateTrade();
+        TradeImpl tradeImpl = this.signalGenerator.generateTrade();
 
-        BigDecimal entryPrice = trade.getEntryPrice();
+        BigDecimal entryPrice = tradeImpl.getEntryPrice();
         int compareEntry = BigDecimal.valueOf(1.23003).compareTo(entryPrice);
 
-        BigDecimal stopLossPrice = trade.getStopLossPrice();
+        BigDecimal stopLossPrice = tradeImpl.getStopLossPrice();
         int compareStopLoss = BigDecimal.valueOf(1.23273).compareTo(stopLossPrice);
 
-        assertTrue("Trade must be tradable", trade.getTradable());
+        assertTrue("TradeImpl must be tradable", tradeImpl.getTradable());
         assertEquals(0, compareEntry);
         assertEquals(0, compareStopLoss);
     }
@@ -160,9 +160,9 @@ public class BGXTradeGeneratorTest {
         when(this.mockSlowWma.getValues()).thenReturn(middleWMAValues);
         when(this.mockPriceSma.getValues()).thenReturn(middleWMAValues);
 
-        Trade trade = this.signalGenerator.generateTrade();
+        TradeImpl tradeImpl = this.signalGenerator.generateTrade();
 
-        assertFalse("Trade must not be tradable", trade.getTradable());
+        assertFalse("TradeImpl must not be tradable", tradeImpl.getTradable());
     }
 
     @Test
@@ -181,9 +181,9 @@ public class BGXTradeGeneratorTest {
         when(this.mockSlowWma.getValues()).thenReturn(middleWMAValues);
         when(this.mockPriceSma.getValues()).thenReturn(middleWMAValues);
 
-        Trade trade = this.signalGenerator.generateTrade();
+        TradeImpl tradeImpl = this.signalGenerator.generateTrade();
 
-        assertFalse("Trade must not be tradable", trade.getTradable());
+        assertFalse("TradeImpl must not be tradable", tradeImpl.getTradable());
     }
 
     @Test
@@ -203,15 +203,15 @@ public class BGXTradeGeneratorTest {
         when(this.mockSlowWma.getValues()).thenReturn(slowWMAValues);
         when(this.mockPriceSma.getValues()).thenReturn(middleWMAValues);
 
-        Trade trade = this.signalGenerator.generateTrade();
+        TradeImpl tradeImpl = this.signalGenerator.generateTrade();
 
-        BigDecimal entryPrice = trade.getEntryPrice();
+        BigDecimal entryPrice = tradeImpl.getEntryPrice();
         int compareEntry = BigDecimal.valueOf(1.23339).compareTo(entryPrice);
 
-        BigDecimal stopLossPrice = trade.getStopLossPrice();
+        BigDecimal stopLossPrice = tradeImpl.getStopLossPrice();
         int compareStopLoss = BigDecimal.valueOf(1.23069).compareTo(stopLossPrice);
 
-        assertTrue("Trade must be tradable", trade.getTradable());
+        assertTrue("TradeImpl must be tradable", tradeImpl.getTradable());
         assertEquals(0, compareEntry);
         assertEquals(0, compareStopLoss);
 
@@ -235,15 +235,15 @@ public class BGXTradeGeneratorTest {
         when(this.mockDailySma.getValues()).thenReturn(dailyValues);
         when(this.mockSlowWma.getValues()).thenReturn(slowWMAValues);
 
-        Trade trade = this.signalGenerator.generateTrade();
+        TradeImpl tradeImpl = this.signalGenerator.generateTrade();
 
-        BigDecimal entryPrice = trade.getEntryPrice();
+        BigDecimal entryPrice = tradeImpl.getEntryPrice();
         int compareEntry = BigDecimal.valueOf(1.23386).compareTo(entryPrice);
 
-        BigDecimal stopLossPrice = trade.getStopLossPrice();
+        BigDecimal stopLossPrice = tradeImpl.getStopLossPrice();
         int compareStopLoss = BigDecimal.valueOf(1.23116).compareTo(stopLossPrice);
 
-        assertTrue("Trade must be tradable", trade.getTradable());
+        assertTrue("TradeImpl must be tradable", tradeImpl.getTradable());
         assertEquals(0, compareEntry);
         assertEquals(0, compareStopLoss);
 
@@ -266,15 +266,15 @@ public class BGXTradeGeneratorTest {
         when(this.mockSlowWma.getValues()).thenReturn(slowWMAValues);
         when(this.mockDailySma.getValues()).thenReturn(dailyValues);
 
-        Trade trade = this.signalGenerator.generateTrade();
+        TradeImpl tradeImpl = this.signalGenerator.generateTrade();
 
-        BigDecimal entryPrice = trade.getEntryPrice();
+        BigDecimal entryPrice = tradeImpl.getEntryPrice();
         int compareEntry = BigDecimal.valueOf(1.23003).compareTo(entryPrice);
 
-        BigDecimal stopLossPrice = trade.getStopLossPrice();
+        BigDecimal stopLossPrice = tradeImpl.getStopLossPrice();
         int compareStopLoss = BigDecimal.valueOf(1.23273).compareTo(stopLossPrice);
 
-        assertTrue("Trade must be tradable", trade.getTradable());
+        assertTrue("TradeImpl must be tradable", tradeImpl.getTradable());
         assertEquals(0, compareEntry);
         assertEquals(0, compareStopLoss);
 
@@ -296,9 +296,9 @@ public class BGXTradeGeneratorTest {
         when(this.mockDailySma.getValues()).thenReturn(dailyValues);
         when(this.mockSlowWma.getValues()).thenReturn(middleWMAValues);
 
-        Trade trade = this.signalGenerator.generateTrade();
+        TradeImpl tradeImpl = this.signalGenerator.generateTrade();
 
-        assertFalse("Trade must not be tradable", trade.getTradable());
+        assertFalse("TradeImpl must not be tradable", tradeImpl.getTradable());
     }
 
     @Test
@@ -317,9 +317,9 @@ public class BGXTradeGeneratorTest {
         when(this.mockDailySma.getValues()).thenReturn(dailyValues);
         when(this.mockSlowWma.getValues()).thenReturn(middleWMAValues);
 
-        Trade trade = this.signalGenerator.generateTrade();
+        TradeImpl tradeImpl = this.signalGenerator.generateTrade();
 
-        assertFalse("Trade must not be tradable", trade.getTradable());
+        assertFalse("TradeImpl must not be tradable", tradeImpl.getTradable());
     }
 
     @Test
@@ -339,15 +339,15 @@ public class BGXTradeGeneratorTest {
         when(this.mockDailySma.getValues()).thenReturn(dailyValues);
         when(this.mockSlowWma.getValues()).thenReturn(slowWMAValues);
 
-        Trade trade = this.signalGenerator.generateTrade();
+        TradeImpl tradeImpl = this.signalGenerator.generateTrade();
 
-        BigDecimal entryPrice = trade.getEntryPrice();
+        BigDecimal entryPrice = tradeImpl.getEntryPrice();
         int compareEntry = BigDecimal.valueOf(1.23339).compareTo(entryPrice);
 
-        BigDecimal stopLossPrice = trade.getStopLossPrice();
+        BigDecimal stopLossPrice = tradeImpl.getStopLossPrice();
         int compareStopLoss = BigDecimal.valueOf(1.23069).compareTo(stopLossPrice);
 
-        assertTrue("Trade must be tradable", trade.getTradable());
+        assertTrue("TradeImpl must be tradable", tradeImpl.getTradable());
         assertEquals(0, compareEntry);
         assertEquals(0, compareStopLoss);
     }
@@ -369,15 +369,15 @@ public class BGXTradeGeneratorTest {
         when(this.mockDailySma.getValues()).thenReturn(dailyValues);
         when(this.mockSlowWma.getValues()).thenReturn(slowWMAValues);
 
-        Trade trade = this.signalGenerator.generateTrade();
+        TradeImpl tradeImpl = this.signalGenerator.generateTrade();
 
-        BigDecimal entryPrice = trade.getEntryPrice();
+        BigDecimal entryPrice = tradeImpl.getEntryPrice();
         int compareEntry = BigDecimal.valueOf(1.23995).compareTo(entryPrice);
 
-        BigDecimal stopLossPrice = trade.getStopLossPrice();
+        BigDecimal stopLossPrice = tradeImpl.getStopLossPrice();
         int compareStopLoss = BigDecimal.valueOf(1.23725).compareTo(stopLossPrice);
 
-        assertTrue("Trade must be tradable", trade.getTradable());
+        assertTrue("TradeImpl must be tradable", tradeImpl.getTradable());
         assertEquals(0, compareEntry);
         assertEquals(0, compareStopLoss);
     }
@@ -399,15 +399,15 @@ public class BGXTradeGeneratorTest {
         when(this.mockSlowWma.getValues()).thenReturn(slowWMAValues);
         when(this.mockDailySma.getValues()).thenReturn(dailyValues);
 
-        Trade trade = this.signalGenerator.generateTrade();
+        TradeImpl tradeImpl = this.signalGenerator.generateTrade();
 
-        BigDecimal entryPrice = trade.getEntryPrice();
+        BigDecimal entryPrice = tradeImpl.getEntryPrice();
         int compareEntry = BigDecimal.valueOf(1.24765).compareTo(entryPrice);
 
-        BigDecimal stopLossPrice = trade.getStopLossPrice();
+        BigDecimal stopLossPrice = tradeImpl.getStopLossPrice();
         int compareStopLoss = BigDecimal.valueOf(1.25035).compareTo(stopLossPrice);
 
-        assertTrue("Trade must be tradable", trade.getTradable());
+        assertTrue("TradeImpl must be tradable", tradeImpl.getTradable());
         assertEquals(0, compareEntry);
         assertEquals(0, compareStopLoss);
 
@@ -432,9 +432,9 @@ public class BGXTradeGeneratorTest {
 
         when(this.mockSlowWma.getValues()).thenReturn(slowWMAValues);
 
-        Trade trade = this.signalGenerator.generateTrade();
+        TradeImpl tradeImpl = this.signalGenerator.generateTrade();
 
-        assertFalse("Trade must not be tradable", trade.getTradable());
+        assertFalse("TradeImpl must not be tradable", tradeImpl.getTradable());
     }
 
     @Test
@@ -455,9 +455,9 @@ public class BGXTradeGeneratorTest {
         when(this.mockDailySma.getValues()).thenReturn(dailyValues);
         when(this.mockSlowWma.getValues()).thenReturn(slowWMAValues);
 
-        Trade trade = this.signalGenerator.generateTrade();
+        TradeImpl tradeImpl = this.signalGenerator.generateTrade();
 
-        assertFalse("Trade must not be tradable", trade.getTradable());
+        assertFalse("TradeImpl must not be tradable", tradeImpl.getTradable());
     }
 
     @Test
@@ -477,15 +477,15 @@ public class BGXTradeGeneratorTest {
         when(this.mockDailySma.getValues()).thenReturn(dailyValues);
         when(this.mockSlowWma.getValues()).thenReturn(slowWMAValues);
 
-        Trade trade = this.signalGenerator.generateTrade();
+        TradeImpl tradeImpl = this.signalGenerator.generateTrade();
 
-        BigDecimal entryPrice = trade.getEntryPrice();
+        BigDecimal entryPrice = tradeImpl.getEntryPrice();
         int compareEntry = BigDecimal.valueOf(1.25906).compareTo(entryPrice);
 
-        BigDecimal stopLossPrice = trade.getStopLossPrice();
+        BigDecimal stopLossPrice = tradeImpl.getStopLossPrice();
         int compareStopLoss = BigDecimal.valueOf(1.25636).compareTo(stopLossPrice);
 
-        assertTrue("Trade must be tradable", trade.getTradable());
+        assertTrue("TradeImpl must be tradable", tradeImpl.getTradable());
         assertEquals(0, compareEntry);
         assertEquals(0, compareStopLoss);
     }

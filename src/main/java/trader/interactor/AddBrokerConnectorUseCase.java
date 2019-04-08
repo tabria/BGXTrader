@@ -3,6 +3,7 @@ package trader.interactor;
 import org.yaml.snakeyaml.Yaml;
 import trader.broker.connector.BrokerConnector;
 import trader.exception.BadRequestException;
+import trader.exception.EmptyArgumentException;
 import trader.exception.NullArgumentException;
 import trader.requestor.Request;
 import trader.requestor.UseCase;

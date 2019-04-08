@@ -17,28 +17,19 @@ public final class UpdateIndicatorObserver extends BaseObserver {
     private static final String QUANTITY = SettingsFieldNames.QUANTITY.toString();
     private static final String GRANULARITY = SettingsFieldNames.GRANULARITY.toString();
 
+
     private final Indicator indicator;
+    private final TradingStrategyConfiguration configuration;
     private HashMap<String, String> settings;
 
-//    private UpdateIndicatorObserver(Indicator indicator, TradingStrategyConfiguration configuration, BrokerGateway gateway){
-//        super(configuration, gateway);
-//        if(indicator == null)
-//            throw new NullArgumentException();
-//        this.indicator = indicator;
-//        this.settings = initializeSettings();
-//    }
-
     public UpdateIndicatorObserver(Indicator indicator, TradingStrategyConfiguration configuration, BrokerGateway gateway){
-        super(configuration, gateway);
-        if(indicator == null)
+        super(gateway);
+        if(configuration == null || indicator == null)
             throw new NullArgumentException();
+        this.configuration = configuration;
         this.indicator = indicator;
         this.settings = initializeSettings();
     }
-
-//    public static UpdateIndicatorObserver create(Indicator indicator, TradingStrategyConfiguration configuration, BrokerGateway gateway){
-//        return new UpdateIndicatorObserver(indicator, configuration, gateway);
-//    }
 
     @Override
     public void updateObserver(Price price) {

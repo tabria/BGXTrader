@@ -46,7 +46,7 @@ public final class Config {
     public static final String INSTRUMEN_T = "EUR_USD";
 
     /**
-     * Risk Per Trade - Default Value is 0.01 or 1% of the account
+     * Risk Per TradeImpl - Default Value is 0.01 or 1% of the account
      */
     public static final BigDecimal RISK_PER_TRADE = BigDecimal.valueOf(0.01);
 

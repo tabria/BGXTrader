@@ -10,10 +10,10 @@ import com.oanda.v20.transaction.Transaction;
 import com.oanda.v20.transaction.TransactionID;
 import org.junit.Before;
 import org.junit.Test;
+import trader.entity.trade.TradeImpl;
 import trader.order.NewTradeService;
-import trader.trade.entitie.Trade;
-import trader.strategy.bgxstrategy.BGXTradeGenerator;
-import trader.trade.enums.Direction;
+import trader.entry.BGXTradeGenerator;
+import trader.entity.trade.Direction;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -38,7 +38,7 @@ public class NewTradeServiceTest {
     private List<Order> orderList;
     private List<TradeSummary> tradeSummaries;
     private Account mockAccount;
-    private Trade mockTrade;
+    private TradeImpl mockTradeImpl;
     private BigDecimal bid;
     private NewTradeService newTradeService;
     private AccountUnits mockAccountUnits;
@@ -69,14 +69,14 @@ public class NewTradeServiceTest {
         when(this.mockContext.order.create(any(OrderCreateRequest.class))).thenReturn(this.mockOrderCreateResponse);
 
 
-        this.mockTrade = mock(Trade.class);
-        when(this.mockTrade.getEntryPrice()).thenReturn(BigDecimal.valueOf(1.14223));
-        when(this.mockTrade.getStopLossPrice()).thenReturn(BigDecimal.valueOf(1.14551));
-        when(this.mockTrade.getDirection()).thenReturn(Direction.DOWN);
-        when(this.mockTrade.getTradable()).thenReturn(true);
+        this.mockTradeImpl = mock(TradeImpl.class);
+        when(this.mockTradeImpl.getEntryPrice()).thenReturn(BigDecimal.valueOf(1.14223));
+        when(this.mockTradeImpl.getStopLossPrice()).thenReturn(BigDecimal.valueOf(1.14551));
+        when(this.mockTradeImpl.getDirection()).thenReturn(Direction.DOWN);
+        when(this.mockTradeImpl.getTradable()).thenReturn(true);
 
         this.mockBGXTradeGenerator = mock(BGXTradeGenerator.class);
-        when(this.mockBGXTradeGenerator.generateTrade()).thenReturn(this.mockTrade);
+        when(this.mockBGXTradeGenerator.generateTrade()).thenReturn(this.mockTradeImpl);
         when(this.mockBGXTradeGenerator.isGenerated()).thenReturn(false);
 
         this.mockOrder = mock(Order.class);

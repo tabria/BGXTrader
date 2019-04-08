@@ -10,9 +10,9 @@ import com.oanda.v20.primitives.DateTime;
 import com.oanda.v20.transaction.StopLossDetails;
 import com.oanda.v20.transaction.TransactionID;
 import trader.config.Config;
-import trader.trade.entitie.Trade;
-import trader.trade.enums.Direction;
-import trader.strategy.bgxstrategy.BGXTradeGenerator;
+import trader.entity.trade.TradeImpl;
+import trader.entity.trade.Direction;
+import trader.entry.BGXTradeGenerator;
 
 import java.math.BigDecimal;
 
@@ -58,24 +58,24 @@ public final class NewTradeService {
             return;
         }
 
-        Trade newTrade = this.tradeGenerator.generateTrade();
+        TradeImpl newTradeImpl = this.tradeGenerator.generateTrade();
 
-        if (!newTrade.getTradable()) {
+        if (!newTradeImpl.getTradable()) {
             return;
         }
 
-        BigDecimal unitsSize = calculateUnitsSize(account, newTrade, bid);
+        BigDecimal unitsSize = calculateUnitsSize(account, newTradeImpl, bid);
         BigDecimal availableMargin = account.getMarginAvailable().bigDecimalValue();
         BigDecimal futureMargin = this.calculateTradeMargin(account, unitsSize);
         if (availableMargin.compareTo(futureMargin)>0 && unitsSize.compareTo(BigDecimal.ZERO)!=0){
 
             //create order request
-            OrderCreateRequest request = this.createOrderRequest(unitsSize, newTrade);
+            OrderCreateRequest request = this.createOrderRequest(unitsSize, newTradeImpl);
             try {
                 this.orderCreateResponse = this.context.order.create(request);
                 TransactionID id = this.orderCreateResponse.getOrderCreateTransaction().getId();
                 DateTime time = this.orderCreateResponse.getOrderCreateTransaction().getTime();
-                System.out.println("New Trade has been added with id: " +id.toString() + " and time: " +time.toString() );
+                System.out.println("New TradeImpl has been added with id: " +id.toString() + " and time: " +time.toString() );
             } catch (RequestException | ExecuteException e){
                 throw new RuntimeException(e);
             }
@@ -85,20 +85,20 @@ public final class NewTradeService {
     /**
      * Create Order RequestImpl for MarketIfTouchedOrder
      * @param unitsSize trade's unit size
-     * @param newTrade current trade
+     * @param newTradeImpl current trade
      * @return {@link OrderCreateRequest} object
      */
-    private OrderCreateRequest createOrderRequest(BigDecimal unitsSize, Trade newTrade){
+    private OrderCreateRequest createOrderRequest(BigDecimal unitsSize, TradeImpl newTradeImpl){
 
         //setting stop Loss for the new order
         StopLossDetails stopLossDetails = new StopLossDetails()
-                .setPrice(newTrade.getStopLossPrice());
+                .setPrice(newTradeImpl.getStopLossPrice());
 
         MarketIfTouchedOrderRequest marketIfTouchedOrderRequest = new MarketIfTouchedOrderRequest()
                 .setInstrument(Config.INSTRUMENT)
                 .setUnits(unitsSize)
                 .setStopLossOnFill(stopLossDetails)
-                .setPrice(newTrade.getEntryPrice());
+                .setPrice(newTradeImpl.getEntryPrice());
 
         return new OrderCreateRequest(Config.ACCOUNTID).setOrder(marketIfTouchedOrderRequest);
     }
@@ -111,7 +111,7 @@ public final class NewTradeService {
      */
     private void setTradeGenerator(BGXTradeGenerator tradeGenerator){
         if (tradeGenerator == null){
-            throw  new NullPointerException("Trade Generator must not be null");
+            throw  new NullPointerException("TradeImpl Generator must not be null");
         }
         this.tradeGenerator = tradeGenerator;
     }
@@ -134,20 +134,20 @@ public final class NewTradeService {
     /**
      * Calculate units size. Each trade must risk (RISK*100)% amount from the account. With Oanda min unit size is 1.
      * @param account current account
-     * @param newTrade generated trade
+     * @param newTradeImpl generated trade
      * @param bid last bid price
      * @return {@link BigDecimal} unit size. If units size are less then 1 will return 0
      */
-    private BigDecimal calculateUnitsSize(Account account, Trade newTrade, BigDecimal bid) {
+    private BigDecimal calculateUnitsSize(Account account, TradeImpl newTradeImpl, BigDecimal bid) {
         //(balance * risk)/(stopSize*pipValue)
         BigDecimal balance = account.getBalance().bigDecimalValue();
         BigDecimal pipValue = this.pipValue(bid);
 
-        BigDecimal stopSize = calculateStopSize(newTrade);
+        BigDecimal stopSize = calculateStopSize(newTradeImpl);
         BigDecimal divider = stopSize.multiply(pipValue).setScale(5, BigDecimal.ROUND_HALF_UP);
 
         //if direction is down the trade must be short, so the units must be negative number
-        if(newTrade.getDirection().equals(Direction.DOWN) ){
+        if(newTradeImpl.getDirection().equals(Direction.DOWN) ){
             divider = divider.multiply(BigDecimal.valueOf(-1)).setScale(5, BigDecimal.ROUND_HALF_UP);
         }
 
@@ -187,12 +187,12 @@ public final class NewTradeService {
 
     /**
      * Calculate stop size in pips.
-     * @param newTrade current trade
+     * @param newTradeImpl current trade
      * @return {@link BigDecimal} stop size
      */
-    private BigDecimal calculateStopSize(Trade newTrade){
-        BigDecimal entryPrice = newTrade.getEntryPrice();
-        BigDecimal stopPrice = newTrade.getStopLossPrice();
+    private BigDecimal calculateStopSize(TradeImpl newTradeImpl){
+        BigDecimal entryPrice = newTradeImpl.getEntryPrice();
+        BigDecimal stopPrice = newTradeImpl.getStopLossPrice();
 
         BigDecimal stopSize = entryPrice.subtract(stopPrice).setScale(5, BigDecimal.ROUND_HALF_UP).abs();
         return stopSize.multiply(PIP_MULTIPLIER).setScale(5, BigDecimal.ROUND_HALF_UP);

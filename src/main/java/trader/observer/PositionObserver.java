@@ -1,18 +1,19 @@
 package trader.observer;
 
 import trader.broker.BrokerGateway;
-import trader.configuration.TradingStrategyConfiguration;
-import trader.controller.AddTradeController;
 import trader.controller.TraderController;
+import trader.exception.NullArgumentException;
 import trader.price.Price;
 
 public class PositionObserver extends BaseObserver {
 
     private TraderController<Object> addTradeController;
 
-    public PositionObserver(TradingStrategyConfiguration configuration, BrokerGateway brokerGateway){
-        super(configuration, brokerGateway);
-        addTradeController = new AddTradeController<>(brokerGateway, configuration);
+    public PositionObserver(BrokerGateway brokerGateway, TraderController<Object> addTradeController){
+        super(brokerGateway);
+        if(addTradeController == null)
+            throw new NullArgumentException();
+        this. addTradeController = addTradeController;
     }
 
 //    private Context context;
@@ -81,18 +82,7 @@ public class PositionObserver extends BaseObserver {
 //            throw new RuntimeException(e);
 //        }
 //    }
-//
-//    /**
-//     * Setter for context
-//     * @param context current context
-//     * @throws NullPointerException when context is null
-//     */
-//    private void setContext(Context context){
-//        if (context == null){
-//            throw new NullPointerException("Context is null");
-//        }
-//        this.context = context;
-//    }
+
 //
 //    /**
 //     * Setter for NewTradeService

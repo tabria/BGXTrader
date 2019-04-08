@@ -1,14 +1,14 @@
-package trader.strategy.bgxstrategy;
+package trader.entry;
 
 
 import trader.broker.connector.BaseGateway;
 import trader.entity.indicator.Indicator;
 import trader.entity.indicator.ma.MovingAverageBuilder;
 import trader.entity.indicator.rsi.RSIBuilder;
+import trader.entity.trade.TradeImpl;
 import trader.trade.entitie.LineSegment;
 import trader.trade.entitie.Point;
-import trader.trade.entitie.Trade;
-import trader.trade.enums.Direction;
+import trader.entity.trade.Direction;
 import trader.trade.service.IntersectionService;
 
 import java.math.BigDecimal;
@@ -41,7 +41,7 @@ public final class BGXTradeGenerator {
     private final Indicator priceSma;
     private final Indicator rsi;
     private Direction direction;
-    private Trade defaultTrade;
+    private TradeImpl defaultTradeImpl;
 
 
     public BGXTradeGenerator(Indicator fastWMA, Indicator middleWMA, Indicator slowWMA,
@@ -91,10 +91,10 @@ public final class BGXTradeGenerator {
 
     /**
      * Generate trade based on intersections and bounces
-     * @return {@link Trade} object
-     * @see Trade
+     * @return {@link TradeImpl} object
+     * @see TradeImpl
      */
-    public Trade generateTrade(){
+    public TradeImpl generateTrade(){
 //////setISTradeGenerated
         setIsTradeGenerated();
         //        this.fastWMA.setIsTradeGenerated(true);
@@ -148,7 +148,7 @@ public final class BGXTradeGenerator {
         }
 
 
-        return this.defaultTrade;
+        return this.defaultTradeImpl;
 
     }
 
@@ -157,7 +157,7 @@ public final class BGXTradeGenerator {
      * Set default trade
      */
     private void setDefaultTrade() {
-        this.defaultTrade = new Trade(new Point.PointBuilder(BigDecimal.ONE).build(), Direction.FLAT, BigDecimal.ONE);
+        this.defaultTradeImpl = new TradeImpl(new Point.PointBuilder(BigDecimal.ONE).build(), Direction.FLAT, BigDecimal.ONE);
     }
 
     /**
@@ -176,24 +176,24 @@ public final class BGXTradeGenerator {
      * Generate trade after intersection
      * @param fastWMALineSegment fast WMA (5 period)
      * @param middleWMALineSegment middle WMA (20 period)
-     * @return {@link Trade} object
+     * @return {@link TradeImpl} object
      */
-    private Trade generateTradeAfterIntersection(LineSegment fastWMALineSegment, LineSegment middleWMALineSegment){
+    private TradeImpl generateTradeAfterIntersection(LineSegment fastWMALineSegment, LineSegment middleWMALineSegment){
 
         Point intersectionPoint = IntersectionService.calculateIntersectionPoint(fastWMALineSegment, middleWMALineSegment);
         List<BigDecimal> dailyValues = this.dailySMA.getValues();
 
         if (direction.equals(Direction.UP) && isAbove(this.fastWMA, this.slowWMA) && isAbove(this.middleWMA, this.slowWMA)){
 
-            System.out.println("New LONG Trade generated: " + intersectionPoint.getPrice());
-            return new Trade(intersectionPoint, direction, dailyValues.get(dailyValues.size()-1));
+            System.out.println("New LONG TradeImpl generated: " + intersectionPoint.getPrice());
+            return new TradeImpl(intersectionPoint, direction, dailyValues.get(dailyValues.size()-1));
 
         } else if (direction.equals(Direction.DOWN) && !isAbove(this.fastWMA, this.slowWMA) && !isAbove(this.middleWMA, this.slowWMA)){
 
-            System.out.println("New SHORT Trade generated: " + intersectionPoint.getPrice());
-            return new Trade(intersectionPoint, direction, dailyValues.get(dailyValues.size()-1));
+            System.out.println("New SHORT TradeImpl generated: " + intersectionPoint.getPrice());
+            return new TradeImpl(intersectionPoint, direction, dailyValues.get(dailyValues.size()-1));
         }
-        return this.defaultTrade;
+        return this.defaultTradeImpl;
     }
 //////////////////to be removed //////////////////////////////
     /**
