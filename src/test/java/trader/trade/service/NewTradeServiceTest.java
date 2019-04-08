@@ -77,7 +77,7 @@ public class NewTradeServiceTest {
 
         this.mockStandardEntryStrategy = mock(StandardEntryStrategy.class);
         when(this.mockStandardEntryStrategy.generateTrade()).thenReturn(this.mockTradeImpl);
-        when(this.mockStandardEntryStrategy.isGenerated()).thenReturn(false);
+      //  when(this.mockStandardEntryStrategy.isGenerated()).thenReturn(false);
 
         this.mockOrder = mock(Order.class);
         this.orderList = fillOrderList(OrderType.STOP_LOSS, 3);
@@ -159,7 +159,7 @@ public class NewTradeServiceTest {
 
         OrderCreateResponse previous = this.getOrderResponse();
 
-        when(this.mockStandardEntryStrategy.isGenerated()).thenReturn(true);
+  //      when(this.mockStandardEntryStrategy.isGenerated()).thenReturn(true);
 
         this.newTradeService.sendNewTradeOrder(mockAccount, bid);
         OrderCreateResponse current = this.getOrderResponse();

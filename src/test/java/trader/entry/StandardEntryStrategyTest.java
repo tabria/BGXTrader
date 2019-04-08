@@ -20,6 +20,7 @@ import trader.exception.NoSuchStrategyException;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static junit.framework.TestCase.assertFalse;
@@ -51,6 +52,7 @@ public class StandardEntryStrategyTest {
     List<BigDecimal> slowWMAValues = createIndicatorValues(1.22889, 1.22739, 1.22639);
     List<BigDecimal> dailyValues = createIndicatorValues(1.5656, 1.5656, 1.5656);
     List<BigDecimal> rsiValues = createIndicatorValues(49, 50, 22);
+    List<BigDecimal> priceSMAValues = createIndicatorValues(1.22889, 1.23339, 1.23339);
 
     private List<Indicator> indicators;
     private StandardEntryStrategy standardEntryStrategy;
@@ -71,7 +73,7 @@ public class StandardEntryStrategyTest {
         this.indicatorUpdateHelper = new IndicatorUpdateHelper();
         init();
 
-        indicators = createFalseListOfIndicators(INDICATOR_COUNT);
+        setFalseInitialIndicators();
         commonMembers = new CommonTestClassMembers();
         standardEntryStrategy = new StandardEntryStrategy(indicators);
 
@@ -98,74 +100,28 @@ public class StandardEntryStrategyTest {
         new StandardEntryStrategy(createFalseListOfIndicators(5));
     }
 
-
     @Test
-    public void WhenInstantiateThenFillIndicators(){
-        Indicator falseFastWMA = createFalseIndicator(5L, "M30", fastWMAValues);
-    }
+    public void WhenInstantiateThenFillIndicatorsFields(){
+        Indicator fastWMA = getField("fastWMA");
+        Indicator middleWMA = getField("middleWMA");
+        Indicator slowWMA = getField("slowWMA");
+        Indicator dailySMA = getField("dailySMA");
+        Indicator priceSMA = getField("priceSMA");
+        Indicator rsi = getField("rsi");
 
-    private void createClass(Class<? extends StandardEntryStrategy> aClass) {
-    }
-
-    private List<Indicator> createFalseListOfIndicators(int size){
-        List<Indicator> indicatorList = new ArrayList<>(size);
-        for (int i = 0; i <size ; i++) {
-         //   indicatorList.add(createFalseIndicator("rsi"));
-        }
-        Indicator indicator = indicatorList.get(0);
-        String simpleName = indicator.getClass().getSimpleName();
-        return  indicatorList;
-    }
-
-
-
-
-
-    private Indicator createFalseIndicator(long period, String granularity, List<BigDecimal> indicatorValues){
-        Indicator indicator = mock(Indicator.class);
-    //    when(indicator.getPeriod()).thenReturn(period);
-        when(indicator.getGranularity()).thenReturn(CandleGranularity.valueOf(granularity));
-        when(indicator.getValues()).thenReturn(indicatorValues);
-        return mock(Indicator.class);
-    }
-
-    @Test
-    public void WhenInstantiateBGXTraderGenaratorThenGenerateIndicators(){
-
-        this.signalGenerator = new StandardEntryStrategy(baseGateway);
-        Indicator fastWMA = (Indicator) commonMembers.extractFieldObject(this.signalGenerator, "fastWMA");
-        Indicator middleWMA = (Indicator) commonMembers.extractFieldObject(this.signalGenerator, "middleWMA");
-        Indicator slowWMA = (Indicator) commonMembers.extractFieldObject(this.signalGenerator, "slowWMA");
-        Indicator priceSma = (Indicator) commonMembers.extractFieldObject(this.signalGenerator, "priceSma");
-        Indicator dailySMA = (Indicator) commonMembers.extractFieldObject(this.signalGenerator, "dailySMA");
-        Indicator rsi = (Indicator) commonMembers.extractFieldObject(this.signalGenerator, "rsi");
-
-        assertEquals(fastWMA.getClass(), WeightedMovingAverage.class);
-        assertEquals(middleWMA.getClass(), WeightedMovingAverage.class);
-        assertEquals(slowWMA.getClass(), WeightedMovingAverage.class);
-        assertEquals(priceSma.getClass(), SimpleMovingAverage.class);
-        assertEquals(dailySMA.getClass(), SimpleMovingAverage.class);
-        assertEquals(rsi.getClass(), RelativeStrengthIndex.class);
+        assertEquals("fast", fastWMA.getPosition());
+        assertEquals("rsi", rsi.getPosition());
+        assertEquals("middle", middleWMA.getPosition());
+        assertEquals("slow", slowWMA.getPosition());
+        assertEquals("price", priceSMA.getPosition());
+        assertEquals("daily", dailySMA.getPosition());
     }
 
     @Test
     public void WhenFastWMACrossMiddleWMAFromBelowThenGenerateCorrectLongSignal() {
 
-        List<BigDecimal> fastWMAValues = createIndicatorValues(1.22889, 1.23339, 1.23339);
-        List<BigDecimal> middleWMAValues = createIndicatorValues(1.23119,1.23196, 1.23196);
-        List<BigDecimal> slowWMAValues = createIndicatorValues(1.22889, 1.22739, 1.22639);
-        List<BigDecimal> dailyValues = createIndicatorValues(1.5656, 1.5656, 1.5656);
-        List<BigDecimal> rsiValues = createIndicatorValues(49, 50, 22);
 
-        when(this.mockRsi.getValues()).thenReturn(rsiValues);
-        when(this.mockFastWma.getValues()).thenReturn(fastWMAValues);
-        when(this.mockMiddleWma.getValues()).thenReturn(middleWMAValues);
-        when(this.mockDailySma.getValues()).thenReturn(dailyValues);
-        //slowWMA and priceSma line segments are irrelevant for this test
-        when(this.mockSlowWma.getValues()).thenReturn(slowWMAValues);
-        when(this.mockPriceSma.getValues()).thenReturn(middleWMAValues);
-
-        TradeImpl tradeImpl = this.signalGenerator.generateTrade();
+        TradeImpl tradeImpl = standardEntryStrategy.generateTrade();
 
         BigDecimal entryPrice = tradeImpl.getEntryPrice();
         int compareEntry = BigDecimal.valueOf(1.23386).compareTo(entryPrice);
@@ -178,6 +134,69 @@ public class StandardEntryStrategyTest {
         assertEquals(0, compareStopLoss);
 
     }
+
+    private Indicator getField(String fieldName) {
+        return (Indicator) commonMembers.extractFieldObject(standardEntryStrategy, fieldName);
+    }
+
+    private List<Indicator> createFalseListOfIndicators(int size){
+        List<Indicator> indicatorList = new ArrayList<>(size);
+        for (int i = 0; i <size ; i++) {
+            indicatorList.add(mock(Indicator.class));
+        }
+        return  indicatorList;
+    }
+
+    private void setFalseInitialIndicators() {
+        indicators = new ArrayList<>();
+        indicators.add(createFalseIndicator("rsi", rsiValues));
+        indicators.add(createFalseIndicator("price", priceSMAValues));
+        indicators.add(createFalseIndicator( "slow", slowWMAValues));
+        indicators.add(createFalseIndicator("fast", fastWMAValues));
+        indicators.add(createFalseIndicator("daily", dailyValues));
+        indicators.add(createFalseIndicator("middle", middleWMAValues));
+    }
+
+    private Indicator createFalseIndicator(String position, List<BigDecimal> indicatorValues){
+        Indicator indicator = mock(Indicator.class);
+        when(indicator.getPosition()).thenReturn(position);
+        when(indicator.getValues()).thenReturn(Collections.unmodifiableList(indicatorValues));
+        return indicator;
+    }
+
+
+
+//    @Test
+//    public void WhenFastWMACrossMiddleWMAFromBelowThenGenerateCorrectLongSignal() {
+//
+//        List<BigDecimal> fastWMAValues = createIndicatorValues(1.22889, 1.23339, 1.23339);
+//        List<BigDecimal> middleWMAValues = createIndicatorValues(1.23119,1.23196, 1.23196);
+//        List<BigDecimal> slowWMAValues = createIndicatorValues(1.22889, 1.22739, 1.22639);
+//        List<BigDecimal> dailyValues = createIndicatorValues(1.5656, 1.5656, 1.5656);
+//        List<BigDecimal> rsiValues = createIndicatorValues(49, 50, 22);
+//
+//
+//        when(this.mockRsi.getValues()).thenReturn(rsiValues);
+//        when(this.mockFastWma.getValues()).thenReturn(fastWMAValues);
+//        when(this.mockMiddleWma.getValues()).thenReturn(middleWMAValues);
+//        when(this.mockDailySma.getValues()).thenReturn(dailyValues);
+//        //slowWMA and priceSma line segments are irrelevant for this test
+//        when(this.mockSlowWma.getValues()).thenReturn(slowWMAValues);
+//        when(this.mockPriceSma.getValues()).thenReturn(middleWMAValues);
+//
+//        TradeImpl tradeImpl = this.signalGenerator.generateTrade();
+//
+//        BigDecimal entryPrice = tradeImpl.getEntryPrice();
+//        int compareEntry = BigDecimal.valueOf(1.23386).compareTo(entryPrice);
+//
+//        BigDecimal stopLossPrice = tradeImpl.getStopLossPrice();
+//        int compareStopLoss = BigDecimal.valueOf(1.23116).compareTo(stopLossPrice);
+//
+//        assertTrue("TradeImpl must be tradable", tradeImpl.getTradable());
+//        assertEquals(0, compareEntry);
+//        assertEquals(0, compareStopLoss);
+//
+//    }
 
     @Test
     public void WhenFastWMACrossMiddleWMAFromAboveThenGenerateCorrectShortSignal() {

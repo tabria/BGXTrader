@@ -1,223 +1,98 @@
 package trader.entry;
 
-
-import trader.broker.connector.BaseGateway;
-import trader.entity.candlestick.candle.CandleGranularity;
 import trader.entity.indicator.Indicator;
-import trader.entity.indicator.ma.MovingAverageBuilder;
-import trader.entity.indicator.rsi.RSIBuilder;
+import trader.entity.segment.LineSegment;
+import trader.entity.segment.LineSegmentImpl;
 import trader.entity.trade.TradeImpl;
+import trader.entry.service.IntersectionService;
+import trader.exception.BadRequestException;
 import trader.exception.NoSuchStrategyException;
-import trader.trade.entitie.LineSegment;
-import trader.trade.entitie.Point;
+import trader.entity.point.PointImpl;
 import trader.entity.trade.Direction;
-import trader.trade.service.IntersectionService;
-
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.List;
-
-
-/**
- * Class is supplying methods for generating trade based on BunnyGirl Cross System.
- * Signals are generating on MA crosses.
- *
- * There are extra filters preventing from entering bad trade.
- *
- */
-
 
 public final class StandardEntryStrategy {
 
-//    private static final BigDecimal OFFSET_FAST_WMA = BigDecimal.valueOf(0.0005);
-//    private static final BigDecimal OFFSET_MIDDLE_WMA = BigDecimal.valueOf(0.0005);
-//    private static final BigDecimal OFFSET_SLOW_WMA = BigDecimal.valueOf(0.0005);
-//    private static final BigDecimal OFFSET_PRICE_SMA = BigDecimal.valueOf(0.0005);
     private static final BigDecimal RSI_FILTER = BigDecimal.valueOf(50);
 
     private static final int INDICATORS_COUNT = 6;
+    private static final int START_OFFSET = 3;
+    private static final int END_OFFSET = 2;
 
     private Indicator fastWMA;
-    private final Indicator middleWMA;
-    private final Indicator slowWMA;
+    private Indicator middleWMA;
+    private Indicator slowWMA;
     private Indicator dailySMA;
-    private final Indicator priceSma;
+    private Indicator priceSMA;
     private Indicator rsi;
     private Direction direction;
-    private TradeImpl defaultTradeImpl;
 
     public StandardEntryStrategy(List<Indicator> indicators) {
-        if(indicators == null || indicators.size() != INDICATORS_COUNT)
-            throw new NoSuchStrategyException();
-//        long slow = 0L;
-//        for (Indicator indicator:indicators) {
-//            if(rsi == null && indicator.getClass().getSimpleName().equals("RelativeStrengthIndex")){
-//                rsi = indicator;
-//            }  else if (dailySMA == null && indicator.getGranularity().equals(CandleGranularity.D)) {
-//                dailySMA = indicator;
-//            } else {
-//                if(slow == 0){
-//                    fastWMA = indicator;
-//                    slow = indicator.getPeriod();
-//                } else if(slow != 0 && slow < indicator.getPeriod()){
-//
-//                }
-//
-//                slow = indicator.getPeriod();
-//            }
-//
-//
-//            Class<? extends Indicator> aClass = indicator.getClass();
-//            String a = "";
-//        }
+        validateInput(indicators);
         direction = Direction.FLAT;
-        this.fastWMA = null; //fastWMA;
-        this.middleWMA = null; //middleWMA;
-        this.slowWMA = null; //slowWMA;
-        this.priceSma = null; //priceClose;
-        this.dailySMA = null; //dailySMA;
-        this.rsi = null;//rsi;
-        //this.setDefaultTrade();
+        setIndicators(indicators);
     }
 
+    public TradeImpl generateTrade(){
+        LineSegment fastWMALineSegment = getLineSegment(this.fastWMA);
+        LineSegment middleWMALineSegment = getLineSegment(this.middleWMA);
+        LineSegment slowWMALineSegment = getLineSegment(this.slowWMA);
+        LineSegment priceSMALineSegment = getLineSegment(this.priceSMA);
+
+        if(isCrossover(fastWMALineSegment, middleWMALineSegment))
+            return this.generateTradeAfterIntersection(fastWMALineSegment, middleWMALineSegment);
+        if(isCrossover(priceSMALineSegment, middleWMALineSegment))
+            return this.generateTradeAfterIntersection(priceSMALineSegment, middleWMALineSegment);
+        if(isCrossover(priceSMALineSegment, slowWMALineSegment))
+            return this.generateTradeAfterIntersection(priceSMALineSegment, middleWMALineSegment);
+
+        return null;
+    }
+
+    private void validateInput(List<Indicator> indicators) {
+        if(indicators == null || indicators.size() != INDICATORS_COUNT)
+            throw new NoSuchStrategyException();
+    }
+
+    private void setIndicators(List<Indicator> indicators) {
+        for (Indicator indicator:indicators) {
+            String position = indicator.getPosition();
+            switch (position){
+                case "rsi": rsi = indicator;
+                break;
+                case "price": priceSMA = indicator;
+                break;
+                case "slow": slowWMA = indicator;
+                break;
+                case "fast": fastWMA = indicator;
+                break;
+                case "daily": dailySMA = indicator;
+                break;
+                case "middle": middleWMA = indicator;
+                break;
+                default:
+                    throw new BadRequestException();
+            }
+        }
+    }
+//////////////////////////////////////
 
     public StandardEntryStrategy(Indicator fastWMA, Indicator middleWMA, Indicator slowWMA,
                                  Indicator priceClose, Indicator dailySMA, Indicator rsi) {
         this.fastWMA = fastWMA;
         this.middleWMA = middleWMA;
         this.slowWMA = slowWMA;
-        this.priceSma = priceClose;
+        this.priceSMA = priceClose;
         this.dailySMA = dailySMA;
         this.rsi = rsi;
-        this.setDefaultTrade();
     }
-
-    public StandardEntryStrategy(BaseGateway baseGateway) {
-//        fastWMA = new MovingAverageBuilder(baseGateway).build(FAST_WMA_SETTINGS);
-//        middleWMA = new MovingAverageBuilder(baseGateway).build(MIDDLE_WMA_SETTINGS);
-//        priceSma = new MovingAverageBuilder(baseGateway).build( PRICE_SMA_SETTINGS);
-//        dailySMA = new MovingAverageBuilder(baseGateway).build(DAILY_SMA_SETTINGS);
-//        slowWMA = new MovingAverageBuilder(baseGateway).build(SLOW_WMA_SETTINGS);
- //       rsi = new RSIBuilder(baseGateway).build(RSI_SETTINGS);
-        fastWMA = new MovingAverageBuilder().build(new HashMap<>());
-        middleWMA = new MovingAverageBuilder().build(new HashMap<>());
-        priceSma = new MovingAverageBuilder().build( new HashMap<>());
-        dailySMA = new MovingAverageBuilder().build(new HashMap<>());
-        slowWMA = new MovingAverageBuilder().build(new HashMap<>());
-        rsi = new RSIBuilder().build(new HashMap<>());
-        direction = Direction.FLAT;
-
-    }
+////////////////////////////////////////////////////////////////////////
 
 
+    private TradeImpl generateTradeAfterIntersection(LineSegment fastSegment, LineSegment middleSegment){
 
-    /**
-     * Check if trade is generated
-     * @return {@link boolean} {@code true} if trade is already generated
-     *                          {@code false} otherwise
-     */
-    public boolean isGenerated(){
-        if (this.fastWMA.getValues().size() == 0 && this.middleWMA.getValues().size() == 0 &&
-                this.slowWMA.getValues().size() == 0 && this.rsi.getValues().size() == 0){
-            return false;
-        }
-//        return this.fastWMA.isTradeGenerated() && this.middleWMA.isTradeGenerated()
-//                && this.slowWMA.isTradeGenerated() && this.rsi.isTradeGenerated();
-        return true;
-    }
-
-    /**
-     * Generate trade based on intersections and bounces
-     * @return {@link TradeImpl} object
-     * @see TradeImpl
-     */
-    public TradeImpl generateTrade(){
-//////setISTradeGenerated
-        setIsTradeGenerated();
-        //        this.fastWMA.setIsTradeGenerated(true);
-//        this.middleWMA.setIsTradeGenerated(true);
-//        this.slowWMA.setIsTradeGenerated(true);
-//        this.dailySMA.setIsTradeGenerated(true);
-//        this.priceSma.setIsTradeGenerated(true);
-//        this.rsi.setIsTradeGenerated(true);
-/////////////////////////////////////////////////////////////
-
-        LineSegment fastWMALineSegment = getLineSegment(this.fastWMA);
-        LineSegment middleWMALineSegment = getLineSegment(this.middleWMA);
-        LineSegment slowWMALineSegment = getLineSegment(this.slowWMA);
-        LineSegment priceSMALineSegment = getLineSegment(this.priceSma);
-
-
-        //signal from intersection between fastWMA and middleWMA
-//        boolean isLineSegmentIntersecting = IntersectionService.doLineSegmentsIntersect(fastWMALineSegment, middleWMALineSegment);
-//        Direction direction = this.getIntersectionDirection(fastWMALineSegment);
-//        if(isLineSegmentIntersecting && isRSITradable(direction)){
-//            System.out.println("New WMA crossover");
-//            return this.generateTradeAfterIntersection(fastWMALineSegment, middleWMALineSegment, direction);
-//        }
-//
-////
-////        //signal from intersection between priceSMA and middleWMA
-////        boolean isLineSegmentIntersecting = IntersectionService.doLineSegmentsIntersect(priceSMALineSegment, middleWMALineSegment);
-////         direction = this.getIntersectionDirection(priceSMALineSegment);
-////        if(isLineSegmentIntersecting && isRSITradable(direction)){
-////            System.out.println("New priceSMA and middleWMA crossover");
-////            return this.generateTradeAfterIntersection(priceSMALineSegment, middleWMALineSegment);
-////        }
-////
-////        //signal from intersection between priceSMA and slowWMA
-////        isLineSegmentIntersecting = IntersectionService.doLineSegmentsIntersect(priceSMALineSegment, slowWMALineSegment);
-////        direction = this.getIntersectionDirection(priceSMALineSegment);
-////        if(isLineSegmentIntersecting && isRSITradable(direction)){
-////            System.out.println("New priceSMA and slowWMA crossover");
-////            return this.generateTradeAfterIntersection(priceSMALineSegment, middleWMALineSegment);
-////        }
-
-
-        if(isCrossover(fastWMALineSegment, middleWMALineSegment)){
-             return this.generateTradeAfterIntersection(fastWMALineSegment, middleWMALineSegment);
-        }
-        if(isCrossover(priceSMALineSegment, middleWMALineSegment)){
-            return this.generateTradeAfterIntersection(priceSMALineSegment, middleWMALineSegment);
-        }
-        if(isCrossover(priceSMALineSegment, slowWMALineSegment)){
-            return this.generateTradeAfterIntersection(priceSMALineSegment, middleWMALineSegment);
-        }
-
-
-        return this.defaultTradeImpl;
-
-    }
-
-
-    /**
-     * Set default trade
-     */
-    private void setDefaultTrade() {
-        this.defaultTradeImpl = new TradeImpl(new Point.PointBuilder(BigDecimal.ONE).build(), Direction.FLAT, BigDecimal.ONE);
-    }
-
-    /**
-     * Set indicator tradeGenerated field to true
-     */
-    private void setIsTradeGenerated() {
-//        this.fastWMA.setIsTradeGenerated(true);
-//        this.middleWMA.setIsTradeGenerated(true);
-//        this.slowWMA.setIsTradeGenerated(true);
-//        this.dailySMA.setIsTradeGenerated(true);
-//        this.priceSma.setIsTradeGenerated(true);
-//        this.rsi.setIsTradeGenerated(true);
-    }
-
-    /**
-     * Generate trade after intersection
-     * @param fastWMALineSegment fast WMA (5 period)
-     * @param middleWMALineSegment middle WMA (20 period)
-     * @return {@link TradeImpl} object
-     */
-    private TradeImpl generateTradeAfterIntersection(LineSegment fastWMALineSegment, LineSegment middleWMALineSegment){
-
-        Point intersectionPoint = IntersectionService.calculateIntersectionPoint(fastWMALineSegment, middleWMALineSegment);
+        PointImpl intersectionPoint = IntersectionService.calculateIntersectionPoint(fastSegment, middleSegment);
         List<BigDecimal> dailyValues = this.dailySMA.getValues();
 
         if (direction.equals(Direction.UP) && isAbove(this.fastWMA, this.slowWMA) && isAbove(this.middleWMA, this.slowWMA)){
@@ -230,26 +105,8 @@ public final class StandardEntryStrategy {
             System.out.println("New SHORT TradeImpl generated: " + intersectionPoint.getPrice());
             return new TradeImpl(intersectionPoint, direction, dailyValues.get(dailyValues.size()-1));
         }
-        return this.defaultTradeImpl;
+        return null;
     }
-//////////////////to be removed //////////////////////////////
-    /**
-     * Check if the value before last value rsi value is on or above 50
-     * @return {@link boolean} {@code true} if it is on 50 or above
-     *                         {@code false} otherwise
-     */
-    private boolean isRSITradable(Direction direction) {
-        List<BigDecimal> rsiValues = this.rsi.getValues();
-        BigDecimal checkValue = rsiValues.get(rsiValues.size() - 2);
-        if (direction.equals(Direction.UP)){
-            return checkValue.compareTo(RSI_FILTER) >= 0;
-        }
-        if (direction.equals(Direction.DOWN)){
-            return checkValue.compareTo(RSI_FILTER) <= 0;
-        }
-        return false;
-    }
-////////////////////////////////////////////////////////////////
 
     private boolean isCrossover(LineSegment fastWMALineSegment, LineSegment middleWMALineSegment) {
         boolean isLineSegmentIntersecting = IntersectionService.doLineSegmentsIntersect(fastWMALineSegment, middleWMALineSegment);
@@ -269,66 +126,36 @@ public final class StandardEntryStrategy {
         return false;
     }
 
-
-
-
-    /**
-     * Get the line segment from indicator.Line segment consist of the values from the last 2 finished candlesticks
-     * @param indicator indicator
-     * @return {@link LineSegment}
-     * @see Indicator
-     * @see LineSegment
-     */
     private LineSegment getLineSegment(Indicator indicator){
-
         List<BigDecimal> indicatorValues = indicator.getValues();
+        BigDecimal pointAPrice = indicatorValues.get(indicatorValues.size()-START_OFFSET);
+        BigDecimal pointBPrice = indicatorValues.get(indicatorValues.size()-END_OFFSET);
+        PointImpl pointA = new PointImpl.PointBuilder(pointAPrice).build();
+        PointImpl pointB = new PointImpl.PointBuilder(pointBPrice).setTime(BigDecimal.valueOf(2)).build();
 
-        BigDecimal pointAPrice = indicatorValues.get(indicatorValues.size()-3);
-        BigDecimal pointBPrice = indicatorValues.get(indicatorValues.size()-2);
-
-        Point pointA = new Point.PointBuilder(pointAPrice).build();
-        Point pointB = new Point.PointBuilder(pointBPrice).setTime(BigDecimal.valueOf(2)).build();
-
-        return new LineSegment(pointA, pointB);
+        return new LineSegmentImpl(pointA, pointB);
     }
 
-    /**
-     * Determine which indicator is above
-     * @param indicatorA first indicator
-     * @param indicatorB second indicator
-     * @return {@link boolean} {@code true} if A above B
-     *                          {@code false} otherwise
-     */
     private boolean isAbove(Indicator indicatorA, Indicator indicatorB ){
 
-        List<BigDecimal> indicatorAValues = indicatorA.getValues();
-        BigDecimal pointAStartPrice = indicatorAValues.get(indicatorAValues.size()-3);
-        BigDecimal pointAEndPrice = indicatorAValues.get(indicatorAValues.size()-2);
-
-        List<BigDecimal> indicatorBValues = indicatorB.getValues();
-        BigDecimal pointBStartPrice = indicatorBValues.get(indicatorBValues.size()-3);
-        BigDecimal pointBEndPrice = indicatorBValues.get(indicatorBValues.size()-2);
-
-        int compareStartPrices = pointAStartPrice.compareTo(pointBStartPrice);
-        int compareEndPrices = pointAEndPrice.compareTo(pointBEndPrice);
+        int compareStartPrices = comparePrices(indicatorA.getValues(), indicatorB.getValues(), START_OFFSET);
+        int compareEndPrices = comparePrices(indicatorA.getValues(), indicatorB.getValues(), END_OFFSET);
 
         return compareStartPrices >= 0 && compareEndPrices >0;
     }
 
-    /**
-     * Getting direction of intersection
-     *
-     * @param segmentA first line segment
-     * @return {@link Direction} object
-     * @see LineSegment
-     * @see Direction
-     */
+    private int comparePrices(List<BigDecimal> indicatorAValues, List<BigDecimal> indicatorBValues, int offset){
+        BigDecimal pointAStartPrice = indicatorAValues.get(indicatorAValues.size()- offset);
+        BigDecimal pointBStartPrice = indicatorBValues.get(indicatorBValues.size()- offset);
+        return pointAStartPrice.compareTo(pointBStartPrice);
+    }
+
     private Direction getIntersectionDirection(LineSegment segmentA){
         direction = Direction.FLAT;
         BigDecimal segmentAStartPrice = segmentA.getPointA().getPrice();
         BigDecimal segmentAEndPrice = segmentA.getPointB().getPrice();
-
-        BigDecimal delta = segmentAStartPrice.subtract(segmentAEndPrice).setScale(5, BigDecimal.ROUND_HALF_UP);
+        BigDecimal delta = segmentAStartPrice.subtract(segmentAEndPrice)
+                .setScale(5, BigDecimal.ROUND_HALF_UP);
         if (delta.compareTo(BigDecimal.ZERO) < 0) {
             direction = Direction.UP;
         } else if (delta.compareTo(BigDecimal.ZERO) > 0){

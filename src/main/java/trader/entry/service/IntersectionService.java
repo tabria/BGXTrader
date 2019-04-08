@@ -1,7 +1,9 @@
-package trader.trade.service;
+package trader.entry.service;
 
-import trader.trade.entitie.LineSegment;
-import trader.trade.entitie.Point;
+
+import trader.entity.point.Point;
+import trader.entity.point.PointImpl;
+import trader.entity.segment.LineSegment;
 
 import java.math.BigDecimal;
 
@@ -160,7 +162,7 @@ public final class IntersectionService {
      *
      * @param segmentA
      * @param segmentB
-     * @return {@link Point} intersection point
+     * @return {@link Point } intersection point
      */
     public static Point calculateIntersectionPoint(LineSegment segmentA, LineSegment segmentB){
         if (segmentA == null || segmentB == null){
@@ -210,7 +212,7 @@ public final class IntersectionService {
         BigDecimal yIntersectPoint = m1x.add(bSegmentA).setScale(5, BigDecimal.ROUND_HALF_UP);
 
         //Time is irrelevant. So the x. Set default time of 1 for the intersection point.
-        return new Point.PointBuilder(yIntersectPoint).build();
+        return new PointImpl.PointBuilder(yIntersectPoint).build();
 
     }
 

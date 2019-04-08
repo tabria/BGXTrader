@@ -2,25 +2,27 @@ package trader.trade.entitie;
 
 import org.junit.Before;
 import org.junit.Test;
+import trader.entity.point.PointImpl;
+import trader.exception.NullArgumentException;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 
 import static org.junit.Assert.*;
 
-public class PointTest {
+public class PointImplTest {
 
 
     private static final BigDecimal DEFAULT_PRICE_START = BigDecimal.valueOf(1.1722);
 
 
-    private Point point;
+    private PointImpl point;
     private BigDecimal startTime = BigDecimal.valueOf(10);
 
     @Before
     public void before() {
 
-        this.point = new Point.PointBuilder(DEFAULT_PRICE_START)
+        this.point = new PointImpl.PointBuilder(DEFAULT_PRICE_START)
                 .setTime(this.startTime)
                 .build();
 
@@ -28,7 +30,7 @@ public class PointTest {
 
     @Test
     public void WhenCreateNewPointThenNewObject(){
-        Point point2 = new Point.PointBuilder(DEFAULT_PRICE_START).build();
+        PointImpl point2 = new PointImpl.PointBuilder(DEFAULT_PRICE_START).build();
 
         assertNotEquals(this.point, point2);
     }
@@ -40,25 +42,25 @@ public class PointTest {
         assertEquals(0, result);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = NullArgumentException.class)
     public void WhenCreatingNewPointFromNullPointThenException(){
-        new Point(null);
+        new PointImpl(null);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = NullArgumentException.class)
     public void WhenCreateNewPointWithNullStartPriceThenException(){
-        Point point = new Point.PointBuilder(null).build();
+        PointImpl point = new PointImpl.PointBuilder(null).build();
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void WhenCreateNewPointWithNegativeStartPriceThenException(){
-        Point point = new Point.PointBuilder(BigDecimal.valueOf(-1)).build();
+        PointImpl point = new PointImpl.PointBuilder(BigDecimal.valueOf(-1)).build();
     }
 
-    @Test (expected = NullPointerException.class)
+    @Test (expected = NullArgumentException.class)
     public void WhenCreateNewPointWithNullStartTimeThenException()  {
 
-        Point point = new Point.PointBuilder(DEFAULT_PRICE_START)
+        PointImpl point = new PointImpl.PointBuilder(DEFAULT_PRICE_START)
                 .setTime(null)
                 .build();
 
@@ -66,7 +68,7 @@ public class PointTest {
 
     @Test (expected = IllegalArgumentException.class)
     public void WhenCreateNewPointWithStartTimeLessThanOneThenException(){
-        Point point = new Point.PointBuilder(DEFAULT_PRICE_START)
+        PointImpl point = new PointImpl.PointBuilder(DEFAULT_PRICE_START)
                 .setTime(BigDecimal.valueOf(0))
                 .build();
     }
@@ -84,7 +86,7 @@ public class PointTest {
     @Test
     public void WhenCreateNewPointWithNoStartTimeThenReturnDefaultStartTime() throws NoSuchFieldException, IllegalAccessException {
 
-        Point point = new Point.PointBuilder(DEFAULT_PRICE_START).build();
+        PointImpl point = new PointImpl.PointBuilder(DEFAULT_PRICE_START).build();
         Field field = point.getClass().getDeclaredField("DEFAULT_START_TIME");
         field.setAccessible(true);
         BigDecimal expected = (BigDecimal) field.get(point);
@@ -99,7 +101,7 @@ public class PointTest {
     //Reflexive
     @Test
     public void WhenCallEqualsOnSameObjectsThenReturnTrue(){
-        Point newPoint = this.point;
+        PointImpl newPoint = this.point;
         boolean equals = this.point.equals(newPoint);
         assertTrue(equals);
     }
@@ -107,7 +109,7 @@ public class PointTest {
     //Symmetric
     @Test
     public void WhenCallEqualsThenResultMustBeSymmetric(){
-        Point newPoint = new Point.PointBuilder(DEFAULT_PRICE_START)
+        PointImpl newPoint = new PointImpl.PointBuilder(DEFAULT_PRICE_START)
                 .setTime(this.startTime)
                 .build();
 
@@ -122,10 +124,10 @@ public class PointTest {
     //Transitive
     @Test
     public void WhenCallEqualsThenResultMustBeTransitive(){
-        Point newPoint = new Point.PointBuilder(DEFAULT_PRICE_START)
+        PointImpl newPoint = new PointImpl.PointBuilder(DEFAULT_PRICE_START)
                 .setTime(this.startTime)
                 .build();
-        Point lastPoint = new Point.PointBuilder(DEFAULT_PRICE_START)
+        PointImpl lastPoint = new PointImpl.PointBuilder(DEFAULT_PRICE_START)
                 .setTime(this.startTime)
                 .build();
         boolean pointNewPointResult = this.point.equals(newPoint);
@@ -146,7 +148,7 @@ public class PointTest {
     //Consistence
     @Test
     public void WhenCallEqualsThenResultMustBeConsistence(){
-        Point newPoint = new Point.PointBuilder(DEFAULT_PRICE_START)
+        PointImpl newPoint = new PointImpl.PointBuilder(DEFAULT_PRICE_START)
                 .setTime(this.startTime)
                 .build();
 
@@ -176,7 +178,7 @@ public class PointTest {
     @Test
     public void WhenCallHashCodeOnEqualObjectsThenResultsMustBeSame(){
 
-        Point newPoint = new Point.PointBuilder(DEFAULT_PRICE_START)
+        PointImpl newPoint = new PointImpl.PointBuilder(DEFAULT_PRICE_START)
                 .setTime(this.startTime)
                 .build();
 
@@ -195,7 +197,7 @@ public class PointTest {
     @Test
     public void WhenCallHashCodeOnNonEqualObjectsThenResultsMustBeDifferent(){
 
-        Point newPoint = new Point.PointBuilder(DEFAULT_PRICE_START)
+        PointImpl newPoint = new PointImpl.PointBuilder(DEFAULT_PRICE_START)
                 .setTime(BigDecimal.valueOf(10.1))
                 .build();
 

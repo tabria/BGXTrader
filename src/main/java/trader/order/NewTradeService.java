@@ -54,9 +54,9 @@ public final class NewTradeService {
         //if don't have open trade or pending market orders, then generate new trade
         //if trade is not yet generated
 
-        if(account.getTrades().size() != 0 || hasWaitingTrades(account) || this.tradeGenerator.isGenerated() ){
-            return;
-        }
+//        if(account.getTrades().size() != 0 || hasWaitingTrades(account) || this.tradeGenerator.isGenerated() ){
+//            return;
+//        }
 
         TradeImpl newTradeImpl = this.tradeGenerator.generateTrade();
 

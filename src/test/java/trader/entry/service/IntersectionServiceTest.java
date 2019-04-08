@@ -1,9 +1,10 @@
-package trader.trade.service;
+package trader.entry.service;
 
 import org.junit.Before;
 import org.junit.Test;
-import trader.trade.entitie.LineSegment;
-import trader.trade.entitie.Point;
+import trader.entity.point.PointImpl;
+import trader.entity.segment.LineSegmentImpl;
+
 import java.math.BigDecimal;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -13,22 +14,22 @@ import static org.mockito.Mockito.when;
 
 public class IntersectionServiceTest {
 
-    private Point mockAPointA;
-    private Point mockAPointB;
-    private Point mockBPointA;
-    private Point mockBPointB;
-    private LineSegment mockSegmentA;
-    private LineSegment mockSegmentB;
+    private PointImpl mockAPointA;
+    private PointImpl mockAPointB;
+    private PointImpl mockBPointA;
+    private PointImpl mockBPointB;
+    private LineSegmentImpl mockSegmentA;
+    private LineSegmentImpl mockSegmentB;
 
     @Before
     public void before(){
 
-        this.mockSegmentA = mock(LineSegment.class);
-        this.mockSegmentB = mock(LineSegment.class);
-        this.mockAPointA = mock(Point.class);
-        this.mockAPointB = mock(Point.class);
-        this.mockBPointA = mock(Point.class);
-        this.mockBPointB = mock(Point.class);
+        this.mockSegmentA = mock(LineSegmentImpl.class);
+        this.mockSegmentB = mock(LineSegmentImpl.class);
+        this.mockAPointA = mock(PointImpl.class);
+        this.mockAPointB = mock(PointImpl.class);
+        this.mockBPointA = mock(PointImpl.class);
+        this.mockBPointB = mock(PointImpl.class);
     }
 
     @Test(expected = NullPointerException.class)
@@ -154,7 +155,7 @@ public class IntersectionServiceTest {
 //        setSegmentA(BigDecimal.valueOf(1.22537), BigDecimal.valueOf(1), BigDecimal.valueOf(1.22622), BigDecimal.valueOf(2));
 //        setSegmentB(BigDecimal.valueOf(1.22606), BigDecimal.valueOf(1), BigDecimal.valueOf(1.22615), BigDecimal.valueOf(2));
 
-        Point resultPoint = IntersectionService.calculateIntersectionPoint(this.mockSegmentA, this.mockSegmentB);
+        PointImpl resultPoint = IntersectionService.calculateIntersectionPoint(this.mockSegmentA, this.mockSegmentB);
 
         BigDecimal resultPrice = resultPoint.getPrice();
 

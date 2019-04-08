@@ -2,6 +2,7 @@ package trader.trade.entitie;
 
 import org.junit.Before;
 import org.junit.Test;
+import trader.entity.point.PointImpl;
 import trader.entity.trade.Direction;
 import trader.entity.trade.TradeImpl;
 
@@ -20,12 +21,12 @@ public class TradeImplTest {
     private static final BigDecimal FIRST_TARGET = BigDecimal.valueOf(0.0050);
 
     private TradeImpl tradeImpl;
-    private Point mockPoint;
+    private PointImpl mockPoint;
 
     @Before
     public void before() throws Exception {
 
-        this.mockPoint = mock(Point.class);
+        this.mockPoint = mock(PointImpl.class);
 
     }
 
@@ -36,12 +37,12 @@ public class TradeImplTest {
 
     @Test(expected = NullPointerException.class)
     public void WhenCreateNewSignalWithNullDirectionThenException(){
-        this.tradeImpl = new TradeImpl(new Point.PointBuilder(BigDecimal.ONE).build(), null, BigDecimal.ONE);
+        this.tradeImpl = new TradeImpl(new PointImpl.PointBuilder(BigDecimal.ONE).build(), null, BigDecimal.ONE);
     }
 
     @Test(expected = NullPointerException.class)
     public void WhenCreateNewSignalWithNullDailyOpenThenException(){
-        this.tradeImpl = new TradeImpl(new Point.PointBuilder(BigDecimal.ONE).build(), null, BigDecimal.ONE);
+        this.tradeImpl = new TradeImpl(new PointImpl.PointBuilder(BigDecimal.ONE).build(), null, BigDecimal.ONE);
     }
 
     @Test
@@ -213,7 +214,7 @@ public class TradeImplTest {
         BigDecimal intersectionPrice = BigDecimal.valueOf(1.12345);
         when(this.mockPoint.getPrice()).thenReturn(intersectionPrice);
         BigDecimal dailyOpen = BigDecimal.valueOf(1.13114);
-        TradeImpl tradeImpl = new TradeImpl(new Point.PointBuilder(BigDecimal.ONE).build(), Direction.FLAT, BigDecimal.ONE);
+        TradeImpl tradeImpl = new TradeImpl(new PointImpl.PointBuilder(BigDecimal.ONE).build(), Direction.FLAT, BigDecimal.ONE);
 
         assertFalse(tradeImpl.getTradable());
 
