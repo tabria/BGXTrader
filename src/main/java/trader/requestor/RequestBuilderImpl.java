@@ -5,6 +5,8 @@ import trader.entity.indicator.Indicator;
 import trader.entity.indicator.ma.MovingAverageBuilder;
 import trader.entity.indicator.ma.enums.MAType;
 import trader.entity.indicator.rsi.RSIBuilder;
+import trader.entity.point.Point;
+import trader.entity.point.PointImpl;
 import trader.entity.trade.Trade;
 import trader.entity.trade.TradeImpl;
 import trader.exception.EmptyArgumentException;
@@ -12,11 +14,13 @@ import trader.exception.NoSuchDataStructureException;
 import trader.exception.NullArgumentException;
 import trader.exception.WrongIndicatorSettingsException;
 import trader.interactor.enums.DataStructureType;
-import trader.interactor.enums.IndicatorTypes;
 import trader.interactor.RequestImpl;
 import trader.configuration.TradingStrategyConfiguration;
 import trader.configuration.BGXConfigurationImpl;
+
+import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.Map;
 
 public class RequestBuilderImpl implements RequestBuilder {
 
@@ -29,6 +33,8 @@ public class RequestBuilderImpl implements RequestBuilder {
     private static final String DIRECTION = "direction";
     private static final String ENTRY_PRICE = "entryPrice";
     private static final String STOP_LOSS_PRICE = "stopLossPrice";
+    private static final String PRICE = "price";
+    private static final String TIME = "time";
 
     @Override
     public Request<?> build(String controllerName, HashMap<String, String> settings) {
@@ -42,8 +48,16 @@ public class RequestBuilderImpl implements RequestBuilder {
             return buildBrokerConnector(settings);
         if(controllerName.contains(type(DataStructureType.CREATE_TRADE)))
             return buildTrade(settings);
-
+        if(controllerName.contains(type(DataStructureType.CREATE_POINT)))
+            return buildPoint(settings);
         throw new NoSuchDataStructureException();
+    }
+
+    private Request<?> buildPoint(HashMap<String,String> settings) {
+        Request<Point> request = new RequestImpl<>();
+        Point point = setPoint(settings);
+        request.setRequestDataStructure(point);
+        return request;
     }
 
     private Request<?> buildTrade(HashMap<String,String> settings) {
@@ -79,6 +93,17 @@ public class RequestBuilderImpl implements RequestBuilder {
         } else if(isMovingAverage(dataStructureType)) {
             request.setRequestDataStructure(new MovingAverageBuilder().build(settings));
             return request;
+        }
+        throw new NoSuchDataStructureException();
+    }
+
+    private Point setPoint(HashMap<String, String> settings) {
+        if(settings.size()>0 && settings.containsKey(PRICE)){
+            BigDecimal priceValue = new BigDecimal(settings.get(PRICE));
+            Point point = new PointImpl(priceValue);
+            BigDecimal timeValue = new BigDecimal(settings.get(TIME));
+            point.setTime(timeValue);
+            return point;
         }
         throw new NoSuchDataStructureException();
     }

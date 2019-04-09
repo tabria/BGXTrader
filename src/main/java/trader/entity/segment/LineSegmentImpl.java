@@ -61,7 +61,7 @@ public final class LineSegmentImpl implements LineSegment {
     }
 
     private void setPointA(BigDecimal priceA){
-        this.pointA = new PointImpl.PointBuilder(priceA).build();
+        this.pointA = new PointImpl(priceA);
     }
 
     private void setPointB(Point b){
@@ -74,6 +74,6 @@ public final class LineSegmentImpl implements LineSegment {
     }
 
     private void setPointB(BigDecimal priceB){
-        this.pointB = new PointImpl.PointBuilder(priceB).setTime(BigDecimal.valueOf(2)).build();
+        this.pointB = new PointImpl(priceB ,BigDecimal.valueOf(2));
     }
 }

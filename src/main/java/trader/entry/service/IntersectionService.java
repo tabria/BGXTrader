@@ -189,7 +189,7 @@ public final class IntersectionService {
                 .setScale(5, BigDecimal.ROUND_HALF_UP);
 
         //Time is irrelevant. So the x. Set default time of 1 for the intersection point.
-        return new PointImpl.PointBuilder(yIntersectPoint).build();
+        return new PointImpl(yIntersectPoint);
     }
 
     /**

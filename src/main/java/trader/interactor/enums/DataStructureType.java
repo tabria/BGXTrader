@@ -20,6 +20,12 @@ public enum DataStructureType {
         public String toString() {
             return "createTrade";
         }
+    },
+    CREATE_POINT{
+        @Override
+        public String toString() {
+            return "createPoint";
+        }
     }
 
 

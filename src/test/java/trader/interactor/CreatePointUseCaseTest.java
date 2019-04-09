@@ -11,26 +11,26 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class CreateTradeUseCaseTest {
+public class CreatePointUseCaseTest {
 
-    private UseCase createTradeUseCase;
+    private UseCase createPointUseCase;
     private Request request;
 
     @Before
     public void setUp() throws Exception {
-        createTradeUseCase = new CreateTradeUseCase();
+        createPointUseCase = new CreatePointUseCase();
         request = mock(Request.class);
     }
 
     @Test(expected = NullArgumentException.class)
     public void WhenCallExecuteWithNull_Exception(){
-        createTradeUseCase.execute(null);
+        createPointUseCase.execute(null);
     }
 
     @Test
     public void WhenCallExecuteWithCorrectValue_CorrectResult(){
         when(request.getRequestDataStructure()).thenReturn("Test");
-        Response<String> response = createTradeUseCase.execute(request);
+        Response<String> response = createPointUseCase.execute(request);
 
         assertEquals("Test", response.getResponseDataStructure());
     }

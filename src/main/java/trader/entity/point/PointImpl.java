@@ -4,16 +4,21 @@ import trader.exception.NullArgumentException;
 
 import java.math.BigDecimal;
 
-public final class PointImpl implements Point {
+public class PointImpl implements Point {
 
     private static final BigDecimal DEFAULT_START_TIME = BigDecimal.ONE;
 
-    private final BigDecimal price ;
-    private final BigDecimal time;
+    private BigDecimal price ;
+    private BigDecimal time;
 
-    private PointImpl(PointBuilder builder){
-        this.price = builder.price;
-        this.time = builder.time;
+    public PointImpl(BigDecimal price){
+        setPrice(price);
+        this.time = DEFAULT_START_TIME;
+    }
+
+    public PointImpl(BigDecimal price, BigDecimal time){
+        setPrice(price);
+        setTime(time);
     }
 
     public PointImpl(Point point){
@@ -21,40 +26,6 @@ public final class PointImpl implements Point {
             throw new NullArgumentException();
         this.price = point.getPrice();
         this.time = point.getTime();
-    }
-
-    public static class PointBuilder{
-
-        private  BigDecimal price ;
-        private  BigDecimal time;
-
-        public PointBuilder(BigDecimal price){
-            this.setPrice(price);
-            this.time = DEFAULT_START_TIME;
-        }
-
-        public PointBuilder setTime(BigDecimal time){
-            if (time == null)
-                throw new NullArgumentException();
-            int result = time.compareTo(DEFAULT_START_TIME);
-            if (result < 0)
-                throw  new IllegalArgumentException();
-            this.time = time;
-            return this;
-        }
-
-        public Point build(){
-            return new PointImpl(this);
-        }
-
-        private void setPrice(BigDecimal price){
-            if (price == null)
-                throw new NullArgumentException();
-            int result = price.compareTo(BigDecimal.ZERO);
-            if (result <= 0 )
-                throw new IllegalArgumentException();
-            this.price = price;
-        }
     }
 
     @Override
@@ -65,6 +36,26 @@ public final class PointImpl implements Point {
     @Override
     public BigDecimal getTime(){
         return this.time;
+    }
+
+    @Override
+    public void setPrice(BigDecimal price){
+        if (price == null)
+            throw new NullArgumentException();
+        int result = price.compareTo(BigDecimal.ZERO);
+        if (result <= 0 )
+            throw new IllegalArgumentException();
+        this.price = price;
+    }
+
+    @Override
+    public void setTime(BigDecimal time){
+        if (time == null)
+            throw new NullArgumentException();
+        int result = time.compareTo(DEFAULT_START_TIME);
+        if (result < 0)
+            throw  new IllegalArgumentException();
+        this.time = time;
     }
 
     @Override
@@ -88,7 +79,7 @@ public final class PointImpl implements Point {
 
     @Override
     public String toString() {
-        return "PointImpl{" +
+        return "Point{" +
                 "price=" + price.toString() +
                 ", time=" + time.toString() +
                 '}';

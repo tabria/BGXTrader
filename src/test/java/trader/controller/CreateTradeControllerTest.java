@@ -2,23 +2,13 @@ package trader.controller;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.internal.matchers.Null;
 import trader.CommonTestClassMembers;
-import trader.broker.BrokerGateway;
 import trader.configuration.TradingStrategyConfiguration;
 import trader.entity.trade.Trade;
 import trader.exception.NullArgumentException;
-import trader.requestor.*;
 import trader.responder.Response;
-
-import java.util.HashMap;
-
-import static org.hamcrest.CoreMatchers.any;
 import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 public class CreateTradeControllerTest extends BaseControllerTest<TradingStrategyConfiguration> {
@@ -65,13 +55,6 @@ public class CreateTradeControllerTest extends BaseControllerTest<TradingStrateg
     public void WhenCallExecuteWithCorrectSetting_CorrectResult(){
         setExecuteSettings(CREATE_TRADE_CONTROLLER);
         when(responseMock.getResponseDataStructure()).thenReturn(tradeMock);
-
-//        when(responseMock.getResponseDataStructure()).thenReturn(configurationMock);
-//        when(useCaseFactoryMock.make(anyString())).thenReturn(useCaseMock);
-//        when(useCaseMock.execute(requestMock)).thenReturn(responseMock);
-//        when(requestBuilderMock.build(controllerName, settings)).thenReturn(requestMock);
-//
-//        when(useCaseMock.execute(eq(requestMock), any(HashMap.class))).thenReturn(responseMock);
         Response<Trade> createTradeResponse = controller.execute(settings);
 
         assertEquals(tradeMock, createTradeResponse.getResponseDataStructure());
@@ -86,15 +69,5 @@ public class CreateTradeControllerTest extends BaseControllerTest<TradingStrateg
 
         assertEquals(tradeMock, createTradeResponse.getResponseDataStructure());
     }
-
-//    @Test
-//    public void test(){
-//        UseCaseFactory ucf = new UseCaseFactoryImpl();
-//        RequestBuilder rqb = new RequestBuilderImpl();
-//
-//        TraderController<Trade> tc = new CreateTradeController<>(rqb, ucf, configurationMock);
-//
-//        tc.execute(new HashMap<>());
-//    }
 
 }

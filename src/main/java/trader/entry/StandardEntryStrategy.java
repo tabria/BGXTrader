@@ -29,6 +29,7 @@ public final class StandardEntryStrategy {
 
     private TraderController<Trade> createTradeController;
     private TradeCalculationService tradeCalculationService;
+
     private Indicator fastWMA;
     private Indicator middleWMA;
     private Indicator slowWMA;
@@ -43,7 +44,6 @@ public final class StandardEntryStrategy {
         setIndicators(indicators);
         this.createTradeController = createTradeController;
         tradeCalculationService = new TradeCalculationService();
-
     }
 
     public Trade generateTrade(){
@@ -150,8 +150,8 @@ public final class StandardEntryStrategy {
         List<BigDecimal> indicatorValues = indicator.getValues();
         BigDecimal pointAPrice = indicatorValues.get(indicatorValues.size()-START_OFFSET);
         BigDecimal pointBPrice = indicatorValues.get(indicatorValues.size()-END_OFFSET);
-        Point pointA = new PointImpl.PointBuilder(pointAPrice).build();
-        Point pointB = new PointImpl.PointBuilder(pointBPrice).setTime(BigDecimal.valueOf(2)).build();
+        Point pointA = new PointImpl(pointAPrice);
+        Point pointB = new PointImpl(pointBPrice, BigDecimal.valueOf(2));
 
         return new LineSegmentImpl(pointA, pointB);
     }
