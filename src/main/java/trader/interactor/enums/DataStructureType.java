@@ -14,6 +14,13 @@ public enum DataStructureType {
         public String toString() {
             return "brokerConnector";
         }
+    },
+    CREATE_TRADE{
+        @Override
+        public String toString() {
+            return "createTrade";
+        }
     }
+
 
 }

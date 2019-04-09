@@ -5,6 +5,8 @@ import trader.entity.indicator.Indicator;
 import trader.entity.indicator.ma.MovingAverageBuilder;
 import trader.entity.indicator.ma.enums.MAType;
 import trader.entity.indicator.rsi.RSIBuilder;
+import trader.entity.trade.Trade;
+import trader.entity.trade.TradeImpl;
 import trader.exception.EmptyArgumentException;
 import trader.exception.NoSuchDataStructureException;
 import trader.exception.NullArgumentException;
@@ -21,6 +23,12 @@ public class RequestBuilderImpl implements RequestBuilder {
 
     private static final String LOCATION = "location";
     private static final String BROKER_NAME = "brokerName";
+    private static final String TYPE = "type";
+    private static final String RSI = "rsi";
+    private static final String TRADABLE = "tradable";
+    private static final String DIRECTION = "direction";
+    private static final String ENTRY_PRICE = "entryPrice";
+    private static final String STOP_LOSS_PRICE = "stopLossPrice";
 
     @Override
     public Request<?> build(String controllerName, HashMap<String, String> settings) {
@@ -32,8 +40,18 @@ public class RequestBuilderImpl implements RequestBuilder {
             return buildBGXConfigurationRequest(settings);
         if(controllerName.contains(type(DataStructureType.BROKER_CONNECTOR)))
             return buildBrokerConnector(settings);
+        if(controllerName.contains(type(DataStructureType.CREATE_TRADE)))
+            return buildTrade(settings);
 
         throw new NoSuchDataStructureException();
+    }
+
+    private Request<?> buildTrade(HashMap<String,String> settings) {
+        Request<Trade> request = new RequestImpl<>();
+        Trade trade = new TradeImpl();
+        setTradeValues(settings, trade);
+        request.setRequestDataStructure(trade);
+        return request;
     }
 
     private Request<?> buildBrokerConnector(HashMap<String, String> settings) {
@@ -55,7 +73,7 @@ public class RequestBuilderImpl implements RequestBuilder {
     private Request<?> buildIndicatorRequest(HashMap<String, String> settings) {
         Request<Indicator> request = new RequestImpl<>();
         String dataStructureType = getDataStructureType(settings).toLowerCase();
-        if (dataStructureType.contains("rsi")) {
+        if (dataStructureType.contains(RSI)) {
             request.setRequestDataStructure(new RSIBuilder().build(settings));
             return request;
         } else if(isMovingAverage(dataStructureType)) {
@@ -65,12 +83,21 @@ public class RequestBuilderImpl implements RequestBuilder {
         throw new NoSuchDataStructureException();
     }
 
+    private void setTradeValues(HashMap<String, String> settings, Trade trade) {
+        if(settings.size()>0){
+            trade.setTradable(settings.get(TRADABLE));
+            trade.setDirection(settings.get(DIRECTION));
+            trade.setEntryPrice(settings.get(ENTRY_PRICE));
+            trade.setStopLossPrice(settings.get(STOP_LOSS_PRICE));
+        }
+    }
+
     private String getDataStructureType(HashMap<String, String> settings) {
         if(settings.size() == 0)
             throw new EmptyArgumentException();
-        if(!settings.containsKey("type"))
+        if(!settings.containsKey(TYPE))
             throw new WrongIndicatorSettingsException();
-        String dataStructureType = settings.get("type");
+        String dataStructureType = settings.get(TYPE);
         if(dataStructureType == null || dataStructureType.isEmpty())
             throw new WrongIndicatorSettingsException();
         return dataStructureType;

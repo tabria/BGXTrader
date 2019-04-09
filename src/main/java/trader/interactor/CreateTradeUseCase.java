@@ -1,127 +1,21 @@
-package trader.entity.trade;
+package trader.interactor;
 
-import trader.entity.point.Point;
-import trader.exception.NegativeNumberException;
+import trader.requestor.Request;
+import trader.requestor.UseCase;
+import trader.responder.Response;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 
-/**
- * Class will create signal object. This object will be used as base for creating and placing Trades
- */
+public class CreateTradeUseCase implements UseCase {
 
-public final class TradeImpl implements Trade {
-
-    private static final BigDecimal DEFAULT_SPREAD = BigDecimal.valueOf(0.0002);
-    //unoptimized value 0.0025
-    private static final BigDecimal DEFAULT_ENTRY_FILTER = BigDecimal.valueOf(0.0020);
-    private static final BigDecimal DEFAULT_STOP_LOSS_FILTER = BigDecimal.valueOf(0.0005);
-    private static final BigDecimal FIRST_TARGET = BigDecimal.valueOf(0.0050);
-
-    private static final BigDecimal DEFAULT_PRICE = BigDecimal.valueOf(0.0001);
-
-    private BigDecimal entryPrice;
-    private BigDecimal stopLossPrice;
-    private boolean tradable;
-    private Direction direction;
-
-
-    public TradeImpl() {
-        direction = Direction.FLAT;
-        tradable = false;
-        entryPrice = DEFAULT_PRICE;
-        stopLossPrice = DEFAULT_PRICE;
-    }
-
-    /**
-     * Constructor for trade
-     *
-     * @param intersectionPoint point of intersect
-     * @param direction trade direction
-     * @param dailyOpenPrice daily open price
-     */
-    public TradeImpl(Point intersectionPoint, Direction direction, BigDecimal dailyOpenPrice) {
-      //  this.direction = direction;
-  //      this.setEntryPrice(intersectionPoint, direction);
-   //     this.setStopLossPrice(intersectionPoint, direction);
-    //    this.setTradable(intersectionPoint, direction, dailyOpenPrice);
-
-    }
-
-    @Override
-    public Direction getDirection() {
-        return this.direction;
-    }
-
-    @Override
-    public void setDirection(String direction) {
-        if (verifyInput(direction)) return;
-        this.direction = Direction.valueOf(direction.toUpperCase());
-    }
-
-    @Override
-    public boolean getTradable(){
-        return this.tradable;
-    }
-
-    @Override
-    public void setTradable(String tradable) {
-        if (verifyInput(tradable)) return;
-        this.tradable = Boolean.parseBoolean(tradable);
-    }
-
-    @Override
-    public BigDecimal getEntryPrice(){
-        return this.entryPrice;
-    }
-
-    @Override
-    public void setEntryPrice(String entryPrice) {
-        if (verifyInput(entryPrice)) return;
-        checkForNegativeNumbers(entryPrice);
-        this.entryPrice = new BigDecimal(entryPrice);
-    }
 
 
     @Override
-    public BigDecimal getStopLossPrice(){
-        return this.stopLossPrice;
+    public <T, E> Response<E> execute(Request<T> request, HashMap<String, Object> settings) {
+        return null;
     }
 
-    @Override
-    public void setStopLossPrice(String stopLossPrice) {
-        if (verifyInput(stopLossPrice)) return;
-        checkForNegativeNumbers(stopLossPrice);
-        this.stopLossPrice = new BigDecimal(stopLossPrice);
-    }
-
-    @Override
-    public String toString() {
-        return "TradeImpl{" +
-                "entryPrice=" + entryPrice .toString() +
-                ", stopLossPrice=" + stopLossPrice.toString() +
-                ", tradable=" + tradable +
-                ", direction=" + direction.toString() +
-                '}';
-    }
-
-    private boolean verifyInput(String direction) {
-        return direction == null || direction.trim().isEmpty();
-    }
-
-    private void checkForNegativeNumbers(String entryPrice) {
-        BigDecimal price = new BigDecimal(entryPrice);
-        if(price.compareTo(BigDecimal.ZERO)<=0)
-            throw new NegativeNumberException();
-    }
-
-//    /**
-//     * Setter for tradability of the trade
-//     *
-//     * @param intersectionPoint point of intersect
-//     * @param direction trade direction
-//     * @param dailyOpenPrice daily open price
-//     * @throws NullPointerException when some of the arguments is null
-//     */
 //    private void setTradable(Point intersectionPoint, Direction direction, BigDecimal dailyOpenPrice) {
 //
 //        if (intersectionPoint == null || direction == null || dailyOpenPrice == null){
@@ -140,7 +34,7 @@ public final class TradeImpl implements Trade {
 //            this.setTradableUpDirection(compareIntersectionPriceDailyOpen, compareEntryPriceDailyOpen, dailyOpenPrice);
 //        }
 //    }
-//
+
 //    /**
 //     * Setter for entry price
 //     *

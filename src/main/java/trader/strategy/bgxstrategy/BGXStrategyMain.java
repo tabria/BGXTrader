@@ -7,7 +7,7 @@ import trader.controller.TraderController;
 import trader.broker.connector.ApiConnector;
 import trader.controller.*;
 import trader.entity.indicator.Indicator;
-import trader.entry.StandardEntryStrategy;
+import trader.entity.trade.Trade;
 import trader.observer.Observer;
 import trader.observer.PositionObserver;
 import trader.observer.UpdateIndicatorObserver;
@@ -112,10 +112,9 @@ public final class BGXStrategyMain implements Strategy {
     }
 
 
-
     Observer setPositionObserver(){
 
-        TraderController<Object> addTradeController = new AddTradeController<>(brokerGateway, configuration);
+        TraderController<Trade> addTradeController = new CreateTradeController<>(requestBuilder, useCaseFactory ,configuration);
        return new PositionObserver(brokerGateway, addTradeController);
     }
 

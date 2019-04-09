@@ -10,7 +10,7 @@ import com.oanda.v20.primitives.DateTime;
 import com.oanda.v20.transaction.StopLossDetails;
 import com.oanda.v20.transaction.TransactionID;
 import trader.config.Config;
-import trader.entity.trade.TradeImpl;
+import trader.entity.trade.Trade;
 import trader.entity.trade.Direction;
 import trader.entry.StandardEntryStrategy;
 
@@ -58,19 +58,19 @@ public final class NewTradeService {
 //            return;
 //        }
 
-        TradeImpl newTradeImpl = this.tradeGenerator.generateTrade();
+        Trade newTrade = this.tradeGenerator.generateTrade();
 
-        if (!newTradeImpl.getTradable()) {
+        if (!newTrade.getTradable()) {
             return;
         }
 
-        BigDecimal unitsSize = calculateUnitsSize(account, newTradeImpl, bid);
+        BigDecimal unitsSize = calculateUnitsSize(account, newTrade, bid);
         BigDecimal availableMargin = account.getMarginAvailable().bigDecimalValue();
         BigDecimal futureMargin = this.calculateTradeMargin(account, unitsSize);
         if (availableMargin.compareTo(futureMargin)>0 && unitsSize.compareTo(BigDecimal.ZERO)!=0){
 
             //create order request
-            OrderCreateRequest request = this.createOrderRequest(unitsSize, newTradeImpl);
+            OrderCreateRequest request = this.createOrderRequest(unitsSize, newTrade);
             try {
                 this.orderCreateResponse = this.context.order.create(request);
                 TransactionID id = this.orderCreateResponse.getOrderCreateTransaction().getId();
@@ -85,20 +85,20 @@ public final class NewTradeService {
     /**
      * Create Order RequestImpl for MarketIfTouchedOrder
      * @param unitsSize trade's unit size
-     * @param newTradeImpl current trade
+     * @param newTrade current trade
      * @return {@link OrderCreateRequest} object
      */
-    private OrderCreateRequest createOrderRequest(BigDecimal unitsSize, TradeImpl newTradeImpl){
+    private OrderCreateRequest createOrderRequest(BigDecimal unitsSize, Trade newTrade){
 
         //setting stop Loss for the new order
         StopLossDetails stopLossDetails = new StopLossDetails()
-                .setPrice(newTradeImpl.getStopLossPrice());
+                .setPrice(newTrade.getStopLossPrice());
 
         MarketIfTouchedOrderRequest marketIfTouchedOrderRequest = new MarketIfTouchedOrderRequest()
                 .setInstrument(Config.INSTRUMENT)
                 .setUnits(unitsSize)
                 .setStopLossOnFill(stopLossDetails)
-                .setPrice(newTradeImpl.getEntryPrice());
+                .setPrice(newTrade.getEntryPrice());
 
         return new OrderCreateRequest(Config.ACCOUNTID).setOrder(marketIfTouchedOrderRequest);
     }
@@ -134,20 +134,20 @@ public final class NewTradeService {
     /**
      * Calculate units size. Each trade must risk (RISK*100)% amount from the account. With Oanda min unit size is 1.
      * @param account current account
-     * @param newTradeImpl generated trade
+     * @param newTrade generated trade
      * @param bid last bid price
      * @return {@link BigDecimal} unit size. If units size are less then 1 will return 0
      */
-    private BigDecimal calculateUnitsSize(Account account, TradeImpl newTradeImpl, BigDecimal bid) {
+    private BigDecimal calculateUnitsSize(Account account, Trade newTrade, BigDecimal bid) {
         //(balance * risk)/(stopSize*pipValue)
         BigDecimal balance = account.getBalance().bigDecimalValue();
         BigDecimal pipValue = this.pipValue(bid);
 
-        BigDecimal stopSize = calculateStopSize(newTradeImpl);
+        BigDecimal stopSize = calculateStopSize(newTrade);
         BigDecimal divider = stopSize.multiply(pipValue).setScale(5, BigDecimal.ROUND_HALF_UP);
 
         //if direction is down the trade must be short, so the units must be negative number
-        if(newTradeImpl.getDirection().equals(Direction.DOWN) ){
+        if(newTrade.getDirection().equals(Direction.DOWN) ){
             divider = divider.multiply(BigDecimal.valueOf(-1)).setScale(5, BigDecimal.ROUND_HALF_UP);
         }
 
@@ -187,12 +187,12 @@ public final class NewTradeService {
 
     /**
      * Calculate stop size in pips.
-     * @param newTradeImpl current trade
+     * @param newTrade current trade
      * @return {@link BigDecimal} stop size
      */
-    private BigDecimal calculateStopSize(TradeImpl newTradeImpl){
-        BigDecimal entryPrice = newTradeImpl.getEntryPrice();
-        BigDecimal stopPrice = newTradeImpl.getStopLossPrice();
+    private BigDecimal calculateStopSize(Trade newTrade){
+        BigDecimal entryPrice = newTrade.getEntryPrice();
+        BigDecimal stopPrice = newTrade.getStopLossPrice();
 
         BigDecimal stopSize = entryPrice.subtract(stopPrice).setScale(5, BigDecimal.ROUND_HALF_UP).abs();
         return stopSize.multiply(PIP_MULTIPLIER).setScale(5, BigDecimal.ROUND_HALF_UP);

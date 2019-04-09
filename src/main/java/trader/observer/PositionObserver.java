@@ -2,18 +2,21 @@ package trader.observer;
 
 import trader.broker.BrokerGateway;
 import trader.controller.TraderController;
+import trader.entity.trade.Trade;
+import trader.entry.EntryStrategy;
 import trader.exception.NullArgumentException;
 import trader.price.Price;
 
 public class PositionObserver extends BaseObserver {
 
-    private TraderController<Object> addTradeController;
+    private TraderController<Trade> createTradeController;
+    private EntryStrategy entryStrategy;
 
-    public PositionObserver(BrokerGateway brokerGateway, TraderController<Object> addTradeController){
+    public PositionObserver(BrokerGateway brokerGateway, TraderController<Trade> addTradeController){
         super(brokerGateway);
         if(addTradeController == null)
             throw new NullArgumentException();
-        this. addTradeController = addTradeController;
+        this. createTradeController = addTradeController;
     }
 
 //    private Context context;

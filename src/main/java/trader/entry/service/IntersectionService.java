@@ -190,7 +190,6 @@ public final class IntersectionService {
 
         //Time is irrelevant. So the x. Set default time of 1 for the intersection point.
         return new PointImpl.PointBuilder(yIntersectPoint).build();
-
     }
 
     /**

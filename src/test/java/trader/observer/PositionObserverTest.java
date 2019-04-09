@@ -2,9 +2,10 @@ package trader.observer;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.internal.matchers.Null;
 import trader.controller.CreateIndicatorController;
-import trader.controller.AddTradeController;
 import trader.controller.TraderController;
+import trader.entity.trade.Trade;
 import trader.exception.NullArgumentException;
 
 import static org.junit.Assert.assertEquals;
@@ -16,7 +17,7 @@ public class PositionObserverTest extends BaseObserverTest {
 
 
     private PositionObserver positionObserver;
-    private TraderController<Object> addTradeControllerMock;
+    private TraderController<Trade> addTradeControllerMock;
 
     @Before
     public void setUp(){

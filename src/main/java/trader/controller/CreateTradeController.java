@@ -1,29 +1,42 @@
 package trader.controller;
 
-import trader.broker.BrokerGateway;
+
 import trader.configuration.TradingStrategyConfiguration;
 import trader.exception.NullArgumentException;
+import trader.requestor.Request;
+import trader.requestor.RequestBuilder;
+import trader.requestor.UseCase;
+import trader.requestor.UseCaseFactory;
 import trader.responder.Response;
 
-import java.util.Map;
+import java.util.HashMap;
 
-public class AddTradeController<T> implements TraderController<T> {
+public class CreateTradeController<T> implements TraderController<T> {
 
-    private BrokerGateway brokerGateway;
+    private RequestBuilder requestBuilder;
+    private UseCaseFactory useCaseFactory;
     private TradingStrategyConfiguration configuration;
 
-    public AddTradeController(BrokerGateway brokerGateway, TradingStrategyConfiguration configuration) {
-        if(brokerGateway == null || configuration == null)
+
+    public CreateTradeController(RequestBuilder requestBuilder, UseCaseFactory useCaseFactory, TradingStrategyConfiguration configuration) {
+        if(requestBuilder == null || configuration == null || useCaseFactory == null)
             throw new NullArgumentException();
-        this.brokerGateway = brokerGateway;
+        this.requestBuilder = requestBuilder;
         this.configuration = configuration;
+        this.useCaseFactory = useCaseFactory;
     }
 
     @Override
-    public Response<T> execute(Map<String, Object> settings) {
+    public Response<T> execute(HashMap<String, String> settings) {
+        String controllerName = this.getClass().getSimpleName();
+        UseCase useCase = useCaseFactory.make(controllerName);
+        Request<?> request = requestBuilder.build(controllerName, settings);
+        return useCase.execute(request);
+    }
 
 
-//        TradeImpl newTrade = this.tradeGenerator.generateTrade();
+
+    //        TradeImpl newTrade = this.tradeGenerator.generateTrade();
 //
 //        if (!newTrade.getTradable()) {
 //            return;
@@ -45,7 +58,4 @@ public class AddTradeController<T> implements TraderController<T> {
 //                throw new RuntimeException(e);
 //            }
 //        }
-
-        return null;
-    }
 }

@@ -2,6 +2,8 @@ package trader.interactor;
 
 import org.junit.Before;
 import org.junit.Test;
+import trader.entity.trade.Direction;
+import trader.entity.trade.Trade;
 import trader.exception.*;
 import trader.requestor.Request;
 import trader.requestor.RequestBuilder;
@@ -10,9 +12,13 @@ import trader.entity.indicator.rsi.RelativeStrengthIndex;
 import trader.configuration.BGXConfigurationImpl;
 import trader.requestor.RequestBuilderImpl;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 
+import static junit.framework.TestCase.assertNotNull;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class RequestBuilderImplTest {
 
@@ -108,6 +114,33 @@ public class RequestBuilderImplTest {
         String expected = CONNECTOR_NAME + "Connector";
 
         assertEquals(expected, actual);
+    }
+
+    @Test
+    public void WhenCallBuildWithCreateTradeControllerWithEmptySettings_DefaultTrade(){
+        settings.clear();
+        Request<?> createTradeRequest = requestBuilder.build("CreateTradeController", settings);
+        Trade trade = (Trade) createTradeRequest.getRequestDataStructure();
+
+        assertFalse(trade.getTradable());
+        assertEquals(Direction.FLAT, trade.getDirection());
+        assertEquals(BigDecimal.valueOf(0.0001) ,trade.getEntryPrice());
+        assertEquals(BigDecimal.valueOf(0.0001) ,trade.getStopLossPrice());
+    }
+
+    @Test
+    public void WhenCallBuildWithCreateTradeControllerWithCorrectCustomSettings_CorrectTrade(){
+        settings.put("direction", "down");
+        settings.put("tradable", "true");
+        settings.put("entryPrice", "1.12345");
+        settings.put("stopLossPrice", "5.1234");
+        Request<?> createTradeRequest = requestBuilder.build("CreateTradeController", settings);
+        Trade trade = (Trade) createTradeRequest.getRequestDataStructure();
+
+        assertTrue(trade.getTradable());
+        assertEquals(Direction.DOWN, trade.getDirection());
+        assertEquals(BigDecimal.valueOf(1.12345) ,trade.getEntryPrice());
+        assertEquals(BigDecimal.valueOf(5.1234) ,trade.getStopLossPrice());
     }
 
 }
