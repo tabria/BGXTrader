@@ -2,15 +2,15 @@ package trader.entry;
 
 import trader.controller.TraderController;
 import trader.entity.indicator.Indicator;
-import trader.entity.point.Point;
-import trader.entity.segment.LineSegment;
-import trader.entity.segment.LineSegmentImpl;
+import trader.entity.trade.point.Point;
+import trader.entity.trade.segment.LineSegment;
+import trader.entity.trade.segment.LineSegmentImpl;
 import trader.entity.trade.Trade;
 import trader.entry.service.IntersectionService;
 import trader.entry.service.TradeCalculationService;
 import trader.exception.BadRequestException;
 import trader.exception.NoSuchStrategyException;
-import trader.entity.point.PointImpl;
+import trader.entity.trade.point.PointImpl;
 import trader.entity.trade.Direction;
 import trader.responder.Response;
 

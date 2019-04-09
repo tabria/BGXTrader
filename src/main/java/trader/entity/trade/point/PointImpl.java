@@ -1,4 +1,4 @@
-package trader.entity.point;
+package trader.entity.trade.point;
 
 import trader.exception.NullArgumentException;
 

@@ -1,9 +1,9 @@
 package trader.entry.service;
 
 
-import trader.entity.point.Point;
-import trader.entity.point.PointImpl;
-import trader.entity.segment.LineSegment;
+import trader.entity.trade.point.Point;
+import trader.entity.trade.point.PointImpl;
+import trader.entity.trade.segment.LineSegment;
 import trader.exception.NullArgumentException;
 
 import java.math.BigDecimal;

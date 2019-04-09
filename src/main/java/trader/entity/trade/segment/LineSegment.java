@@ -1,7 +1,7 @@
-package trader.entity.segment;
+package trader.entity.trade.segment;
 
 
-import trader.entity.point.Point;
+import trader.entity.trade.point.Point;
 
 public interface LineSegment {
     Point getPointA();

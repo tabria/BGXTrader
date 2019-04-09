@@ -1,9 +1,7 @@
-package trader.entity.point;
+package trader.entity.trade.point;
 
 import org.junit.Before;
 import org.junit.Test;
-import trader.entity.point.Point;
-import trader.entity.point.PointImpl;
 import trader.exception.NullArgumentException;
 
 import java.lang.reflect.Field;

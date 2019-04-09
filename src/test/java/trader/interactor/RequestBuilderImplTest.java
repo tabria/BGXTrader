@@ -2,7 +2,7 @@ package trader.interactor;
 
 import org.junit.Before;
 import org.junit.Test;
-import trader.entity.point.Point;
+import trader.entity.trade.point.Point;
 import trader.entity.trade.Direction;
 import trader.entity.trade.Trade;
 import trader.exception.*;
@@ -149,52 +149,4 @@ public class RequestBuilderImplTest {
         assertEquals(BigDecimal.valueOf(1.12345) ,trade.getEntryPrice());
         assertEquals(BigDecimal.valueOf(5.1234) ,trade.getStopLossPrice());
     }
-
-    @Test
-    public void whenCallBuildWithCreatePointControllerName_ReturnPointRequest() {
-        String price = "1.2020";
-        String time = "1";
-        settings.put("price", price);
-        settings.put("time", time);
-        Request<?> pointRequest = requestBuilder.build("CreatePointController", settings);
-        Point point = (Point) pointRequest.getRequestDataStructure();
-
-        assertEquals(new BigDecimal(price), point.getPrice());
-        assertEquals(new BigDecimal(time), point.getTime());
-    }
-
-    @Test(expected = NoSuchDataStructureException.class)
-    public void whenCallBuildWithCreatePointControllerWithLessThanMinSettings_Exception() {
-        settings.clear();
-        requestBuilder.build("CreatePointController", settings);
-    }
-
-    @Test(expected = NoSuchDataStructureException.class)
-    public void whenCallBuildWithCreatePointControllerWithSettingsWithoutPriceKeyName_Exception() {
-        settings.put("pra", "1.22");
-        requestBuilder.build("CreatePointController", settings);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void whenCallBuildWithCreatePointControllerWithSettingsWithoutTimeKeyName_Exception() {
-        settings.put("price", "1.22");
-        settings.put("rr", "1");
-        requestBuilder.build("CreatePointController", settings);
-    }
-
-
-    @Test(expected = NumberFormatException.class)
-    public void whenCallBuildWithCreatePointControllerWithPriceThatIsNotNumber_Exception() {
-        settings.put("price", "price");
-        requestBuilder.build("CreatePointController", settings);
-    }
-
-    @Test(expected = NumberFormatException.class)
-    public void whenCallBuildWithCreatePointControllerWithTimeThatIsNotNumbers_Exception() {
-        settings.put("price", "1.12");
-        settings.put("time", "time");
-        requestBuilder.build("CreatePointController", settings);
-    }
-
-
 }

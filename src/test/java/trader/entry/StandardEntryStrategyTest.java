@@ -6,7 +6,7 @@ import org.mockito.ArgumentCaptor;
 import trader.CommonTestClassMembers;
 import trader.controller.TraderController;
 import trader.entity.indicator.Indicator;
-import trader.entity.point.Point;
+import trader.entity.trade.point.Point;
 import trader.entity.trade.Direction;
 import trader.entity.trade.Trade;
 import trader.exception.BadRequestException;

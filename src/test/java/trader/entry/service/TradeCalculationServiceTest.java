@@ -2,7 +2,7 @@ package trader.entry.service;
 
 import org.junit.Before;
 import org.junit.Test;
-import trader.entity.point.Point;
+import trader.entity.trade.point.Point;
 import trader.entity.trade.Direction;
 import trader.exception.NullArgumentException;
 

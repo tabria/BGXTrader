@@ -2,7 +2,7 @@ package trader.entity.trade;
 
 import org.junit.Before;
 import org.junit.Test;
-import trader.entity.point.PointImpl;
+import trader.entity.trade.point.PointImpl;
 import trader.exception.NegativeNumberException;
 
 import java.math.BigDecimal;
