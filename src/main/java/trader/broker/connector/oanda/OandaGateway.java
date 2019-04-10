@@ -5,12 +5,14 @@ import com.oanda.v20.ContextBuilder;
 import com.oanda.v20.account.*;
 import com.oanda.v20.instrument.InstrumentCandlesResponse;
 import com.oanda.v20.pricing.PricingGetResponse;
+import com.oanda.v20.primitives.AccountUnits;
 import trader.broker.connector.*;
 import trader.entity.candlestick.Candlestick;
 import trader.price.Price;
 import trader.requestor.Request;
 import trader.responder.Response;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 
@@ -31,11 +33,6 @@ public class OandaGateway extends BaseGateway {
     private CandlestickTransformable oandaCandlesTransformer;
     private HashMap<String, String> priceSettings;
     private HashMap<String, String> accountSettings;
-
-
-
-    List<AccountProperties> accountProperties;
-
 
     private OandaGateway(BrokerConnector connector){
         this.connector = connector;
@@ -81,6 +78,27 @@ public class OandaGateway extends BaseGateway {
     public int totalOpenOrdersSize() {
         Account account = getAccount();
         return account.getOrders().size();
+    }
+
+    @Override
+    public BigDecimal getMarginUsed(){
+        return getAccount().getMarginUsed().bigDecimalValue();
+    }
+
+    @Override
+    public BigDecimal getAvailableMargin() {
+        return getAccount().getMarginAvailable().bigDecimalValue();
+    }
+
+    @Override
+    public BigDecimal getBalance() {
+        return getAccount().getBalance().bigDecimalValue();
+    }
+
+
+    @Override
+    public BrokerConnector getConnector() {
+        return connector;
     }
 
     Context getContext(){

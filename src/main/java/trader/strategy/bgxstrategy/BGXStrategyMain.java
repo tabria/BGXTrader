@@ -67,7 +67,7 @@ public final class BGXStrategyMain implements Strategy {
         indicatorList = createIndicatorsFromConfiguration(configuration.getIndicators());
         entryStrategy = setEntryStrategy(entryStrategyName);
 
-        orderStrategy = new OrderService(apiConnector);
+//        orderStrategy = new OrderService(apiConnector);
         exitStrategy = BaseExitStrategy.createInstance();
     }
 

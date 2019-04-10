@@ -2,6 +2,7 @@ package trader.broker.connector.oanda;
 
 import com.oanda.v20.Context;
 import com.oanda.v20.account.Account;
+import com.oanda.v20.primitives.AccountUnits;
 import com.oanda.v20.trade.TradeSummary;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,6 +14,8 @@ import trader.price.Price;
 import trader.price.PriceImpl;
 import trader.requestor.Request;
 import trader.responder.Response;
+
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,6 +48,41 @@ public class OandaGatewayTest {
         connectorMock = mock(BrokerConnector.class);
         when(connectorMock.getUrl()).thenReturn(URL);
         oandaGateway = (OandaGateway) BaseGateway.create("Oanda", connectorMock);
+    }
+
+    @Test
+    public void WhenCallGetConnector_CorrectConnector(){
+        assertEquals(connectorMock, oandaGateway.getConnector());
+    }
+
+    @Test
+    public void WhenCallGetMarginUsedThenReturnCorrectresult(){
+        Account accountMock = mock(Account.class);
+
+        AccountUnits accountUnitsMock = setFalseAccountUnits(accountMock);
+        when(accountMock.getMarginUsed()).thenReturn(accountUnitsMock);
+
+        assertEquals(BigDecimal.TEN, oandaGateway.getMarginUsed());
+    }
+
+    @Test
+    public void WhenCallGetAvailableMarginThenReturnCorrectresult(){
+        Account accountMock = mock(Account.class);
+
+        AccountUnits accountUnitsMock = setFalseAccountUnits(accountMock);
+        when(accountMock.getMarginAvailable()).thenReturn(accountUnitsMock);
+
+        assertEquals(BigDecimal.TEN, oandaGateway.getAvailableMargin());
+    }
+
+    @Test
+    public void WhenCallGetBalanceThenReturnCorrectresult(){
+        Account accountMock = mock(Account.class);
+
+        AccountUnits accountUnitsMock = setFalseAccountUnits(accountMock);
+        when(accountMock.getBalance()).thenReturn(accountUnitsMock);
+
+        assertEquals(BigDecimal.TEN, oandaGateway.getBalance());
     }
 
     @Test
@@ -113,6 +151,14 @@ public class OandaGatewayTest {
         assertEquals(0,  oandaGateway.totalOpenOrdersSize());
     }
 
+    private AccountUnits setFalseAccountUnits(Account accountMock) {
+        AccountUnits accountUnitsMock = mock(AccountUnits.class);
+        when(accountUnitsMock.bigDecimalValue()).thenReturn(BigDecimal.TEN);
+        setFakeContext();
+        setFakeBuilders();
+        when(responseMock.getResponseDataStructure()).thenReturn(accountMock);
+        return accountUnitsMock;
+    }
 
     private void setFakeTradeSummary(List<TradeSummary> trades) {
         Account accountMock = mock(Account.class);

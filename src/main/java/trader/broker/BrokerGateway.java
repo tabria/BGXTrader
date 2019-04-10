@@ -1,8 +1,10 @@
 package trader.broker;
 
+import trader.broker.connector.BrokerConnector;
 import trader.entity.candlestick.Candlestick;
 import trader.price.Price;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 
@@ -14,6 +16,11 @@ public interface BrokerGateway {
     void validateConnector();
     int totalOpenTradesSize();
     int totalOpenOrdersSize();
+    BigDecimal getMarginUsed();
+    BigDecimal getAvailableMargin();
+    BigDecimal getBalance();
+    BrokerConnector getConnector();
+
 //    List<TradeImpl> getOpenTrades();
 
 //    List<Order> getOpenOrders();

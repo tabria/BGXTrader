@@ -51,20 +51,20 @@ public class PositionObserver extends BaseObserver {
         Trade trade = null;
         if(brokerGateway.totalOpenTradesSize() == 0 && brokerGateway.totalOpenOrdersSize() == 0){
             Trade newTrade = entryStrategy.generateTrade();
-            setTradableForThreshold(price, newTrade);
-        }
-    }
-
-    private void setTradableForThreshold(Price price, Trade newTrade) {
-        if(isTradable(newTrade)){
-            BigDecimal delta = getEntryPriceAndPriceDelta(newTrade, price);
-            if(delta.compareTo(TRADABLE_THRESHOLD) > 0)
-                newTrade.setTradable("false");
+            if(isTradable(newTrade)) {
+                setTradableForThreshold(price, newTrade);
+            }
         }
     }
 
     private boolean isTradable(Trade newTrade) {
         return newTrade.getTradable() && !newTrade.getDirection().equals(Direction.FLAT);
+    }
+
+    private void setTradableForThreshold(Price price, Trade newTrade) {
+        BigDecimal delta = getEntryPriceAndPriceDelta(newTrade, price);
+        if(delta.compareTo(TRADABLE_THRESHOLD) > 0)
+            newTrade.setTradable("false");
     }
 
     private BigDecimal getEntryPriceAndPriceDelta(Trade newTrade, Price price) {

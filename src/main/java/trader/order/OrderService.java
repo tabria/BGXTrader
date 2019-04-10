@@ -17,7 +17,7 @@ import java.math.BigDecimal;
  * Manage waiting orders
  */
 
-public final class OrderService implements OrderStrategy {
+public final class OrderService {
 
     private static final BigDecimal STOP_LOSS_OFFSET = BigDecimal.valueOf(0.0005);
 
