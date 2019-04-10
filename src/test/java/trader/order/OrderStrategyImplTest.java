@@ -3,7 +3,6 @@ package trader.order;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.internal.matchers.Null;
 import trader.CommonTestClassMembers;
 import trader.broker.BrokerGateway;
 import trader.broker.connector.BrokerConnector;
@@ -16,8 +15,10 @@ import trader.price.Price;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.HashMap;
 
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -45,18 +46,24 @@ public class OrderStrategyImplTest {
 
     @Test(expected = NullArgumentException.class)
     public void WhenCallPlaceTradeAsOrderWithNullBrokerGateway_Exception(){
-        orderStrategy.placeTradeAsOrder(null, priceMock, tradeMock);
+        orderStrategy.placeTradeAsOrder(null, priceMock, tradeMock, configurationMock);
     }
 
     @Test(expected = NullArgumentException.class)
     public void WhenCallPlaceTradeAsOrderWithNullPrice_Exception(){
-        orderStrategy.placeTradeAsOrder(brokerGatewayMock, null, tradeMock);
+        orderStrategy.placeTradeAsOrder(brokerGatewayMock, null, tradeMock, configurationMock);
     }
 
     @Test(expected = NullArgumentException.class)
     public void WhenCallPlaceTradeAsOrderWithNullTrade_Exception(){
-        orderStrategy.placeTradeAsOrder(brokerGatewayMock, priceMock, null);
+        orderStrategy.placeTradeAsOrder(brokerGatewayMock, priceMock, null, configurationMock);
     }
+
+    @Test(expected = NullArgumentException.class)
+    public void WhenCallPlaceTradeAsOrderWithNullConfiguration_Exception(){
+        orderStrategy.placeTradeAsOrder(brokerGatewayMock, priceMock, tradeMock, null);
+    }
+
 
     @Test
     public void WhenCalculatePipValue_CorrectResult(){
@@ -152,19 +159,20 @@ public class OrderStrategyImplTest {
 
     @Test
     public void WhenCallCalculateUnitsSizeForLondTradeWithCorrectSetting_CorrectResult(){
-        BigDecimal balance = BigDecimal.valueOf(1000);
-        setFalseInputForCalculatingUnitsSize(Direction.UP, balance);
+        setFakeTrade(Direction.UP, 1.2000, 1.1980);
+        setFakeBrokerGateway(2000, 200, 1000 );
+        setFalseInputForCalculatingUnitsSize(1.2000, 0.01);
 
         BigDecimal unitsSize = orderStrategy.calculateUnitsSize(brokerGatewayMock, priceMock, tradeMock, configurationMock);
 
         assertEquals(BigDecimal.valueOf(5988), unitsSize);
     }
 
-
     @Test
     public void WhenCallCalculateUnitsSizeForShortTradeWithCorrectSetting_CorrectResult(){
-        BigDecimal balance = BigDecimal.valueOf(1000);
-        setFalseInputForCalculatingUnitsSize(Direction.DOWN, balance);
+        setFakeTrade(Direction.DOWN, 1.2000, 1.1980);
+        setFakeBrokerGateway(2000, 200, 1000 );
+        setFalseInputForCalculatingUnitsSize(1.2000, 0.01);
 
         BigDecimal unitsSize = orderStrategy.calculateUnitsSize(brokerGatewayMock, priceMock, tradeMock, configurationMock);
 
@@ -173,25 +181,50 @@ public class OrderStrategyImplTest {
 
     @Test
     public void WhenCallCalculateUnitsSizeForTradeWithZeroBalance_CorrectResult(){
-        BigDecimal balance = BigDecimal.valueOf(0);
-        setFalseInputForCalculatingUnitsSize(Direction.FLAT, balance);
+        setFakeTrade(Direction.FLAT, 1.2000, 1.1980);
+        setFakeBrokerGateway(2000, 200, 0 );
+        setFalseInputForCalculatingUnitsSize(1.2000, 0.01);
 
         BigDecimal unitsSize = orderStrategy.calculateUnitsSize(brokerGatewayMock, priceMock, tradeMock, configurationMock);
 
         assertEquals(BigDecimal.valueOf(0), unitsSize);
     }
 
-    private void setFalseInputForCalculatingUnitsSize(Direction up, BigDecimal balance) {
-        BigDecimal entryPrice = BigDecimal.valueOf(1.2000);
-        BigDecimal currentPrice = BigDecimal.valueOf(1.2000);
-        BigDecimal stopLosPrice = BigDecimal.valueOf(1.1980);
-        BigDecimal riskPerTrade = BigDecimal.valueOf(0.01);
-        when(brokerGatewayMock.getBalance()).thenReturn(balance);
-        when(priceMock.getBid()).thenReturn(currentPrice);
-        when(tradeMock.getEntryPrice()).thenReturn(entryPrice);
-        when(tradeMock.getStopLossPrice()).thenReturn(stopLosPrice);
-        when(tradeMock.getDirection()).thenReturn(up);
-        when(configurationMock.getRiskPerTrade()).thenReturn(riskPerTrade);
+    @Test
+    public void WhenCallPlaceTradeAsOrderWithCorrectSettings_NewTransactionID(){
+        String leverage = "30";
+        String expectedID = "1122";
+        String lastOrderTransactionID = (String) commonMembers.extractFieldObject(orderStrategy, "lastOrderTransactionID");
+        setFakeTrade(Direction.UP, 1.2000, 1.1980);
+        setFakeBrokerGateway(2000, 200, 1000 );
+        setFalseInputForCalculatingUnitsSize(1.2000, 0.01);
+        when(connectorMock.getLeverage()).thenReturn(leverage);
+        when(brokerGatewayMock.placeMarketIfTouchedOrderOrder(any(HashMap.class))).thenReturn(expectedID);
+        orderStrategy.placeTradeAsOrder(brokerGatewayMock, priceMock, tradeMock, configurationMock);
+        String lastID = (String) commonMembers.extractFieldObject(orderStrategy, "lastOrderTransactionID");
+
+        assertNotEquals(lastOrderTransactionID, lastID);
+        assertEquals(expectedID, lastID);
     }
+
+    private void setFakeBrokerGateway(double availableMargin, double marginUsed, double balance) {
+        when(brokerGatewayMock.getConnector()).thenReturn(connectorMock);
+        when(brokerGatewayMock.getAvailableMargin()).thenReturn(BigDecimal.valueOf(availableMargin));
+        when(brokerGatewayMock.getMarginUsed()).thenReturn(BigDecimal.valueOf(marginUsed));
+        when(brokerGatewayMock.getBalance()).thenReturn(BigDecimal.valueOf(balance));
+    }
+
+
+    private void setFalseInputForCalculatingUnitsSize(double currentPrice, double riskPerTrade) { ;
+        when(priceMock.getBid()).thenReturn(BigDecimal.valueOf(currentPrice));
+        when(configurationMock.getRiskPerTrade()).thenReturn(BigDecimal.valueOf(riskPerTrade));
+    }
+
+    private void setFakeTrade(Direction direction, double entryPrice, double stopLosPrice) {
+        when(tradeMock.getEntryPrice()).thenReturn(BigDecimal.valueOf(entryPrice));
+        when(tradeMock.getStopLossPrice()).thenReturn(BigDecimal.valueOf(stopLosPrice));
+        when(tradeMock.getDirection()).thenReturn(direction);
+    }
+
 
 }

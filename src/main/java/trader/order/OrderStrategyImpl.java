@@ -1,6 +1,5 @@
 package trader.order;
 
-import com.oanda.v20.account.Account;
 import trader.broker.BrokerGateway;
 import trader.configuration.TradingStrategyConfiguration;
 import trader.entity.trade.Direction;
@@ -10,57 +9,48 @@ import trader.exception.NullArgumentException;
 import trader.price.Price;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 
 public class OrderStrategyImpl implements OrderStrategy {
 
     private static final BigDecimal ONE_PIP = BigDecimal.valueOf(0.0001);
-    private static final BigDecimal EUR_LEVERAGE = BigDecimal.valueOf(30);
     private static final BigDecimal PIP_MULTIPLIER = BigDecimal.valueOf(10_000);
+    private static final String TRADE_STOP_LOSS_PRICE = "tradeStopLossPrice";
+    private static final String TRADE_ENTRY_PRICE = "tradeEntryPrice";
+    private static final String INSTRUMENT = "instrument";
+    private static final String UNITS_SIZE = "unitsSize";
 
+    private String lastOrderTransactionID;
 
-//price is bid
-    public void placeTradeAsOrder(BrokerGateway brokerGateway, Price price, Trade trade){
-        if(brokerGateway == null || price == null || trade == null)
+    public OrderStrategyImpl() {
+        lastOrderTransactionID = null;
+    }
+
+    public void placeTradeAsOrder(BrokerGateway brokerGateway, Price price, Trade trade, TradingStrategyConfiguration configuration){
+        if(brokerGateway == null || price == null || trade == null || configuration == null)
             throw new NullArgumentException();
 
-//        BigDecimal unitsSize = calculateUnitsSize(account, newTrade, bid);
+        BigDecimal unitsSize = calculateUnitsSize(brokerGateway, price, trade, configuration);
         BigDecimal availableMargin = brokerGateway.getAvailableMargin();
-//        BigDecimal tradeMargin = calculateTradeMargin(brokerGateway, unitsSize);
-//        if (availableMargin.compareTo(futureMargin)>0 && unitsSize.compareTo(BigDecimal.ZERO)!=0){
-//
-//            //create order request
-//            OrderCreateRequest request = this.createOrderRequest(unitsSize, newTrade);
-//            try {
-//                this.orderCreateResponse = this.context.order.create(request);
-//                TransactionID id = this.orderCreateResponse.getOrderCreateTransaction().getId();
-//                DateTime time = this.orderCreateResponse.getOrderCreateTransaction().getTime();
-//                System.out.println("New TradeImpl has been added with id: " +id.toString() + " and time: " +time.toString() );
-//            } catch (RequestException | ExecuteException e){
-//                throw new RuntimeException(e);
-//            }
-//        }
+        BigDecimal tradeMargin = calculateTradeMargin(brokerGateway, unitsSize);
+        BigDecimal futureMargin = brokerGateway.getMarginUsed().add(tradeMargin).setScale(5, BigDecimal.ROUND_HALF_UP);
+        if (availableMargin.compareTo(futureMargin)>0 && isNotZero(unitsSize)){
+            HashMap<String, String> settings = gatherOrderSettings(trade, configuration, unitsSize);
+            lastOrderTransactionID = brokerGateway.placeMarketIfTouchedOrderOrder(settings);
+        }
     }
 
     public BigDecimal calculateUnitsSize(BrokerGateway brokerGateway, Price price, Trade trade, TradingStrategyConfiguration configuration) {
         if(brokerGateway == null || price == null || trade == null || configuration == null)
             throw new NullArgumentException();
         //(balance * risk)/(stopSize*pipValue)
-        BigDecimal balance = brokerGateway.getBalance();
-        BigDecimal pipValue = getPipValue(price);
-
-        BigDecimal stopSize = calculateStopSize(trade);
-        BigDecimal unitsSize = balance
-                .multiply(configuration.getRiskPerTrade())
-                .setScale(5, BigDecimal.ROUND_HALF_UP);
-        BigDecimal divider = stopSize.multiply(pipValue).setScale(5, BigDecimal.ROUND_HALF_UP);
+        BigDecimal unitsSize = multiply(brokerGateway.getBalance(), configuration.getRiskPerTrade());
+        BigDecimal divider = multiply(calculateStopSize(trade), getPipValue(price));
         //for short trades units must be negative number
-        if(trade.getDirection().equals(Direction.DOWN) ) {
-            divider = divider
-                    .multiply(BigDecimal.valueOf(-1))
-                    .setScale(5, BigDecimal.ROUND_HALF_UP);
-        }
-        if (divider.compareTo(BigDecimal.ZERO) != 0)
-            return  unitsSize.divide(divider, 0, BigDecimal.ROUND_HALF_UP);
+        if(isShort(trade))
+            divider = multiply(divider, BigDecimal.valueOf(-1));
+        if(isNotZero(divider))
+            return divide(unitsSize, divider, 0);
         return BigDecimal.ZERO;
     }
 
@@ -68,29 +58,55 @@ public class OrderStrategyImpl implements OrderStrategy {
     public BigDecimal getPipValue(Price price){
         if(price == null || price.getBid().compareTo(BigDecimal.ZERO) <= 0)
             throw new EmptyArgumentException();
-        return ONE_PIP.divide(price.getBid(), 7, BigDecimal.ROUND_HALF_UP);//.multiply(LOT_SIZE).setScale(2, BigDecimal.ROUND_HALF_UP);
-
+        return divide(ONE_PIP, price.getBid(), 7);//.multiply(LOT_SIZE).setScale(2, BigDecimal.ROUND_HALF_UP);
     }
 
     @Override
     public BigDecimal calculateStopSize(Trade trade){
         if(trade == null)
             throw new NullArgumentException();
-        BigDecimal entryPrice = trade.getEntryPrice();
-        BigDecimal stopPrice = trade.getStopLossPrice();
-
-        BigDecimal stopSize = entryPrice.subtract(stopPrice).setScale(5, BigDecimal.ROUND_HALF_UP).abs();
-        return stopSize.multiply(PIP_MULTIPLIER).setScale(5, BigDecimal.ROUND_HALF_UP);
+        return  multiply(
+                subtract(trade.getEntryPrice(), trade.getStopLossPrice()),
+                PIP_MULTIPLIER).abs();
     }
 
     public BigDecimal calculateTradeMargin(BrokerGateway brokerGateway, BigDecimal unitsSize){
         if(brokerGateway == null || unitsSize == null)
             throw new NullArgumentException();
         String leverage = brokerGateway.getConnector().getLeverage();
-        return  unitsSize.compareTo(BigDecimal.ZERO) !=0 ? unitsSize.divide(new BigDecimal(leverage), 5, BigDecimal.ROUND_HALF_UP) : BigDecimal.ZERO;
-        //brokerGateway.getMarginUsed();
-     //   return null; //account.getMarginUsed().bigDecimalValue().add(tradeMargin).setScale(5, BigDecimal.ROUND_HALF_UP);
+        return  isNotZero(unitsSize) ? divide(unitsSize, new BigDecimal(leverage), 5) : BigDecimal.ZERO;
+    }
 
+    private HashMap<String, String> gatherOrderSettings(Trade trade, TradingStrategyConfiguration configuration, BigDecimal unitsSize) {
+        HashMap<String, String> settings = new HashMap<>();
+        settings.put(TRADE_STOP_LOSS_PRICE, trade.getStopLossPrice().toString());
+        settings.put(TRADE_ENTRY_PRICE, trade.getEntryPrice().toString());
+        settings.put(INSTRUMENT, configuration.getInstrument());
+        settings.put(UNITS_SIZE, unitsSize.toString());
+        return settings;
+    }
+
+    private BigDecimal subtract(BigDecimal entryPrice, BigDecimal stopPrice) {
+        return entryPrice.subtract(stopPrice);
+    }
+
+    private boolean isShort(Trade trade) {
+        return trade.getDirection().equals(Direction.DOWN);
+    }
+
+    private BigDecimal divide(BigDecimal unitsSize, BigDecimal divider, int scale) {
+        return unitsSize
+                .divide(divider, scale, BigDecimal.ROUND_HALF_UP);
+    }
+
+    private BigDecimal multiply(BigDecimal numberA, BigDecimal numberB) {
+        return (numberA)
+                .multiply(numberB)
+                .setScale(5, BigDecimal.ROUND_HALF_UP);
+    }
+
+    private boolean isNotZero(BigDecimal number) {
+        return number.compareTo(BigDecimal.ZERO) !=0;
     }
 
 

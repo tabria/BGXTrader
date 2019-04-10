@@ -4,9 +4,13 @@ import com.oanda.v20.Context;
 import com.oanda.v20.ContextBuilder;
 import com.oanda.v20.account.*;
 import com.oanda.v20.instrument.InstrumentCandlesResponse;
+import com.oanda.v20.order.MarketIfTouchedOrderRequest;
+import com.oanda.v20.order.OrderCreateRequest;
+import com.oanda.v20.order.OrderCreateResponse;
 import com.oanda.v20.pricing.PricingGetResponse;
-import com.oanda.v20.primitives.AccountUnits;
+import com.oanda.v20.transaction.StopLossDetails;
 import trader.broker.connector.*;
+import trader.config.Config;
 import trader.entity.candlestick.Candlestick;
 import trader.price.Price;
 import trader.requestor.Request;
@@ -62,6 +66,25 @@ public class OandaGateway extends BaseGateway {
         return oandaCandlesTransformer.transformCandlesticks(candlesResponse);
     }
 
+    public String placeMarketIfTouchedOrderOrder(HashMap<String, String> settings){
+        Request<?> marketIfTouchedOrderRequest = oandaRequestBuilder.build("marketIfTouchedOrder", settings);
+        //setting stop Loss for the new order
+//        StopLossDetails stopLossDetails = new StopLossDetails()
+//                .setPrice(newTrade.getStopLossPrice());
+//
+//        MarketIfTouchedOrderRequest marketIfTouchedOrderRequest = new MarketIfTouchedOrderRequest()
+//                .setInstrument(Config.INSTRUMENT)
+//                .setUnits(unitsSize)
+//                .setStopLossOnFill(stopLossDetails)
+//                .setPrice(newTrade.getEntryPrice());
+//
+//        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(Config.ACCOUNTID).setOrder(marketIfTouchedOrderRequest);
+
+        Response<OrderCreateResponse> marketIfTouchedOrderResponse = oandaResponseBuilder.buildResponse("marketIfTouchedOrder", marketIfTouchedOrderRequest);
+        OrderCreateResponse orderResponse = (OrderCreateResponse) marketIfTouchedOrderRequest.getRequestDataStructure();
+        return orderResponse.getOrderCreateTransaction().getId().toString();
+    }
+
     @Override
     public void validateConnector() {
         oandaAccountValidator.validateAccount(connector, context);
@@ -94,7 +117,6 @@ public class OandaGateway extends BaseGateway {
     public BigDecimal getBalance() {
         return getAccount().getBalance().bigDecimalValue();
     }
-
 
     @Override
     public BrokerConnector getConnector() {
