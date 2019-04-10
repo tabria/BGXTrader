@@ -23,31 +23,24 @@ public class CreateTradeControllerTest extends BaseControllerTest<TradingStrateg
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        setConfigurationMock(mock(TradingStrategyConfiguration.class));
         commonMembers = new CommonTestClassMembers();
         tradeMock = mock(Trade.class);
-        controller = new CreateTradeController<Trade>(requestBuilderMock, useCaseFactoryMock ,configurationMock);
+        controller = new CreateTradeController<Trade>(requestBuilderMock, useCaseFactoryMock);
     }
 
     @Test(expected = NullArgumentException.class)
     public void WhenCreatedWithNullUseCaseFactory_Exception(){
-        new CreateTradeController<Trade>(requestBuilderMock, null, configurationMock);
+        new CreateTradeController<Trade>(requestBuilderMock, null);
     }
 
     @Test(expected = NullArgumentException.class)
     public void WhenCreatedWithNullRequestBuilder_Exception(){
-        new CreateTradeController<Trade>(null, useCaseFactoryMock , configurationMock);
-    }
-
-    @Test(expected = NullArgumentException.class)
-    public void WhenCreatedWithNullConfiguration_Exception(){
-        new CreateTradeController<Trade>(requestBuilderMock, useCaseFactoryMock ,null);
+        new CreateTradeController<Trade>(null, useCaseFactoryMock);
     }
 
     @Test
     public void WhenCreatedWithCorrectSettings_CorrectResits(){
         assertEquals(requestBuilderMock, commonMembers.extractFieldObject(controller, "requestBuilder"));
-        assertEquals(configurationMock, commonMembers.extractFieldObject(controller, "configuration"));
         assertEquals(useCaseFactoryMock, commonMembers.extractFieldObject(controller, "useCaseFactory"));
     }
 

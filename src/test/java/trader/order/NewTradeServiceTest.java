@@ -1,8 +1,9 @@
-package trader.trade.service;
+package trader.order;
 
 import com.oanda.v20.Context;
 import com.oanda.v20.account.Account;
 import com.oanda.v20.order.*;
+import com.oanda.v20.order.Order;
 import com.oanda.v20.primitives.AccountUnits;
 import com.oanda.v20.primitives.DateTime;
 import com.oanda.v20.trade.TradeSummary;
@@ -33,9 +34,9 @@ public class NewTradeServiceTest {
 
     private Context mockContext;
     private StandardEntryStrategy mockStandardEntryStrategy;
-    private Order mockOrder;
+    private com.oanda.v20.order.Order mockOrder;
     private TradeSummary mockTradeSummary;
-    private List<Order> orderList;
+    private List<com.oanda.v20.order.Order> orderList;
     private List<TradeSummary> tradeSummaries;
     private Account mockAccount;
     private TradeImpl mockTradeImpl;
@@ -79,7 +80,7 @@ public class NewTradeServiceTest {
         when(this.mockStandardEntryStrategy.generateTrade()).thenReturn(this.mockTradeImpl);
       //  when(this.mockStandardEntryStrategy.isGenerated()).thenReturn(false);
 
-        this.mockOrder = mock(Order.class);
+        this.mockOrder = mock(com.oanda.v20.order.Order.class);
         this.orderList = fillOrderList(OrderType.STOP_LOSS, 3);
 
         this.mockTradeSummary = mock(TradeSummary.class);
@@ -204,7 +205,7 @@ public class NewTradeServiceTest {
         return (OrderCreateResponse) hasResponse.get(this.newTradeService);
     }
 
-    private List<Order> fillOrderList(OrderType type, int size){
+    private List<com.oanda.v20.order.Order> fillOrderList(OrderType type, int size){
         List<Order> orders = new ArrayList<>();
         for (int i = 0; i <size ; i++) {
             when(this.mockOrder.getType()).thenReturn(type);

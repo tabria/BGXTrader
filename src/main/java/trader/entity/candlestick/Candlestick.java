@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
 public interface Candlestick {
-//    CandlePriceType getPriceType();
 
     long getTimeFrame();
 

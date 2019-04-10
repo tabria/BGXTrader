@@ -175,4 +175,10 @@ public class LineSegmentImplTest {
         assertNotEquals(result1, result2);
     }
 
+    @Test
+    public void WhenCallToString_CorrectResult(){
+        String expected = String.format("LineSegment{pointA=%s, pointB=%s}", mockPointX.toString(), mockPointY.toString());
+        assertEquals(expected, lineSegment.toString());
+    }
+
 }

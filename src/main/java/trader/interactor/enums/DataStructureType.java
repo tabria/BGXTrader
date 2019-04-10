@@ -21,10 +21,10 @@ public enum DataStructureType {
             return "createTrade";
         }
     },
-    CREATE_POINT{
+    ENTRY_STRATEGY{
         @Override
         public String toString() {
-            return "createPoint";
+            return "entryStrategy";
         }
     }
 

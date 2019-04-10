@@ -96,6 +96,13 @@ public class OandaResponseBuilderTest {
     }
 
     @Test
+    public void WhenCallBuildResponseWithNotExistingType_ReturnNull(){
+        Response response = responseBuilder.buildResponse("kar", requestMock);
+
+        assertNull(response);
+    }
+
+    @Test
     public void WhenCallBuildResponseWithCorrectValues_ReturnCorrectResult(){
         Response<PricingGetResponse> actualResponse = this.responseBuilder.buildResponse("price", requestMock);
         PricingGetResponse response = actualResponse.getResponseDataStructure();

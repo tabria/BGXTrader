@@ -156,7 +156,7 @@ public class OandaRequestBuilderTest {
     }
 
     @Test(expected = EmptyArgumentException.class)
-    public void WhenCallBuildForCandlesWithEmptygranularity_Exception(){
+    public void WhenCallBuildForCandlesWithEmptyGranularity_Exception(){
         settings.put(QUANTITY, "12");
         settings.put(INSTRUMENT, "EUR");
         settings.put(GRANULARITY, "  ");
@@ -206,6 +206,14 @@ public class OandaRequestBuilderTest {
     @Test
     public void WhenCallBuildForCandlesWithLowerCaseExistingGranularity_NoExceptions(){
         settings.put(QUANTITY, "12");
+        settings.put(INSTRUMENT, "EUR");
+        settings.put(GRANULARITY, "m30");
+        this.request.build("candle", settings);
+    }
+
+    @Test(expected = BadRequestException.class)
+    public void WhenCallBuildForCandlesWithQuantityThatIsNotANumber_Exception(){
+        settings.put(QUANTITY, "aaa");
         settings.put(INSTRUMENT, "EUR");
         settings.put(GRANULARITY, "m30");
         this.request.build("candle", settings);

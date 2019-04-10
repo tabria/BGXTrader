@@ -2,6 +2,9 @@ package trader.price;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.internal.matchers.Null;
+import trader.exception.NegativeNumberException;
+import trader.exception.NullArgumentException;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -132,6 +135,16 @@ public class PriceImplTest {
         String expected = "PriceImpl{ask=0.01000, bid=0.02000, dateTime=2012-06-30T12:30:40Z[UTC], isTradable=true, availableUnits=0}";
 
         assertEquals(expected, priceImpl.toString());
+    }
+
+    @Test(expected = NullArgumentException.class)
+    public void WhenCallBuilderWithNullSetting_Exception(){
+        new PriceImpl.PriceBuilder().setBid(null);
+    }
+
+    @Test(expected = NegativeNumberException.class)
+    public void WhenCallBuilderWithNegativeNumber_Exception(){
+        new PriceImpl.PriceBuilder().setBid(BigDecimal.valueOf(-2));
     }
 
 }

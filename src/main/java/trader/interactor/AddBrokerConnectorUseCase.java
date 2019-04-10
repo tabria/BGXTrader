@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 
-public class AddBrokerConnectorUseCase implements UseCase {
+public class AddBrokerConnectorUseCase extends BaseUseCase {
 
     private static final String URL = "url";
     private static final String TOKEN = "token";

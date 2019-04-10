@@ -11,6 +11,7 @@ import trader.entity.trade.Direction;
 import trader.entity.trade.Trade;
 import trader.exception.BadRequestException;
 import trader.exception.NoSuchStrategyException;
+import trader.exception.NullArgumentException;
 import trader.responder.Response;
 import java.math.BigDecimal;
 import java.util.*;
@@ -37,7 +38,6 @@ public class StandardEntryStrategyTest {
     private Trade tradeMock;
     private ArgumentCaptor<HashMap> argument;
     private TraderController<Trade> tradeControllerMock;
-    private TraderController<Point> pointControllerMock;
     private List<Indicator> indicators;
     private StandardEntryStrategy standardEntryStrategy;
 
@@ -48,18 +48,13 @@ public class StandardEntryStrategyTest {
         responseMock = mock(Response.class);
         when(responseMock.getResponseDataStructure()).thenReturn(tradeMock);
         tradeControllerMock = mock(TraderController.class);
-        when(tradeControllerMock.execute(any(HashMap.class))).thenReturn(responseMock);
-        pointControllerMock = mock(TraderController.class);
+        when(tradeControllerMock.execute(any(HashMap.class))).thenReturn(responseMock);;
         argument = ArgumentCaptor.forClass(HashMap.class);
         setFalseInitialIndicators(rsiValues, priceSMAValues, slowWMAValues, fastWMAValues, dailyValues, middleWMAValues);
         commonMembers = new CommonTestClassMembers();
-        standardEntryStrategy = new StandardEntryStrategy(indicators, tradeControllerMock);
-
-    }
-
-    @Test(expected = NoSuchStrategyException.class)
-    public void WhenCreatedWithNullCreateTradeController_Exception(){
-        new StandardEntryStrategy(indicators, null);
+        standardEntryStrategy = new StandardEntryStrategy();
+        standardEntryStrategy.setIndicators(indicators);
+        standardEntryStrategy.setCreateTradeController(tradeControllerMock);
     }
 
     @Test
@@ -79,12 +74,34 @@ public class StandardEntryStrategyTest {
 
     @Test(expected = NoSuchStrategyException.class)
     public void WhenInstantiateWithIndicatorsListSizeAboveRequired_Exception(){
-        new StandardEntryStrategy(createFalseListOfIndicators(7), tradeControllerMock);
+        new StandardEntryStrategy();
+        standardEntryStrategy.setIndicators(createFalseListOfIndicators(7));
+        standardEntryStrategy.generateTrade();
     }
 
     @Test(expected = NoSuchStrategyException.class)
     public void WhenInstantiateWithIndicatorListSizeBelowRequired_Exception(){
-        new StandardEntryStrategy(createFalseListOfIndicators(5), tradeControllerMock);
+        new StandardEntryStrategy();
+        standardEntryStrategy.setIndicators(createFalseListOfIndicators(5));
+        standardEntryStrategy.generateTrade();
+    }
+
+    @Test(expected = NullArgumentException.class)
+    public void WhenSetCreateTraderControllerWithNull_Exception(){
+        standardEntryStrategy.setCreateTradeController(null);
+    }
+
+    @Test(expected = NullArgumentException.class)
+    public void WhenCallGenerateWithNullIndicators_Exception(){
+        StandardEntryStrategy ses = new StandardEntryStrategy();
+        ses.generateTrade();
+    }
+
+    @Test(expected = NullArgumentException.class)
+    public void WhenCallGenerateTradeAndCreateTradeControllerIsNull_Exception(){
+        standardEntryStrategy = new StandardEntryStrategy();
+        standardEntryStrategy.setIndicators(indicators);
+        standardEntryStrategy.generateTrade();
     }
 
     @Test
@@ -108,7 +125,8 @@ public class StandardEntryStrategyTest {
     public void WhenInstantiateThenFillIndicatorsFieldsWithIndicatorWithNonExistingType_Exception(){
         indicators.remove(0);
         indicators.add(createFalseIndicator("miole", rsiValues));
-        standardEntryStrategy = new StandardEntryStrategy(indicators, tradeControllerMock);
+        standardEntryStrategy = new StandardEntryStrategy();
+        standardEntryStrategy.setIndicators(indicators);
     }
 
    @Test
@@ -283,8 +301,9 @@ public class StandardEntryStrategyTest {
         Response responseMock = mock(Response.class);
         Point pointMock = mock(Point.class);
         when(responseMock.getResponseDataStructure()).thenReturn(pointMock);
-        when(pointControllerMock.execute(any(HashMap.class))).thenReturn(responseMock);
-        standardEntryStrategy = new StandardEntryStrategy(indicators, tradeControllerMock);
+        standardEntryStrategy = new StandardEntryStrategy();
+        standardEntryStrategy.setIndicators(indicators);
+        standardEntryStrategy.setCreateTradeController(tradeControllerMock);
         Trade trade = standardEntryStrategy.generateTrade();
         verify(tradeControllerMock).execute(argument.capture());
         int argumentSize = argument.getValue().size();
@@ -294,7 +313,9 @@ public class StandardEntryStrategyTest {
     }
 
     private void assertForNonTradableDefaultTrade() {
-        standardEntryStrategy = new StandardEntryStrategy(indicators, tradeControllerMock);
+        standardEntryStrategy = new StandardEntryStrategy();
+        standardEntryStrategy.setIndicators(indicators);
+        standardEntryStrategy.setCreateTradeController(tradeControllerMock);
         Trade trade = standardEntryStrategy.generateTrade();
         verify(tradeControllerMock).execute(argument.capture());
         int argumentSize = argument.getValue().size();

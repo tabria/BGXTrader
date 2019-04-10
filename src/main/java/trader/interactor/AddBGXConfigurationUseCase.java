@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AddBGXConfigurationUseCase implements UseCase {
+public class AddBGXConfigurationUseCase extends BaseUseCase {
 
 
     private static final String CANDLES_QUANTITY = "candlesQuantity";

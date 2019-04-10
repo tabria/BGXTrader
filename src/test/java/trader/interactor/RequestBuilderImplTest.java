@@ -2,9 +2,12 @@ package trader.interactor;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.internal.matchers.Null;
 import trader.entity.trade.point.Point;
 import trader.entity.trade.Direction;
 import trader.entity.trade.Trade;
+import trader.entry.EntryStrategy;
+import trader.entry.StandardEntryStrategy;
 import trader.exception.*;
 import trader.requestor.Request;
 import trader.requestor.RequestBuilder;
@@ -148,5 +151,38 @@ public class RequestBuilderImplTest {
         assertEquals(Direction.DOWN, trade.getDirection());
         assertEquals(BigDecimal.valueOf(1.12345) ,trade.getEntryPrice());
         assertEquals(BigDecimal.valueOf(5.1234) ,trade.getStopLossPrice());
+    }
+
+    @Test(expected = NullArgumentException.class)
+    public void WhenCallBuildWithAddEntryStrategyControllerWithBadKeyNameInSettings_Exception(){
+        settings.put("entry", "standard");
+        requestBuilder.build("AddEntryStrategyController", settings);
+    }
+
+    @Test(expected = NullArgumentException.class)
+    public void WhenCallBuildWithAddEntryStrategyControllerWithNullValueInSettings_Exception(){
+        settings.put("entryStrategy", null);
+        requestBuilder.build("AddEntryStrategyController", settings);
+    }
+
+    @Test(expected = NoSuchStrategyException.class)
+    public void WhenCallBuildWithAddEntryStrategyControllerWithEmptyValueInSettings_Exception(){
+        settings.put("entryStrategy", "   ");
+        requestBuilder.build("AddEntryStrategyController", settings);
+    }
+
+    @Test(expected = NoSuchStrategyException.class)
+    public void WhenCallBuildWithAddEntryStrategyControllerWithENonExistingStrtegy_Exception(){
+        settings.put("entryStrategy", "non");
+        requestBuilder.build("AddEntryStrategyController", settings);
+    }
+
+    @Test
+    public void WhenCallBuildWithAddEntryStrategyControllerWithCorrectSettings_CorrectEntryStrategy(){
+        settings.put("entryStrategy", " standard ");
+        Request<?> entryStrategyRequest = requestBuilder.build("AddEntryStrategyController", settings);
+        EntryStrategy entryStrategy = (EntryStrategy) entryStrategyRequest.getRequestDataStructure();
+
+        assertEquals(StandardEntryStrategy.class, entryStrategy.getClass());
     }
 }

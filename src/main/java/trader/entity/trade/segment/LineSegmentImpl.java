@@ -47,7 +47,7 @@ public final class LineSegmentImpl implements LineSegment {
 
     @Override
     public String toString() {
-        return "LineSegmentImpl{" +
+        return "LineSegment{" +
                 "pointA=" + pointA.toString() +
                 ", pointB=" + pointB.toString() +
                 '}';
@@ -60,10 +60,6 @@ public final class LineSegmentImpl implements LineSegment {
         this.pointA = a;
     }
 
-    private void setPointA(BigDecimal priceA){
-        this.pointA = new PointImpl(priceA);
-    }
-
     private void setPointB(Point b){
         if(b == null)
             throw new NullArgumentException();
@@ -71,9 +67,5 @@ public final class LineSegmentImpl implements LineSegment {
         if (result >= 0 )
             throw new IllegalArgumentException();
         this.pointB = b;
-    }
-
-    private void setPointB(BigDecimal priceB){
-        this.pointB = new PointImpl(priceB ,BigDecimal.valueOf(2));
     }
 }

@@ -54,8 +54,6 @@ public class TradeCalculationService {
             return getTradableForDownDirection(dailyOpenPrice, entryPrice, intersectionPoint.getPrice());
         else if (direction.equals(Direction.UP))
             return getTradableForUpDirection(dailyOpenPrice, entryPrice, intersectionPoint.getPrice());
-
-
         return false;
     }
 

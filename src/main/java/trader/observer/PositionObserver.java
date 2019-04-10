@@ -1,22 +1,24 @@
 package trader.observer;
 
 import trader.broker.BrokerGateway;
-import trader.controller.TraderController;
+import trader.entity.trade.Direction;
 import trader.entity.trade.Trade;
 import trader.entry.EntryStrategy;
 import trader.exception.NullArgumentException;
 import trader.price.Price;
 
+import java.math.BigDecimal;
+
 public class PositionObserver extends BaseObserver {
 
-    private TraderController<Trade> createTradeController;
+    private static final BigDecimal TRADABLE_THRESHOLD = BigDecimal.valueOf(0.0020);
     private EntryStrategy entryStrategy;
 
-    public PositionObserver(BrokerGateway brokerGateway, TraderController<Trade> addTradeController){
+    public PositionObserver(BrokerGateway brokerGateway, EntryStrategy entryStrategy){
         super(brokerGateway);
-        if(addTradeController == null)
+        if(entryStrategy == null)
             throw new NullArgumentException();
-        this. createTradeController = addTradeController;
+        this.entryStrategy = entryStrategy;
     }
 
 //    private Context context;
@@ -46,10 +48,29 @@ public class PositionObserver extends BaseObserver {
 //
     @Override
     public void updateObserver(Price price) {
-        if(brokerGateway.totalOpenTradesSize() == 0 &&
-                brokerGateway.totalOpenOrdersSize() == 0){
-            //addTradeController.execute(price);
+        Trade trade = null;
+        if(brokerGateway.totalOpenTradesSize() == 0 && brokerGateway.totalOpenOrdersSize() == 0){
+            Trade newTrade = entryStrategy.generateTrade();
+            setTradableForThreshold(price, newTrade);
         }
+    }
+
+    private void setTradableForThreshold(Price price, Trade newTrade) {
+        if(isTradable(newTrade)){
+            BigDecimal delta = getEntryPriceAndPriceDelta(newTrade, price);
+            if(delta.compareTo(TRADABLE_THRESHOLD) > 0)
+                newTrade.setTradable("false");
+        }
+    }
+
+    private boolean isTradable(Trade newTrade) {
+        return newTrade.getTradable() && !newTrade.getDirection().equals(Direction.FLAT);
+    }
+
+    private BigDecimal getEntryPriceAndPriceDelta(Trade newTrade, Price price) {
+        BigDecimal currentPrice = newTrade.getDirection().equals(Direction.UP) ? price.getAsk() : price.getBid();
+        BigDecimal entryPrice = newTrade.getEntryPrice();
+        return entryPrice.subtract(currentPrice).abs();
     }
 
     BrokerGateway getBrokerGateway() {

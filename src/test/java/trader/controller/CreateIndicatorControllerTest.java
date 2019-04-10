@@ -1,15 +1,11 @@
 package trader.controller;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import trader.broker.BrokerGateway;
 import trader.configuration.TradingStrategyConfiguration;
-import trader.entity.candlestick.candle.CandleGranularity;
 import trader.entity.indicator.Indicator;
-import trader.exception.BadRequestException;
 import trader.exception.NullArgumentException;
-import trader.observer.Observer;
 import trader.requestor.UseCase;
 import trader.requestor.Request;
 import trader.requestor.RequestBuilder;
@@ -17,11 +13,8 @@ import trader.requestor.UseCaseFactory;
 import trader.responder.Response;
 import trader.strategy.observable.PriceObservable;
 import java.util.HashMap;
-
 import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -51,7 +44,6 @@ public class CreateIndicatorControllerTest {
         useCaseFactoryMock = mock(UseCaseFactory.class);
         gatewayMock = mock(BrokerGateway.class);
         settings = new HashMap<>();
-//        createIndicatorController = new CreateIndicatorController(requestBuilderMock, useCaseFactoryMock, priceObservableMock, configurationMock, gatewayMock);
         createIndicatorController = new CreateIndicatorController(requestBuilderMock, useCaseFactoryMock);
     }
 
@@ -64,21 +56,6 @@ public class CreateIndicatorControllerTest {
     public void WhenCreateControllerWithNullUserCaseFactory_Exception(){
         new CreateIndicatorController(requestBuilderMock, null);
     }
-
-//    @Test(expected = NullArgumentException.class)
-//    public void WhenCreateControllerWithNullObservable_Exception(){
-//        new CreateIndicatorController(requestBuilderMock, useCaseFactoryMock, null, configurationMock, gatewayMock);
-//    }
-//
-//    @Test(expected = NullArgumentException.class)
-//    public void WhenCreateControllerWithNullConfiguration_Exception(){
-//        new CreateIndicatorController(requestBuilderMock, useCaseFactoryMock, priceObservableMock, null, gatewayMock);
-//    }
-//
-//    @Test(expected = NullArgumentException.class)
-//    public void WhenCreateControllerWithNullBrokerGateway_Exception(){
-//        new CreateIndicatorController(requestBuilderMock, useCaseFactoryMock, priceObservableMock, configurationMock, null);
-//    }
 
     @Test
     public void WhenCallGetRequestWithCorrectSettings_ReturnCorrectResult(){
@@ -112,10 +89,6 @@ public class CreateIndicatorControllerTest {
         when(useCaseFactoryMock.make(anyString())).thenReturn(useCaseMock);
         when(useCaseMock.execute(requestMock)).thenReturn(responseMock);
         when(requestBuilderMock.build(ADD_INDICATOR_CONTROLLER_NAME, settings)).thenReturn(requestMock);
-//        when(configurationMock.getInstrument()).thenReturn("EUR_USD");
-//        when(configurationMock.getInitialCandlesQuantity()).thenReturn(12L);
-//        when(indicatorMock.getGranularity()).thenReturn(CandleGranularity.H1);
-//        doThrow(BadRequestException.class).when(priceObservableMock).registerObserver(any(Observer.class));
     }
 
 }

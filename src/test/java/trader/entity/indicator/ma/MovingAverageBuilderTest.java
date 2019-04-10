@@ -6,6 +6,10 @@ import trader.exception.WrongIndicatorSettingsException;
 import trader.entity.indicator.BaseBuilderTest;
 import trader.entity.indicator.Indicator;
 import trader.entity.indicator.ma.enums.MAType;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import static org.junit.Assert.*;
 
 public class MovingAverageBuilderTest extends BaseBuilderTest {

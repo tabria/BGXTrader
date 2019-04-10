@@ -12,13 +12,14 @@ import trader.exception.BadRequestException;
 import trader.exception.NoSuchStrategyException;
 import trader.entity.trade.point.PointImpl;
 import trader.entity.trade.Direction;
+import trader.exception.NullArgumentException;
 import trader.responder.Response;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 
-public final class StandardEntryStrategy {
+public final class StandardEntryStrategy implements EntryStrategy {
 
     private static final BigDecimal RSI_FILTER = BigDecimal.valueOf(50);
 
@@ -38,15 +39,22 @@ public final class StandardEntryStrategy {
     private Indicator rsi;
     private Direction direction;
 
-    public StandardEntryStrategy(List<Indicator> indicators, TraderController<Trade> createTradeController) {
-        validateInput(indicators, createTradeController);
+    public StandardEntryStrategy() {
         direction = Direction.FLAT;
-        setIndicators(indicators);
-        this.createTradeController = createTradeController;
         tradeCalculationService = new TradeCalculationService();
     }
 
+    @Override
+    public void setCreateTradeController(TraderController<Trade> createTradeController) {
+        if(createTradeController == null)
+            throw new NullArgumentException();
+        this.createTradeController = createTradeController;
+    }
+
+    @Override
     public Trade generateTrade(){
+        validateIndicatorExistence();
+        validateCreateTradeControllerExistence();
         LineSegment fastWMALineSegment = getLineSegment(this.fastWMA);
         LineSegment middleWMALineSegment = getLineSegment(this.middleWMA);
         LineSegment slowWMALineSegment = getLineSegment(this.slowWMA);
@@ -62,37 +70,50 @@ public final class StandardEntryStrategy {
         return defaultTrade();
     }
 
-    private void validateInput(List<Indicator> indicators, TraderController<Trade> createTradeController) {
-        if(indicators == null || indicators.size() != INDICATORS_COUNT ||
-                createTradeController == null)
+    private void validateIndicatorExistence() {
+        if(rsi == null || priceSMA == null || slowWMA == null ||
+                fastWMA == null || dailySMA == null || middleWMA == null)
+            throw new NullArgumentException();
+    }
+
+
+    @Override
+    public void setIndicators(List<Indicator> indicators) {
+        validateInput(indicators);
+        for (Indicator indicator:indicators) {
+            String position = indicator.getPosition();
+            switch (position){
+                case "rsi": rsi = indicator;
+                    break;
+                case "price": priceSMA = indicator;
+                    break;
+                case "slow": slowWMA = indicator;
+                    break;
+                case "fast": fastWMA = indicator;
+                    break;
+                case "daily": dailySMA = indicator;
+                    break;
+                case "middle": middleWMA = indicator;
+                    break;
+                default:
+                    throw new BadRequestException();
+            }
+        }
+    }
+
+    private void validateCreateTradeControllerExistence() {
+        if(createTradeController == null)
+            throw new NullArgumentException();
+    }
+
+    private void validateInput(List<Indicator> indicators) {
+        if(indicators == null || indicators.size() != INDICATORS_COUNT)
             throw new NoSuchStrategyException();
     }
 
     private Trade defaultTrade() {
         Response<Trade> tradeResponse = createTradeController.execute(new HashMap<>());
         return tradeResponse.getResponseDataStructure();
-    }
-
-    private void setIndicators(List<Indicator> indicators) {
-        for (Indicator indicator:indicators) {
-            String position = indicator.getPosition();
-            switch (position){
-                case "rsi": rsi = indicator;
-                break;
-                case "price": priceSMA = indicator;
-                break;
-                case "slow": slowWMA = indicator;
-                break;
-                case "fast": fastWMA = indicator;
-                break;
-                case "daily": dailySMA = indicator;
-                break;
-                case "middle": middleWMA = indicator;
-                break;
-                default:
-                    throw new BadRequestException();
-            }
-        }
     }
 
     private Trade generateTradeAfterIntersection(LineSegment fastSegment, LineSegment middleSegment){

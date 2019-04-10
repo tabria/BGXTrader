@@ -9,15 +9,15 @@ import trader.entity.trade.point.Point;
 import trader.entity.trade.point.PointImpl;
 import trader.entity.trade.Trade;
 import trader.entity.trade.TradeImpl;
-import trader.exception.EmptyArgumentException;
-import trader.exception.NoSuchDataStructureException;
-import trader.exception.NullArgumentException;
-import trader.exception.WrongIndicatorSettingsException;
+import trader.entry.EntryStrategy;
+import trader.exception.*;
 import trader.interactor.enums.DataStructureType;
 import trader.interactor.RequestImpl;
 import trader.configuration.TradingStrategyConfiguration;
 import trader.configuration.BGXConfigurationImpl;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.HashMap;
 
@@ -45,7 +45,30 @@ public class RequestBuilderImpl implements RequestBuilder {
             return buildBrokerConnector(settings);
         if(controllerName.contains(type(DataStructureType.CREATE_TRADE)))
             return buildTrade(settings);
+        if(controllerName.contains(type(DataStructureType.ENTRY_STRATEGY)))
+            return buildEntryStrategy(settings);
         throw new NoSuchDataStructureException();
+    }
+
+    private Request<?> buildEntryStrategy(HashMap<String,String> settings) {
+        Request<EntryStrategy> request = new RequestImpl<>();
+        EntryStrategy entryStrategy = createEntryStrategyInstance(settings);
+        request.setRequestDataStructure(entryStrategy);
+        return request;
+    }
+
+    private EntryStrategy createEntryStrategyInstance(HashMap<String, String> settings) {
+        try {
+            String className = settings.get("entryStrategy").trim();
+            className = Character.toUpperCase(className.charAt(0)) + className.substring(1);
+            Class<?> entryStrategyClass = Class.forName("trader.entry." + className + "EntryStrategy");
+            Constructor<?> entryStrategyConstructor = entryStrategyClass.getDeclaredConstructor();
+            return (EntryStrategy) entryStrategyConstructor.newInstance();
+        } catch (ClassNotFoundException | InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException | StringIndexOutOfBoundsException e) {
+            throw new NoSuchStrategyException();
+        } catch (NullPointerException e) {
+            throw new NullArgumentException();
+        }
     }
 
     private Request<?> buildTrade(HashMap<String,String> settings) {

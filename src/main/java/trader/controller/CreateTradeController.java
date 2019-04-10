@@ -15,14 +15,12 @@ public class CreateTradeController<T> implements TraderController<T> {
 
     private RequestBuilder requestBuilder;
     private UseCaseFactory useCaseFactory;
-    private TradingStrategyConfiguration configuration;
 
 
-    public CreateTradeController(RequestBuilder requestBuilder, UseCaseFactory useCaseFactory, TradingStrategyConfiguration configuration) {
-        if(requestBuilder == null || configuration == null || useCaseFactory == null)
+    public CreateTradeController(RequestBuilder requestBuilder, UseCaseFactory useCaseFactory) {
+        if(requestBuilder == null || useCaseFactory == null)
             throw new NullArgumentException();
         this.requestBuilder = requestBuilder;
-        this.configuration = configuration;
         this.useCaseFactory = useCaseFactory;
     }
 
