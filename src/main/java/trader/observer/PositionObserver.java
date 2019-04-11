@@ -5,6 +5,7 @@ import trader.entity.trade.Direction;
 import trader.entity.trade.Trade;
 import trader.entry.EntryStrategy;
 import trader.exception.NullArgumentException;
+import trader.order.OrderStrategy;
 import trader.price.Price;
 
 import java.math.BigDecimal;
@@ -13,12 +14,14 @@ public class PositionObserver extends BaseObserver {
 
     private static final BigDecimal TRADABLE_THRESHOLD = BigDecimal.valueOf(0.0020);
     private EntryStrategy entryStrategy;
+    private OrderStrategy orderStrategy;
 
-    public PositionObserver(BrokerGateway brokerGateway, EntryStrategy entryStrategy){
+    public PositionObserver(BrokerGateway brokerGateway, EntryStrategy entryStrategy, OrderStrategy orderStrategy){
         super(brokerGateway);
-        if(entryStrategy == null)
+        if(entryStrategy == null || orderStrategy == null)
             throw new NullArgumentException();
         this.entryStrategy = entryStrategy;
+        this.orderStrategy = orderStrategy;
     }
 
 //    private Context context;

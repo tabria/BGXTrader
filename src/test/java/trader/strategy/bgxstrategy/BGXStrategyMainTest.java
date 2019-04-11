@@ -34,6 +34,7 @@ public class BGXStrategyMainTest {
     private static final String BGX_STRATEGY_CONFIG_FILE_NAME = "bgxStrategyConfig.yaml";
     private static final String BROKER_CONFIG_FILE_NAME = "oandaBrokerConfig.yaml";
     private static final String ENTRY_STRATEGY_NAME = "standard";
+    private static final String ORDER_STRATEGY_NAME = "standard";
 
     private BGXStrategyMain bgxStrategyMain;
     private TradingStrategyConfiguration bgxConfigurationMock;
@@ -70,27 +71,32 @@ public class BGXStrategyMainTest {
         commonMembers = new CommonTestClassMembers();
         bgxConfigurationMock = mock(TradingStrategyConfiguration.class);
         setFalseInitialIndicators();
-        bgxStrategyMain = new BGXStrategyMain(BROKER_NAME, BGX_STRATEGY_CONFIG_FILE_NAME, BROKER_CONFIG_FILE_NAME, ENTRY_STRATEGY_NAME);
+        bgxStrategyMain = new BGXStrategyMain(BROKER_NAME, BGX_STRATEGY_CONFIG_FILE_NAME, BROKER_CONFIG_FILE_NAME, ENTRY_STRATEGY_NAME, ORDER_STRATEGY_NAME);
 
     }
 
     @Test(expected = NullArgumentException.class)
     public void WhenBrokerNameIsNull_Exception(){
-    new BGXStrategyMain(null, BGX_STRATEGY_CONFIG_FILE_NAME, BROKER_CONFIG_FILE_NAME, ENTRY_STRATEGY_NAME);
+    new BGXStrategyMain(null, BGX_STRATEGY_CONFIG_FILE_NAME, BROKER_CONFIG_FILE_NAME, ENTRY_STRATEGY_NAME, ORDER_STRATEGY_NAME);
     }
 
     @Test(expected = NullArgumentException.class)
     public void WhenStrategyConfigFileNameIsNull_Exception(){
-        new BGXStrategyMain(BROKER_NAME, null, BROKER_CONFIG_FILE_NAME, ENTRY_STRATEGY_NAME);
+        new BGXStrategyMain(BROKER_NAME, null, BROKER_CONFIG_FILE_NAME, ENTRY_STRATEGY_NAME, ORDER_STRATEGY_NAME);
     }
     @Test(expected = NullArgumentException.class)
     public void WhenBrokerConfigFileNameIsNull_Exception(){
-        new BGXStrategyMain(BROKER_NAME, BGX_STRATEGY_CONFIG_FILE_NAME, null, ENTRY_STRATEGY_NAME);
+        new BGXStrategyMain(BROKER_NAME, BGX_STRATEGY_CONFIG_FILE_NAME, null, ENTRY_STRATEGY_NAME, ORDER_STRATEGY_NAME);
     }
 
     @Test(expected = NullArgumentException.class)
     public void WhenEntryStrategyNameIsNull_Exception(){
-        new BGXStrategyMain(BROKER_NAME, BGX_STRATEGY_CONFIG_FILE_NAME, BROKER_CONFIG_FILE_NAME, null);
+        new BGXStrategyMain(BROKER_NAME, BGX_STRATEGY_CONFIG_FILE_NAME, BROKER_CONFIG_FILE_NAME, null, ORDER_STRATEGY_NAME);
+    }
+
+    @Test(expected = NullArgumentException.class)
+    public void WhenOrderStrategyNameIsNull_Exception(){
+        new BGXStrategyMain(BROKER_NAME, BGX_STRATEGY_CONFIG_FILE_NAME, BROKER_CONFIG_FILE_NAME, ENTRY_STRATEGY_NAME, null);
     }
 
     @Test
@@ -101,21 +107,26 @@ public class BGXStrategyMainTest {
 
     @Test(expected = EmptyArgumentException.class)
     public void WhenBrokerNameIsEmpty_Exception(){
-        new BGXStrategyMain("  ", BGX_STRATEGY_CONFIG_FILE_NAME, BROKER_CONFIG_FILE_NAME, ENTRY_STRATEGY_NAME);
+        new BGXStrategyMain("  ", BGX_STRATEGY_CONFIG_FILE_NAME, BROKER_CONFIG_FILE_NAME, ENTRY_STRATEGY_NAME, ORDER_STRATEGY_NAME);
     }
 
     @Test(expected = EmptyArgumentException.class)
     public void WhenStrategyConfigFileNameIsEmpty_Exception(){
-        new BGXStrategyMain(BROKER_NAME, "  ", BROKER_CONFIG_FILE_NAME, ENTRY_STRATEGY_NAME);
+        new BGXStrategyMain(BROKER_NAME, "  ", BROKER_CONFIG_FILE_NAME, ENTRY_STRATEGY_NAME, ORDER_STRATEGY_NAME);
     }
     @Test(expected = EmptyArgumentException.class)
     public void WhenBrokerConfigFileNameIsEmpty_Exception(){
-        new BGXStrategyMain(BROKER_NAME, BGX_STRATEGY_CONFIG_FILE_NAME, "  ", ENTRY_STRATEGY_NAME);
+        new BGXStrategyMain(BROKER_NAME, BGX_STRATEGY_CONFIG_FILE_NAME, "  ", ENTRY_STRATEGY_NAME, ORDER_STRATEGY_NAME);
     }
 
     @Test(expected = EmptyArgumentException.class)
     public void WhenEntryStrategyNameIsEmpty_Exception(){
-        new BGXStrategyMain(BROKER_NAME, BGX_STRATEGY_CONFIG_FILE_NAME, BROKER_CONFIG_FILE_NAME, "  ");
+        new BGXStrategyMain(BROKER_NAME, BGX_STRATEGY_CONFIG_FILE_NAME, BROKER_CONFIG_FILE_NAME, "  ", ORDER_STRATEGY_NAME);
+    }
+
+    @Test(expected = EmptyArgumentException.class)
+    public void WhenOrderStrategyNameIsEmpty_Exception(){
+        new BGXStrategyMain(BROKER_NAME, BGX_STRATEGY_CONFIG_FILE_NAME, BROKER_CONFIG_FILE_NAME, ENTRY_STRATEGY_NAME, "  ");
     }
 
     @Test
@@ -180,6 +191,26 @@ public class BGXStrategyMainTest {
         assertNotNull(entryStrategy);
         assertEquals(StandardEntryStrategy.class, entryStrategy.getClass());
     }
+
+    @Test
+    public void WhenInstantiateOrderStrategyItMustBeCorrectType(){
+        EntryStrategy entryStrategy = (EntryStrategy) commonMembers.extractFieldObject(bgxStrategyMain, "entryStrategy");
+        Object createTradeController = commonMembers.extractFieldObject(entryStrategy, "createTradeController");
+        Object rsi = commonMembers.extractFieldObject(entryStrategy, "rsi");
+
+        assertNotNull(entryStrategy);
+        assertNotNull(createTradeController);
+        assertNotNull(rsi);
+    }
+
+//    @Test
+//    public void WhenCallSetPositionObserverThenHeMustHaveEntryStrategy(){
+//        Observer observer = bgxStrategyMain.setPositionObserver();
+//        Object entryStrategy = commonMembers.extractFieldObject(observer, "entryStrategy");
+//
+//        assertNotNull(entryStrategy);
+//        assertEquals(StandardEntryStrategy.class, entryStrategy.getClass());
+//    }
 
 
 

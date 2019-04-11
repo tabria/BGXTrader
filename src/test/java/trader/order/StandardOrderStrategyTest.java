@@ -1,6 +1,5 @@
 package trader.order;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import trader.CommonTestClassMembers;
@@ -22,14 +21,14 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class OrderStrategyImplTest {
+public class StandardOrderStrategyTest {
 
     private BrokerGateway brokerGatewayMock;
     private Trade tradeMock;
     private Price priceMock;
     private BrokerConnector connectorMock;
     private TradingStrategyConfiguration configurationMock;
-    private OrderStrategyImpl orderStrategy;
+    private StandardOrderStrategy orderStrategy;
     private CommonTestClassMembers commonMembers;
 
     @Before
@@ -40,7 +39,7 @@ public class OrderStrategyImplTest {
         priceMock = mock(Price.class);
         connectorMock = mock(BrokerConnector.class);
         configurationMock = mock(TradingStrategyConfiguration.class);
-        orderStrategy = new OrderStrategyImpl();
+        orderStrategy = new StandardOrderStrategy();
         commonMembers = new CommonTestClassMembers();
     }
 

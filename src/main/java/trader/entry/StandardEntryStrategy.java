@@ -121,15 +121,21 @@ public final class StandardEntryStrategy implements EntryStrategy {
         Point intersectionPoint = IntersectionService.calculateIntersectionPoint(fastSegment, middleSegment);
         List<BigDecimal> dailyValues = this.dailySMA.getValues();
 
-        if (direction.equals(Direction.UP) && isAbove(this.fastWMA, this.slowWMA) && isAbove(this.middleWMA, this.slowWMA)){
+        if (isLongCross())
             //          System.out.println("New Long TradeImpl generated: " + intersectionPoint.getPrice());
             return getTrade(intersectionPoint, dailyValues);
-
-        } else if (direction.equals(Direction.DOWN) && !isAbove(this.fastWMA, this.slowWMA) && !isAbove(this.middleWMA, this.slowWMA)){
+        else if (isShortCross())
             //          System.out.println("New SHORT TradeImpl generated: " + intersectionPoint.getPrice());
             return getTrade(intersectionPoint, dailyValues);
-        }
         return defaultTrade();
+    }
+
+    private boolean isShortCross() {
+        return direction.equals(Direction.DOWN) && !isAbove(this.fastWMA, this.slowWMA) && !isAbove(this.middleWMA, this.slowWMA);
+    }
+
+    private boolean isLongCross() {
+        return direction.equals(Direction.UP) && isAbove(this.fastWMA, this.slowWMA) && isAbove(this.middleWMA, this.slowWMA);
     }
 
     private Trade getTrade(Point intersectionPoint, List<BigDecimal> dailyValues) {

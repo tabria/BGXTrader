@@ -9,6 +9,7 @@ import trader.entity.trade.Trade;
 import trader.entry.EntryStrategy;
 import trader.exception.BadRequestException;
 import trader.exception.NullArgumentException;
+import trader.order.OrderStrategy;
 import trader.price.Price;
 
 import java.math.BigDecimal;
@@ -25,6 +26,7 @@ public class PositionObserverTest extends BaseObserverTest {
 
     private PositionObserver positionObserver;
     private EntryStrategy entryStrategyMock;
+    private OrderStrategy orderStrategyMock;
     private Price priceMock;
     private Trade tradeMock;
 
@@ -32,20 +34,26 @@ public class PositionObserverTest extends BaseObserverTest {
     public void setUp(){
         super.before();
         entryStrategyMock = mock(EntryStrategy.class);
+        orderStrategyMock = mock(OrderStrategy.class);
         priceMock = mock(Price.class);
         tradeMock = mock(Trade.class);
-        positionObserver = new PositionObserver(brokerGatewayMock, entryStrategyMock);
+        positionObserver = new PositionObserver(brokerGatewayMock, entryStrategyMock, orderStrategyMock);
     }
 
 
     @Test(expected = NullArgumentException.class)
     public void WhenCreatePositionObserverWithNullBrokerGateway_Exception(){
-        new PositionObserver( null, entryStrategyMock);
+        new PositionObserver( null, entryStrategyMock, orderStrategyMock);
     }
 
     @Test(expected = NullArgumentException.class)
-    public void WhenCreatePositionObserverWithNullTradeController_Exception(){
-        new PositionObserver( brokerGatewayMock, null);
+    public void WhenCreatePositionObserverWithNullEntryStrategy_Exception(){
+        new PositionObserver( brokerGatewayMock, null, orderStrategyMock);
+    }
+
+    @Test(expected = NullArgumentException.class)
+    public void WhenCreatePositionObserverWithNullOrderStrategy_Exception(){
+        new PositionObserver( brokerGatewayMock, entryStrategyMock, null);
     }
 
     @Test
@@ -59,6 +67,14 @@ public class PositionObserverTest extends BaseObserverTest {
 
         assertNotNull(commonTestMembers.extractFieldObject(positionObserver, "entryStrategy"));
         assertEquals(entryStrategyMock, entryStrategy);
+    }
+
+    @Test
+    public void TestIfOrderStrategyIsSet(){
+        Object orderStrategy = commonTestMembers.extractFieldObject(positionObserver, "orderStrategy");
+
+        assertNotNull(commonTestMembers.extractFieldObject(positionObserver, "orderStrategy"));
+        assertEquals(orderStrategyMock, orderStrategy);
     }
 
     @Test(expected = BadRequestException.class)

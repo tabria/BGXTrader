@@ -11,7 +11,7 @@ import trader.price.Price;
 import java.math.BigDecimal;
 import java.util.HashMap;
 
-public class OrderStrategyImpl implements OrderStrategy {
+public class StandardOrderStrategy implements OrderStrategy {
 
     private static final BigDecimal ONE_PIP = BigDecimal.valueOf(0.0001);
     private static final BigDecimal PIP_MULTIPLIER = BigDecimal.valueOf(10_000);
@@ -22,7 +22,7 @@ public class OrderStrategyImpl implements OrderStrategy {
 
     private String lastOrderTransactionID;
 
-    public OrderStrategyImpl() {
+    public StandardOrderStrategy() {
         lastOrderTransactionID = null;
     }
 

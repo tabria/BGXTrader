@@ -38,6 +38,7 @@ public final class BGXStrategyMain implements Strategy {
     private static final String LOCATION = "location";
     private static final String BROKER_NAME = "brokerName";
     private static final String ENTRY_STRATEGY_KEY_NAME = "entryStrategy";
+    private static final String ORDER_STRATEGY_KEY_NAME = "orderStrategy";
 
     private RequestBuilder requestBuilder;
     private UseCaseFactory useCaseFactory;
@@ -46,6 +47,7 @@ public final class BGXStrategyMain implements Strategy {
     private BrokerGateway brokerGateway;
     private Observable priceObservable;
     private EntryStrategy entryStrategy;
+    private OrderStrategy orderStrategy;
 
 
     private Observer positionObserver;
@@ -54,10 +56,10 @@ public final class BGXStrategyMain implements Strategy {
 
 
     private ExitStrategy exitStrategy;
-    private OrderStrategy orderStrategy;
 
 
-    public BGXStrategyMain(String brokerName, String configurationFileName, String brokerConfigurationFileName, String entryStrategyName) {
+
+    public BGXStrategyMain(String brokerName, String configurationFileName, String brokerConfigurationFileName, String entryStrategyName, String orderStrategyName) {
         validateInput(brokerName, configurationFileName, brokerConfigurationFileName, entryStrategyName);
         requestBuilder = new RequestBuilderImpl();
         useCaseFactory = new UseCaseFactoryImpl();
@@ -66,6 +68,7 @@ public final class BGXStrategyMain implements Strategy {
         priceObservable = PriceObservable.create(brokerGateway, configuration);
         indicatorList = createIndicatorsFromConfiguration(configuration.getIndicators());
         entryStrategy = setEntryStrategy(entryStrategyName);
+        orderStrategy = setOrderStrategy(orderStrategyName);
 
 //        orderStrategy = new OrderService(apiConnector);
         exitStrategy = BaseExitStrategy.createInstance();
@@ -120,7 +123,7 @@ public final class BGXStrategyMain implements Strategy {
     //////////////////////////////////////////////////// not tested/////////
     Observer setPositionObserver(){
 
-       return new PositionObserver(brokerGateway, entryStrategy);
+       return new PositionObserver(brokerGateway, entryStrategy, orderStrategy);
     }
 
 
@@ -136,6 +139,17 @@ public final class BGXStrategyMain implements Strategy {
         if(brokerName.trim().isEmpty() || configurationFileName.trim().isEmpty() || brokerConfigurationFileName.trim().isEmpty() || entryStrategyName.trim().isEmpty())
             throw new EmptyArgumentException();
     }
+
+    private OrderStrategy setOrderStrategy(String entryStrategyName) {
+        HashMap<String, String> settings = new HashMap<>();
+        settings.put(ORDER_STRATEGY_KEY_NAME, entryStrategyName);
+        TraderController<OrderStrategy> controller = new AddOrderStrategyController<>(requestBuilder, useCaseFactory);
+        Response<OrderStrategy> entryResponse = controller.execute(settings);
+        OrderStrategy orderStrategy = entryResponse.getResponseDataStructure();
+        return orderStrategy;
+    }
+
+
 
     private EntryStrategy setEntryStrategy(String entryStrategyName) {
         HashMap<String, String> settings = new HashMap<>();

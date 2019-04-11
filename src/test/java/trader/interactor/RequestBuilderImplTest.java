@@ -9,6 +9,8 @@ import trader.entity.trade.Trade;
 import trader.entry.EntryStrategy;
 import trader.entry.StandardEntryStrategy;
 import trader.exception.*;
+import trader.order.OrderStrategy;
+import trader.order.StandardOrderStrategy;
 import trader.requestor.Request;
 import trader.requestor.RequestBuilder;
 import trader.entity.indicator.ma.SimpleMovingAverage;
@@ -184,5 +186,41 @@ public class RequestBuilderImplTest {
         EntryStrategy entryStrategy = (EntryStrategy) entryStrategyRequest.getRequestDataStructure();
 
         assertEquals(StandardEntryStrategy.class, entryStrategy.getClass());
+    }
+
+
+
+
+    @Test(expected = NullArgumentException.class)
+    public void WhenCallBuildWithAddOrderStrategyControllerWithBadKeyNameInSettings_Exception(){
+        settings.put("order", "standard");
+        requestBuilder.build("AddOrderStrategyController", settings);
+    }
+
+    @Test(expected = NullArgumentException.class)
+    public void WhenCallBuildWithAddOrderStrategyControllerWithNullValueInSettings_Exception(){
+        settings.put("orderStrategy", null);
+        requestBuilder.build("AddOrderStrategyController", settings);
+    }
+
+    @Test(expected = NoSuchStrategyException.class)
+    public void WhenCallBuildWithAddOrderStrategyControllerWithEmptyValueInSettings_Exception(){
+        settings.put("orderStrategy", "   ");
+        requestBuilder.build("AddOrderStrategyController", settings);
+    }
+
+    @Test(expected = NoSuchStrategyException.class)
+    public void WhenCallBuildWithAddOrderStrategyControllerWithENonExistingStrtegy_Exception(){
+        settings.put("orderStrategy", "non");
+        requestBuilder.build("AddOrderStrategyController", settings);
+    }
+
+    @Test
+    public void WhenCallBuildWithAddOrderStrategyControllerWithCorrectSettings_CorrectEntryStrategy(){
+        settings.put("orderStrategy", " standard ");
+        Request<?> orderStrategyRequest = requestBuilder.build("AddOrderStrategyController", settings);
+        OrderStrategy orderStrategy = (OrderStrategy) orderStrategyRequest.getRequestDataStructure();
+
+        assertEquals(StandardOrderStrategy.class, orderStrategy.getClass());
     }
 }
