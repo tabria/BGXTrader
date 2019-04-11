@@ -1,7 +1,6 @@
 package trader.broker.connector;
 
 import trader.entity.indicator.CandlesUpdaterConnector;
-import trader.order.Order;
 import trader.strategy.PriceConnector;
 import trader.entity.trade.TradeImpl;
 
@@ -13,7 +12,6 @@ public interface ApiConnector extends CandlesUpdaterConnector, PriceConnector {
 //        return BaseGateway.create(apiName);
 //    }
 
-    List<Order> getOpenOrders();
 
     List<TradeImpl> getOpenTrades();
 }

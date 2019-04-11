@@ -26,6 +26,36 @@ public class StandardOrderStrategy implements OrderStrategy {
         lastOrderTransactionID = null;
     }
 
+
+    @Override
+    public void closeUnfilledOrders() {
+//        MarketIfTouchedOrder notFilledOrder = this.getMarketIfTouchedOrder(account);
+//
+//        if (notFilledOrder == null) {
+//            return;
+//        }
+//
+//        BigDecimal stopLossPrice = notFilledOrder.getStopLossOnFill().getPrice().bigDecimalValue();
+//        BigDecimal units = notFilledOrder.getUnits().bigDecimalValue();
+//
+//        BigDecimal delta = null;
+//        if(units.compareTo(BigDecimal.ZERO) < 0) {
+//            delta = ask.subtract(stopLossPrice).setScale(5, BigDecimal.ROUND_HALF_UP);
+//        } else if(units.compareTo(BigDecimal.ZERO) > 0){
+//            delta = stopLossPrice.subtract(bid).setScale(5, BigDecimal.ROUND_HALF_UP);
+//
+//        }
+//        if(delta != null && delta.compareTo(STOP_LOSS_OFFSET) > 0){
+//            this.cancelOrder(account.getId(), notFilledOrder.getId());
+//
+//            TransactionID id = this.cancelOrderResponse.getOrderCancelTransaction().getId();
+//            DateTime time = this.cancelOrderResponse.getOrderCancelTransaction().getTime();
+//
+//            System.out.println("Order canceled id: "+id.toString()+" time: "+time);
+//        }
+    }
+
+    @Override
     public void placeTradeAsOrder(BrokerGateway brokerGateway, Price price, Trade trade, TradingStrategyConfiguration configuration){
         if(brokerGateway == null || price == null || trade == null || configuration == null)
             throw new NullArgumentException();
@@ -40,6 +70,7 @@ public class StandardOrderStrategy implements OrderStrategy {
         }
     }
 
+    @Override
     public BigDecimal calculateUnitsSize(BrokerGateway brokerGateway, Price price, Trade trade, TradingStrategyConfiguration configuration) {
         if(brokerGateway == null || price == null || trade == null || configuration == null)
             throw new NullArgumentException();
@@ -70,6 +101,7 @@ public class StandardOrderStrategy implements OrderStrategy {
                 PIP_MULTIPLIER).abs();
     }
 
+    @Override
     public BigDecimal calculateTradeMargin(BrokerGateway brokerGateway, BigDecimal unitsSize){
         if(brokerGateway == null || unitsSize == null)
             throw new NullArgumentException();

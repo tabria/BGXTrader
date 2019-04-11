@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import trader.CommonTestClassMembers;
 import trader.broker.BrokerGateway;
+import trader.configuration.BGXConfigurationImpl;
 import trader.controller.CreateTradeController;
 import trader.entry.EntryStrategy;
 import trader.entry.StandardEntryStrategy;
@@ -14,6 +15,8 @@ import trader.entity.candlestick.candle.CandlePriceType;
 import trader.entity.indicator.Indicator;
 import trader.exception.NullArgumentException;
 import trader.configuration.TradingStrategyConfiguration;
+import trader.order.OrderStrategy;
+import trader.order.StandardOrderStrategy;
 import trader.strategy.Observable;
 import trader.strategy.observable.PriceObservable;
 
@@ -193,14 +196,29 @@ public class BGXStrategyMainTest {
     }
 
     @Test
-    public void WhenInstantiateOrderStrategyItMustBeCorrectType(){
-        EntryStrategy entryStrategy = (EntryStrategy) commonMembers.extractFieldObject(bgxStrategyMain, "entryStrategy");
-        Object createTradeController = commonMembers.extractFieldObject(entryStrategy, "createTradeController");
-        Object rsi = commonMembers.extractFieldObject(entryStrategy, "rsi");
+    public void WhenCallSetPositionObserverThenHeMustHaveOrderStrategy(){
+        Observer observer = bgxStrategyMain.setPositionObserver();
+        Object orderStrategy = commonMembers.extractFieldObject(observer, "orderStrategy");
 
-        assertNotNull(entryStrategy);
-        assertNotNull(createTradeController);
-        assertNotNull(rsi);
+        assertNotNull(orderStrategy);
+        assertEquals(StandardOrderStrategy.class, orderStrategy.getClass());
+    }
+
+    @Test
+    public void WhenCallSetPositionObserverThenHeMustHaveConfiguration(){
+        Observer observer = bgxStrategyMain.setPositionObserver();
+        Object configuration = commonMembers.extractFieldObject(observer, "configuration");
+
+        assertNotNull(configuration);
+        assertEquals(BGXConfigurationImpl.class, configuration.getClass());
+    }
+
+    @Test
+    public void WhenInstantiateOrderStrategyItMustBeCorrectType(){
+        Object orderStrategy = commonMembers.extractFieldObject(bgxStrategyMain, "orderStrategy");
+
+        assertNotNull(orderStrategy);
+        assertEquals(StandardOrderStrategy.class, orderStrategy.getClass());
     }
 
 //    @Test

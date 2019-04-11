@@ -60,7 +60,7 @@ public final class BGXStrategyMain implements Strategy {
 
 
     public BGXStrategyMain(String brokerName, String configurationFileName, String brokerConfigurationFileName, String entryStrategyName, String orderStrategyName) {
-        validateInput(brokerName, configurationFileName, brokerConfigurationFileName, entryStrategyName);
+        validateInput(brokerName, configurationFileName, brokerConfigurationFileName, entryStrategyName, orderStrategyName);
         requestBuilder = new RequestBuilderImpl();
         useCaseFactory = new UseCaseFactoryImpl();
         configuration = setConfiguration(configurationFileName);
@@ -70,7 +70,7 @@ public final class BGXStrategyMain implements Strategy {
         entryStrategy = setEntryStrategy(entryStrategyName);
         orderStrategy = setOrderStrategy(orderStrategyName);
 
-//        orderStrategy = new OrderService(apiConnector);
+
         exitStrategy = BaseExitStrategy.createInstance();
     }
 
@@ -123,20 +123,16 @@ public final class BGXStrategyMain implements Strategy {
     //////////////////////////////////////////////////// not tested/////////
     Observer setPositionObserver(){
 
-       return new PositionObserver(brokerGateway, entryStrategy, orderStrategy);
+       return new PositionObserver(brokerGateway, entryStrategy, orderStrategy, configuration);
     }
 
-
-    private void addIndicatorsToBGXGenerator(){
-
-    }
 
 ///// not tested//////////////
 
-    private void validateInput(String brokerName, String configurationFileName, String brokerConfigurationFileName, String entryStrategyName) {
-        if(brokerName == null || configurationFileName == null || brokerConfigurationFileName == null || entryStrategyName == null)
+    private void validateInput(String brokerName, String configurationFileName, String brokerConfigurationFileName, String entryStrategyName, String orderStrategyName) {
+        if(brokerName == null || configurationFileName == null || brokerConfigurationFileName == null || entryStrategyName == null || orderStrategyName == null)
             throw new NullArgumentException();
-        if(brokerName.trim().isEmpty() || configurationFileName.trim().isEmpty() || brokerConfigurationFileName.trim().isEmpty() || entryStrategyName.trim().isEmpty())
+        if(brokerName.trim().isEmpty() || configurationFileName.trim().isEmpty() || brokerConfigurationFileName.trim().isEmpty() || entryStrategyName.trim().isEmpty() || orderStrategyName.trim().isEmpty())
             throw new EmptyArgumentException();
     }
 
@@ -185,9 +181,6 @@ public final class BGXStrategyMain implements Strategy {
 
 
 
-    private boolean haveOpenOrders() {
-        return apiConnector.getOpenOrders().size() > 0;
-    }
 
     private boolean haveOpenTrades() {
         return apiConnector.getOpenTrades().size()>0;

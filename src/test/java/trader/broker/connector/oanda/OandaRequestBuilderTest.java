@@ -2,6 +2,7 @@ package trader.broker.connector.oanda;
 
 import com.oanda.v20.account.AccountID;
 import com.oanda.v20.instrument.InstrumentCandlesRequest;
+import com.oanda.v20.order.MarketIfTouchedOrderRequest;
 import com.oanda.v20.order.OrderCreateRequest;
 import com.oanda.v20.pricing.PricingGetRequest;
 import org.junit.Before;
@@ -23,7 +24,8 @@ public class OandaRequestBuilderTest {
     private static final String EXPECTED_QUANTITY = "5";
     private static final String GRANULARITY = "granularity";
     private static final String EXPECTED_GRANULARITY = "M30";
-    public static final String MARKET_IF_TOUCHED_ORDER = "marketIfTouchedOrder";
+    private static final String GET_MARKET_IF_TOUCHED_ORDER = "getMarketIfTouchedOrder";
+    private static final String CREATE_MARKET_IF_TOUCHED_ORDER = "createMarketIfTouchedOrder";
 
     private OandaRequestBuilder request;
     private HashMap<String, String> settings;
@@ -235,7 +237,6 @@ public class OandaRequestBuilderTest {
         assertEquals(EXPECTED_QUANTITY, queryParams.get("count").toString());
         assertEquals(EXPECTED_GRANULARITY, queryParams.get(GRANULARITY).toString());
         assertEquals("false",queryParams.get("smooth").toString());
-
     }
 
     @Test(expected = EmptyArgumentException.class)
@@ -273,167 +274,168 @@ public class OandaRequestBuilderTest {
     }
 
     @Test(expected = BadRequestException.class)
-    public void WhenCallBuildMarketIfTouchedOrderWithWrongAccountIDKeyName_Exception(){
+    public void WhenCallBuildCreateMarketIfTouchedOrderWithWrongAccountIDKeyName_Exception(){
         settings.put("xxx", "xxx");
-        this.request.build(MARKET_IF_TOUCHED_ORDER, settings);
+        this.request.build(CREATE_MARKET_IF_TOUCHED_ORDER, settings);
     }
 
     @Test(expected = BadRequestException.class)
-    public void WhenCallBuildMarketIfTouchedOrderWithWrongInstrumentKeyName_Exception(){
+    public void WhenCallBuildCreateMarketIfTouchedOrderWithWrongInstrumentKeyName_Exception(){
         settings.put("accountID", "xxx");
         settings.put("in", "xxx");
-        this.request.build(MARKET_IF_TOUCHED_ORDER, settings);
+        this.request.build(CREATE_MARKET_IF_TOUCHED_ORDER, settings);
     }
 
     @Test(expected = BadRequestException.class)
-    public void WhenCallBuildMarketIfTouchedOrderWithWrongUnitSizeKeyName_Exception(){
+    public void WhenCallBuildCreateMarketIfTouchedOrderWithWrongUnitSizeKeyName_Exception(){
         settings.put("accountID", "xxx");
         settings.put("instrument", "xxx");
         settings.put("usi", "xxx");
-        this.request.build(MARKET_IF_TOUCHED_ORDER, settings);
+        this.request.build(CREATE_MARKET_IF_TOUCHED_ORDER, settings);
     }
 
     @Test(expected = BadRequestException.class)
-    public void WhenCallBuildMarketIfTouchedOrderWithWrongTradeEntryPriceKeyName_Exception(){
+    public void WhenCallBuildCreateMarketIfTouchedOrderWithWrongTradeEntryPriceKeyName_Exception(){
         settings.put("accountID", "xxx");
         settings.put("instrument", "xxx");
         settings.put("unitsSize", "xxx");
         settings.put("entry", "xxx");
-        this.request.build(MARKET_IF_TOUCHED_ORDER, settings);
+        this.request.build(CREATE_MARKET_IF_TOUCHED_ORDER, settings);
     }
 
     @Test(expected = BadRequestException.class)
-    public void WhenCallBuildMarketIfTouchedOrderWithWrongTradeStopLossPriceKeyName_Exception(){
+    public void WhenCallBuildCreateMarketIfTouchedOrderWithWrongTradeStopLossPriceKeyName_Exception(){
         settings.put("accountID", "xxx");
         settings.put("instrument", "xxx");
         settings.put("unitsSize", "xxx");
         settings.put("tradeEntryPrice", "xxx");
         settings.put("stopLoss", "xxx");
-        this.request.build(MARKET_IF_TOUCHED_ORDER, settings);
+        this.request.build(CREATE_MARKET_IF_TOUCHED_ORDER, settings);
     }
 
     @Test(expected = NullArgumentException.class)
-    public void WhenCallBuildForMarketIfTouchedOrderWithNullAccountIDValue_Exception(){
+    public void WhenCallBuildForCreateMarketIfTouchedOrderWithNullAccountIDValue_Exception(){
         settings.put("accountID", null);
-        this.request.build(MARKET_IF_TOUCHED_ORDER, settings);
+        this.request.build(CREATE_MARKET_IF_TOUCHED_ORDER, settings);
     }
 
     @Test(expected = NullArgumentException.class)
-    public void WhenCallBuildForMarketIfTouchedOrderWithNullInstrumentValue_Exception(){
+    public void WhenCallBuildForCreateMarketIfTouchedOrderWithNullInstrumentValue_Exception(){
         settings.put("accountID", "xxx");
         settings.put("instrument", null);
-        this.request.build(MARKET_IF_TOUCHED_ORDER, settings);
+        this.request.build(CREATE_MARKET_IF_TOUCHED_ORDER, settings);
     }
 
     @Test(expected = NullArgumentException.class)
-    public void WhenCallBuildForMarketIfTouchedOrderWithNullUnitsSizeValue_Exception(){
+    public void WhenCallBuildForCreateMarketIfTouchedOrderWithNullUnitsSizeValue_Exception(){
         settings.put("accountID", "xxx");
         settings.put("instrument", "xxx");
         settings.put("unitsSize", null);
-        this.request.build(MARKET_IF_TOUCHED_ORDER, settings);
+        this.request.build(CREATE_MARKET_IF_TOUCHED_ORDER, settings);
     }
 
     @Test(expected = NullArgumentException.class)
-    public void WhenCallBuildForMarketIfTouchedOrderWithNullTradeEntryPriceValue_Exception(){
+    public void WhenCallBuildForCreateMarketIfTouchedOrderWithNullTradeEntryPriceValue_Exception(){
         settings.put("accountID", "xxx");
         settings.put("instrument", "xxx");
         settings.put("unitsSize", "xxx");
         settings.put("tradeEntryPrice", null);
-        this.request.build(MARKET_IF_TOUCHED_ORDER, settings);
+        this.request.build(CREATE_MARKET_IF_TOUCHED_ORDER, settings);
     }
 
     @Test(expected = NullArgumentException.class)
-    public void WhenCallBuildForMarketIfTouchedOrderWithNullTradeStopLossPriceValue_Exception(){
+    public void WhenCallBuildForCreateMarketIfTouchedOrderWithNullTradeStopLossPriceValue_Exception(){
         settings.put("accountID", "xxx");
         settings.put("instrument", "xxx");
         settings.put("unitsSize", "xxx");
         settings.put("tradeEntryPrice", "xxx");
         settings.put("tradeStopLossPrice", null);
-        this.request.build(MARKET_IF_TOUCHED_ORDER, settings);
+        this.request.build(CREATE_MARKET_IF_TOUCHED_ORDER, settings);
     }
 
     @Test(expected = EmptyArgumentException.class)
-    public void WhenCallBuildForMarketIfTouchedOrderWithEmptyAccountIDValue_Exception(){
+    public void WhenCallBuildForCreateMarketIfTouchedOrderWithEmptyAccountIDValue_Exception(){
         settings.put("accountID", "  ");
-        this.request.build(MARKET_IF_TOUCHED_ORDER, settings);
+        this.request.build(CREATE_MARKET_IF_TOUCHED_ORDER, settings);
     }
 
     @Test(expected = EmptyArgumentException.class)
-    public void WhenCallBuildForMarketIfTouchedOrderWithEmptyInstrumentValue_Exception(){
+    public void WhenCallBuildForCreateMarketIfTouchedOrderWithEmptyInstrumentValue_Exception(){
         settings.put("accountID", "xxx");
         settings.put("instrument", "  ");
-        this.request.build(MARKET_IF_TOUCHED_ORDER, settings);
+        this.request.build(CREATE_MARKET_IF_TOUCHED_ORDER, settings);
     }
 
     @Test(expected = EmptyArgumentException.class)
-    public void WhenCallBuildForMarketIfTouchedOrderWithEmptyUnitsSizeValue_Exception(){
+    public void WhenCallBuildForCreateMarketIfTouchedOrderWithEmptyUnitsSizeValue_Exception(){
         settings.put("accountID", "xxx");
         settings.put("instrument", "xxx");
         settings.put("unitsSize", "  ");
-        this.request.build(MARKET_IF_TOUCHED_ORDER, settings);
+        this.request.build(CREATE_MARKET_IF_TOUCHED_ORDER, settings);
     }
 
     @Test(expected = EmptyArgumentException.class)
-    public void WhenCallBuildForMarketIfTouchedOrderWithEmptyTradeEntryPriceValue_Exception(){
+    public void WhenCallBuildForCreateMarketIfTouchedOrderWithEmptyTradeEntryPriceValue_Exception(){
         settings.put("accountID", "xxx");
         settings.put("instrument", "xxx");
         settings.put("unitsSize", "xxx");
         settings.put("tradeEntryPrice", "   ");
-        this.request.build(MARKET_IF_TOUCHED_ORDER, settings);
+        this.request.build(CREATE_MARKET_IF_TOUCHED_ORDER, settings);
     }
 
     @Test(expected = EmptyArgumentException.class)
-    public void WhenCallBuildForMarketIfTouchedOrderWithEmptyTradeStopLossPriceValue_Exception(){
+    public void WhenCallBuildForCreateMarketIfTouchedOrderWithEmptyTradeStopLossPriceValue_Exception(){
         settings.put("accountID", "xxx");
         settings.put("instrument", "xxx");
         settings.put("unitsSize", "xxx");
         settings.put("tradeEntryPrice", "xxx");
         settings.put("tradeStopLossPrice", "   ");
-        this.request.build(MARKET_IF_TOUCHED_ORDER, settings);
+        this.request.build(CREATE_MARKET_IF_TOUCHED_ORDER, settings);
     }
 
     @Test(expected = BadRequestException.class)
-    public void WhenCallBuildForMarketIfTouchedOrderWithNotANumberUnitsSize_Exception(){
+    public void WhenCallBuildForCreateMarketIfTouchedOrderWithNotANumberUnitsSize_Exception(){
         settings.put("accountID", "xxx");
         settings.put("instrument", "xxx");
         settings.put("unitsSize", "xxx");
-        this.request.build(MARKET_IF_TOUCHED_ORDER, settings);
+        this.request.build(CREATE_MARKET_IF_TOUCHED_ORDER, settings);
     }
 
     @Test(expected = BadRequestException.class)
-    public void WhenCallBuildForMarketIfTouchedOrderWithNotANumberTradeEntryPrice_Exception(){
+    public void WhenCallBuildForCreateMarketIfTouchedOrderWithNotANumberTradeEntryPrice_Exception(){
         settings.put("accountID", "xxx");
         settings.put("instrument", "xxx");
         settings.put("unitsSize", "xxx");
         settings.put("tradeEntryPrice", "xxx");
-        this.request.build(MARKET_IF_TOUCHED_ORDER, settings);
+        this.request.build(CREATE_MARKET_IF_TOUCHED_ORDER, settings);
     }
 
     @Test(expected = BadRequestException.class)
-    public void WhenCallBuildForMarketIfTouchedOrderWithNotANumberTradeStopLossPrice_Exception(){
+    public void WhenCallBuildForCreateMarketIfTouchedOrderWithNotANumberTradeStopLossPrice_Exception(){
         settings.put("accountID", "xxx");
         settings.put("instrument", "xxx");
         settings.put("unitsSize", "xxx");
         settings.put("tradeEntryPrice", "xxx");
         settings.put("tradeStopLossPrice", "xxx");
-        this.request.build(MARKET_IF_TOUCHED_ORDER, settings);
+        this.request.build(CREATE_MARKET_IF_TOUCHED_ORDER, settings);
     }
 
     @Test
-    public void WhenCallBuildForMarketIfTouchedOrderWithCorrectSettings_CorrectResult(){
+    public void WhenCallBuildForCreateMarketIfTouchedOrderWithCorrectSettings_CorrectResult(){
         String expectedID = "12";
         settings.put("accountID", expectedID);
         settings.put("instrument", "EUR_USD");
         settings.put("unitsSize", "100");
         settings.put("tradeEntryPrice", "1.1200");
         settings.put("tradeStopLossPrice", "1.1980");
-        Request<?> marketIfTouchedRequest = this.request.build(MARKET_IF_TOUCHED_ORDER, settings);
+        Request<?> marketIfTouchedRequest = this.request.build(CREATE_MARKET_IF_TOUCHED_ORDER, settings);
         OrderCreateRequest request = (OrderCreateRequest) marketIfTouchedRequest.getRequestDataStructure();
         HashMap<String, Object> pathParams = request.getPathParams();
         AccountID accountID = (AccountID) pathParams.get("accountID");
 
         assertEquals("12", accountID.toString());
     }
+
 
     private Class<? extends PricingGetRequest> getRequestClass(PricingGetRequest request) {
         return request.getClass();

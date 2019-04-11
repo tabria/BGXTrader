@@ -4,13 +4,9 @@ import com.oanda.v20.Context;
 import com.oanda.v20.ContextBuilder;
 import com.oanda.v20.account.*;
 import com.oanda.v20.instrument.InstrumentCandlesResponse;
-import com.oanda.v20.order.MarketIfTouchedOrderRequest;
-import com.oanda.v20.order.OrderCreateRequest;
-import com.oanda.v20.order.OrderCreateResponse;
+import com.oanda.v20.order.*;
 import com.oanda.v20.pricing.PricingGetResponse;
-import com.oanda.v20.transaction.StopLossDetails;
 import trader.broker.connector.*;
-import trader.config.Config;
 import trader.entity.candlestick.Candlestick;
 import trader.price.Price;
 import trader.requestor.Request;
@@ -27,7 +23,8 @@ public class OandaGateway extends BaseGateway {
     private static final String INSTRUMENT = "instrument";
     private static final String PRICE = "price";
     private static final String CANDLE = "candle";
-    private static final String MARKET_IF_TOUCHED_ORDER = "marketIfTouchedOrder";
+    private static final String CREATE_MARKET_IF_TOUCHED_ORDER = "createMarketIfTouchedOrder";
+    private static final String NON_EXISTING_MARKET_IF_TOUCHED_ORDER_ID = "0";
 
     private Context context;
     private BrokerConnector connector;
@@ -66,12 +63,23 @@ public class OandaGateway extends BaseGateway {
         return oandaCandlesTransformer.transformCandlesticks(candlesResponse);
     }
 
+    @Override
     public String placeMarketIfTouchedOrder(HashMap<String, String> settings){
         settings.put(ACCOUNT_ID, getConnector().getAccountID());
-        Request<?> marketIfTouchedOrderRequest = oandaRequestBuilder.build(MARKET_IF_TOUCHED_ORDER, settings);
-        Response<OrderCreateResponse> marketIfTouchedOrderResponse = oandaResponseBuilder.buildResponse(MARKET_IF_TOUCHED_ORDER, marketIfTouchedOrderRequest);
+        Request<?> marketIfTouchedOrderRequest = oandaRequestBuilder.build(CREATE_MARKET_IF_TOUCHED_ORDER, settings);
+        Response<OrderCreateResponse> marketIfTouchedOrderResponse = oandaResponseBuilder.buildResponse(CREATE_MARKET_IF_TOUCHED_ORDER, marketIfTouchedOrderRequest);
         OrderCreateResponse orderResponse =marketIfTouchedOrderResponse.getResponseDataStructure();
         return orderResponse.getOrderCreateTransaction().getId().toString();
+    }
+
+    @Override
+    public String getNotFilledOrderID(){
+        List<Order> orders = getAccount().getOrders();
+        for (Order order : orders){
+            if (order.getType().equals(OrderType.MARKET_IF_TOUCHED))
+                return order.getId().toString();
+        }
+        return NON_EXISTING_MARKET_IF_TOUCHED_ORDER_ID;
     }
 
     @Override

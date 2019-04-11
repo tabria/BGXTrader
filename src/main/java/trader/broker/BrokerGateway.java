@@ -20,6 +20,7 @@ public interface BrokerGateway {
     BigDecimal getAvailableMargin();
     BigDecimal getBalance();
     BrokerConnector getConnector();
+    String getNotFilledOrderID();
     String placeMarketIfTouchedOrder(HashMap<String, String> settings);
 
 //    List<TradeImpl> getOpenTrades();

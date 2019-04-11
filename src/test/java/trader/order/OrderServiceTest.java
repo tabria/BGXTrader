@@ -144,6 +144,7 @@ public class OrderServiceTest {
 
     }
 
+
     private void settings() throws RequestException, ExecuteException {
         this.mockOrderCancelResponse = mock(OrderCancelResponse.class);
         this.mockOrderCancelTransaction = mock(OrderCancelTransaction.class);

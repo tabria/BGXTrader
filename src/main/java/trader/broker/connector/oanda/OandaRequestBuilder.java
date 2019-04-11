@@ -1,6 +1,5 @@
 package trader.broker.connector.oanda;
 
-import com.oanda.v20.account.Account;
 import com.oanda.v20.account.AccountID;
 import com.oanda.v20.instrument.CandlestickGranularity;
 import com.oanda.v20.instrument.InstrumentCandlesRequest;
@@ -49,14 +48,14 @@ class OandaRequestBuilder implements RequestBuilder {
             accountIDRequest.setRequestDataStructure(new AccountID(settings.get(ACCOUNT_ID)));
             return accountIDRequest;
         }
-        if(requestType.trim().equalsIgnoreCase("MarketIfTouchedOrder")){
+        if(requestType.trim().equalsIgnoreCase("createMarketIfTouchedOrder")){
             validateRequestInput(settings, ACCOUNT_ID, INSTRUMENT, UNITS_SIZE, TRADE_ENTRY_PRICE, TRADE_STOP_LOSS_PRICE);
-            return buildMarketIfTouchedOrderRequest(settings);
+            return buildCreateMarketIfTouchedOrderRequest(settings);
         }
         throw new NoSuchDataStructureException();
     }
 
-    private Request<OrderCreateRequest> buildMarketIfTouchedOrderRequest(HashMap<String, String> settings) {
+    private Request<OrderCreateRequest> buildCreateMarketIfTouchedOrderRequest(HashMap<String, String> settings) {
         AccountID accountID = new AccountID(settings.get(ACCOUNT_ID));
         StopLossDetails stopLossDetails = new StopLossDetails()
                 .setPrice(parseStringToDouble(settings.get(TRADE_STOP_LOSS_PRICE)));

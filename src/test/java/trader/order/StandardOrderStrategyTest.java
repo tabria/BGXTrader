@@ -206,6 +206,7 @@ public class StandardOrderStrategyTest {
         assertEquals(expectedID, lastID);
     }
 
+
     private void setFakeBrokerGateway(double availableMargin, double marginUsed, double balance) {
         when(brokerGatewayMock.getConnector()).thenReturn(connectorMock);
         when(brokerGatewayMock.getAvailableMargin()).thenReturn(BigDecimal.valueOf(availableMargin));

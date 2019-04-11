@@ -1,6 +1,7 @@
 package trader.observer;
 
 import trader.broker.BrokerGateway;
+import trader.configuration.TradingStrategyConfiguration;
 import trader.entity.trade.Direction;
 import trader.entity.trade.Trade;
 import trader.entry.EntryStrategy;
@@ -13,15 +14,17 @@ import java.math.BigDecimal;
 public class PositionObserver extends BaseObserver {
 
     private static final BigDecimal TRADABLE_THRESHOLD = BigDecimal.valueOf(0.0020);
+    private TradingStrategyConfiguration configuration;
     private EntryStrategy entryStrategy;
     private OrderStrategy orderStrategy;
 
-    public PositionObserver(BrokerGateway brokerGateway, EntryStrategy entryStrategy, OrderStrategy orderStrategy){
+    public PositionObserver(BrokerGateway brokerGateway, EntryStrategy entryStrategy, OrderStrategy orderStrategy, TradingStrategyConfiguration configuration){
         super(brokerGateway);
-        if(entryStrategy == null || orderStrategy == null)
+        if(entryStrategy == null || orderStrategy == null || configuration == null)
             throw new NullArgumentException();
         this.entryStrategy = entryStrategy;
         this.orderStrategy = orderStrategy;
+        this.configuration = configuration;
     }
 
 //    private Context context;
@@ -51,13 +54,13 @@ public class PositionObserver extends BaseObserver {
 //
     @Override
     public void updateObserver(Price price) {
-        Trade trade = null;
         if(brokerGateway.totalOpenTradesSize() == 0 && brokerGateway.totalOpenOrdersSize() == 0){
             Trade newTrade = entryStrategy.generateTrade();
-            if(isTradable(newTrade)) {
-                setTradableForThreshold(price, newTrade);
-            }
-        }
+            setTradableForThreshold(price, newTrade);
+            if(isTradable(newTrade))
+               orderStrategy.placeTradeAsOrder(brokerGateway, price, newTrade, configuration);
+        } else if(brokerGateway.totalOpenOrdersSize() > 0)
+            orderStrategy.closeUnfilledOrders();
     }
 
     private boolean isTradable(Trade newTrade) {
@@ -65,9 +68,11 @@ public class PositionObserver extends BaseObserver {
     }
 
     private void setTradableForThreshold(Price price, Trade newTrade) {
-        BigDecimal delta = getEntryPriceAndPriceDelta(newTrade, price);
-        if(delta.compareTo(TRADABLE_THRESHOLD) > 0)
-            newTrade.setTradable("false");
+        if(isTradable(newTrade)) {
+            BigDecimal delta = getEntryPriceAndPriceDelta(newTrade, price);
+            if (delta.compareTo(TRADABLE_THRESHOLD) > 0)
+                newTrade.setTradable("false");
+        }
     }
 
     private BigDecimal getEntryPriceAndPriceDelta(Trade newTrade, Price price) {
