@@ -25,9 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static junit.framework.TestCase.assertSame;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -183,36 +181,49 @@ public class OandaGatewayTest {
     }
 
     @Test
-    public void WhenCallGetNotFilledOrderID_CorrectID(){
-        String id = "11";
+    public void WhenCallGetOrderAndThereAreNoOrders_ReturnNull(){
         setFakeContext();
         setFakeBuilders();
-        MarketIfTouchedOrder orderMock = setFakeMarketIFTouchedOrder(id);
+        List<Order> orderList = new ArrayList<>();
+        when(responseMock.getResponseDataStructure()).thenReturn(accountMock);
+        when(accountMock.getOrders()).thenReturn(orderList);
+
+        trader.entity.order.Order order = oandaGateway.getOrder(trader.entity.order.enums.OrderType.MARKET_IF_TOUCHED);
+
+        assertNull(order);
+    }
+
+    @Test
+    public void WhenCallGetOrderWithMarketIfTouchedOrderType_CorrectOrder(){
+        setFakeContext();
+        setFakeBuilders();
+        MarketIfTouchedOrder orderMock = setFakeMarketIFTouchedOrder();
+        setFakeOrderList(orderMock);
+        trader.entity.order.Order expected = mock(trader.entity.order.Order.class);
+        setFakeOrderTransformer(expected);
+
+        trader.entity.order.Order order = oandaGateway.getOrder(trader.entity.order.enums.OrderType.MARKET_IF_TOUCHED);
+
+        assertEquals(order, expected);
+    }
+
+    private void setFakeOrderList(MarketIfTouchedOrder orderMock) {
         List<Order> orderList = new ArrayList<>();
         orderList.add(orderMock);
         when(responseMock.getResponseDataStructure()).thenReturn(accountMock);
         when(accountMock.getOrders()).thenReturn(orderList);
-
-        String notFilledOrderID = oandaGateway.getNotFilledOrderID();
-
-        assertEquals(id, notFilledOrderID);
     }
 
-    @Test
-    public void testGetOrderToReturnCorrectValue(){
-        setFakeOrder();
-        setFakePrice();
-        Price actualPrice = oandaGateway.getPrice("EUR_USD");
+    private void setFakeOrderTransformer(trader.entity.order.Order expected){
+        OandaOrderTransformer orderTransformerMock = mock(OandaOrderTransformer.class);
 
-        assertEquals(mockPrice, actualPrice);
+        when(orderTransformerMock.transformOrder(any(Order.class))).thenReturn(expected);
+        commonMembers.changeFieldObject(oandaGateway, "oandaOrderTransformer", orderTransformerMock);
     }
 
-    private MarketIfTouchedOrder setFakeMarketIFTouchedOrder(String id) {
+    private MarketIfTouchedOrder setFakeMarketIFTouchedOrder() {
         MarketIfTouchedOrder orderMock = mock(MarketIfTouchedOrder.class);
-        OrderID orderID = mock(OrderID.class);
-        when(orderID.toString()).thenReturn(id);
         when(orderMock.getType()).thenReturn(OrderType.MARKET_IF_TOUCHED);
-        when(orderMock.getId()).thenReturn(orderID);
         return orderMock;
     }
 
@@ -267,13 +278,6 @@ public class OandaGatewayTest {
         when(connectorMock.getUrl()).thenReturn("dd");
     }
 
-    private void setFakeOrder(){
-        setFakeContext();
-        setFakeBuilders();
-        //to be finished
-    //    setFakeOrderTransformer();
-    }
-
     @SuppressWarnings("unchecked")
     private void setFakePriceTransformer() {
         OandaPriceTransformer mockPriceTransformer = mockPriceTransformer = mock(OandaPriceTransformer.class);
@@ -296,41 +300,4 @@ public class OandaGatewayTest {
         when(mockRequestBuilder.build(anyString(), any(HashMap.class))).thenReturn(requestMock);
         when(mockResponseBuilder.buildResponse(anyString(), eq(requestMock))).thenReturn(responseMock);
     }
-
-//
-//    @SuppressWarnings(value = "unchecked")
-//    @Test
-//    public void getCorrectInitialCandlesQuantiy() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-//        setCandlesResponseField();
-//        List<Candlestick> initialCandlesList = (List<Candlestick>) invokeTestMethod("getInitialCandles");
-//
-//        assertSame(candlesticks, initialCandlesList);
-//    }
-//
-//    @Test
-//    public void getCorrectCandlesQuantityWhenUpdating() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-//        setCandlesResponseField();
-//        Candlestick candlestick = (Candlestick) invokeTestMethod("updateCandle");
-//
-//        assertSame(mockCandle, candlestick);
-//    }
-//
-//    @Test
-//    public void testGetUpdateCandle_CorrectResult(){
-//        setCandlesResponseField();
-//        assertEquals(mockCandle, oandaGateway.updateCandle());
-//    }
-//
-//
-//    private void setCandlesResponseField() {
-//        when(mockCandlesResponse.getUpdateCandle()).thenReturn(mockCandle);
-//        when(mockCandlesResponse.getInitialCandles()).thenReturn(candlesticks);
-//        commonMembers.changeFieldObject(oandaGateway, "oandaCandlesResponse", mockCandlesResponse);
-//    }
-//
-//    private Object invokeTestMethod(String methodName) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-//        Method getUpdateCandles = commonMembers.getPrivateMethodForTest(oandaGateway, methodName);
-//        return getUpdateCandles.invoke(oandaGateway);
-//    }
-
 }

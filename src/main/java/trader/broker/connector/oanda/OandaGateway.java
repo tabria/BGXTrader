@@ -24,7 +24,6 @@ public class OandaGateway extends BaseGateway {
     private static final String PRICE = "price";
     private static final String CANDLE = "candle";
     private static final String CREATE_MARKET_IF_TOUCHED_ORDER = "createMarketIfTouchedOrder";
-    private static final String NON_EXISTING_MARKET_IF_TOUCHED_ORDER_ID = "0";
 
     private Context context;
     private BrokerConnector connector;
@@ -78,7 +77,7 @@ public class OandaGateway extends BaseGateway {
     public trader.entity.order.Order getOrder(trader.entity.order.enums.OrderType type){
         List<Order> orders = getAccount().getOrders();
         for (Order order : orders){
-            if (order.getType().equals(OrderType.MARKET_IF_TOUCHED)) {
+            if (order.getType().toString().equals(type.toString())) {
                 MarketIfTouchedOrder orderToTransform = (MarketIfTouchedOrder) order;
                 return oandaOrderTransformer.transformOrder(orderToTransform);
             }
@@ -86,16 +85,20 @@ public class OandaGateway extends BaseGateway {
         return null;
     }
 
+    //to be tested
+    @Override
+    public void cancelOrder(String orderID) {
+        HashMap<String, String> settings = new HashMap<>();
+        settings.put("orderID", orderID);
+        Request<?> orderCancelRequest = oandaRequestBuilder.build("cancelOrder", settings);
+        Response<OrderCancelResponse> cancelOrderResponse = oandaResponseBuilder.buildResponse("cancelOrder",orderCancelRequest);
 
-    public String getNotFilledOrderID(){
-        List<Order> orders = getAccount().getOrders();
-        for (Order order : orders){
-            if (order.getType().equals(OrderType.MARKET_IF_TOUCHED)) {
-                MarketIfTouchedOrder order1 = (MarketIfTouchedOrder) order;
-                return order.getId().toString();
-            }
-        }
-        return NON_EXISTING_MARKET_IF_TOUCHED_ORDER_ID;
+//        OrderSpecifier orderSpecifier = new OrderSpecifier(orderID);
+//        try {
+//            this.cancelOrderResponse = this.context.order.cancel(accountID, orderSpecifier);
+//        } catch (RequestException | ExecuteException e) {
+//            throw new RuntimeException(e);
+//        }
     }
 
     @Override
@@ -158,63 +161,4 @@ public class OandaGateway extends BaseGateway {
         settings.put(ACCOUNT_ID, connector.getAccountID());
         return settings;
     }
-
-
-
-//    @Override
-//    public List<Candlestick> getInitialCandles() {
-//        return oandaCandlesResponse.getInitialCandles();
-//    }
-//
-//    @Override
-//    public Candlestick updateCandle(){
-//        return oandaCandlesResponse.getUpdateCandle();
-//    }
-//
-//    @Override
-//    public List<Order> getOpenOrders() {
-//        return null;
-//    }
-//
-//
-//    @Override
-//    public List<TradeImpl> getOpenTrades() {
-//        return null;
-//    }
-
-
-//    AccountID getAccountID(){
-//        return oandaConfig.getAccountID();
-//    }
-//
-//    String getToken(){
-//        return oandaConfig.getToken();
-//    }
-//
-//    String getUrl(){
-//        return oandaConfig.getUrl();
-//    }
-
-//
-//    private void setOandaValidator() {
-//        oandaAccountValidator = new OandaAccountValidator();
-//    }
-//
-//    private void setOandaPriceResponse() {
-//        oandaResponseBuilder = new OandaResponseBuilder(this);
-//    }
-//
-//    private void setOandaCandlesResponse() {
-//        oandaCandlesResponse = new OandaCandlesResponse(this);
-//    }
-//
-//
-//    private void initialize() {
-//        setContext();
-//        setOandaValidator();
-//        validateAccount();
-//        setOandaPriceResponse();
-//        setOandaCandlesResponse();
-//    }
-
 }

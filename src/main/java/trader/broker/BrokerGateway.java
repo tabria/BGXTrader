@@ -23,6 +23,7 @@ public interface BrokerGateway {
     BigDecimal getBalance();
     BrokerConnector getConnector();
     Order getOrder(OrderType orderType);
+    void cancelOrder(String orderID);
     String placeMarketIfTouchedOrder(HashMap<String, String> settings);
 
 

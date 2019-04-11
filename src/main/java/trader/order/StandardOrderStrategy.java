@@ -2,6 +2,8 @@ package trader.order;
 
 import trader.broker.BrokerGateway;
 import trader.configuration.TradingStrategyConfiguration;
+import trader.entity.order.Order;
+import trader.entity.order.enums.OrderType;
 import trader.entity.trade.Direction;
 import trader.entity.trade.Trade;
 import trader.exception.EmptyArgumentException;
@@ -15,6 +17,7 @@ public class StandardOrderStrategy implements OrderStrategy {
 
     private static final BigDecimal ONE_PIP = BigDecimal.valueOf(0.0001);
     private static final BigDecimal PIP_MULTIPLIER = BigDecimal.valueOf(10_000);
+    private static final BigDecimal STOP_LOSS_OFFSET = BigDecimal.valueOf(0.0005);
     private static final String TRADE_STOP_LOSS_PRICE = "tradeStopLossPrice";
     private static final String TRADE_ENTRY_PRICE = "tradeEntryPrice";
     private static final String INSTRUMENT = "instrument";
@@ -29,33 +32,17 @@ public class StandardOrderStrategy implements OrderStrategy {
 
     @Override
     public void closeUnfilledOrders(BrokerGateway brokerGateway, Price price) {
-        int orderID = parseOrderID(brokerGateway);
-       if ( orderID > 0){
-//           BigDecimal stopLossPrice = notFilledOrder.getStopLossOnFill().getPrice().bigDecimalValue();
+        Order order = brokerGateway.getOrder(OrderType.MARKET_IF_TOUCHED);
+        if ( parseOrderID(order) > 0){
+           BigDecimal delta = calculateStopLossAndPriceDelta(order, price);
+           if(delta != null && delta.compareTo(STOP_LOSS_OFFSET) > 0){
+               brokerGateway.cancelOrder(order.getId());
+//               TransactionID id = this.cancelOrderResponse.getOrderCancelTransaction().getId();
+//               DateTime time = this.cancelOrderResponse.getOrderCancelTransaction().getTime();
+//
+//               System.out.println("Order canceled id: "+id.toString()+" time: "+time);
+           }
        }
-
-
-//        BigDecimal units = notFilledOrder.getUnits().bigDecimalValue();
-//
-//        BigDecimal delta = null;
-//        if(units.compareTo(BigDecimal.ZERO) < 0) {
-//            delta = ask.subtract(stopLossPrice).setScale(5, BigDecimal.ROUND_HALF_UP);
-//        } else if(units.compareTo(BigDecimal.ZERO) > 0){
-//            delta = stopLossPrice.subtract(bid).setScale(5, BigDecimal.ROUND_HALF_UP);
-//
-//        }
-//        if(delta != null && delta.compareTo(STOP_LOSS_OFFSET) > 0){
-//            this.cancelOrder(account.getId(), notFilledOrder.getId());
-//
-//            TransactionID id = this.cancelOrderResponse.getOrderCancelTransaction().getId();
-//            DateTime time = this.cancelOrderResponse.getOrderCancelTransaction().getTime();
-//
-//            System.out.println("Order canceled id: "+id.toString()+" time: "+time);
-//        }
-    }
-
-    private int parseOrderID(BrokerGateway brokerGateway) {
-        return 1; //Integer.parseInt(brokerGateway.getNotFilledOrderID());
     }
 
     @Override
@@ -112,6 +99,21 @@ public class StandardOrderStrategy implements OrderStrategy {
         return  isNotZero(unitsSize) ? divide(unitsSize, new BigDecimal(leverage), 5) : BigDecimal.ZERO;
     }
 
+    private BigDecimal calculateStopLossAndPriceDelta(Order order, Price price){
+        BigDecimal delta = null;
+        if(order.getUnits().compareTo(BigDecimal.ZERO) < 0)
+            delta = subtract(price.getAsk(), order.getStopLossPrice());
+        else if(order.getUnits().compareTo(BigDecimal.ZERO) > 0)
+            delta = subtract(order.getStopLossPrice(), price.getBid());
+        return delta;
+    }
+
+    private int parseOrderID(Order order) {
+        if(order != null)
+            return Integer.parseInt(order.getId());
+        return -1;
+    }
+
     private HashMap<String, String> gatherOrderSettings(Trade trade, TradingStrategyConfiguration configuration, BigDecimal unitsSize) {
         HashMap<String, String> settings = new HashMap<>();
         settings.put(TRADE_STOP_LOSS_PRICE, trade.getStopLossPrice().toString());
@@ -121,8 +123,8 @@ public class StandardOrderStrategy implements OrderStrategy {
         return settings;
     }
 
-    private BigDecimal subtract(BigDecimal entryPrice, BigDecimal stopPrice) {
-        return entryPrice.subtract(stopPrice);
+    private BigDecimal subtract(BigDecimal valueA, BigDecimal valueB) {
+        return valueA.subtract(valueB).setScale(5, BigDecimal.ROUND_HALF_UP);
     }
 
     private boolean isShort(Trade trade) {

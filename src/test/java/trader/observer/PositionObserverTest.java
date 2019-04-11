@@ -166,9 +166,8 @@ public class PositionObserverTest extends BaseObserverTest {
 
 
     @Test(expected = BadRequestException.class)
-    public void WhenCallUpdateObserverAndHaveOpenOrderWithIDBiggerThanZero_CallCloseUnfilledOrders(){
+    public void WhenCallUpdateObserverAndHaveOpenOrder_CallCloseUnfilledOrders(){
         when(brokerGatewayMock.totalOpenOrdersSize()).thenReturn(11);
-     //   when(brokerGatewayMock.getNotFilledOrderID()).thenReturn("1");
         doThrow(new BadRequestException()).when(orderStrategyMock).closeUnfilledOrders(brokerGatewayMock, priceMock);
 
         positionObserver.updateObserver(priceMock);

@@ -81,9 +81,9 @@ public class PositionObserver extends BaseObserver {
         return entryPrice.subtract(currentPrice).abs();
     }
 
-    BrokerGateway getBrokerGateway() {
-        return brokerGateway;
-    }
+//    BrokerGateway getBrokerGateway() {
+//        return brokerGateway;
+//    }
 
     //    /**
 //     * Update current positions

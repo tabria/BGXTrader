@@ -6,8 +6,11 @@ import trader.CommonTestClassMembers;
 import trader.broker.BrokerGateway;
 import trader.broker.connector.BrokerConnector;
 import trader.configuration.TradingStrategyConfiguration;
+import trader.entity.order.Order;
+import trader.entity.order.enums.OrderType;
 import trader.entity.trade.Direction;
 import trader.entity.trade.Trade;
+import trader.exception.BadRequestException;
 import trader.exception.EmptyArgumentException;
 import trader.exception.NullArgumentException;
 import trader.price.Price;
@@ -18,6 +21,8 @@ import java.util.HashMap;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -26,6 +31,7 @@ public class StandardOrderStrategyTest {
     private BrokerGateway brokerGatewayMock;
     private Trade tradeMock;
     private Price priceMock;
+    private Order orderMock;
     private BrokerConnector connectorMock;
     private TradingStrategyConfiguration configurationMock;
     private StandardOrderStrategy orderStrategy;
@@ -37,6 +43,7 @@ public class StandardOrderStrategyTest {
         brokerGatewayMock = mock(BrokerGateway.class);
         tradeMock = mock(Trade.class);
         priceMock = mock(Price.class);
+        orderMock = mock(Order.class);
         connectorMock = mock(BrokerConnector.class);
         configurationMock = mock(TradingStrategyConfiguration.class);
         orderStrategy = new StandardOrderStrategy();
@@ -204,6 +211,62 @@ public class StandardOrderStrategyTest {
 
         assertNotEquals(lastOrderTransactionID, lastID);
         assertEquals(expectedID, lastID);
+    }
+
+    @Test
+    public void WhenCallCloseUnfilledOrdersAndNoWaitingOrders_NothingToRemove(){
+        when(brokerGatewayMock.getOrder(any(OrderType.class))).thenReturn(null);
+
+        doThrow(BadRequestException.class).when(brokerGatewayMock).cancelOrder(anyString());
+
+        orderStrategy.closeUnfilledOrders(brokerGatewayMock, priceMock);
+    }
+
+    @Test(expected = BadRequestException.class)
+    public void WhenCallCloseUnfilledOrdersForLongAndDifferenceBetweenStopLossAndPriceIsOverBoundary_CancelOrder(){
+        String orderId = "15";
+        setFakePrice(1.1221, 1.1220);
+        setFalseOrder(orderId, 1.1228, 100);
+        when(brokerGatewayMock.getOrder(any(OrderType.class))).thenReturn(orderMock);
+
+        doThrow(BadRequestException.class).when(brokerGatewayMock).cancelOrder(anyString());
+
+        orderStrategy.closeUnfilledOrders(brokerGatewayMock, priceMock);
+    }
+
+    @Test(expected = BadRequestException.class)
+    public void WhenCallCloseUnfilledOrdersForShortAndDifferenceBetweenStopLossAndPriceIsOverBoundary_CancelOrder(){
+        String orderId = "15";
+        setFakePrice(1.1227, 1.1225);
+        setFalseOrder(orderId, 1.1218, -100);
+        when(brokerGatewayMock.getOrder(any(OrderType.class))).thenReturn(orderMock);
+
+        doThrow(BadRequestException.class).when(brokerGatewayMock).cancelOrder(anyString());
+
+        orderStrategy.closeUnfilledOrders(brokerGatewayMock, priceMock);
+    }
+
+    @Test
+    public void WhenCallCloseUnfilledOrdersAndDifferenceBetweenStopLossAndPriceIsBelowBoundary_NoOrderToCancel(){
+        String orderId = "15";
+        setFakePrice(1.1221, 1.1220);
+        setFalseOrder(orderId, 1.1222, 100);
+        when(brokerGatewayMock.getOrder(any(OrderType.class))).thenReturn(orderMock);
+
+        doThrow(BadRequestException.class).when(brokerGatewayMock).cancelOrder(anyString());
+
+        orderStrategy.closeUnfilledOrders(brokerGatewayMock, priceMock);
+    }
+
+    private void setFakePrice(double askPrice, double bidPrice) {
+        when(priceMock.getAsk()).thenReturn(BigDecimal.valueOf(askPrice));
+        when(priceMock.getBid()).thenReturn(BigDecimal.valueOf(bidPrice));
+    }
+
+    private void setFalseOrder(String orderId, double orderStopLossPrice, double orderUnits) {
+        when(orderMock.getId()).thenReturn(orderId);
+        when(orderMock.getStopLossPrice()).thenReturn(BigDecimal.valueOf(orderStopLossPrice));
+        when(orderMock.getUnits()).thenReturn(BigDecimal.valueOf(orderUnits));
     }
 
 

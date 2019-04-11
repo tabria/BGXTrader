@@ -7,7 +7,6 @@ import trader.config.Config;
 import trader.strategy.bgxstrategy.BGXStrategyMain;
 import trader.strategy.Strategy;
 import trader.strategy.ThreadedStrategy;
-import trader.order.OrderService;
 import trader.exit.ExitStrategy;
 import trader.exit.exit_strategie.FullCloseStrategy;
 
@@ -119,7 +118,7 @@ public class Main {
         //create trade service
    //     NewTradeService newTradeService = new NewTradeService(context, signalGenerator);
         ExitStrategy exitStrategy = new FullCloseStrategy(context, Config.TIME_FRAME);
-        OrderService orderService = new OrderService(context);
+ //       OrderService orderService = new OrderService(context);
 
         //create position manager
       //  Observer tradeManager = new bgxstrategy(apiConnector);
