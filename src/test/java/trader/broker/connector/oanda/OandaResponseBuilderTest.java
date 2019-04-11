@@ -13,6 +13,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import trader.CommonTestClassMembers;
 import trader.OandaAPIMock.OandaAPIMockInstrument;
+import trader.OandaAPIMock.OandaAPIMockOrder;
 import trader.OandaAPIMock.OandaAPIMockPricing;
 import trader.connection.Connection;
 import trader.exception.EmptyArgumentException;
@@ -34,6 +35,7 @@ public class OandaResponseBuilderTest {
     private Request requestMock;
     private OandaAPIMockPricing oandaAPIMockPricing;
     private OandaAPIMockInstrument oandaAPIMockInstrument;
+    private OandaAPIMockOrder oandaAPIMockOrder;
     private OandaResponseBuilder responseBuilder;
     private CommonTestClassMembers commonMembers;
 
@@ -41,6 +43,7 @@ public class OandaResponseBuilderTest {
     public void setUp() throws RequestException, ExecuteException {
         oandaAPIMockPricing = new OandaAPIMockPricing();
         oandaAPIMockInstrument = new OandaAPIMockInstrument(2);
+        oandaAPIMockOrder = new OandaAPIMockOrder();
         oandaAPIMockPricing.setMockPricingGetResponse(oandaAPIMockPricing.getMockPricingGetResponse());
         contextMock = oandaAPIMockPricing.getContext();
         requestMock = mock(Request.class);
@@ -114,8 +117,7 @@ public class OandaResponseBuilderTest {
     @Test
     public void WhenBuildResponseThrowExecuteOrRequestExceptions_ResponseIsNull() throws RequestException, ExecuteException {
         oandaAPIMockPricing.setMockPricingGetResponseToThrowException(RequestException.class);
-        PowerMockito.mockStatic(Connection.class);
-        PowerMockito.when(Connection.waitToConnect(URL)).thenReturn(true);
+        setStaticConnectonWaitToReturnTrue();
         Response<PricingGetResponse> actualResponse = this.responseBuilder.buildResponse("price", requestMock);
         assertNull(actualResponse);
     }
@@ -137,13 +139,66 @@ public class OandaResponseBuilderTest {
 
     @Test
     public void WhenBuildResponseForCandleThrowExecuteOrRequestExceptions_ResponseIsNull() throws RequestException, ExecuteException {
-        OandaResponseBuilder responseBuilder = new OandaResponseBuilder(oandaAPIMockInstrument.getContext(), URL);
-        when(requestMock.getRequestDataStructure()).thenReturn(oandaAPIMockInstrument.getMockRequest());
-        oandaAPIMockInstrument.setMockInstrumentCandlesResponseToThrowException(RequestException.class);
-        PowerMockito.mockStatic(Connection.class);
-        PowerMockito.when(Connection.waitToConnect(URL)).thenReturn(true);
+        setStaticConnectonWaitToReturnTrue();
+        setInstrumentCandleResponseToThrowException(RequestException.class);
         Response<InstrumentCandlesResponse> actualResponse = responseBuilder.buildResponse("candle", requestMock);
 
         assertNull(actualResponse);
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void WhenBuildResponseWithCreateCandlesResponseThrowUnexpectedException_ThrowRuntimeException() throws RequestException, ExecuteException {
+        setInstrumentCandleResponseToThrowException(RuntimeException.class);
+        responseBuilder.buildResponse("candle", requestMock);
+    }
+
+
+    @Test
+    public void WhenCallBuildResponseWithMarketIfTouchedOrder_CorrectResponse(){
+        createFakeOrderCreateRequest();
+        Response response = responseBuilder.buildResponse("marketIfTouchedOrder", requestMock);
+
+        assertEquals(oandaAPIMockOrder.getMockOrderCreateResponse(), response.getResponseDataStructure());
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void WhenBuildResponseForCreateOrderCreateResponseThrowUnexpectedException_ThrowRuntimeException() throws RequestException, ExecuteException {
+        setOrderCreateResponseToThrowException(RuntimeException.class);
+        responseBuilder.buildResponse("marketIfTouchedOrder", requestMock);
+    }
+
+    @Test
+    public void WhenBuildResponseForCreateOrderCreateResponseThrowExecuteException_ReturnNull() throws RequestException, ExecuteException {
+        setStaticConnectonWaitToReturnTrue();
+        setOrderCreateResponseToThrowException(RequestException.class);
+        Response response = responseBuilder.buildResponse("marketIfTouchedOrder", requestMock);
+
+        assertNull(response);
+    }
+
+    private <T extends Throwable> void setOrderCreateResponseToThrowException(Class<T> exception) throws ExecuteException, RequestException {
+        createFakeOrderCreateRequest();
+        oandaAPIMockOrder.setMockOrderCreateResponseToThrowException(exception);
+    }
+
+    private <T extends Throwable> void setInstrumentCandleResponseToThrowException(Class<T> exception) throws ExecuteException, RequestException {
+        createFakeInstrumentCandleRequest();
+        oandaAPIMockInstrument.setMockInstrumentCandlesResponseToThrowException(exception);
+    }
+
+    private void createFakeInstrumentCandleRequest() {
+        responseBuilder = new OandaResponseBuilder(oandaAPIMockInstrument.getContext(), URL);
+        when(requestMock.getRequestDataStructure()).thenReturn(oandaAPIMockInstrument.getMockRequest());
+    }
+
+    private void createFakeOrderCreateRequest() {
+        responseBuilder = new OandaResponseBuilder(oandaAPIMockOrder.getContext(), URL);
+        when(requestMock.getRequestDataStructure()).thenReturn(oandaAPIMockOrder.getMockOrderCreateRequest());
+    }
+
+
+    private void setStaticConnectonWaitToReturnTrue() {
+        PowerMockito.mockStatic(Connection.class);
+        PowerMockito.when(Connection.waitToConnect(URL)).thenReturn(true);
     }
 }

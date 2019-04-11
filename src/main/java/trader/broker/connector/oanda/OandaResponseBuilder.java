@@ -5,7 +5,11 @@ import com.oanda.v20.ExecuteException;
 import com.oanda.v20.RequestException;
 import com.oanda.v20.instrument.InstrumentCandlesRequest;
 import com.oanda.v20.instrument.InstrumentCandlesResponse;
+import com.oanda.v20.order.OrderCreateRequest;
+import com.oanda.v20.order.OrderCreateResponse;
 import com.oanda.v20.pricing.*;
+import com.oanda.v20.primitives.DateTime;
+import com.oanda.v20.transaction.TransactionID;
 import trader.connection.Connection;
 import trader.exception.EmptyArgumentException;
 import trader.exception.NullArgumentException;
@@ -27,13 +31,27 @@ public class OandaResponseBuilder {
     public <T, E> Response<E> buildResponse(String type, Request<T> request) {
         verifyInput(request, type);
         if(type.trim().equalsIgnoreCase("price"))
-            return setResponse((E) createPriceResponse(context, url, request));
+            return setResponse((E) createPriceResponse(request));
         if(type.trim().equalsIgnoreCase("candle"))
-            return setResponse((E) createCandlesResponse(context, url, request));
+            return setResponse((E) createCandlesResponse(request));
+        if(type.trim().equalsIgnoreCase("marketIfTouchedOrder"))
+            return setResponse((E) createOrderCreateResponse(request));
         return null;
     }
 
-    private <T> PricingGetResponse createPriceResponse(Context context, String url, Request<T> priceRequest) {
+    private <T> OrderCreateResponse createOrderCreateResponse(Request<T> createMarketIfTouchedOrderRequest) {
+        try {
+            OrderCreateRequest request = (OrderCreateRequest) createMarketIfTouchedOrderRequest.getRequestDataStructure();
+            return context.order.create(request);
+        } catch (ExecuteException | RequestException e) {
+            Connection.waitToConnect(url);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
+    private <T> PricingGetResponse createPriceResponse(Request<T> priceRequest) {
         try {
             PricingGetRequest request = (PricingGetRequest) priceRequest.getRequestDataStructure();
             return context.pricing.get(request);
@@ -45,7 +63,7 @@ public class OandaResponseBuilder {
         return null;
     }
 
-    private <T> InstrumentCandlesResponse createCandlesResponse(Context context, String url, Request<T> candlesRequest) {
+    private <T> InstrumentCandlesResponse createCandlesResponse(Request<T> candlesRequest) {
         try{
             InstrumentCandlesRequest request = (InstrumentCandlesRequest) candlesRequest.getRequestDataStructure();
             return context.instrument.candles(request);

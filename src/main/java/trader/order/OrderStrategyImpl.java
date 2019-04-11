@@ -36,7 +36,7 @@ public class OrderStrategyImpl implements OrderStrategy {
         BigDecimal futureMargin = brokerGateway.getMarginUsed().add(tradeMargin).setScale(5, BigDecimal.ROUND_HALF_UP);
         if (availableMargin.compareTo(futureMargin)>0 && isNotZero(unitsSize)){
             HashMap<String, String> settings = gatherOrderSettings(trade, configuration, unitsSize);
-            lastOrderTransactionID = brokerGateway.placeMarketIfTouchedOrderOrder(settings);
+            lastOrderTransactionID = brokerGateway.placeMarketIfTouchedOrder(settings);
         }
     }
 

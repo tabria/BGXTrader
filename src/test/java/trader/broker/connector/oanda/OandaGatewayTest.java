@@ -2,10 +2,14 @@ package trader.broker.connector.oanda;
 
 import com.oanda.v20.Context;
 import com.oanda.v20.account.Account;
+import com.oanda.v20.order.OrderCreateResponse;
 import com.oanda.v20.primitives.AccountUnits;
 import com.oanda.v20.trade.TradeSummary;
+import com.oanda.v20.transaction.Transaction;
+import com.oanda.v20.transaction.TransactionID;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import trader.CommonTestClassMembers;
 import trader.broker.connector.BaseGateway;
 import trader.broker.connector.BrokerConnector;
@@ -23,6 +27,7 @@ import java.util.List;
 import static junit.framework.TestCase.assertSame;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -37,6 +42,11 @@ public class OandaGatewayTest {
     private Price mockPrice;
     private Response responseMock;
     private BrokerConnector connectorMock;
+    private Transaction transactionMock;
+    private TransactionID transactionIDMock;
+    private OandaResponseBuilder mockResponseBuilder;
+    private OandaRequestBuilder mockRequestBuilder;
+    private ArgumentCaptor<HashMap> argument;
 
 
     @Before
@@ -47,6 +57,11 @@ public class OandaGatewayTest {
         responseMock = mock(Response.class);
         connectorMock = mock(BrokerConnector.class);
         when(connectorMock.getUrl()).thenReturn(URL);
+        transactionMock = mock(Transaction.class);
+        transactionIDMock = mock(TransactionID.class);
+        mockResponseBuilder = mock(OandaResponseBuilder.class);
+        mockRequestBuilder = mock(OandaRequestBuilder.class);
+        argument = ArgumentCaptor.forClass(HashMap.class);
         oandaGateway = (OandaGateway) BaseGateway.create("Oanda", connectorMock);
     }
 
@@ -56,7 +71,7 @@ public class OandaGatewayTest {
     }
 
     @Test
-    public void WhenCallGetMarginUsedThenReturnCorrectresult(){
+    public void WhenCallGetMarginUsedThenReturnCorrectResult(){
         Account accountMock = mock(Account.class);
 
         AccountUnits accountUnitsMock = setFalseAccountUnits(accountMock);
@@ -66,7 +81,7 @@ public class OandaGatewayTest {
     }
 
     @Test
-    public void WhenCallGetAvailableMarginThenReturnCorrectresult(){
+    public void WhenCallGetAvailableMarginThenReturnCorrectResult(){
         Account accountMock = mock(Account.class);
 
         AccountUnits accountUnitsMock = setFalseAccountUnits(accountMock);
@@ -76,7 +91,7 @@ public class OandaGatewayTest {
     }
 
     @Test
-    public void WhenCallGetBalanceThenReturnCorrectresult(){
+    public void WhenCallGetBalanceThenReturnCorrectResult(){
         Account accountMock = mock(Account.class);
 
         AccountUnits accountUnitsMock = setFalseAccountUnits(accountMock);
@@ -96,6 +111,7 @@ public class OandaGatewayTest {
     @Test
     public void getContextReturnCorrectContext(){
         setFakeContext();
+
         assertEquals(oandaGateway.getContext(), contextMock);
     }
 
@@ -151,6 +167,43 @@ public class OandaGatewayTest {
         assertEquals(0,  oandaGateway.totalOpenOrdersSize());
     }
 
+    @Test
+    public void WhenCallPlaceMarketIfTouchedOrder_CorrectResult(){
+        String expectedID = "18";
+        String result = makeFakeMarketIfTouchedOrderCall(expectedID);
+
+        assertEquals(expectedID, result);
+    }
+
+    @Test
+    public void WhenCallPlaceMarketIfTouchedOrder_AddExtraEntryInSettings(){
+        String expectedID = "2";
+        makeFakeMarketIfTouchedOrderCall(expectedID);
+        verify(mockRequestBuilder).build(anyString(), argument.capture());
+        int argumentSize = argument.getValue().size();
+
+        assertTrue(argumentSize == 1);
+        assertTrue(argument.getValue().containsKey("accountID"));
+
+    }
+
+
+
+    private String makeFakeMarketIfTouchedOrderCall(String transactionID) {
+        setFakeContext();
+        setFakeBuilders();
+        setFakeTransaction(transactionID);
+        OrderCreateResponse orderResponseMock = mock(OrderCreateResponse.class);
+        when(orderResponseMock.getOrderCreateTransaction()).thenReturn(transactionMock);
+        when(responseMock.getResponseDataStructure()).thenReturn(orderResponseMock);
+        return oandaGateway.placeMarketIfTouchedOrder(new HashMap<>());
+    }
+
+    private void setFakeTransaction(String expectedID) {
+        when(transactionIDMock.toString()).thenReturn(expectedID);
+        when(transactionMock.getId()).thenReturn(transactionIDMock);
+    }
+
     private AccountUnits setFalseAccountUnits(Account accountMock) {
         AccountUnits accountUnitsMock = mock(AccountUnits.class);
         when(accountUnitsMock.bigDecimalValue()).thenReturn(BigDecimal.TEN);
@@ -203,8 +256,6 @@ public class OandaGatewayTest {
 
     @SuppressWarnings("unchecked")
     private void setFakeBuilders() {
-        OandaResponseBuilder mockResponseBuilder = mock(OandaResponseBuilder.class);
-        OandaRequestBuilder mockRequestBuilder = mock(OandaRequestBuilder.class);
         Request requestMock = mock(Request.class);
         commonMembers.changeFieldObject(oandaGateway, "oandaRequestBuilder", mockRequestBuilder);
         commonMembers.changeFieldObject(oandaGateway, "oandaResponseBuilder", mockResponseBuilder);

@@ -199,7 +199,7 @@ public class OrderStrategyImplTest {
         setFakeBrokerGateway(2000, 200, 1000 );
         setFalseInputForCalculatingUnitsSize(1.2000, 0.01);
         when(connectorMock.getLeverage()).thenReturn(leverage);
-        when(brokerGatewayMock.placeMarketIfTouchedOrderOrder(any(HashMap.class))).thenReturn(expectedID);
+        when(brokerGatewayMock.placeMarketIfTouchedOrder(any(HashMap.class))).thenReturn(expectedID);
         orderStrategy.placeTradeAsOrder(brokerGatewayMock, priceMock, tradeMock, configurationMock);
         String lastID = (String) commonMembers.extractFieldObject(orderStrategy, "lastOrderTransactionID");
 

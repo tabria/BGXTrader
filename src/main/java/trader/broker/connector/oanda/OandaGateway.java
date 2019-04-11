@@ -27,6 +27,7 @@ public class OandaGateway extends BaseGateway {
     private static final String INSTRUMENT = "instrument";
     private static final String PRICE = "price";
     private static final String CANDLE = "candle";
+    private static final String MARKET_IF_TOUCHED_ORDER = "marketIfTouchedOrder";
 
     private Context context;
     private BrokerConnector connector;
@@ -58,7 +59,6 @@ public class OandaGateway extends BaseGateway {
         return oandaPriceTransformer.transformToPrice(priceResponse);
     }
 
-    //to be tested
     @Override
     public List<Candlestick> getCandles(HashMap<String, String> settings) {
         Request<?> candleRequest = oandaRequestBuilder.build(CANDLE, settings);
@@ -66,22 +66,11 @@ public class OandaGateway extends BaseGateway {
         return oandaCandlesTransformer.transformCandlesticks(candlesResponse);
     }
 
-    public String placeMarketIfTouchedOrderOrder(HashMap<String, String> settings){
-        Request<?> marketIfTouchedOrderRequest = oandaRequestBuilder.build("marketIfTouchedOrder", settings);
-        //setting stop Loss for the new order
-//        StopLossDetails stopLossDetails = new StopLossDetails()
-//                .setPrice(newTrade.getStopLossPrice());
-//
-//        MarketIfTouchedOrderRequest marketIfTouchedOrderRequest = new MarketIfTouchedOrderRequest()
-//                .setInstrument(Config.INSTRUMENT)
-//                .setUnits(unitsSize)
-//                .setStopLossOnFill(stopLossDetails)
-//                .setPrice(newTrade.getEntryPrice());
-//
-//        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(Config.ACCOUNTID).setOrder(marketIfTouchedOrderRequest);
-
-        Response<OrderCreateResponse> marketIfTouchedOrderResponse = oandaResponseBuilder.buildResponse("marketIfTouchedOrder", marketIfTouchedOrderRequest);
-        OrderCreateResponse orderResponse = (OrderCreateResponse) marketIfTouchedOrderRequest.getRequestDataStructure();
+    public String placeMarketIfTouchedOrder(HashMap<String, String> settings){
+        settings.put(ACCOUNT_ID, getConnector().getAccountID());
+        Request<?> marketIfTouchedOrderRequest = oandaRequestBuilder.build(MARKET_IF_TOUCHED_ORDER, settings);
+        Response<OrderCreateResponse> marketIfTouchedOrderResponse = oandaResponseBuilder.buildResponse(MARKET_IF_TOUCHED_ORDER, marketIfTouchedOrderRequest);
+        OrderCreateResponse orderResponse =marketIfTouchedOrderResponse.getResponseDataStructure();
         return orderResponse.getOrderCreateTransaction().getId().toString();
     }
 

@@ -4,8 +4,11 @@ import com.oanda.v20.account.Account;
 import com.oanda.v20.account.AccountID;
 import com.oanda.v20.instrument.CandlestickGranularity;
 import com.oanda.v20.instrument.InstrumentCandlesRequest;
+import com.oanda.v20.order.MarketIfTouchedOrderRequest;
+import com.oanda.v20.order.OrderCreateRequest;
 import com.oanda.v20.pricing.PricingGetRequest;
 import com.oanda.v20.primitives.InstrumentName;
+import com.oanda.v20.transaction.StopLossDetails;
 import trader.controller.enums.SettingsFieldNames;
 import trader.entity.candlestick.candle.CandleGranularity;
 import trader.exception.*;
@@ -23,6 +26,9 @@ class OandaRequestBuilder implements RequestBuilder {
     private static final String INSTRUMENT = SettingsFieldNames.INSTRUMENT.toString();
     private static final String QUANTITY = SettingsFieldNames.QUANTITY.toString();
     private static final String GRANULARITY = SettingsFieldNames.GRANULARITY.toString();
+    private static final String UNITS_SIZE = "unitsSize";
+    private static final String TRADE_ENTRY_PRICE = "tradeEntryPrice";
+    private static final String TRADE_STOP_LOSS_PRICE = "tradeStopLossPrice";
 
     @Override
     public Request<?> build(String requestType, HashMap<String, String> settings) {
@@ -43,8 +49,27 @@ class OandaRequestBuilder implements RequestBuilder {
             accountIDRequest.setRequestDataStructure(new AccountID(settings.get(ACCOUNT_ID)));
             return accountIDRequest;
         }
-
+        if(requestType.trim().equalsIgnoreCase("MarketIfTouchedOrder")){
+            validateRequestInput(settings, ACCOUNT_ID, INSTRUMENT, UNITS_SIZE, TRADE_ENTRY_PRICE, TRADE_STOP_LOSS_PRICE);
+            return buildMarketIfTouchedOrderRequest(settings);
+        }
         throw new NoSuchDataStructureException();
+    }
+
+    private Request<OrderCreateRequest> buildMarketIfTouchedOrderRequest(HashMap<String, String> settings) {
+        AccountID accountID = new AccountID(settings.get(ACCOUNT_ID));
+        StopLossDetails stopLossDetails = new StopLossDetails()
+                .setPrice(parseStringToDouble(settings.get(TRADE_STOP_LOSS_PRICE)));
+        MarketIfTouchedOrderRequest marketIfTouchedOrderRequest = new MarketIfTouchedOrderRequest()
+                .setInstrument(settings.get(INSTRUMENT))
+                .setUnits(parseStringToDouble(settings.get(UNITS_SIZE)))
+                .setStopLossOnFill(stopLossDetails)
+                .setPrice(parseStringToDouble(settings.get(TRADE_ENTRY_PRICE)));
+        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(accountID)
+                .setOrder(marketIfTouchedOrderRequest);
+        Request<OrderCreateRequest> request = new RequestImpl<>();
+        request.setRequestDataStructure(orderCreateRequest);
+        return request;
     }
 
     private Request<PricingGetRequest> buildPricingRequest(HashMap<String, String> settings) {
@@ -87,6 +112,14 @@ class OandaRequestBuilder implements RequestBuilder {
 
     private boolean isEmpty(HashMap<String, String> settings, String element) {
         return settings.get(element).trim().isEmpty();
+    }
+
+    private double parseStringToDouble(String str){
+        try{
+            return  Double.parseDouble(str);
+        } catch (RuntimeException e){
+            throw new BadRequestException();
+        }
     }
 
     private long parseQuantity(HashMap<String, String> settings) {
