@@ -3,7 +3,6 @@ package trader.entity.indicator.ma;
 
 import org.junit.Before;
 import org.junit.Test;
-import trader.entity.candlestick.Candlestick;
 import trader.exception.BadRequestException;
 import trader.exception.IndicatorPeriodTooBigException;
 import trader.entity.indicator.BaseIndicatorTest;
@@ -11,11 +10,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import static org.junit.Assert.*;
-import static trader.strategy.bgxstrategy.configuration.StrategyConfig.SCALE;
 
 public class WeightedMovingAverageTest extends BaseIndicatorTest {
 
-    private static final BigDecimal LAST_WMA_VALUE = BigDecimal.valueOf(1.16210).setScale(SCALE, BigDecimal.ROUND_HALF_UP);;
+    private static final BigDecimal LAST_WMA_VALUE = BigDecimal.valueOf(1.16210).setScale(5, BigDecimal.ROUND_HALF_UP);;
 
     private WeightedMovingAverage wma;
 

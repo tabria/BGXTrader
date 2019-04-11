@@ -17,6 +17,9 @@ public class BGXConfigurationImpl implements TradingStrategyConfiguration {
     private static final String DEFAULT_BGX_CONFIG_FILE_LOCATION = "bgxStrategyConfig.yaml";
     private static final BigDecimal DEFAULT_SPREAD = BigDecimal.valueOf(0.0002).setScale(5, BigDecimal.ROUND_HALF_UP);
     private static final BigDecimal DEFAULT_RISK_PER_TRADE = BigDecimal.valueOf(0.01).setScale(5, BigDecimal.ROUND_HALF_UP);
+    private static final String DEFAULT_ENTRY_STRATEGY = "standard";
+    private static final String DEFAULT_ORDER_STRATEGY = "standard";
+    private static final String DEFAULT_EXIT_STRATEGY = "fullClose";
 
     private String fileLocation;
     private List<HashMap<String, String>> indicators;
@@ -25,6 +28,10 @@ public class BGXConfigurationImpl implements TradingStrategyConfiguration {
     private String instrument;
     private BigDecimal spread;
     private BigDecimal riskPerTrade;
+    private String entryStrategy;
+    private String orderStrategy;
+    private String exitStrategy;
+
 
 
     public BGXConfigurationImpl() {
@@ -35,6 +42,9 @@ public class BGXConfigurationImpl implements TradingStrategyConfiguration {
         this.spread = DEFAULT_SPREAD;
         this.fileLocation = DEFAULT_BGX_CONFIG_FILE_LOCATION;
         this.riskPerTrade = DEFAULT_RISK_PER_TRADE;
+        this.entryStrategy = DEFAULT_ENTRY_STRATEGY;
+        this.orderStrategy = DEFAULT_ORDER_STRATEGY;
+        this.exitStrategy = DEFAULT_EXIT_STRATEGY;
     }
 
     @Override
@@ -106,6 +116,39 @@ public class BGXConfigurationImpl implements TradingStrategyConfiguration {
         if(riskPerTrade.compareTo(BigDecimal.ZERO) < 0)
             throw new NegativeNumberException();
         this.riskPerTrade = riskPerTrade;
+    }
+
+    @Override
+    public String getEntryStrategy() {
+        return entryStrategy;
+    }
+
+    @Override
+    public void setEntryStrategy(String entryStrategy) {
+        if(entryStrategy != null && !entryStrategy.trim().isEmpty())
+            this.entryStrategy = entryStrategy.trim();
+    }
+
+    @Override
+    public String getOrderStrategy() {
+        return orderStrategy;
+    }
+
+    @Override
+    public void setOrderStrategy(String orderStrategy) {
+        if(orderStrategy != null && !orderStrategy.trim().isEmpty())
+            this.orderStrategy = orderStrategy.trim();
+    }
+
+    @Override
+    public String getExitStrategy() {
+        return exitStrategy;
+    }
+
+    @Override
+    public void setExitStrategy(String exitStrategy) {
+        if(exitStrategy != null && !exitStrategy.trim().isEmpty())
+            this.exitStrategy = exitStrategy.trim();
     }
 
     private void validateInputFileLocation(String fileLocation) {

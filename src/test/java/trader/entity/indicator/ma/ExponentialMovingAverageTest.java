@@ -7,19 +7,16 @@ import trader.entity.candlestick.Candlestick;
 import trader.exception.BadRequestException;
 import trader.exception.IndicatorPeriodTooBigException;
 import trader.entity.indicator.BaseIndicatorTest;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.when;
-import static trader.strategy.bgxstrategy.configuration.StrategyConfig.SCALE;
 
 public class ExponentialMovingAverageTest extends BaseIndicatorTest {
 
-    private static final BigDecimal LAST_EMA_VALUE = BigDecimal.valueOf(1.16230).setScale(SCALE, BigDecimal.ROUND_HALF_UP);
+    private static final BigDecimal LAST_EMA_VALUE = BigDecimal.valueOf(1.16230).setScale(5, BigDecimal.ROUND_HALF_UP);
 
     private ExponentialMovingAverage ema;
     private CommonTestClassMembers commonMembers;
@@ -85,7 +82,7 @@ public class ExponentialMovingAverageTest extends BaseIndicatorTest {
         setSMAValue.invoke(ema, indicatorUpdateHelper.getFakeCandlestickListFullOfMock());
 
         assertEquals(1, ema.getValues().size());
-        assertEquals(BigDecimal.valueOf(1.16414).setScale(SCALE,
+        assertEquals(BigDecimal.valueOf(1.16414).setScale(5,
                 BigDecimal.ROUND_HALF_UP), ema.getValues().get(0));
     }
 

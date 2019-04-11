@@ -1,0 +1,5 @@
+spread: 0.0002
+entryFilter: 0.0020
+stopLossFilter: 0.0005
+target: 0.0050
+rsiFilter: 50

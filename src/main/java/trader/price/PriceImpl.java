@@ -8,7 +8,6 @@ import java.math.RoundingMode;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 
-import static trader.strategy.bgxstrategy.configuration.StrategyConfig.*;
 
 public class PriceImpl implements Price {
 
@@ -83,9 +82,9 @@ public class PriceImpl implements Price {
     public static class PriceBuilder{
 
         private static final BigDecimal DEFAULT_ASK = new BigDecimal(0.01)
-                .setScale(SCALE, RoundingMode.HALF_UP);
+                .setScale(5, RoundingMode.HALF_UP);
         private static final BigDecimal DEFAULT_BID = new BigDecimal(0.02)
-                .setScale(SCALE, RoundingMode.HALF_UP);
+                .setScale(5, RoundingMode.HALF_UP);
         private static final ZonedDateTime DEFAULT_DATE_TIME = ZonedDateTime.parse("2012-06-30T12:30:40Z[UTC]");
         private static final BigDecimal DEFAULT_AVAILABLE_UNITS = BigDecimal.ZERO;
 

@@ -46,105 +46,78 @@ public class AddBGXConfigurationUseCaseTest {
 
     @Test(expected = NullPointerException.class)
     public void WhenCallSetCandlesQuantityWithNullValue_Exception(){
-        HashMap<String, HashMap<String, String>> quantities = new HashMap<>();
-        HashMap<String, String> values = new HashMap<>();
-        values.put("initial", null);
-        quantities.put("candlesQuantity", values);
+        HashMap<String, HashMap<String, String>> settings = setSettings("initial", "candlesQuantity", null);
 
-        addBgxConfigurationUseCase.setCandlesQuantities(configurationMock, quantities);
+        addBgxConfigurationUseCase.setCandlesQuantities(configurationMock, settings);
     }
 
     @Test(expected = NumberFormatException.class)
     public void WhenCallSetCandlesQuantityWithEmptyValue_Exception(){
-        HashMap<String, HashMap<String, String>> quantities = new HashMap<>();
-        HashMap<String, String> values = new HashMap<>();
-        values.put("update", "");
-        quantities.put("candlesQuantity", values);
+        HashMap<String, HashMap<String, String>> settings = setSettings("update", "candlesQuantity", "");
 
-        addBgxConfigurationUseCase.setCandlesQuantities(configurationMock, quantities);
+        addBgxConfigurationUseCase.setCandlesQuantities(configurationMock, settings);
     }
 
     @Test(expected = NullPointerException.class)
     public void WhenCallSetCandlesQuantityWithCorrectInitialValues_CorrectResult(){
         long expectedInitial = 200L;
-        HashMap<String, HashMap<String, String>> quantities = new HashMap<>();
-        HashMap<String, String> values = new HashMap<>();
-        values.put("initial", "200");
-        quantities.put("candlesQuantity", values);
+        HashMap<String, HashMap<String, String>> settings = setSettings("initial", "candlesQuantity", "200");
         doThrow(NullPointerException.class).when(configurationMock).setInitialCandlesQuantity(expectedInitial);
 
-        addBgxConfigurationUseCase.setCandlesQuantities(configurationMock, quantities);
+        addBgxConfigurationUseCase.setCandlesQuantities(configurationMock, settings);
 
     }
 
     @Test(expected = NullPointerException.class)
     public void WhenCallSetCandlesQuantityWithCorrectUpdateValues_CorrectResult(){
         long expectedUpdate = 100L;
-        HashMap<String, HashMap<String, String>> quantities = new HashMap<>();
-        HashMap<String, String> values = new HashMap<>();
-        values.put("update", "100");
-        quantities.put("candlesQuantity", values);
+        HashMap<String, HashMap<String, String>> settings = setSettings("update", "candlesQuantity", "100");
         doThrow(NullPointerException.class).when(configurationMock).setUpdateCandlesQuantity(expectedUpdate);
 
-        addBgxConfigurationUseCase.setCandlesQuantities(configurationMock, quantities);
+        addBgxConfigurationUseCase.setCandlesQuantities(configurationMock, settings);
 
     }
 
     @Test(expected = NullPointerException.class)
     public void WhenCallSetCandlesQuantityWithCorrectInitialValuesContainingSpaces_CorrectResult(){
         long expectedInitial = 200L;
-        HashMap<String, HashMap<String, String>> quantities = new HashMap<>();
-        HashMap<String, String> values = new HashMap<>();
-        values.put("initial", " 200 ");
-        quantities.put("candlesQuantity", values);
+        HashMap<String, HashMap<String, String>> settings = setSettings("initial", "candlesQuantity", " 200 ");
         doThrow(NullPointerException.class).when(configurationMock).setInitialCandlesQuantity(expectedInitial);
 
-        addBgxConfigurationUseCase.setCandlesQuantities(configurationMock, quantities);
+        addBgxConfigurationUseCase.setCandlesQuantities(configurationMock, settings);
 
     }
 
     @Test(expected = NullPointerException.class)
     public void WhenCallSetCandlesQuantityWithCorrectUpdateValuesContainingSpaces_CorrectResult(){
         long expectedUpdate = 100L;
-        HashMap<String, HashMap<String, String>> quantities = new HashMap<>();
-        HashMap<String, String> values = new HashMap<>();
-        values.put("update", " 100 ");
-        quantities.put("candlesQuantity", values);
+        HashMap<String, HashMap<String, String>> settings = setSettings("update", "candlesQuantity", " 100 ");
         doThrow(NullPointerException.class).when(configurationMock).setUpdateCandlesQuantity(expectedUpdate);
 
-        addBgxConfigurationUseCase.setCandlesQuantities(configurationMock, quantities);
+        addBgxConfigurationUseCase.setCandlesQuantities(configurationMock, settings);
 
     }
 
     @Test(expected = NumberFormatException.class)
     public void WhenCallSetSetRiskPerTradeWithNotANumberValue_Exception(){
-        HashMap<String, HashMap<String, String>> quantities = new HashMap<>();
-        HashMap<String, String> values = new HashMap<>();
-        values.put("riskPerTrade", "  ");
-        quantities.put("risk", values);
+        HashMap<String, HashMap<String, String>> settings = setSettings("riskPerTrade", "risk", "  ");
 
-        addBgxConfigurationUseCase.setRiskPerTrade(configurationMock, quantities);
+        addBgxConfigurationUseCase.setRiskPerTrade(configurationMock, settings);
     }
 
     @Test(expected = NullPointerException.class)
     public void WhenCallSetSetRiskPerTradeWithNullValue_Exception(){
-        HashMap<String, HashMap<String, String>> quantities = new HashMap<>();
-        HashMap<String, String> values = new HashMap<>();
-        values.put("riskPerTrade", null);
-        quantities.put("risk", values);
+        HashMap<String, HashMap<String, String>> settings = setSettings("riskPerTrade", "risk", null);
 
-        addBgxConfigurationUseCase.setRiskPerTrade(configurationMock, quantities);
+        addBgxConfigurationUseCase.setRiskPerTrade(configurationMock, settings);
     }
 
     @Test(expected = RuntimeException.class)
     public void WhenCallSetSetRiskPerTradeWithCorrectValueContainingSpaces_CorrectResult(){
-        HashMap<String, HashMap<String, String>> quantities = new HashMap<>();
-        HashMap<String, String> values = new HashMap<>();
-        values.put("riskPerTrade", " 0.03 ");
-        quantities.put("risk", values);
+        HashMap<String, HashMap<String, String>> settings = setSettings("riskPerTrade", "risk", " 0.03 ");
 
         doThrow(new RuntimeException()).when(configurationMock).setRiskPerTrade(BigDecimal.valueOf(0.03));
-        addBgxConfigurationUseCase.setRiskPerTrade(configurationMock, quantities);
+        addBgxConfigurationUseCase.setRiskPerTrade(configurationMock, settings);
     }
 
     @Test
@@ -166,5 +139,34 @@ public class AddBGXConfigurationUseCaseTest {
         TradingStrategyConfiguration configuration = bgxConfigurationResponse.getResponseDataStructure();
 
         Assert.assertEquals(configurationMock, configuration);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void WhenCallSetEntryStrategyWithNullValue_Exception(){
+        HashMap<String, HashMap<String, String>> settings = setSettings("entryStrategy", "entry", null);
+
+        addBgxConfigurationUseCase.setEntryStrategy(configurationMock, settings);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void WhenCallSetOrderStrategyWithNullValue_Exception(){
+        HashMap<String, HashMap<String, String>> settings = setSettings("orderStrategy", "order", null);
+
+        addBgxConfigurationUseCase.setOrderStrategy(configurationMock, settings);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void WhenCallSetExitStrategyWithNullValue_Exception(){
+        HashMap<String, HashMap<String, String>> settings = setSettings("exitStrategy", "exit", null);
+
+        addBgxConfigurationUseCase.setExitStrategy(configurationMock, settings);
+    }
+
+    private HashMap<String, HashMap<String, String>> setSettings(String keyName, String entryName, String value) {
+        HashMap<String, HashMap<String, String>> settings = new HashMap<>();
+        HashMap<String, String> values = new HashMap<>();
+        values.put(keyName, value);
+        settings.put(entryName, values);
+        return settings;
     }
 }

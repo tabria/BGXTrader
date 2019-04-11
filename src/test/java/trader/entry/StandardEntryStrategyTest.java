@@ -9,6 +9,7 @@ import trader.entity.indicator.Indicator;
 import trader.entity.trade.point.Point;
 import trader.entity.trade.Direction;
 import trader.entity.trade.Trade;
+import trader.entry.standard.StandardEntryStrategy;
 import trader.exception.BadRequestException;
 import trader.exception.NoSuchStrategyException;
 import trader.exception.NullArgumentException;

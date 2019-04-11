@@ -23,6 +23,18 @@ public class AddBGXConfigurationUseCase extends BaseUseCase {
     private static final String RISK = "risk";
     private static final String RISK_PER_TRADE = "riskPerTrade";
     private static final String INDICATOR = "indicator";
+    private static final String ENTRY_STRATEGY = "entryStrategy";
+    private static final String ORDER_STRATEGY = "orderStrategy";
+    private static final String EXIT_STRATEGY = "exitStrategy";
+    private static final String ENTRY = "entry";
+    public static final String ORDER = "order";
+    public static final String EXIT = "exit";
+//    entry:
+//    entryStrategy: "standard"
+//    order:
+//    orderStrategy: "standard"
+//    exit:
+//    exitStrategy: "fullClose"
 
     @Override
     public <T, E> Response<E> execute(Request<T> request) {
@@ -47,6 +59,9 @@ public class AddBGXConfigurationUseCase extends BaseUseCase {
             setCandlesQuantities(bgxConfiguration, bgxSettings);
             setRiskPerTrade(bgxConfiguration, bgxSettings);
             setIndicators(bgxConfiguration, bgxSettings);
+            setEntryStrategy(bgxConfiguration, bgxSettings);
+            setOrderStrategy(bgxConfiguration, bgxSettings);
+            setExitStrategy(bgxConfiguration, bgxSettings);
         } catch (IOException | RuntimeException e) {
             BadRequestException badRequestException = new BadRequestException();
             badRequestException.initCause(e);
@@ -83,6 +98,33 @@ public class AddBGXConfigurationUseCase extends BaseUseCase {
             if(quantitiesValues.containsKey(RISK_PER_TRADE)){
                 BigDecimal riskPerTrade =  new BigDecimal(quantitiesValues.get(RISK_PER_TRADE).trim());
                 bgxConfiguration.setRiskPerTrade(riskPerTrade);
+            }
+        }
+    }
+
+    void setEntryStrategy(TradingStrategyConfiguration bgxConfiguration, HashMap<String, HashMap<String, String>> bgxSettings) {
+        if(bgxSettings.containsKey(ENTRY)){
+            Map<String, String> quantitiesValues = bgxSettings.get(ENTRY);
+            if(quantitiesValues.containsKey(ENTRY_STRATEGY)){
+                bgxConfiguration.setEntryStrategy(quantitiesValues.get(ENTRY_STRATEGY).trim());
+            }
+        }
+    }
+
+    void setOrderStrategy(TradingStrategyConfiguration bgxConfiguration, HashMap<String, HashMap<String, String>> bgxSettings) {
+        if(bgxSettings.containsKey(ORDER)){
+            Map<String, String> quantitiesValues = bgxSettings.get(ORDER);
+            if(quantitiesValues.containsKey(ORDER_STRATEGY)){
+                bgxConfiguration.setOrderStrategy(quantitiesValues.get(ORDER_STRATEGY).trim());
+            }
+        }
+    }
+
+    void setExitStrategy(TradingStrategyConfiguration bgxConfiguration, HashMap<String, HashMap<String, String>> bgxSettings) {
+        if(bgxSettings.containsKey(EXIT)){
+            Map<String, String> quantitiesValues = bgxSettings.get(EXIT);
+            if(quantitiesValues.containsKey(EXIT_STRATEGY)){
+                bgxConfiguration.setExitStrategy(quantitiesValues.get(EXIT_STRATEGY).trim());
             }
         }
     }

@@ -10,7 +10,6 @@ import java.math.BigDecimal;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static trader.strategy.bgxstrategy.configuration.StrategyConfig.SCALE;
 
 public class CandlePriceImplTypeTest {
 
@@ -64,7 +63,7 @@ public class CandlePriceImplTypeTest {
     private BigDecimal averagePrice() {
         BigDecimal high = this.mockCandlestick.getHighPrice();
         BigDecimal low = this.mockCandlestick.getLowPrice();
-        return high.add(low).divide(new BigDecimal(2), SCALE, BigDecimal.ROUND_HALF_UP);
+        return high.add(low).divide(new BigDecimal(2), 5, BigDecimal.ROUND_HALF_UP);
     }
 
     private int comparePrices(BigDecimal closePrice, BigDecimal candleClosePrice) {

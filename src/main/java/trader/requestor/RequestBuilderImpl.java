@@ -108,7 +108,7 @@ public class RequestBuilderImpl implements RequestBuilder {
         try {
             String className = settings.get("entryStrategy").trim();
             className = Character.toUpperCase(className.charAt(0)) + className.substring(1);
-            Class<?> entryStrategyClass = Class.forName("trader.entry." + className + "EntryStrategy");
+            Class<?> entryStrategyClass = Class.forName("trader.entry." + className.toLowerCase() + "." + className +"EntryStrategy");
             Constructor<?> entryStrategyConstructor = entryStrategyClass.getDeclaredConstructor();
             return (EntryStrategy) entryStrategyConstructor.newInstance();
         } catch (ClassNotFoundException | InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException | StringIndexOutOfBoundsException e) {

@@ -1,8 +1,7 @@
-package trader.strategy.bgxstrategy.configuration;
+package trader.configuration;
 
 import org.junit.Before;
 import org.junit.Test;
-import trader.configuration.BGXConfigurationImpl;
 import trader.exception.BadRequestException;
 import trader.exception.NegativeNumberException;
 import trader.exception.NullArgumentException;
@@ -20,7 +19,10 @@ public class BGXConfigurationImplTest {
     private static final long DEFAULT_UPDATE_CANDLES_QUANTITY = 2L;
     private static final String DEFAULT_BGX_CONFIG_FILE_LOCATION = "bgxStrategyConfig.yaml";
     private static final BigDecimal DEFAULT_SPREAD = BigDecimal.valueOf(0.0002).setScale(5, BigDecimal.ROUND_HALF_UP);
-    public static final BigDecimal DEFAULT_RISK_PER_TRADE = BigDecimal.valueOf(0.01).setScale(5, BigDecimal.ROUND_HALF_UP);
+    private static final BigDecimal DEFAULT_RISK_PER_TRADE = BigDecimal.valueOf(0.01).setScale(5, BigDecimal.ROUND_HALF_UP);
+    private static final String DEFAULT_ENTRY_STRATEGY = "standard";
+    private static final String DEFAULT_ORDER_STRATEGY = "standard";
+    private static final String DEFAULT_EXIT_STRATEGY = "fullClose";
 
 
     private BGXConfigurationImpl config;
@@ -151,5 +153,67 @@ public class BGXConfigurationImplTest {
         assertEquals(DEFAULT_RISK_PER_TRADE, config.getRiskPerTrade());
     }
 
+    @Test
+    public void WhenCallSetEntryStrategyWithNull_Default(){
+        config.setEntryStrategy(null);
+
+        assertEquals(DEFAULT_ENTRY_STRATEGY, config.getEntryStrategy());
+    }
+
+    @Test
+    public void WhenCallSetOrderStrategyWithNull_Default(){
+        config.setOrderStrategy(null);
+
+        assertEquals(DEFAULT_ORDER_STRATEGY, config.getOrderStrategy());
+    }
+
+    @Test
+    public void WhenCallSetExitStrategyWithNull_Default(){
+        config.setExitStrategy(null);
+
+        assertEquals(DEFAULT_EXIT_STRATEGY, config.getExitStrategy());
+    }
+
+    @Test
+    public void WhenCallSetEntryStrategyWithEmpty_Default(){
+        config.setEntryStrategy("  ");
+
+        assertEquals(DEFAULT_ENTRY_STRATEGY, config.getEntryStrategy());
+    }
+
+    @Test
+    public void WhenCallSetOrderStrategyWithEmpty_Default(){
+        config.setOrderStrategy("  ");
+
+        assertEquals(DEFAULT_ORDER_STRATEGY, config.getOrderStrategy());
+    }
+
+    @Test
+    public void WhenCallSetExitStrategyWithEmpty_Default(){
+        config.setExitStrategy("   ");
+
+        assertEquals(DEFAULT_EXIT_STRATEGY, config.getExitStrategy());
+    }
+
+    @Test
+    public void WhenCallSetEntryStrategyWithCorrectSetting_CorrectUpdate(){
+        config.setEntryStrategy(" bestEntry ");
+
+        assertEquals("bestEntry", config.getEntryStrategy());
+    }
+
+    @Test
+    public void WhenCallSetOrderStrategyWithCorrectSetting_CorrectUpdate(){
+        config.setOrderStrategy(" bestOrder ");
+
+        assertEquals("bestOrder", config.getOrderStrategy());
+    }
+
+    @Test
+    public void WhenCallSetExitStrategyWithCorrectSetting_CorrectUpdate(){
+        config.setExitStrategy("  bestExit  ");
+
+        assertEquals("bestExit", config.getExitStrategy());
+    }
 
 }

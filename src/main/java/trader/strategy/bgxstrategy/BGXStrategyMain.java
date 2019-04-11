@@ -23,8 +23,6 @@ import trader.order.OrderStrategy;
 import trader.configuration.TradingStrategyConfiguration;
 import trader.strategy.observable.PriceObservable;
 import trader.strategy.Strategy;
-import trader.order.OrderService;
-import trader.exit.exit_strategie.BaseExitStrategy;
 import trader.exit.ExitStrategy;
 import trader.strategy.observable.PricePull;
 
@@ -39,6 +37,7 @@ public final class BGXStrategyMain implements Strategy {
     private static final String BROKER_NAME = "brokerName";
     private static final String ENTRY_STRATEGY_KEY_NAME = "entryStrategy";
     private static final String ORDER_STRATEGY_KEY_NAME = "orderStrategy";
+    private static final String EXIT_STRATEGY_KEY_NAME = "exitStrategy";
 
     private RequestBuilder requestBuilder;
     private UseCaseFactory useCaseFactory;
@@ -49,29 +48,30 @@ public final class BGXStrategyMain implements Strategy {
     private EntryStrategy entryStrategy;
     private OrderStrategy orderStrategy;
 
+    private ExitStrategy exitStrategy;
 
     private Observer positionObserver;
 
     private ApiConnector apiConnector;
 
 
-    private ExitStrategy exitStrategy;
 
 
 
-    public BGXStrategyMain(String brokerName, String configurationFileName, String brokerConfigurationFileName, String entryStrategyName, String orderStrategyName) {
-        validateInput(brokerName, configurationFileName, brokerConfigurationFileName, entryStrategyName, orderStrategyName);
+
+    public BGXStrategyMain(String brokerName, String configurationFileName, String brokerConfigurationFileName) {
+        validateInput(brokerName, configurationFileName, brokerConfigurationFileName);
         requestBuilder = new RequestBuilderImpl();
         useCaseFactory = new UseCaseFactoryImpl();
         configuration = setConfiguration(configurationFileName);
         brokerGateway = setBrokerGateway(brokerName, brokerConfigurationFileName);
         priceObservable = PriceObservable.create(brokerGateway, configuration);
         indicatorList = createIndicatorsFromConfiguration(configuration.getIndicators());
-        entryStrategy = setEntryStrategy(entryStrategyName);
-        orderStrategy = setOrderStrategy(orderStrategyName);
+        entryStrategy = setEntryStrategy();
+        orderStrategy = setOrderStrategy();
 
 
-        exitStrategy = BaseExitStrategy.createInstance();
+       // exitStrategy = BaseExitStrategy.createInstance();
     }
 
 
@@ -129,27 +129,26 @@ public final class BGXStrategyMain implements Strategy {
 
 ///// not tested//////////////
 
-    private void validateInput(String brokerName, String configurationFileName, String brokerConfigurationFileName, String entryStrategyName, String orderStrategyName) {
-        if(brokerName == null || configurationFileName == null || brokerConfigurationFileName == null || entryStrategyName == null || orderStrategyName == null)
+    private void validateInput(String brokerName, String configurationFileName, String brokerConfigurationFileName) {
+        if(brokerName == null || configurationFileName == null || brokerConfigurationFileName == null)
             throw new NullArgumentException();
-        if(brokerName.trim().isEmpty() || configurationFileName.trim().isEmpty() || brokerConfigurationFileName.trim().isEmpty() || entryStrategyName.trim().isEmpty() || orderStrategyName.trim().isEmpty())
+        if(brokerName.trim().isEmpty() || configurationFileName.trim().isEmpty() || brokerConfigurationFileName.trim().isEmpty())
             throw new EmptyArgumentException();
     }
 
-    private OrderStrategy setOrderStrategy(String entryStrategyName) {
+    //make controllers and usecases for loading settings for entry order and exit strategies
+    private OrderStrategy setOrderStrategy() {
         HashMap<String, String> settings = new HashMap<>();
-        settings.put(ORDER_STRATEGY_KEY_NAME, entryStrategyName);
+        settings.put(ORDER_STRATEGY_KEY_NAME, configuration.getEntryStrategy());
         TraderController<OrderStrategy> controller = new AddOrderStrategyController<>(requestBuilder, useCaseFactory);
         Response<OrderStrategy> entryResponse = controller.execute(settings);
         OrderStrategy orderStrategy = entryResponse.getResponseDataStructure();
         return orderStrategy;
     }
-
-
-
-    private EntryStrategy setEntryStrategy(String entryStrategyName) {
+    //make controllers and usecases for loading settings for entry order and exit strategies
+    private EntryStrategy setEntryStrategy() {
         HashMap<String, String> settings = new HashMap<>();
-        settings.put(ENTRY_STRATEGY_KEY_NAME, entryStrategyName);
+        settings.put(ENTRY_STRATEGY_KEY_NAME, configuration.getEntryStrategy());
         TraderController<EntryStrategy> controller = new AddEntryStrategyController<>(requestBuilder, useCaseFactory);
         Response<EntryStrategy> entryResponse = controller.execute(settings);
         EntryStrategy entryStrategy = entryResponse.getResponseDataStructure();
@@ -157,7 +156,6 @@ public final class BGXStrategyMain implements Strategy {
         entryStrategy.setCreateTradeController(new CreateTradeController<>(requestBuilder, useCaseFactory));
         return entryStrategy;
     }
-
 
     private TradingStrategyConfiguration setConfiguration(String configurationFileName) {
         HashMap<String, String> settings = new HashMap<>();

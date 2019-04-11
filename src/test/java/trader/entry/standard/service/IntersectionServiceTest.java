@@ -1,4 +1,4 @@
-package trader.entry.service;
+package trader.entry.standard.service;
 
 import org.junit.Before;
 import org.junit.Test;

@@ -1,4 +1,4 @@
-package trader.entry;
+package trader.entry.standard;
 
 import trader.controller.TraderController;
 import trader.entity.indicator.Indicator;
@@ -6,8 +6,9 @@ import trader.entity.trade.point.Point;
 import trader.entity.trade.segment.LineSegment;
 import trader.entity.trade.segment.LineSegmentImpl;
 import trader.entity.trade.Trade;
-import trader.entry.service.IntersectionService;
-import trader.entry.service.TradeCalculationService;
+import trader.entry.EntryStrategy;
+import trader.entry.standard.service.IntersectionService;
+import trader.entry.standard.service.TradeCalculationService;
 import trader.exception.BadRequestException;
 import trader.exception.NoSuchStrategyException;
 import trader.entity.trade.point.PointImpl;

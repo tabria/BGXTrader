@@ -5,9 +5,8 @@ import org.junit.Test;
 import trader.CommonTestClassMembers;
 import trader.broker.BrokerGateway;
 import trader.configuration.BGXConfigurationImpl;
-import trader.controller.CreateTradeController;
 import trader.entry.EntryStrategy;
-import trader.entry.StandardEntryStrategy;
+import trader.entry.standard.StandardEntryStrategy;
 import trader.exception.EmptyArgumentException;
 import trader.observer.Observer;
 import trader.entity.candlestick.candle.CandleGranularity;
@@ -15,7 +14,6 @@ import trader.entity.candlestick.candle.CandlePriceType;
 import trader.entity.indicator.Indicator;
 import trader.exception.NullArgumentException;
 import trader.configuration.TradingStrategyConfiguration;
-import trader.order.OrderStrategy;
 import trader.order.StandardOrderStrategy;
 import trader.strategy.Observable;
 import trader.strategy.observable.PriceObservable;
@@ -30,6 +28,8 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 public class BGXStrategyMainTest {
+
+
 
     private static final int CANDLESTICK_LIST_SIZE = 170;
     private static final BigDecimal DEFAULT_PRICE = new BigDecimal(0.00001).setScale(5, BigDecimal.ROUND_HALF_UP);
@@ -74,32 +74,22 @@ public class BGXStrategyMainTest {
         commonMembers = new CommonTestClassMembers();
         bgxConfigurationMock = mock(TradingStrategyConfiguration.class);
         setFalseInitialIndicators();
-        bgxStrategyMain = new BGXStrategyMain(BROKER_NAME, BGX_STRATEGY_CONFIG_FILE_NAME, BROKER_CONFIG_FILE_NAME, ENTRY_STRATEGY_NAME, ORDER_STRATEGY_NAME);
+        bgxStrategyMain = new BGXStrategyMain(BROKER_NAME, BGX_STRATEGY_CONFIG_FILE_NAME, BROKER_CONFIG_FILE_NAME);
 
     }
 
     @Test(expected = NullArgumentException.class)
     public void WhenBrokerNameIsNull_Exception(){
-    new BGXStrategyMain(null, BGX_STRATEGY_CONFIG_FILE_NAME, BROKER_CONFIG_FILE_NAME, ENTRY_STRATEGY_NAME, ORDER_STRATEGY_NAME);
+    new BGXStrategyMain(null, BGX_STRATEGY_CONFIG_FILE_NAME, BROKER_CONFIG_FILE_NAME);
     }
 
     @Test(expected = NullArgumentException.class)
     public void WhenStrategyConfigFileNameIsNull_Exception(){
-        new BGXStrategyMain(BROKER_NAME, null, BROKER_CONFIG_FILE_NAME, ENTRY_STRATEGY_NAME, ORDER_STRATEGY_NAME);
+        new BGXStrategyMain(BROKER_NAME, null, BROKER_CONFIG_FILE_NAME);
     }
     @Test(expected = NullArgumentException.class)
     public void WhenBrokerConfigFileNameIsNull_Exception(){
-        new BGXStrategyMain(BROKER_NAME, BGX_STRATEGY_CONFIG_FILE_NAME, null, ENTRY_STRATEGY_NAME, ORDER_STRATEGY_NAME);
-    }
-
-    @Test(expected = NullArgumentException.class)
-    public void WhenEntryStrategyNameIsNull_Exception(){
-        new BGXStrategyMain(BROKER_NAME, BGX_STRATEGY_CONFIG_FILE_NAME, BROKER_CONFIG_FILE_NAME, null, ORDER_STRATEGY_NAME);
-    }
-
-    @Test(expected = NullArgumentException.class)
-    public void WhenOrderStrategyNameIsNull_Exception(){
-        new BGXStrategyMain(BROKER_NAME, BGX_STRATEGY_CONFIG_FILE_NAME, BROKER_CONFIG_FILE_NAME, ENTRY_STRATEGY_NAME, null);
+        new BGXStrategyMain(BROKER_NAME, BGX_STRATEGY_CONFIG_FILE_NAME, null);
     }
 
     @Test
@@ -110,26 +100,16 @@ public class BGXStrategyMainTest {
 
     @Test(expected = EmptyArgumentException.class)
     public void WhenBrokerNameIsEmpty_Exception(){
-        new BGXStrategyMain("  ", BGX_STRATEGY_CONFIG_FILE_NAME, BROKER_CONFIG_FILE_NAME, ENTRY_STRATEGY_NAME, ORDER_STRATEGY_NAME);
+        new BGXStrategyMain("  ", BGX_STRATEGY_CONFIG_FILE_NAME, BROKER_CONFIG_FILE_NAME);
     }
 
     @Test(expected = EmptyArgumentException.class)
     public void WhenStrategyConfigFileNameIsEmpty_Exception(){
-        new BGXStrategyMain(BROKER_NAME, "  ", BROKER_CONFIG_FILE_NAME, ENTRY_STRATEGY_NAME, ORDER_STRATEGY_NAME);
+        new BGXStrategyMain(BROKER_NAME, "  ", BROKER_CONFIG_FILE_NAME);
     }
     @Test(expected = EmptyArgumentException.class)
     public void WhenBrokerConfigFileNameIsEmpty_Exception(){
-        new BGXStrategyMain(BROKER_NAME, BGX_STRATEGY_CONFIG_FILE_NAME, "  ", ENTRY_STRATEGY_NAME, ORDER_STRATEGY_NAME);
-    }
-
-    @Test(expected = EmptyArgumentException.class)
-    public void WhenEntryStrategyNameIsEmpty_Exception(){
-        new BGXStrategyMain(BROKER_NAME, BGX_STRATEGY_CONFIG_FILE_NAME, BROKER_CONFIG_FILE_NAME, "  ", ORDER_STRATEGY_NAME);
-    }
-
-    @Test(expected = EmptyArgumentException.class)
-    public void WhenOrderStrategyNameIsEmpty_Exception(){
-        new BGXStrategyMain(BROKER_NAME, BGX_STRATEGY_CONFIG_FILE_NAME, BROKER_CONFIG_FILE_NAME, ENTRY_STRATEGY_NAME, "  ");
+        new BGXStrategyMain(BROKER_NAME, BGX_STRATEGY_CONFIG_FILE_NAME, "  ");
     }
 
     @Test

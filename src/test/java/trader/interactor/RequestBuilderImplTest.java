@@ -2,12 +2,10 @@ package trader.interactor;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.internal.matchers.Null;
-import trader.entity.trade.point.Point;
 import trader.entity.trade.Direction;
 import trader.entity.trade.Trade;
 import trader.entry.EntryStrategy;
-import trader.entry.StandardEntryStrategy;
+import trader.entry.standard.StandardEntryStrategy;
 import trader.exception.*;
 import trader.order.OrderStrategy;
 import trader.order.StandardOrderStrategy;

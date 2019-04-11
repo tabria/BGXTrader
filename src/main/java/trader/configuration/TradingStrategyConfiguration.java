@@ -29,4 +29,16 @@ public interface TradingStrategyConfiguration {
     BigDecimal getRiskPerTrade();
 
     void setRiskPerTrade(BigDecimal riskPerTrade);
+
+    String getEntryStrategy();
+
+    void setEntryStrategy(String entryStrategy);
+
+    String getOrderStrategy();
+
+    void setOrderStrategy(String orderStrategy);
+
+    String getExitStrategy();
+
+    void setExitStrategy(String exitStrategy);
 }

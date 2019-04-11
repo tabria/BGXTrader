@@ -1,4 +1,4 @@
-package trader.exit.exit_strategie;
+package trader.exit.fullclose;
 
 import com.oanda.v20.Context;
 import com.oanda.v20.account.Account;
@@ -11,6 +11,7 @@ import com.oanda.v20.transaction.TransactionID;
 import trader.entity.indicator.updater.CandlesUpdater;
 import trader.entity.candlestick.candle.CandleGranularity;
 import trader.exit.ExitStrategy;
+import trader.exit.exit_strategie.BaseExitStrategy;
 
 import java.math.BigDecimal;
 
@@ -20,7 +21,7 @@ public final class FullCloseStrategy implements ExitStrategy {
     private static final BigDecimal PARTS_TO_CLOSE = BigDecimal.valueOf(1);
     private static final BigDecimal BREAK_EVEN_DISTANCE = BigDecimal.valueOf(0.0025);
 
-    private final BaseExitStrategy baseExitStrategy;
+//    private final BaseExitStrategy baseExitStrategy;
     private OrderCreateResponse halfTradeResponse;
     private TradeSetDependentOrdersResponse tradeSetDependentOrdersResponse;
 
@@ -31,7 +32,7 @@ public final class FullCloseStrategy implements ExitStrategy {
      * @see Context
      */
     public FullCloseStrategy(Context context, CandleGranularity candlestickGranularity) {
-        this.baseExitStrategy = new BaseExitStrategy(context, candlestickGranularity);
+     //   this.baseExitStrategy = new BaseExitStrategy(context, candlestickGranularity);
     }
 
     /**
@@ -45,13 +46,13 @@ public final class FullCloseStrategy implements ExitStrategy {
     @Override
     public void execute(Account account, BigDecimal ask, BigDecimal bid, DateTime dateTime) {
 
-        TradeSummary trade = this.baseExitStrategy.getTrade(account);
-
-        this.baseExitStrategy.updaterUpdateCandles(dateTime);
-
-        this.moveToBreakEven(account, trade, ask, bid);
-
-        this.closePosition(trade, ask, bid);
+//        TradeSummary trade = this.baseExitStrategy.getTrade(account);
+//
+//        this.baseExitStrategy.updaterUpdateCandles(dateTime);
+//
+//        this.moveToBreakEven(account, trade, ask, bid);
+//
+//        this.closePosition(trade, ask, bid);
 
     }
 
@@ -62,24 +63,24 @@ public final class FullCloseStrategy implements ExitStrategy {
      * @param bid current bid price
      */
     private void moveToBreakEven(Account account, TradeSummary trade, BigDecimal ask, BigDecimal bid){
-        BigDecimal tradeOpenPrice = trade.getPrice().bigDecimalValue();
-        BigDecimal stopLossPrice = this.baseExitStrategy.getStopLossOrderPriceByID(account, trade.getStopLossOrderID());
-        BigDecimal currentUnits = trade.getCurrentUnits().bigDecimalValue();
-
-        if (currentUnits.compareTo(BigDecimal.ZERO) > 0 && stopLossPrice.compareTo(tradeOpenPrice) >= 0){
-            return;
-        }
-
-        if (currentUnits.compareTo(BigDecimal.ZERO) < 0 && stopLossPrice.compareTo(tradeOpenPrice) <= 0){
-            return;
-        }
-
-        BigDecimal breakEvenPrice = this.calculateTargetPrice(currentUnits, tradeOpenPrice, BREAK_EVEN_DISTANCE);
-        if (isFilterPassed(currentUnits, breakEvenPrice, ask, bid)){
-            TradeID id = trade.getId();
-
-            this.tradeSetDependentOrdersResponse = this.baseExitStrategy.changeStopLoss(id, tradeOpenPrice);
-        }
+//        BigDecimal tradeOpenPrice = trade.getPrice().bigDecimalValue();
+//        BigDecimal stopLossPrice = this.baseExitStrategy.getStopLossOrderPriceByID(account, trade.getStopLossOrderID());
+//        BigDecimal currentUnits = trade.getCurrentUnits().bigDecimalValue();
+//
+//        if (currentUnits.compareTo(BigDecimal.ZERO) > 0 && stopLossPrice.compareTo(tradeOpenPrice) >= 0){
+//            return;
+//        }
+//
+//        if (currentUnits.compareTo(BigDecimal.ZERO) < 0 && stopLossPrice.compareTo(tradeOpenPrice) <= 0){
+//            return;
+//        }
+//
+//        BigDecimal breakEvenPrice = this.calculateTargetPrice(currentUnits, tradeOpenPrice, BREAK_EVEN_DISTANCE);
+//        if (isFilterPassed(currentUnits, breakEvenPrice, ask, bid)){
+//            TradeID id = trade.getId();
+//
+//   //         this.tradeSetDependentOrdersResponse = this.baseExitStrategy.changeStopLoss(id, tradeOpenPrice);
+//        }
     }
 
     /**
@@ -102,7 +103,7 @@ public final class FullCloseStrategy implements ExitStrategy {
         BigDecimal targetPrice = this.calculateTargetPrice(currentUnits, tradeOpenPrice, TARGET_DISTANCE);
 
         if (isFilterPassed(currentUnits, targetPrice, ask, bid)){
-            this.halfTradeResponse = this.baseExitStrategy.partialTradeClose(currentUnits, PARTS_TO_CLOSE);
+//            this.halfTradeResponse = this.baseExitStrategy.partialTradeClose(currentUnits, PARTS_TO_CLOSE);
         }
     }
 

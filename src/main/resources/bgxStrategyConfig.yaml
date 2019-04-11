@@ -52,3 +52,9 @@ candlesQuantity:
   update: "2"
 risk:
   riskPerTrade: "0.01"
+entry:
+  entryStrategy: "standard"
+order:
+  orderStrategy: "standard"
+exit:
+  exitStrategy: "fullClose"

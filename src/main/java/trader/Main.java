@@ -8,7 +8,7 @@ import trader.strategy.bgxstrategy.BGXStrategyMain;
 import trader.strategy.Strategy;
 import trader.strategy.ThreadedStrategy;
 import trader.exit.ExitStrategy;
-import trader.exit.exit_strategie.FullCloseStrategy;
+import trader.exit.fullclose.FullCloseStrategy;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -43,7 +43,7 @@ public class Main {
 
 
       //  ApiConnector apiConnector = ApiConnector.create("Oanda");
-        Strategy strategy = new BGXStrategyMain("Oanda", "bgxStrategyConfig.yaml", "oandaBrokerConfig", "standard", "standard");
+        Strategy strategy = new BGXStrategyMain("Oanda", "bgxStrategyConfig.yaml", "oandaBrokerConfig");
       //  Strategy strategy = new BGXStrategyMain(apiConnector);
         ThreadedStrategy threadedStrategy = new ThreadedStrategy(strategy);
 
