@@ -2,6 +2,8 @@ package trader.broker;
 
 import trader.broker.connector.BrokerConnector;
 import trader.entity.candlestick.Candlestick;
+import trader.entity.order.Order;
+import trader.entity.order.enums.OrderType;
 import trader.price.Price;
 
 import java.math.BigDecimal;
@@ -20,11 +22,8 @@ public interface BrokerGateway {
     BigDecimal getAvailableMargin();
     BigDecimal getBalance();
     BrokerConnector getConnector();
-    String getNotFilledOrderID();
+    Order getOrder(OrderType orderType);
     String placeMarketIfTouchedOrder(HashMap<String, String> settings);
 
-//    List<TradeImpl> getOpenTrades();
-
-//    List<Order> getOpenOrders();
 
 }

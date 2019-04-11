@@ -28,14 +28,13 @@ public class StandardOrderStrategy implements OrderStrategy {
 
 
     @Override
-    public void closeUnfilledOrders() {
-//        MarketIfTouchedOrder notFilledOrder = this.getMarketIfTouchedOrder(account);
-//
-//        if (notFilledOrder == null) {
-//            return;
-//        }
-//
-//        BigDecimal stopLossPrice = notFilledOrder.getStopLossOnFill().getPrice().bigDecimalValue();
+    public void closeUnfilledOrders(BrokerGateway brokerGateway, Price price) {
+        int orderID = parseOrderID(brokerGateway);
+       if ( orderID > 0){
+//           BigDecimal stopLossPrice = notFilledOrder.getStopLossOnFill().getPrice().bigDecimalValue();
+       }
+
+
 //        BigDecimal units = notFilledOrder.getUnits().bigDecimalValue();
 //
 //        BigDecimal delta = null;
@@ -53,6 +52,10 @@ public class StandardOrderStrategy implements OrderStrategy {
 //
 //            System.out.println("Order canceled id: "+id.toString()+" time: "+time);
 //        }
+    }
+
+    private int parseOrderID(BrokerGateway brokerGateway) {
+        return 1; //Integer.parseInt(brokerGateway.getNotFilledOrderID());
     }
 
     @Override

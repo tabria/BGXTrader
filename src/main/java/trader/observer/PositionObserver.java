@@ -60,7 +60,7 @@ public class PositionObserver extends BaseObserver {
             if(isTradable(newTrade))
                orderStrategy.placeTradeAsOrder(brokerGateway, price, newTrade, configuration);
         } else if(brokerGateway.totalOpenOrdersSize() > 0)
-            orderStrategy.closeUnfilledOrders();
+            orderStrategy.closeUnfilledOrders(brokerGateway, price);
     }
 
     private boolean isTradable(Trade newTrade) {

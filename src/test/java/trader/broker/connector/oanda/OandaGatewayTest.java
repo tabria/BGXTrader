@@ -198,6 +198,15 @@ public class OandaGatewayTest {
         assertEquals(id, notFilledOrderID);
     }
 
+    @Test
+    public void testGetOrderToReturnCorrectValue(){
+        setFakeOrder();
+        setFakePrice();
+        Price actualPrice = oandaGateway.getPrice("EUR_USD");
+
+        assertEquals(mockPrice, actualPrice);
+    }
+
     private MarketIfTouchedOrder setFakeMarketIFTouchedOrder(String id) {
         MarketIfTouchedOrder orderMock = mock(MarketIfTouchedOrder.class);
         OrderID orderID = mock(OrderID.class);
@@ -256,6 +265,13 @@ public class OandaGatewayTest {
         setFakeBuilders();
         setFakePriceTransformer();
         when(connectorMock.getUrl()).thenReturn("dd");
+    }
+
+    private void setFakeOrder(){
+        setFakeContext();
+        setFakeBuilders();
+        //to be finished
+    //    setFakeOrderTransformer();
     }
 
     @SuppressWarnings("unchecked")

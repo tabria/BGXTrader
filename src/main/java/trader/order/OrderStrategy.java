@@ -19,5 +19,5 @@ public interface OrderStrategy {
 
     BigDecimal calculateTradeMargin(BrokerGateway brokerGateway, BigDecimal unitsSize);
 
-    void closeUnfilledOrders();
+    void closeUnfilledOrders(BrokerGateway brokerGateway, Price price);
 }

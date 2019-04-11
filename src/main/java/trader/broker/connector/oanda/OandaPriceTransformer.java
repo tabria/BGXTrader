@@ -2,9 +2,8 @@ package trader.broker.connector.oanda;
 
 import com.oanda.v20.pricing.ClientPrice;
 import com.oanda.v20.pricing.PricingGetResponse;
-import com.oanda.v20.pricing_common.PriceBucket;
 import com.oanda.v20.primitives.DateTime;
-import trader.broker.connector.PriceTransformable;
+import trader.broker.connector.Transformable;
 import trader.price.Price;
 import trader.price.PriceImpl;
 import trader.responder.Response;
@@ -13,9 +12,8 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.List;
 
-public class OandaPriceTransformer implements PriceTransformable {
+public class OandaPriceTransformer implements Transformable.PriceTransformable {
     @Override
     public <T> Price transformToPrice(Response<T> response) {
 

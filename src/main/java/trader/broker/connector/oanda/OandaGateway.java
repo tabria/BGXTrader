@@ -31,8 +31,9 @@ public class OandaGateway extends BaseGateway {
     private OandaAccountValidator oandaAccountValidator ;
     private OandaRequestBuilder oandaRequestBuilder;
     private OandaResponseBuilder oandaResponseBuilder;
-    private PriceTransformable oandaPriceTransformer;
-    private CandlestickTransformable oandaCandlesTransformer;
+    private Transformable.PriceTransformable oandaPriceTransformer;
+    private Transformable.CandleTransformable oandaCandlesTransformer;
+    private Transformable.OrderTransformable oandaOrderTransformer;
     private HashMap<String, String> priceSettings;
     private HashMap<String, String> accountSettings;
 
@@ -44,6 +45,7 @@ public class OandaGateway extends BaseGateway {
         oandaResponseBuilder = new OandaResponseBuilder(context, connector.getUrl());
         oandaPriceTransformer = new OandaPriceTransformer();
         oandaCandlesTransformer = new OandaCandleTransformer();
+        oandaOrderTransformer = new OandaOrderTransformer();
         priceSettings = setAccount();
         accountSettings = setAccount();
     }
@@ -73,11 +75,25 @@ public class OandaGateway extends BaseGateway {
     }
 
     @Override
+    public trader.entity.order.Order getOrder(trader.entity.order.enums.OrderType type){
+        List<Order> orders = getAccount().getOrders();
+        for (Order order : orders){
+            if (order.getType().equals(OrderType.MARKET_IF_TOUCHED)) {
+                MarketIfTouchedOrder orderToTransform = (MarketIfTouchedOrder) order;
+                return oandaOrderTransformer.transformOrder(orderToTransform);
+            }
+        }
+        return null;
+    }
+
+
     public String getNotFilledOrderID(){
         List<Order> orders = getAccount().getOrders();
         for (Order order : orders){
-            if (order.getType().equals(OrderType.MARKET_IF_TOUCHED))
+            if (order.getType().equals(OrderType.MARKET_IF_TOUCHED)) {
+                MarketIfTouchedOrder order1 = (MarketIfTouchedOrder) order;
                 return order.getId().toString();
+            }
         }
         return NON_EXISTING_MARKET_IF_TOUCHED_ORDER_ID;
     }

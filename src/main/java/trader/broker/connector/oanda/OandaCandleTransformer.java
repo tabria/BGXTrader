@@ -3,7 +3,7 @@ package trader.broker.connector.oanda;
 import com.oanda.v20.instrument.CandlestickData;
 import com.oanda.v20.instrument.InstrumentCandlesResponse;
 import com.oanda.v20.primitives.DateTime;
-import trader.broker.connector.CandlestickTransformable;
+import trader.broker.connector.Transformable;
 import trader.entity.candlestick.Candlestick;
 import trader.entity.candlestick.candle.Candle;
 import trader.responder.Response;
@@ -14,7 +14,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OandaCandleTransformer implements CandlestickTransformable {
+public class OandaCandleTransformer implements  Transformable.CandleTransformable {
 
 
     @Override
