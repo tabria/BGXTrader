@@ -1,5 +1,6 @@
 package trader.entry.standard;
 
+import trader.configuration.TradingStrategyConfiguration;
 import trader.controller.TraderController;
 import trader.entity.indicator.Indicator;
 import trader.entity.trade.point.Point;
@@ -22,8 +23,6 @@ import java.util.List;
 
 public final class StandardEntryStrategy implements EntryStrategy {
 
-    private static final BigDecimal RSI_FILTER = BigDecimal.valueOf(50);
-
     private static final int INDICATORS_COUNT = 6;
     private static final int START_OFFSET = 3;
     private static final int END_OFFSET = 2;
@@ -31,6 +30,7 @@ public final class StandardEntryStrategy implements EntryStrategy {
 
     private TraderController<Trade> createTradeController;
     private TradeCalculationService tradeCalculationService;
+    private TradingStrategyConfiguration configuration;
 
     private Indicator fastWMA;
     private Indicator middleWMA;
@@ -45,6 +45,13 @@ public final class StandardEntryStrategy implements EntryStrategy {
         tradeCalculationService = new TradeCalculationService();
     }
 
+    public void setConfiguration(TradingStrategyConfiguration configuration) {
+        if(configuration == null)
+            throw new NullArgumentException();
+        this.configuration = configuration;
+        tradeCalculationService.setConfiguration(configuration);
+    }
+
     @Override
     public void setCreateTradeController(TraderController<Trade> createTradeController) {
         if(createTradeController == null)
@@ -54,6 +61,7 @@ public final class StandardEntryStrategy implements EntryStrategy {
 
     @Override
     public Trade generateTrade(){
+        validateConfigurationExistence();
         validateIndicatorExistence();
         validateCreateTradeControllerExistence();
         LineSegment fastWMALineSegment = getLineSegment(this.fastWMA);
@@ -100,6 +108,11 @@ public final class StandardEntryStrategy implements EntryStrategy {
                     throw new BadRequestException();
             }
         }
+    }
+
+    private void validateConfigurationExistence() {
+        if(configuration == null)
+            throw new NullArgumentException();
     }
 
     private void validateCreateTradeControllerExistence() {
@@ -166,10 +179,10 @@ public final class StandardEntryStrategy implements EntryStrategy {
         List<BigDecimal> rsiValues = this.rsi.getValues();
         BigDecimal checkValue = rsiValues.get(rsiValues.size() - 2);
         if (direction.equals(Direction.UP)){
-            return checkValue.compareTo(RSI_FILTER) >= 0;
+            return checkValue.compareTo(configuration.getRsiFilter()) >= 0;
         }
         if (direction.equals(Direction.DOWN)){
-            return checkValue.compareTo(RSI_FILTER) <= 0;
+            return checkValue.compareTo(configuration.getRsiFilter()) <= 0;
         }
         return false;
     }

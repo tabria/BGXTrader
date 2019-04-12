@@ -2,6 +2,8 @@ package trader.entry.standard.service;
 
 import org.junit.Before;
 import org.junit.Test;
+import trader.configuration.TradingStrategyConfiguration;
+import trader.entity.trade.Trade;
 import trader.entity.trade.point.Point;
 import trader.entity.trade.Direction;
 import trader.exception.NullArgumentException;
@@ -23,8 +25,11 @@ public class TradeCalculationServiceTest {
             .setScale(5, RoundingMode.HALF_UP);
     private static final BigDecimal DEFAULT_STOP_LOSS_FILTER = BigDecimal.valueOf(0.0005)
             .setScale(5, RoundingMode.HALF_UP);
+    private static final BigDecimal FIRST_TARGET = BigDecimal.valueOf(0.0050)
+            .setScale(5, RoundingMode.HALF_UP);
 
     private TradeCalculationService tradeCalculationService;
+    private TradingStrategyConfiguration configurationMock;
     private Point pointMock;
 
 
@@ -33,7 +38,9 @@ public class TradeCalculationServiceTest {
     public void setUp() throws Exception {
         pointMock = mock(Point.class);
         when(pointMock.getPrice()).thenReturn(INTERSECTION_PRICE);
+        configurationMock = mock(TradingStrategyConfiguration.class);
         tradeCalculationService = new TradeCalculationService();
+        setConfiguration();
     }
 
     @Test(expected = NullArgumentException.class)
@@ -48,7 +55,7 @@ public class TradeCalculationServiceTest {
 
     @Test
     public void WhenCallCalculateEntryPriceWithDownDirection_CorrectResult(){
-        BigDecimal expected = INTERSECTION_PRICE.subtract(DEFAULT_ENTRY_FILTER);
+        BigDecimal expected = INTERSECTION_PRICE.subtract(configurationMock.getEntryFilter());
         BigDecimal entryPriceValue = tradeCalculationService.calculateEntryPrice(pointMock, Direction.DOWN);
 
         assertEquals(expected, entryPriceValue);
@@ -56,7 +63,7 @@ public class TradeCalculationServiceTest {
 
     @Test
     public void WhenCallCalculateEntryPriceWithUPDirection_CorrectResult(){
-        BigDecimal expected = INTERSECTION_PRICE.add(DEFAULT_ENTRY_FILTER).add(DEFAULT_SPREAD);
+        BigDecimal expected = INTERSECTION_PRICE.add(configurationMock.getEntryFilter()).add(configurationMock.getSpread());
         BigDecimal entryPriceValue = tradeCalculationService.calculateEntryPrice(pointMock, Direction.UP);
 
         assertEquals(expected, entryPriceValue);
@@ -64,7 +71,7 @@ public class TradeCalculationServiceTest {
 
     @Test
     public void WhenCallCalculateEntryPriceWithFLATDirection_CorrectResult(){
-        BigDecimal expected = INTERSECTION_PRICE.add(DEFAULT_ENTRY_FILTER).add(DEFAULT_SPREAD);
+        BigDecimal expected = INTERSECTION_PRICE.add(configurationMock.getEntryFilter()).add(configurationMock.getSpread());
         BigDecimal entryPriceValue = tradeCalculationService.calculateEntryPrice(pointMock, Direction.FLAT);
 
         assertEquals(expected, entryPriceValue);
@@ -82,7 +89,7 @@ public class TradeCalculationServiceTest {
 
     @Test
     public void WhenCallCalculateStopLossPriceWithDownDirection_CorrectResult(){
-        BigDecimal expected = INTERSECTION_PRICE.add(DEFAULT_STOP_LOSS_FILTER).add(DEFAULT_SPREAD);
+        BigDecimal expected = INTERSECTION_PRICE.add(configurationMock.getStopLossFilter()).add(configurationMock.getSpread());
         BigDecimal stopLossPriceValue = tradeCalculationService.calculateStopLossPrice(pointMock, Direction.DOWN);
 
         assertEquals(expected, stopLossPriceValue);
@@ -90,7 +97,7 @@ public class TradeCalculationServiceTest {
 
     @Test
     public void WhenCallCalculateStopLossPriceWithUpDirection_CorrectResult(){
-        BigDecimal expected = INTERSECTION_PRICE.subtract(DEFAULT_STOP_LOSS_FILTER);
+        BigDecimal expected = INTERSECTION_PRICE.subtract(configurationMock.getStopLossFilter());
         BigDecimal stopLossPriceValue = tradeCalculationService.calculateStopLossPrice(pointMock, Direction.UP);
 
         assertEquals(expected, stopLossPriceValue);
@@ -98,7 +105,7 @@ public class TradeCalculationServiceTest {
 
     @Test
     public void WhenCallCalculateStopLossPriceWithFlatDirection_CorrectResult(){
-        BigDecimal expected = INTERSECTION_PRICE.subtract(DEFAULT_STOP_LOSS_FILTER);
+        BigDecimal expected = INTERSECTION_PRICE.subtract(configurationMock.getStopLossFilter());
         BigDecimal stopLossPriceValue = tradeCalculationService.calculateStopLossPrice(pointMock, Direction.FLAT);
 
         assertEquals(expected, stopLossPriceValue);
@@ -154,14 +161,14 @@ public class TradeCalculationServiceTest {
 
     @Test
     public void WhenCallIsTradableWithDownDirectionAndDailyOpenBetweenIntersectionPriceAndEntryPrice_TradableTrue(){
-        boolean tradable = tradeCalculationService.setTradable(pointMock, Direction.DOWN, INTERSECTION_PRICE.subtract(BigDecimal.valueOf(0.0010)), INTERSECTION_PRICE.subtract(DEFAULT_ENTRY_FILTER));
+        boolean tradable = tradeCalculationService.setTradable(pointMock, Direction.DOWN, INTERSECTION_PRICE.subtract(BigDecimal.valueOf(0.0010)), INTERSECTION_PRICE.subtract(configurationMock.getEntryFilter()));
 
         assertTrue(tradable);
     }
 
     @Test
     public void WhenCallIsTradableWithDownDirectionAndDailyOpenBelowIntersectionPriceAndOnEntryPrice_TradableTrue(){
-        boolean tradable = tradeCalculationService.setTradable(pointMock, Direction.DOWN, INTERSECTION_PRICE.subtract(DEFAULT_ENTRY_FILTER), INTERSECTION_PRICE.subtract(DEFAULT_ENTRY_FILTER));
+        boolean tradable = tradeCalculationService.setTradable(pointMock, Direction.DOWN, INTERSECTION_PRICE.subtract(configurationMock.getEntryFilter()), INTERSECTION_PRICE.subtract(configurationMock.getEntryFilter()));
 
         assertTrue(tradable);
     }
@@ -169,7 +176,7 @@ public class TradeCalculationServiceTest {
     @Test
     public void WhenCallIsTradableWithDownDirectionAndDailyOpenBelowIntersectionPriceAndBelowEntryPriceButAboveFirstTargetPrice_TradableFalse(){
 
-        boolean tradable = tradeCalculationService.setTradable(pointMock, Direction.DOWN, INTERSECTION_PRICE.subtract(BigDecimal.valueOf(0.0069)), INTERSECTION_PRICE.subtract(DEFAULT_ENTRY_FILTER));
+        boolean tradable = tradeCalculationService.setTradable(pointMock, Direction.DOWN, INTERSECTION_PRICE.subtract(BigDecimal.valueOf(0.0069)), INTERSECTION_PRICE.subtract(configurationMock.getEntryFilter()));
 
         assertFalse(tradable);
     }
@@ -177,8 +184,8 @@ public class TradeCalculationServiceTest {
     @Test
     public void WhenCallIsTradableWithDownDirectionAndDailyOpenBelowIntersectionPriceAndBelowEntryPriceButOnOrBelowFirstTargetPrice_TradableTrue(){
 
-        boolean tradableOn = tradeCalculationService.setTradable(pointMock, Direction.DOWN, INTERSECTION_PRICE.subtract(BigDecimal.valueOf(0.0070)), INTERSECTION_PRICE.subtract(DEFAULT_ENTRY_FILTER));
-        boolean tradableBelow = tradeCalculationService.setTradable(pointMock, Direction.DOWN, INTERSECTION_PRICE.subtract(BigDecimal.valueOf(0.0071)), INTERSECTION_PRICE.subtract(DEFAULT_ENTRY_FILTER));
+        boolean tradableOn = tradeCalculationService.setTradable(pointMock, Direction.DOWN, INTERSECTION_PRICE.subtract(BigDecimal.valueOf(0.0070)), INTERSECTION_PRICE.subtract(configurationMock.getEntryFilter()));
+        boolean tradableBelow = tradeCalculationService.setTradable(pointMock, Direction.DOWN, INTERSECTION_PRICE.subtract(BigDecimal.valueOf(0.0071)), INTERSECTION_PRICE.subtract(configurationMock.getEntryFilter()));
 
         assertTrue(tradableOn);
         assertTrue(tradableBelow);
@@ -214,14 +221,14 @@ public class TradeCalculationServiceTest {
 
     @Test
     public void WhenCallIsTradableWithUpDirectionAndDailyOpenBetweenIntersectionPriceAndEntryPrice_TradableTrue(){
-        boolean tradable = tradeCalculationService.setTradable(pointMock, Direction.UP, INTERSECTION_PRICE.add(BigDecimal.valueOf(0.0010)), INTERSECTION_PRICE.add(DEFAULT_ENTRY_FILTER));
+        boolean tradable = tradeCalculationService.setTradable(pointMock, Direction.UP, INTERSECTION_PRICE.add(BigDecimal.valueOf(0.0010)), INTERSECTION_PRICE.add(configurationMock.getEntryFilter()));
 
         assertTrue(tradable);
     }
 
     @Test
     public void WhenCallIsTradableWithUpDirectionAndDailyOpenBelowIntersectionPriceAndOnEntryPrice_TradableTrue(){
-        boolean tradable = tradeCalculationService.setTradable(pointMock, Direction.UP, INTERSECTION_PRICE.add(DEFAULT_ENTRY_FILTER), INTERSECTION_PRICE.add(DEFAULT_ENTRY_FILTER));
+        boolean tradable = tradeCalculationService.setTradable(pointMock, Direction.UP, INTERSECTION_PRICE.add(configurationMock.getEntryFilter()), INTERSECTION_PRICE.add(configurationMock.getEntryFilter()));
 
         assertTrue(tradable);
     }
@@ -229,7 +236,7 @@ public class TradeCalculationServiceTest {
     @Test
     public void WhenCallIsTradableWithUpDirectionAndDailyOpenAboveIntersectionPriceAndAboveEntryPriceButBelowFirstTargetPrice_TradableFalse(){
 
-        boolean tradable = tradeCalculationService.setTradable(pointMock, Direction.UP, INTERSECTION_PRICE.add(BigDecimal.valueOf(0.0069)), INTERSECTION_PRICE.add(DEFAULT_ENTRY_FILTER));
+        boolean tradable = tradeCalculationService.setTradable(pointMock, Direction.UP, INTERSECTION_PRICE.add(BigDecimal.valueOf(0.0069)), INTERSECTION_PRICE.add(configurationMock.getEntryFilter()));
 
         assertFalse(tradable);
     }
@@ -237,11 +244,19 @@ public class TradeCalculationServiceTest {
     @Test
     public void WhenCallIsTradableWithUpDirectionAndDailyOpenAboveIntersectionPriceAndAboveEntryPriceButOnOrAboveFirstTargetPrice_TradableTrue(){
 
-        boolean tradableOn = tradeCalculationService.setTradable(pointMock, Direction.UP, INTERSECTION_PRICE.add(BigDecimal.valueOf(0.0070)), INTERSECTION_PRICE.add(DEFAULT_ENTRY_FILTER));
-        boolean tradableBelow = tradeCalculationService.setTradable(pointMock, Direction.UP, INTERSECTION_PRICE.add(BigDecimal.valueOf(0.0071)), INTERSECTION_PRICE.add(DEFAULT_ENTRY_FILTER));
+        boolean tradableOn = tradeCalculationService.setTradable(pointMock, Direction.UP, INTERSECTION_PRICE.add(BigDecimal.valueOf(0.0070)), INTERSECTION_PRICE.add(configurationMock.getEntryFilter()));
+        boolean tradableBelow = tradeCalculationService.setTradable(pointMock, Direction.UP, INTERSECTION_PRICE.add(BigDecimal.valueOf(0.0071)), INTERSECTION_PRICE.add(configurationMock.getEntryFilter()));
 
         assertTrue(tradableOn);
         assertTrue(tradableBelow);
+    }
+
+    private void setConfiguration() {
+        tradeCalculationService.setConfiguration(configurationMock);
+        when(configurationMock.getSpread()).thenReturn(DEFAULT_SPREAD);
+        when(configurationMock.getEntryFilter()).thenReturn(DEFAULT_ENTRY_FILTER);
+        when(configurationMock.getStopLossFilter()).thenReturn(DEFAULT_STOP_LOSS_FILTER);
+        when(configurationMock.getTarget()).thenReturn(FIRST_TARGET);
     }
 
 }

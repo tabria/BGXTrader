@@ -11,6 +11,7 @@ import trader.entity.trade.Trade;
 import trader.entity.trade.TradeImpl;
 import trader.entry.EntryStrategy;
 import trader.exception.*;
+import trader.exit.ExitStrategy;
 import trader.interactor.enums.DataStructureType;
 import trader.interactor.RequestImpl;
 import trader.configuration.TradingStrategyConfiguration;
@@ -50,7 +51,16 @@ public class RequestBuilderImpl implements RequestBuilder {
             return buildEntryStrategy(settings);
         if(controllerName.contains(type(DataStructureType.ORDER_STRATEGY)))
             return buildOrderStrategy(settings);
+        if(controllerName.contains(type(DataStructureType.EXIT_STRATEGY)))
+            return buildExitStrategy(settings);
         throw new NoSuchDataStructureException();
+    }
+
+    private Request<?> buildExitStrategy(HashMap<String,String> settings) {
+        Request<ExitStrategy> request = new RequestImpl<>();
+        ExitStrategy exitStrategy = createExitStrategyInstance(settings);
+        request.setRequestDataStructure(exitStrategy);
+        return request;
     }
 
     private Request<?> buildOrderStrategy(HashMap<String,String> settings) {
@@ -104,6 +114,20 @@ public class RequestBuilderImpl implements RequestBuilder {
         throw new NoSuchDataStructureException();
     }
 
+    private ExitStrategy createExitStrategyInstance(HashMap<String,String> settings) {
+        try {
+            String className = settings.get("exitStrategy").trim();
+            className = Character.toUpperCase(className.charAt(0)) + className.substring(1);
+            Class<?> exitStrategyClass = Class.forName("trader.exit." + className.toLowerCase() + "." + className +"ExitStrategy");
+            Constructor<?> exitStrategyConstructor = exitStrategyClass.getDeclaredConstructor();
+            return (ExitStrategy) exitStrategyConstructor.newInstance();
+        } catch (ClassNotFoundException | InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException | StringIndexOutOfBoundsException e) {
+            throw new NoSuchStrategyException();
+        } catch (NullPointerException e) {
+            throw new NullArgumentException();
+        }
+    }
+
     private EntryStrategy createEntryStrategyInstance(HashMap<String, String> settings) {
         try {
             String className = settings.get("entryStrategy").trim();
@@ -122,7 +146,7 @@ public class RequestBuilderImpl implements RequestBuilder {
         try {
             String className = settings.get("orderStrategy").trim();
             className = Character.toUpperCase(className.charAt(0)) + className.substring(1);
-            Class<?> orderStrategyClass = Class.forName("trader.order." + className + "OrderStrategy");
+            Class<?> orderStrategyClass = Class.forName("trader.order." +className.toLowerCase() + "." + className +"OrderStrategy");
             Constructor<?> orderStrategyConstructor = orderStrategyClass.getDeclaredConstructor();
             return (OrderStrategy) orderStrategyConstructor.newInstance();
         } catch (ClassNotFoundException | InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException | StringIndexOutOfBoundsException e) {

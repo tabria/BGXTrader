@@ -8,7 +8,7 @@ import trader.strategy.bgxstrategy.BGXStrategyMain;
 import trader.strategy.Strategy;
 import trader.strategy.ThreadedStrategy;
 import trader.exit.ExitStrategy;
-import trader.exit.fullclose.FullCloseStrategy;
+import trader.exit.fullclose.FullCloseExitStrategy;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -117,7 +117,7 @@ public class Main {
 
         //create trade service
    //     NewTradeService newTradeService = new NewTradeService(context, signalGenerator);
-        ExitStrategy exitStrategy = new FullCloseStrategy(context, Config.TIME_FRAME);
+  //      ExitStrategy exitStrategy = new FullCloseExitStrategy(context, Config.TIME_FRAME);
  //       OrderService orderService = new OrderService(context);
 
         //create position manager

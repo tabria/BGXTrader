@@ -54,7 +54,12 @@ risk:
   riskPerTrade: "0.01"
 entry:
   entryStrategy: "standard"
+  entryFilter: "0.0020"
+  stopLossFilter: "0.0005"
+  target: "0.0050"
+  rsiFilter: "50"
 order:
   orderStrategy: "standard"
 exit:
   exitStrategy: "fullClose"
+  exitGranularity: "M30"

@@ -69,14 +69,16 @@ public final class BGXStrategyMain implements Strategy {
         indicatorList = createIndicatorsFromConfiguration(configuration.getIndicators());
         entryStrategy = setEntryStrategy();
         orderStrategy = setOrderStrategy();
+   //     exitStrategy = setExitStrategy();
 
 
-       // exitStrategy = BaseExitStrategy.createInstance();
+       // exitStrategy = ServiceExitStrategy.createInstance();
     }
 
 
     @Override
     public void execute() {
+        brokerGateway.validateConnector();
         addIndicatorsToObservable(priceObservable, indicatorList);
         new PricePull("PricePull", priceObservable);
 
@@ -136,16 +138,23 @@ public final class BGXStrategyMain implements Strategy {
             throw new EmptyArgumentException();
     }
 
-    //make controllers and usecases for loading settings for entry order and exit strategies
+    private ExitStrategy setExitStrategy() {
+        HashMap<String, String> settings = new HashMap<>();
+        settings.put(EXIT_STRATEGY_KEY_NAME, configuration.getExitStrategy());
+        TraderController<ExitStrategy> controller = new AddExitStrategyController<>(requestBuilder, useCaseFactory);
+        Response<ExitStrategy> exitResponse = controller.execute(settings);
+        ExitStrategy exitStrategy = exitResponse.getResponseDataStructure();
+        return exitStrategy;
+    }
+
     private OrderStrategy setOrderStrategy() {
         HashMap<String, String> settings = new HashMap<>();
-        settings.put(ORDER_STRATEGY_KEY_NAME, configuration.getEntryStrategy());
+        settings.put(ORDER_STRATEGY_KEY_NAME, configuration.getOrderStrategy());
         TraderController<OrderStrategy> controller = new AddOrderStrategyController<>(requestBuilder, useCaseFactory);
-        Response<OrderStrategy> entryResponse = controller.execute(settings);
-        OrderStrategy orderStrategy = entryResponse.getResponseDataStructure();
-        return orderStrategy;
+        Response<OrderStrategy> orderResponse = controller.execute(settings);
+        return orderResponse.getResponseDataStructure();
     }
-    //make controllers and usecases for loading settings for entry order and exit strategies
+
     private EntryStrategy setEntryStrategy() {
         HashMap<String, String> settings = new HashMap<>();
         settings.put(ENTRY_STRATEGY_KEY_NAME, configuration.getEntryStrategy());
@@ -173,7 +182,7 @@ public final class BGXStrategyMain implements Strategy {
         Response<BrokerGateway> brokerResponse = controller.execute(settings);
         BrokerConnector connector = (BrokerConnector) brokerResponse.getResponseDataStructure();
         BrokerGateway brokerGateway = BaseGateway.create(brokerName, connector);
-        brokerGateway.validateConnector();
+      //  brokerGateway.validateConnector();
         return brokerGateway;
     }
 

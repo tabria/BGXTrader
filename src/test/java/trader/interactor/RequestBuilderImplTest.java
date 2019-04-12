@@ -7,8 +7,10 @@ import trader.entity.trade.Trade;
 import trader.entry.EntryStrategy;
 import trader.entry.standard.StandardEntryStrategy;
 import trader.exception.*;
+import trader.exit.ExitStrategy;
+import trader.exit.fullclose.FullCloseExitStrategy;
 import trader.order.OrderStrategy;
-import trader.order.StandardOrderStrategy;
+import trader.order.standard.StandardOrderStrategy;
 import trader.requestor.Request;
 import trader.requestor.RequestBuilder;
 import trader.entity.indicator.ma.SimpleMovingAverage;
@@ -186,9 +188,6 @@ public class RequestBuilderImplTest {
         assertEquals(StandardEntryStrategy.class, entryStrategy.getClass());
     }
 
-
-
-
     @Test(expected = NullArgumentException.class)
     public void WhenCallBuildWithAddOrderStrategyControllerWithBadKeyNameInSettings_Exception(){
         settings.put("order", "standard");
@@ -214,11 +213,46 @@ public class RequestBuilderImplTest {
     }
 
     @Test
-    public void WhenCallBuildWithAddOrderStrategyControllerWithCorrectSettings_CorrectEntryStrategy(){
+    public void WhenCallBuildWithAddOrderStrategyControllerWithCorrectSettings_CorrectOrderStrategy(){
         settings.put("orderStrategy", " standard ");
         Request<?> orderStrategyRequest = requestBuilder.build("AddOrderStrategyController", settings);
         OrderStrategy orderStrategy = (OrderStrategy) orderStrategyRequest.getRequestDataStructure();
 
         assertEquals(StandardOrderStrategy.class, orderStrategy.getClass());
     }
+
+    @Test(expected = NullArgumentException.class)
+    public void WhenCallBuildWithAddExitStrategyControllerWithBadKeyNameInSettings_Exception(){
+        settings.put("exit", "fullClose");
+        requestBuilder.build("AddExitStrategyController", settings);
+    }
+
+    @Test(expected = NullArgumentException.class)
+    public void WhenCallBuildWithAddExitStrategyControllerWithNullValueInSettings_Exception(){
+        settings.put("exitStrategy", null);
+        requestBuilder.build("AddExitStrategyController", settings);
+    }
+
+    @Test(expected = NoSuchStrategyException.class)
+    public void WhenCallBuildWithAddExitStrategyControllerWithEmptyValueInSettings_Exception(){
+        settings.put("exitStrategy", "   ");
+        requestBuilder.build("AddExitStrategyController", settings);
+    }
+
+    @Test(expected = NoSuchStrategyException.class)
+    public void WhenCallBuildWithAddExitStrategyControllerWithENonExistingStrategy_Exception(){
+        settings.put("exitStrategy", "non");
+        requestBuilder.build("AddExitStrategyController", settings);
+    }
+
+    @Test
+    public void WhenCallBuildWithAddExitStrategyControllerWithCorrectSettings_CorrectExitStrategy(){
+        settings.put("exitStrategy", " fullClose ");
+        Request<?> exitStrategyRequest = requestBuilder.build("AddExitStrategyController", settings);
+        ExitStrategy exitStrategy = (ExitStrategy) exitStrategyRequest.getRequestDataStructure();
+
+        assertEquals(FullCloseExitStrategy.class, exitStrategy.getClass());
+    }
+
+
 }

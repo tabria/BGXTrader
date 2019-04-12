@@ -1,5 +1,7 @@
 package trader.configuration;
 
+import trader.entity.candlestick.candle.CandleGranularity;
+
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
@@ -41,4 +43,24 @@ public interface TradingStrategyConfiguration {
     String getExitStrategy();
 
     void setExitStrategy(String exitStrategy);
+
+    BigDecimal getStopLossFilter();
+
+    void setStopLossFilter(BigDecimal stopLossFilter);
+
+    BigDecimal getTarget();
+
+    void setTarget(BigDecimal target);
+
+    BigDecimal getRsiFilter();
+
+    void setRsiFilter(BigDecimal rsiFilter);
+
+    BigDecimal getEntryFilter();
+
+    void setEntryFilter(BigDecimal entryFilter);
+
+    CandleGranularity getExitGranularity();
+
+    void setExitGranularity(CandleGranularity exitGranularity);
 }

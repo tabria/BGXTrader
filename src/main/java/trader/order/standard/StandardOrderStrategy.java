@@ -1,4 +1,4 @@
-package trader.order;
+package trader.order.standard;
 
 import trader.broker.BrokerGateway;
 import trader.configuration.TradingStrategyConfiguration;
@@ -8,6 +8,7 @@ import trader.entity.trade.Direction;
 import trader.entity.trade.Trade;
 import trader.exception.EmptyArgumentException;
 import trader.exception.NullArgumentException;
+import trader.order.OrderStrategy;
 import trader.price.Price;
 
 import java.math.BigDecimal;

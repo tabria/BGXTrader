@@ -2,11 +2,13 @@ package trader.configuration;
 
 import org.junit.Before;
 import org.junit.Test;
+import trader.entity.candlestick.candle.CandleGranularity;
 import trader.exception.BadRequestException;
 import trader.exception.NegativeNumberException;
 import trader.exception.NullArgumentException;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -18,8 +20,19 @@ public class BGXConfigurationImplTest {
     private static final long DEFAULT_INITIAL_CANDLES_QUANTITY = 4999L;
     private static final long DEFAULT_UPDATE_CANDLES_QUANTITY = 2L;
     private static final String DEFAULT_BGX_CONFIG_FILE_LOCATION = "bgxStrategyConfig.yaml";
-    private static final BigDecimal DEFAULT_SPREAD = BigDecimal.valueOf(0.0002).setScale(5, BigDecimal.ROUND_HALF_UP);
-    private static final BigDecimal DEFAULT_RISK_PER_TRADE = BigDecimal.valueOf(0.01).setScale(5, BigDecimal.ROUND_HALF_UP);
+    private static final BigDecimal DEFAULT_SPREAD = BigDecimal.valueOf(0.0002)
+            .setScale(5, BigDecimal.ROUND_HALF_UP);
+    private static final BigDecimal DEFAULT_RISK_PER_TRADE = BigDecimal.valueOf(0.01)
+            .setScale(5, BigDecimal.ROUND_HALF_UP);
+    private static final BigDecimal DEFAULT_ENTRY_FILTER = BigDecimal.valueOf(0.0020)
+            .setScale(5, BigDecimal.ROUND_HALF_UP);
+    private static final BigDecimal DEFAULT_STOP_LOSS_FILTER = BigDecimal.valueOf(0.0005)
+            .setScale(5, BigDecimal.ROUND_HALF_UP);
+    private static final BigDecimal FIRST_TARGET = BigDecimal.valueOf(0.0050)
+            .setScale(5, RoundingMode.HALF_UP);
+    private static final BigDecimal RSI_FILTER = BigDecimal.valueOf(50)
+            .setScale(5, RoundingMode.HALF_UP);
+    private static final CandleGranularity DEFAULT_EXIT_GRANULARITY = CandleGranularity.M30;
     private static final String DEFAULT_ENTRY_STRATEGY = "standard";
     private static final String DEFAULT_ORDER_STRATEGY = "standard";
     private static final String DEFAULT_EXIT_STRATEGY = "fullClose";
@@ -214,6 +227,112 @@ public class BGXConfigurationImplTest {
         config.setExitStrategy("  bestExit  ");
 
         assertEquals("bestExit", config.getExitStrategy());
+    }
+
+    @Test(expected = NullArgumentException.class)
+    public void whenCallStopLossFilterWithNull_Exception(){
+        config.setStopLossFilter(null);
+    }
+
+    @Test(expected = NegativeNumberException.class)
+    public void WhenCallSetStopLossFilterWithNegativeValue_Exception(){
+        config.setStopLossFilter(new BigDecimal(-20));
+    }
+
+    @Test
+    public void WhenCallSetStopLossFilterWithCorrectValue_CorrectResult(){
+        BigDecimal expected = new BigDecimal(0.07);
+        config.setStopLossFilter(expected);
+
+        assertEquals(expected, config.getStopLossFilter());
+    }
+
+    @Test
+    public void WhenCallGetStopLossFilterAfterInitializing_Default(){
+        assertEquals(DEFAULT_STOP_LOSS_FILTER, config.getStopLossFilter());
+    }
+
+    @Test(expected = NullArgumentException.class)
+    public void whenCallTargetWithNull_Exception(){
+        config.setTarget(null);
+    }
+
+    @Test(expected = NegativeNumberException.class)
+    public void WhenCallSetTargetWithNegativeValue_Exception(){
+        config.setTarget(new BigDecimal(-20));
+    }
+
+    @Test
+    public void WhenCallSetTargetWithCorrectValue_CorrectResult(){
+        BigDecimal expected = new BigDecimal(0.07);
+        config.setTarget(expected);
+
+        assertEquals(expected, config.getTarget());
+    }
+
+    @Test
+    public void WhenCallGetTargetAfterInitializing_Default(){
+        assertEquals(FIRST_TARGET, config.getTarget());
+    }
+
+    @Test(expected = NullArgumentException.class)
+    public void whenCallRSIFilterWithNull_Exception(){
+        config.setRsiFilter(null);
+    }
+
+    @Test(expected = NegativeNumberException.class)
+    public void WhenCallSetRSIFilterWithNegativeValue_Exception(){
+        config.setRsiFilter(new BigDecimal(-20));
+    }
+
+    @Test
+    public void WhenCallSetRSIFilterWithCorrectValue_CorrectResult(){
+        BigDecimal expected = new BigDecimal(0.07);
+        config.setRsiFilter(expected);
+
+        assertEquals(expected, config.getRsiFilter());
+    }
+
+    @Test
+    public void WhenCallGetRSIFilterAfterInitializing_Default(){
+        assertEquals(RSI_FILTER, config.getRsiFilter());
+    }
+
+    @Test(expected = NullArgumentException.class)
+    public void whenCallEntryFilterWithNull_Exception(){
+        config.setEntryFilter(null);
+    }
+
+    @Test(expected = NegativeNumberException.class)
+    public void WhenCallSetEntryFilterWithNegativeValue_Exception(){
+        config.setEntryFilter(new BigDecimal(-20));
+    }
+
+    @Test
+    public void WhenCallSetEntryFilterWithCorrectValue_CorrectResult(){
+        BigDecimal expected = new BigDecimal(0.07);
+        config.setEntryFilter(expected);
+
+        assertEquals(expected, config.getEntryFilter());
+    }
+
+    @Test
+    public void WhenCallGetEntryFilterInitializing_Default(){
+        assertEquals(DEFAULT_ENTRY_FILTER, config.getEntryFilter());
+    }
+
+    @Test
+    public void WhenCallSetExitGranularityWithNull_Default(){
+        config.setExitGranularity(null);
+
+        assertEquals(DEFAULT_EXIT_GRANULARITY, config.getExitGranularity());
+    }
+
+    @Test
+    public void WhenCallSetExitGranularityWithCorrectValue_CorrectUpdate(){
+        config.setExitGranularity(CandleGranularity.M1);
+
+        assertEquals(CandleGranularity.M1, config.getExitGranularity());
     }
 
 }

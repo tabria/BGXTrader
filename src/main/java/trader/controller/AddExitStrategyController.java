@@ -1,7 +1,5 @@
 package trader.controller;
 
-
-import trader.configuration.TradingStrategyConfiguration;
 import trader.exception.NullArgumentException;
 import trader.requestor.Request;
 import trader.requestor.RequestBuilder;
@@ -11,13 +9,12 @@ import trader.responder.Response;
 
 import java.util.HashMap;
 
-public class CreateTradeController<T> implements TraderController<T> {
+public class AddExitStrategyController<T> implements TraderController<T> {
 
     private RequestBuilder requestBuilder;
     private UseCaseFactory useCaseFactory;
 
-
-    public CreateTradeController(RequestBuilder requestBuilder, UseCaseFactory useCaseFactory) {
+    public AddExitStrategyController(RequestBuilder requestBuilder, UseCaseFactory useCaseFactory) {
         if(requestBuilder == null || useCaseFactory == null)
             throw new NullArgumentException();
         this.requestBuilder = requestBuilder;
@@ -26,9 +23,9 @@ public class CreateTradeController<T> implements TraderController<T> {
 
     @Override
     public Response<T> execute(HashMap<String, String> settings) {
-        String controllerName = this.getClass().getSimpleName();
-        UseCase useCase = useCaseFactory.make(controllerName);
+        String controllerName = this.getClass().getSimpleName().trim();
         Request<?> request = requestBuilder.build(controllerName, settings);
+        UseCase useCase = useCaseFactory.make(controllerName);
         return useCase.execute(request);
     }
 }

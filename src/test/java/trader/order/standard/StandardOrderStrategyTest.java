@@ -1,4 +1,4 @@
-package trader.order;
+package trader.order.standard;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -13,6 +13,7 @@ import trader.entity.trade.Trade;
 import trader.exception.BadRequestException;
 import trader.exception.EmptyArgumentException;
 import trader.exception.NullArgumentException;
+import trader.order.standard.StandardOrderStrategy;
 import trader.price.Price;
 
 import java.math.BigDecimal;
@@ -276,7 +277,6 @@ public class StandardOrderStrategyTest {
         when(brokerGatewayMock.getMarginUsed()).thenReturn(BigDecimal.valueOf(marginUsed));
         when(brokerGatewayMock.getBalance()).thenReturn(BigDecimal.valueOf(balance));
     }
-
 
     private void setFalseInputForCalculatingUnitsSize(double currentPrice, double riskPerTrade) { ;
         when(priceMock.getBid()).thenReturn(BigDecimal.valueOf(currentPrice));

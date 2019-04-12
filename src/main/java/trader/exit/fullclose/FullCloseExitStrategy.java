@@ -4,24 +4,22 @@ import com.oanda.v20.Context;
 import com.oanda.v20.account.Account;
 import com.oanda.v20.order.OrderCreateResponse;
 import com.oanda.v20.primitives.DateTime;
-import com.oanda.v20.trade.TradeID;
 import com.oanda.v20.trade.TradeSetDependentOrdersResponse;
 import com.oanda.v20.trade.TradeSummary;
 import com.oanda.v20.transaction.TransactionID;
 import trader.entity.indicator.updater.CandlesUpdater;
 import trader.entity.candlestick.candle.CandleGranularity;
 import trader.exit.ExitStrategy;
-import trader.exit.exit_strategie.BaseExitStrategy;
 
 import java.math.BigDecimal;
 
-public final class FullCloseStrategy implements ExitStrategy {
+public final class FullCloseExitStrategy {
     //original 25
     private static final BigDecimal TARGET_DISTANCE = BigDecimal.valueOf(0.0054);
     private static final BigDecimal PARTS_TO_CLOSE = BigDecimal.valueOf(1);
     private static final BigDecimal BREAK_EVEN_DISTANCE = BigDecimal.valueOf(0.0025);
 
-//    private final BaseExitStrategy baseExitStrategy;
+//    private final ServiceExitStrategy baseExitStrategy;
     private OrderCreateResponse halfTradeResponse;
     private TradeSetDependentOrdersResponse tradeSetDependentOrdersResponse;
 
@@ -31,8 +29,8 @@ public final class FullCloseStrategy implements ExitStrategy {
      * @param candlestickGranularity time frame
      * @see Context
      */
-    public FullCloseStrategy(Context context, CandleGranularity candlestickGranularity) {
-     //   this.baseExitStrategy = new BaseExitStrategy(context, candlestickGranularity);
+    public FullCloseExitStrategy(Context context, CandleGranularity candlestickGranularity) {
+     //   this.baseExitStrategy = new ServiceExitStrategy(context, candlestickGranularity);
     }
 
     /**
@@ -43,7 +41,7 @@ public final class FullCloseStrategy implements ExitStrategy {
      * @param dateTime current dateTime
      * @see CandlesUpdater
      */
-    @Override
+
     public void execute(Account account, BigDecimal ask, BigDecimal bid, DateTime dateTime) {
 
 //        TradeSummary trade = this.baseExitStrategy.getTrade(account);

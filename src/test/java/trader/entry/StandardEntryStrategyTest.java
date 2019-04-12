@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import trader.CommonTestClassMembers;
+import trader.configuration.TradingStrategyConfiguration;
 import trader.controller.TraderController;
 import trader.entity.indicator.Indicator;
 import trader.entity.trade.point.Point;
@@ -14,7 +15,11 @@ import trader.exception.BadRequestException;
 import trader.exception.NoSuchStrategyException;
 import trader.exception.NullArgumentException;
 import trader.responder.Response;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -34,13 +39,26 @@ public class StandardEntryStrategyTest {
     private List<BigDecimal> middleWMAValues = createIndicatorValues(1.23119,1.23196, 1.23196);
 
 
+    private static final BigDecimal DEFAULT_ENTRY_FILTER = BigDecimal.valueOf(0.0020)
+            .setScale(5, RoundingMode.HALF_UP);
+    private static final BigDecimal DEFAULT_SPREAD = BigDecimal.valueOf(0.0002)
+            .setScale(5, RoundingMode.HALF_UP);
+    private static final BigDecimal DEFAULT_STOP_LOSS_FILTER = BigDecimal.valueOf(0.0005)
+            .setScale(5, RoundingMode.HALF_UP);
+    private static final BigDecimal FIRST_TARGET = BigDecimal.valueOf(0.0050)
+            .setScale(5, RoundingMode.HALF_UP);
+    private static final BigDecimal RSI_FILTER = BigDecimal.valueOf(50);
+
+
     private CommonTestClassMembers commonMembers;
     private Response responseMock;
     private Trade tradeMock;
     private ArgumentCaptor<HashMap> argument;
     private TraderController<Trade> tradeControllerMock;
     private List<Indicator> indicators;
+    private TradingStrategyConfiguration configurationMock;
     private StandardEntryStrategy standardEntryStrategy;
+
 
 
     @Before
@@ -53,7 +71,10 @@ public class StandardEntryStrategyTest {
         argument = ArgumentCaptor.forClass(HashMap.class);
         setFalseInitialIndicators(rsiValues, priceSMAValues, slowWMAValues, fastWMAValues, dailyValues, middleWMAValues);
         commonMembers = new CommonTestClassMembers();
+        configurationMock = mock(TradingStrategyConfiguration.class);
+        setConfiguration();
         standardEntryStrategy = new StandardEntryStrategy();
+        standardEntryStrategy.setConfiguration(configurationMock);
         standardEntryStrategy.setIndicators(indicators);
         standardEntryStrategy.setCreateTradeController(tradeControllerMock);
     }
@@ -88,6 +109,17 @@ public class StandardEntryStrategyTest {
     }
 
     @Test(expected = NullArgumentException.class)
+    public void WhenSetConfigurationWithNull_Exception(){
+        standardEntryStrategy.setConfiguration(null);
+    }
+
+    @Test(expected = NullArgumentException.class)
+    public void WhenCallGenerateWithNullConfiguration_Exception(){
+        StandardEntryStrategy ses = new StandardEntryStrategy();
+        ses.generateTrade();
+    }
+
+    @Test(expected = NullArgumentException.class)
     public void WhenSetCreateTraderControllerWithNull_Exception(){
         standardEntryStrategy.setCreateTradeController(null);
     }
@@ -96,6 +128,12 @@ public class StandardEntryStrategyTest {
     public void WhenCallGenerateWithNullIndicators_Exception(){
         StandardEntryStrategy ses = new StandardEntryStrategy();
         ses.generateTrade();
+    }
+
+    @Test
+    public void WhenCallValidateIndicatorWithValidIndicators_NoNullArgumentException() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        Method validateIndicatorExistence = commonMembers.getPrivateMethodForTest(standardEntryStrategy, "validateIndicatorExistence");
+        validateIndicatorExistence.invoke(standardEntryStrategy);
     }
 
     @Test(expected = NullArgumentException.class)
@@ -303,6 +341,8 @@ public class StandardEntryStrategyTest {
         Point pointMock = mock(Point.class);
         when(responseMock.getResponseDataStructure()).thenReturn(pointMock);
         standardEntryStrategy = new StandardEntryStrategy();
+        when(configurationMock.getRsiFilter()).thenReturn(RSI_FILTER);
+        standardEntryStrategy.setConfiguration(configurationMock);
         standardEntryStrategy.setIndicators(indicators);
         standardEntryStrategy.setCreateTradeController(tradeControllerMock);
         Trade trade = standardEntryStrategy.generateTrade();
@@ -315,6 +355,8 @@ public class StandardEntryStrategyTest {
 
     private void assertForNonTradableDefaultTrade() {
         standardEntryStrategy = new StandardEntryStrategy();
+        when(configurationMock.getRsiFilter()).thenReturn(RSI_FILTER);
+        standardEntryStrategy.setConfiguration(configurationMock);
         standardEntryStrategy.setIndicators(indicators);
         standardEntryStrategy.setCreateTradeController(tradeControllerMock);
         Trade trade = standardEntryStrategy.generateTrade();
@@ -359,5 +401,13 @@ public class StandardEntryStrategyTest {
         for (double price :prices)
             maValues.add( BigDecimal.valueOf(price));
         return maValues;
+    }
+
+    private void setConfiguration() {
+        when(configurationMock.getSpread()).thenReturn(DEFAULT_SPREAD);
+        when(configurationMock.getEntryFilter()).thenReturn(DEFAULT_ENTRY_FILTER);
+        when(configurationMock.getStopLossFilter()).thenReturn(DEFAULT_STOP_LOSS_FILTER);
+        when(configurationMock.getTarget()).thenReturn(FIRST_TARGET);
+        when(configurationMock.getRsiFilter()).thenReturn(RSI_FILTER);
     }
 }

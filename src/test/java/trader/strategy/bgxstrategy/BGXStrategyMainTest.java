@@ -14,7 +14,7 @@ import trader.entity.candlestick.candle.CandlePriceType;
 import trader.entity.indicator.Indicator;
 import trader.exception.NullArgumentException;
 import trader.configuration.TradingStrategyConfiguration;
-import trader.order.StandardOrderStrategy;
+import trader.order.standard.StandardOrderStrategy;
 import trader.strategy.Observable;
 import trader.strategy.observable.PriceObservable;
 
@@ -93,7 +93,7 @@ public class BGXStrategyMainTest {
     }
 
     @Test
-    public void WhenCreateWithNullConfiguration_Exception(){
+    public void WhenCreateWithNotNullConfiguration_ConfigurationNotNull(){
         TradingStrategyConfiguration configuration = bgxStrategyMain.getConfiguration();
         assertNotNull(configuration);
     }
@@ -113,7 +113,7 @@ public class BGXStrategyMainTest {
     }
 
     @Test
-    public void WhenCreateWithNullBrokerConfiguration_Exception(){
+    public void WhenCreateWithNotNullBrokerConfiguration_BrokerGatewayNotNull(){
         BrokerGateway brokerGateway = bgxStrategyMain.getBrokerGateway();
         assertNotNull(brokerGateway);
     }

@@ -32,6 +32,12 @@ public enum DataStructureType {
         public String toString() {
             return "orderStrategy";
         }
+    },
+    EXIT_STRATEGY{
+        @Override
+        public String toString() {
+            return "exitStrategy";
+        }
     }
 
 
