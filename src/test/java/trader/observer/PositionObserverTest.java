@@ -4,15 +4,13 @@ import org.junit.Before;
 import org.junit.Test;
 import trader.broker.BrokerGateway;
 import trader.configuration.TradingStrategyConfiguration;
-import trader.controller.CreateIndicatorController;
-import trader.controller.TraderController;
 import trader.entity.trade.Direction;
 import trader.entity.trade.Trade;
 import trader.entry.EntryStrategy;
 import trader.exception.BadRequestException;
 import trader.exception.NullArgumentException;
 import trader.order.OrderStrategy;
-import trader.price.Price;
+import trader.entity.price.Price;
 
 import java.math.BigDecimal;
 
@@ -163,7 +161,6 @@ public class PositionObserverTest extends BaseObserverTest {
 
         positionObserver.updateObserver(priceMock);
     }
-
 
     @Test(expected = BadRequestException.class)
     public void WhenCallUpdateObserverAndHaveOpenOrder_CallCloseUnfilledOrders(){

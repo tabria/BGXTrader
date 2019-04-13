@@ -159,7 +159,7 @@
 //
 //        MarketOrderRequest marketOrderRequest = new MarketOrderRequest()
 //                .setInstrument(Config.INSTRUMENT)
-//                .setUnits(unitsToClose);
+//                .setCurrentUnits(unitsToClose);
 //        OrderCreateRequest halfTradeRequest = new OrderCreateRequest(Config.ACCOUNTID).setOrder(marketOrderRequest);
 //        try {
 //            return this.context.order.create(halfTradeRequest);

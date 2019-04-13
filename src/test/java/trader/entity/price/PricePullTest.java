@@ -1,4 +1,4 @@
-package trader.price;
+package trader.entity.price;
 
 import org.junit.Before;
 import org.junit.Test;

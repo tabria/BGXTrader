@@ -6,9 +6,15 @@ import com.oanda.v20.account.*;
 import com.oanda.v20.instrument.InstrumentCandlesResponse;
 import com.oanda.v20.order.*;
 import com.oanda.v20.pricing.PricingGetResponse;
+import com.oanda.v20.trade.TradeSetDependentOrdersResponse;
 import trader.broker.connector.*;
+import trader.broker.connector.oanda.transformer.*;
 import trader.entity.candlestick.Candlestick;
-import trader.price.Price;
+import trader.entity.price.Price;
+import trader.entity.trade.BrokerTradeDetails;
+import trader.exception.BadRequestException;
+import trader.exception.EmptyArgumentException;
+import trader.exception.NullArgumentException;
 import trader.requestor.Request;
 import trader.responder.Response;
 
@@ -24,15 +30,17 @@ public class OandaGateway extends BaseGateway {
     private static final String PRICE = "price";
     private static final String CANDLE = "candle";
     private static final String CREATE_MARKET_IF_TOUCHED_ORDER = "createMarketIfTouchedOrder";
+    private static final String TRADE_ID = "tradeID";
+    private static final String ORDER_ID = "orderID";
+    private static final String CANCEL_ORDER = "cancelOrder";
+    private static final String SET_STOP_LOSS_PRICE = "setStopLossPrice";
 
     private Context context;
     private BrokerConnector connector;
     private OandaAccountValidator oandaAccountValidator ;
     private OandaRequestBuilder oandaRequestBuilder;
     private OandaResponseBuilder oandaResponseBuilder;
-    private Transformable.PriceTransformable oandaPriceTransformer;
-    private Transformable.CandleTransformable oandaCandlesTransformer;
-    private Transformable.OrderTransformable oandaOrderTransformer;
+    private Transformable oandaTransformer;
     private HashMap<String, String> priceSettings;
     private HashMap<String, String> accountSettings;
 
@@ -42,81 +50,14 @@ public class OandaGateway extends BaseGateway {
         oandaAccountValidator = new OandaAccountValidator();
         oandaRequestBuilder = new OandaRequestBuilder();
         oandaResponseBuilder = new OandaResponseBuilder(context, connector.getUrl());
-        oandaPriceTransformer = new OandaPriceTransformer();
-        oandaCandlesTransformer = new OandaCandleTransformer();
-        oandaOrderTransformer = new OandaOrderTransformer();
+        oandaTransformer = new OandaTransformer();
         priceSettings = setAccount();
         accountSettings = setAccount();
     }
 
     @Override
-    public Price getPrice(String instrument) {
-        priceSettings.put(INSTRUMENT, instrument);
-        Request<?> priceRequest = oandaRequestBuilder.build(PRICE, priceSettings);
-        Response<PricingGetResponse> priceResponse = oandaResponseBuilder.buildResponse(PRICE, priceRequest);
-        return oandaPriceTransformer.transformToPrice(priceResponse);
-    }
-
-    @Override
-    public List<Candlestick> getCandles(HashMap<String, String> settings) {
-        Request<?> candleRequest = oandaRequestBuilder.build(CANDLE, settings);
-        Response<InstrumentCandlesResponse> candlesResponse = oandaResponseBuilder.buildResponse(CANDLE,candleRequest);
-        return oandaCandlesTransformer.transformCandlesticks(candlesResponse);
-    }
-
-    @Override
-    public String placeMarketIfTouchedOrder(HashMap<String, String> settings){
-        settings.put(ACCOUNT_ID, getConnector().getAccountID());
-        Request<?> marketIfTouchedOrderRequest = oandaRequestBuilder.build(CREATE_MARKET_IF_TOUCHED_ORDER, settings);
-        Response<OrderCreateResponse> marketIfTouchedOrderResponse = oandaResponseBuilder.buildResponse(CREATE_MARKET_IF_TOUCHED_ORDER, marketIfTouchedOrderRequest);
-        OrderCreateResponse orderResponse =marketIfTouchedOrderResponse.getResponseDataStructure();
-        return orderResponse.getOrderCreateTransaction().getId().toString();
-    }
-
-    @Override
-    public trader.entity.order.Order getOrder(trader.entity.order.enums.OrderType type){
-        List<Order> orders = getAccount().getOrders();
-        for (Order order : orders){
-            if (order.getType().toString().equals(type.toString())) {
-                MarketIfTouchedOrder orderToTransform = (MarketIfTouchedOrder) order;
-                return oandaOrderTransformer.transformOrder(orderToTransform);
-            }
-        }
-        return null;
-    }
-
-    //to be tested
-    @Override
-    public void cancelOrder(String orderID) {
-        HashMap<String, String> settings = new HashMap<>();
-        settings.put("orderID", orderID);
-        Request<?> orderCancelRequest = oandaRequestBuilder.build("cancelOrder", settings);
-        Response<OrderCancelResponse> cancelOrderResponse = oandaResponseBuilder.buildResponse("cancelOrder",orderCancelRequest);
-
-//        OrderSpecifier orderSpecifier = new OrderSpecifier(orderID);
-//        try {
-//            this.cancelOrderResponse = this.context.order.cancel(accountID, orderSpecifier);
-//        } catch (RequestException | ExecuteException e) {
-//            throw new RuntimeException(e);
-//        }
-    }
-
-    @Override
-    public void validateConnector() {
-        oandaAccountValidator.validateAccount(connector, context);
-        oandaAccountValidator.validateAccountBalance(connector, context);
-    }
-
-    @Override
-    public int totalOpenTradesSize() {
-        Account account = getAccount();
-        return account.getTrades().size();
-    }
-
-    @Override
-    public int totalOpenOrdersSize() {
-        Account account = getAccount();
-        return account.getOrders().size();
+    public BrokerConnector getConnector() {
+        return connector;
     }
 
     @Override
@@ -135,12 +76,114 @@ public class OandaGateway extends BaseGateway {
     }
 
     @Override
-    public BrokerConnector getConnector() {
-        return connector;
+    public void validateConnector() {
+        oandaAccountValidator.validateAccount(connector, context);
+        oandaAccountValidator.validateAccountBalance(connector, context);
+    }
+
+    @Override
+    public Price getPrice(String instrument) {
+        priceSettings.put(INSTRUMENT, instrument);
+        Request<?> priceRequest = oandaRequestBuilder.build(PRICE, priceSettings);
+        Response<PricingGetResponse> priceResponse = oandaResponseBuilder.buildResponse(PRICE, priceRequest);
+        return oandaTransformer.transformToPrice(priceResponse);
+    }
+
+    @Override
+    public List<Candlestick> getCandles(HashMap<String, String> settings) {
+        Request<?> candleRequest = oandaRequestBuilder.build(CANDLE, settings);
+        Response<InstrumentCandlesResponse> candlesResponse = oandaResponseBuilder.buildResponse(CANDLE,candleRequest);
+        return  oandaTransformer.transformCandlesticks(candlesResponse);
+    }
+
+    @Override
+    public int totalOpenTradesSize() {
+        return getAccount().getTrades().size();
+    }
+
+    @Override
+    public int totalOpenOrdersSize() {
+        return getAccount().getOrders().size();
+    }
+
+    @Override
+    public String placeMarketIfTouchedOrder(HashMap<String, String> settings){
+        settings.put(ACCOUNT_ID, getConnector().getAccountID());
+        Request<?> marketIfTouchedOrderRequest = oandaRequestBuilder.build(CREATE_MARKET_IF_TOUCHED_ORDER, settings);
+        Response<OrderCreateResponse> marketIfTouchedOrderResponse = oandaResponseBuilder.buildResponse(CREATE_MARKET_IF_TOUCHED_ORDER, marketIfTouchedOrderRequest);
+        OrderCreateResponse orderResponse = marketIfTouchedOrderResponse.getResponseDataStructure();
+        return orderResponse.getOrderCreateTransaction().getId().toString();
+    }
+
+    @Override
+    public trader.entity.order.Order getOrder(trader.entity.order.enums.OrderType type){
+        List<Order> orders = getAccount().getOrders();
+        for (Order order : orders){
+            if (order.getType().toString().equals(type.toString())) {
+                MarketIfTouchedOrder orderToTransform = (MarketIfTouchedOrder) order;
+                return oandaTransformer.transformOrder(orderToTransform);
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public BrokerTradeDetails getTradeDetails(int index){
+        try{
+            return oandaTransformer.transformTradeSummary(
+                    getAccount().getTrades().get(index),
+                    getAccount().getOrders()
+            );
+        } catch(Exception e){
+            throw new BadRequestException();
+        }
+    }
+
+    @Override
+    public String setTradeStopLossPrice(String tradeID, String stopLossPrice){
+        validateStringInput(tradeID);
+        validateStringInput(stopLossPrice);
+        HashMap<String, String> settings = setAccount();
+        settings.put(TRADE_ID, tradeID);
+        settings.put(PRICE, stopLossPrice);
+        Request<?> tradeSetDependentOrderRequest = oandaRequestBuilder.build(SET_STOP_LOSS_PRICE, settings);
+        Response<TradeSetDependentOrdersResponse> tradeSetDependentOrdersResponse = oandaResponseBuilder.buildResponse(SET_STOP_LOSS_PRICE, tradeSetDependentOrderRequest);
+
+        TradeSetDependentOrdersResponse responseDataStructure = tradeSetDependentOrdersResponse.getResponseDataStructure();
+        return responseDataStructure.getLastTransactionID().toString();
+//        TradeSpecifier tradeSpecifier = new TradeSpecifier(id);
+//        StopLossDetails stopLossDetails = new StopLossDetails().setPrice(tradeOpenPrice);
+//
+//        TradeSetDependentOrdersRequest tradeSetDependentOrdersRequest = new TradeSetDependentOrdersRequest(Config.ACCOUNTID, tradeSpecifier).setStopLoss(stopLossDetails);
+//        try {
+//            return this.context.trade.setDependentOrders(tradeSetDependentOrdersRequest);
+//        } catch (RequestException | ExecuteException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
+    }
+
+    //to be tested
+    @Override
+    public String cancelOrder(String orderID) {
+        validateStringInput(orderID);
+        HashMap<String, String> settings = setAccount();
+        settings.put(ORDER_ID, orderID);
+        Request<?> orderCancelRequest = oandaRequestBuilder.build(CANCEL_ORDER, settings);
+        Response<OrderCancelResponse> cancelOrderResponse = oandaResponseBuilder.buildResponse("orderSpecifier",orderCancelRequest);
+        OrderCancelResponse responseDataStructure = cancelOrderResponse.getResponseDataStructure();
+        return responseDataStructure.getLastTransactionID().toString();
     }
 
     Context getContext(){
         return context;
+    }
+
+    private void validateStringInput(String tradeID) {
+        if(tradeID == null)
+            throw new NullArgumentException();
+        if(tradeID.trim().isEmpty())
+            throw new EmptyArgumentException();
     }
 
     private Account getAccount(){

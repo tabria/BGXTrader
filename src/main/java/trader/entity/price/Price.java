@@ -1,4 +1,4 @@
-package trader.price;
+package trader.entity.price;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;

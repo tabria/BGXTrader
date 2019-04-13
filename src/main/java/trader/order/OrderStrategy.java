@@ -3,7 +3,7 @@ package trader.order;
 import trader.broker.BrokerGateway;
 import trader.configuration.TradingStrategyConfiguration;
 import trader.entity.trade.Trade;
-import trader.price.Price;
+import trader.entity.price.Price;
 
 import java.math.BigDecimal;
 

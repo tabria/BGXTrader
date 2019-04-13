@@ -2,20 +2,24 @@ package trader.broker.connector.oanda;
 
 import com.oanda.v20.account.AccountID;
 import com.oanda.v20.instrument.InstrumentCandlesRequest;
-import com.oanda.v20.order.MarketIfTouchedOrderRequest;
 import com.oanda.v20.order.OrderCreateRequest;
+import com.oanda.v20.order.OrderSpecifier;
 import com.oanda.v20.pricing.PricingGetRequest;
+import com.oanda.v20.trade.TradeSetDependentOrdersRequest;
 import org.junit.Before;
 import org.junit.Test;
 import trader.exception.*;
 import trader.requestor.Request;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 
 
 public class OandaRequestBuilderTest {
 
+    public static final String ORDER_SPECIFIER = "orderSpecifier";
     private static final String ACCOUNT_ID = "accountID";
     private static final String INSTRUMENT = "instrument";
     private static final String EXPECTED_ACCOUNT_ID = "100";
@@ -24,8 +28,8 @@ public class OandaRequestBuilderTest {
     private static final String EXPECTED_QUANTITY = "5";
     private static final String GRANULARITY = "granularity";
     private static final String EXPECTED_GRANULARITY = "M30";
-    private static final String GET_MARKET_IF_TOUCHED_ORDER = "getMarketIfTouchedOrder";
     private static final String CREATE_MARKET_IF_TOUCHED_ORDER = "createMarketIfTouchedOrder";
+
 
     private OandaRequestBuilder request;
     private HashMap<String, String> settings;
@@ -52,61 +56,6 @@ public class OandaRequestBuilderTest {
         request.build("price", new HashMap<>());
     }
 
-    @Test(expected = BadRequestException.class)
-    public void WhenCreatingPriceRequestOnlyWithAccountID_Exception(){
-        settings.put(ACCOUNT_ID, "xxx");
-        request.build("price", settings);
-    }
-
-    @Test(expected = BadRequestException.class)
-    public void WhenCreatingPriceRequestOnlyWithInstrument_Exception(){
-        settings.put(INSTRUMENT, "EUR");
-        request.build("price", settings);
-    }
-
-
-    @Test(expected = NullArgumentException.class)
-    public void WhenCreatingPriceRequestWithNullAccountID_Exception(){
-        settings.put(ACCOUNT_ID, null);
-        settings.put(INSTRUMENT, "EUR");
-        request.build("price", settings);
-    }
-
-    @Test(expected = NullArgumentException.class)
-    public void WhenCreatingPriceRequestWithNullInstrument_Exception(){
-        settings.put(ACCOUNT_ID, "xxx");
-        settings.put(INSTRUMENT, null);
-        request.build("price", settings);
-    }
-
-    @Test(expected = EmptyArgumentException.class)
-    public void WhenCreatingPriceRequestWithEmptyAccountID_Exception(){
-        settings.put(ACCOUNT_ID, " ");
-        settings.put(INSTRUMENT, "EUR");
-        request.build("price", settings);
-    }
-
-    @Test(expected = EmptyArgumentException.class)
-    public void WhenCreatingPriceRequestWithEmptyInstrument_Exception(){
-        settings.put(ACCOUNT_ID, "xxx");
-        settings.put(INSTRUMENT, "  ");
-        request.build("price", settings);
-    }
-
-    @Test(expected = BadRequestException.class)
-    public void WhenCreatingPriceRequestWithWrongAccountIDKeyName_Exception(){
-        settings.put("accot", "xxx");
-        settings.put(INSTRUMENT, "EUR");
-        request.build("price", settings);
-    }
-
-    @Test(expected = BadRequestException.class)
-    public void WhenCreatingPriceRequestWithWrongInstrumentKeyName_Exception(){
-        settings.put(ACCOUNT_ID, "xxx");
-        settings.put("ind", "EUR");
-        request.build("price", settings);
-    }
-
     @Test
     public void getCorrectPriceRequest(){
 
@@ -120,74 +69,20 @@ public class OandaRequestBuilderTest {
         assertEquals(EXPECTED_INSTRUMENT, getRequestInstrument(pricingRequest));
     }
 
-    @Test(expected = NullArgumentException.class)
-    public void WhenCallBuildCandleWithNullQuantity_Exception(){
-        settings.put(QUANTITY, null);
-        request.build("candle", settings);
-    }
-
-    @Test(expected = NullArgumentException.class)
-    public void WhenCallBuildCandleWithNullInstrument_Exception(){
-        settings.put(QUANTITY, "12");
-        settings.put(INSTRUMENT, null);
-        settings.put(GRANULARITY, "M30");
-        request.build("candle", settings);
-    }
-
-    @Test(expected = NullArgumentException.class)
-    public void WhenCallBuildCandleWithNullGranularity_Exception(){
-        settings.put(QUANTITY, "12");
+    @Test(expected = BadRequestException.class)
+    public void WhenCallBuildForCandlesWithNotExistingGranularity_Exception(){
+        settings.put(QUANTITY, "xxx");
         settings.put(INSTRUMENT, "EUR");
-        settings.put(GRANULARITY, null);
-        request.build("candle", settings);
-    }
-
-    @Test(expected = EmptyArgumentException.class)
-    public void WhenCallBuildForCandlesWithEmptyQuantity_Exception(){
-        settings.put(QUANTITY, " ");
-        settings.put(INSTRUMENT, "EUR");
-        settings.put(GRANULARITY, "M30");
-        request.build("candle", settings);
-    }
-
-    @Test(expected = EmptyArgumentException.class)
-    public void WhenCallBuildForCandlesWithEmptyInstrument_Exception(){
-        settings.put(QUANTITY, "12");
-        settings.put(INSTRUMENT, " ");
-        settings.put(GRANULARITY, "M30");
-        request.build("candle", settings);
-    }
-
-    @Test(expected = EmptyArgumentException.class)
-    public void WhenCallBuildForCandlesWithEmptyGranularity_Exception(){
-        settings.put(QUANTITY, "12");
-        settings.put(INSTRUMENT, "EUR");
-        settings.put(GRANULARITY, "  ");
-        request.build("candle", settings);
+        settings.put(GRANULARITY, "M90");
+        this.request.build("candle", settings);
     }
 
     @Test(expected = BadRequestException.class)
-    public void WhenCallBuildForCandlesWithWrongQuantityKeyName_Exception(){
-        settings.put("quan", "12");
+    public void WhenCallBuildForCandlesWithLessNotANumberQuantity_Exception(){
+        settings.put(QUANTITY, "xxx");
         settings.put(INSTRUMENT, "EUR");
         settings.put(GRANULARITY, "M30");
-        request.build("candle", settings);
-    }
-
-    @Test(expected = BadRequestException.class)
-    public void WhenCallBuildForCandlesWithWrongInstrumentKeyName_Exception(){
-        settings.put(QUANTITY, "12");
-        settings.put("ins", "EUR");
-        settings.put(GRANULARITY, "M30");
-        request.build("candle", settings);
-    }
-
-    @Test(expected = BadRequestException.class)
-    public void WhenCallBuildForCandlesWithWrongGranularityKeyName_Exception(){
-        settings.put(QUANTITY, "12");
-        settings.put(INSTRUMENT, "EUR");
-        settings.put("gra", "M30");
-        request.build("candle", settings);
+        this.request.build("candle", settings);
     }
 
     @Test(expected = OutOfBoundaryException.class)
@@ -195,30 +90,6 @@ public class OandaRequestBuilderTest {
         settings.put(QUANTITY, "-1");
         settings.put(INSTRUMENT, "EUR");
         settings.put(GRANULARITY, "M30");
-        this.request.build("candle", settings);
-    }
-
-    @Test(expected = BadRequestException.class)
-    public void WhenCallBuildForCandlesWithNotExistingGranularity_Exception(){
-        settings.put(QUANTITY, "12");
-        settings.put(INSTRUMENT, "EUR");
-        settings.put(GRANULARITY, "k3");
-        this.request.build("candle", settings);
-    }
-
-    @Test
-    public void WhenCallBuildForCandlesWithLowerCaseExistingGranularity_NoExceptions(){
-        settings.put(QUANTITY, "12");
-        settings.put(INSTRUMENT, "EUR");
-        settings.put(GRANULARITY, "m30");
-        this.request.build("candle", settings);
-    }
-
-    @Test(expected = BadRequestException.class)
-    public void WhenCallBuildForCandlesWithQuantityThatIsNotANumber_Exception(){
-        settings.put(QUANTITY, "aaa");
-        settings.put(INSTRUMENT, "EUR");
-        settings.put(GRANULARITY, "m30");
         this.request.build("candle", settings);
     }
 
@@ -239,29 +110,6 @@ public class OandaRequestBuilderTest {
         assertEquals("false",queryParams.get("smooth").toString());
     }
 
-    @Test(expected = EmptyArgumentException.class)
-    public void WhenCallBuildForAccountIDWithEmptySettings_Exception(){
-        this.request.build(ACCOUNT_ID, settings);
-    }
-
-    @Test(expected = BadRequestException.class)
-    public void WhenCallBuildForAccountIDWithWrongKeyName_Exception(){
-        settings.put("xxx", "xxx");
-        this.request.build(ACCOUNT_ID, settings);
-    }
-
-    @Test(expected = NullArgumentException.class)
-    public void WhenCallBuildForAccountIDWithNullSettingsValue_Exception(){
-        settings.put(ACCOUNT_ID, null);
-        this.request.build(ACCOUNT_ID, settings);
-    }
-
-    @Test(expected = EmptyArgumentException.class)
-    public void WhenCallBuildForAccountIDWithEmptySettingsValue_Exception(){
-        settings.put(ACCOUNT_ID, "  ");
-        this.request.build(ACCOUNT_ID, settings);
-    }
-
     @SuppressWarnings("unchecked")
     @Test
     public void WhenCallBuildForAccountIDWithCorrectSetting_CorrectResult(){
@@ -271,126 +119,6 @@ public class OandaRequestBuilderTest {
         AccountID requestDataStructure = accountIDRequest.getRequestDataStructure();
 
         assertEquals(accountId, requestDataStructure.toString());
-    }
-
-    @Test(expected = BadRequestException.class)
-    public void WhenCallBuildCreateMarketIfTouchedOrderWithWrongAccountIDKeyName_Exception(){
-        settings.put("xxx", "xxx");
-        this.request.build(CREATE_MARKET_IF_TOUCHED_ORDER, settings);
-    }
-
-    @Test(expected = BadRequestException.class)
-    public void WhenCallBuildCreateMarketIfTouchedOrderWithWrongInstrumentKeyName_Exception(){
-        settings.put("accountID", "xxx");
-        settings.put("in", "xxx");
-        this.request.build(CREATE_MARKET_IF_TOUCHED_ORDER, settings);
-    }
-
-    @Test(expected = BadRequestException.class)
-    public void WhenCallBuildCreateMarketIfTouchedOrderWithWrongUnitSizeKeyName_Exception(){
-        settings.put("accountID", "xxx");
-        settings.put("instrument", "xxx");
-        settings.put("usi", "xxx");
-        this.request.build(CREATE_MARKET_IF_TOUCHED_ORDER, settings);
-    }
-
-    @Test(expected = BadRequestException.class)
-    public void WhenCallBuildCreateMarketIfTouchedOrderWithWrongTradeEntryPriceKeyName_Exception(){
-        settings.put("accountID", "xxx");
-        settings.put("instrument", "xxx");
-        settings.put("unitsSize", "xxx");
-        settings.put("entry", "xxx");
-        this.request.build(CREATE_MARKET_IF_TOUCHED_ORDER, settings);
-    }
-
-    @Test(expected = BadRequestException.class)
-    public void WhenCallBuildCreateMarketIfTouchedOrderWithWrongTradeStopLossPriceKeyName_Exception(){
-        settings.put("accountID", "xxx");
-        settings.put("instrument", "xxx");
-        settings.put("unitsSize", "xxx");
-        settings.put("tradeEntryPrice", "xxx");
-        settings.put("stopLoss", "xxx");
-        this.request.build(CREATE_MARKET_IF_TOUCHED_ORDER, settings);
-    }
-
-    @Test(expected = NullArgumentException.class)
-    public void WhenCallBuildForCreateMarketIfTouchedOrderWithNullAccountIDValue_Exception(){
-        settings.put("accountID", null);
-        this.request.build(CREATE_MARKET_IF_TOUCHED_ORDER, settings);
-    }
-
-    @Test(expected = NullArgumentException.class)
-    public void WhenCallBuildForCreateMarketIfTouchedOrderWithNullInstrumentValue_Exception(){
-        settings.put("accountID", "xxx");
-        settings.put("instrument", null);
-        this.request.build(CREATE_MARKET_IF_TOUCHED_ORDER, settings);
-    }
-
-    @Test(expected = NullArgumentException.class)
-    public void WhenCallBuildForCreateMarketIfTouchedOrderWithNullUnitsSizeValue_Exception(){
-        settings.put("accountID", "xxx");
-        settings.put("instrument", "xxx");
-        settings.put("unitsSize", null);
-        this.request.build(CREATE_MARKET_IF_TOUCHED_ORDER, settings);
-    }
-
-    @Test(expected = NullArgumentException.class)
-    public void WhenCallBuildForCreateMarketIfTouchedOrderWithNullTradeEntryPriceValue_Exception(){
-        settings.put("accountID", "xxx");
-        settings.put("instrument", "xxx");
-        settings.put("unitsSize", "xxx");
-        settings.put("tradeEntryPrice", null);
-        this.request.build(CREATE_MARKET_IF_TOUCHED_ORDER, settings);
-    }
-
-    @Test(expected = NullArgumentException.class)
-    public void WhenCallBuildForCreateMarketIfTouchedOrderWithNullTradeStopLossPriceValue_Exception(){
-        settings.put("accountID", "xxx");
-        settings.put("instrument", "xxx");
-        settings.put("unitsSize", "xxx");
-        settings.put("tradeEntryPrice", "xxx");
-        settings.put("tradeStopLossPrice", null);
-        this.request.build(CREATE_MARKET_IF_TOUCHED_ORDER, settings);
-    }
-
-    @Test(expected = EmptyArgumentException.class)
-    public void WhenCallBuildForCreateMarketIfTouchedOrderWithEmptyAccountIDValue_Exception(){
-        settings.put("accountID", "  ");
-        this.request.build(CREATE_MARKET_IF_TOUCHED_ORDER, settings);
-    }
-
-    @Test(expected = EmptyArgumentException.class)
-    public void WhenCallBuildForCreateMarketIfTouchedOrderWithEmptyInstrumentValue_Exception(){
-        settings.put("accountID", "xxx");
-        settings.put("instrument", "  ");
-        this.request.build(CREATE_MARKET_IF_TOUCHED_ORDER, settings);
-    }
-
-    @Test(expected = EmptyArgumentException.class)
-    public void WhenCallBuildForCreateMarketIfTouchedOrderWithEmptyUnitsSizeValue_Exception(){
-        settings.put("accountID", "xxx");
-        settings.put("instrument", "xxx");
-        settings.put("unitsSize", "  ");
-        this.request.build(CREATE_MARKET_IF_TOUCHED_ORDER, settings);
-    }
-
-    @Test(expected = EmptyArgumentException.class)
-    public void WhenCallBuildForCreateMarketIfTouchedOrderWithEmptyTradeEntryPriceValue_Exception(){
-        settings.put("accountID", "xxx");
-        settings.put("instrument", "xxx");
-        settings.put("unitsSize", "xxx");
-        settings.put("tradeEntryPrice", "   ");
-        this.request.build(CREATE_MARKET_IF_TOUCHED_ORDER, settings);
-    }
-
-    @Test(expected = EmptyArgumentException.class)
-    public void WhenCallBuildForCreateMarketIfTouchedOrderWithEmptyTradeStopLossPriceValue_Exception(){
-        settings.put("accountID", "xxx");
-        settings.put("instrument", "xxx");
-        settings.put("unitsSize", "xxx");
-        settings.put("tradeEntryPrice", "xxx");
-        settings.put("tradeStopLossPrice", "   ");
-        this.request.build(CREATE_MARKET_IF_TOUCHED_ORDER, settings);
     }
 
     @Test(expected = BadRequestException.class)
@@ -436,10 +164,38 @@ public class OandaRequestBuilderTest {
         assertEquals("12", accountID.toString());
     }
 
+    @Test
+    public void WhenCallBuildOrderSpecifierRequestWithCorrectSettings_CorrectResult(){
+        String accountID = "12";
+        String orderID = "13";
+        settings.put("accountID", accountID);
+        settings.put("orderID", orderID);
+        Request<?> orderSpecifierRequest = this.request.build("orderSpecifier", settings);
+        List<Object> request = (List<Object>) orderSpecifierRequest.getRequestDataStructure();
+        AccountID account = (AccountID) request.get(0);
+        OrderSpecifier order = (OrderSpecifier) request.get(1);
 
-    private Class<? extends PricingGetRequest> getRequestClass(PricingGetRequest request) {
-        return request.getClass();
+        assertEquals(accountID,  account.toString());
+        assertEquals(orderID, order.toString());
     }
+
+    @Test
+    public void WhenCallBuildForSetStopLossPriceRequestWithCorrectSetting_CorrectResult(){
+        String accountID = "12";
+        String tradeID = "13";
+        settings.put("accountID", accountID);
+        settings.put("tradeID", tradeID);
+        settings.put("price", "1.234");
+        Request<?> setStopLossPriceRequest = this.request.build("setStopLossPrice", settings);
+        TradeSetDependentOrdersRequest request = (TradeSetDependentOrdersRequest) setStopLossPriceRequest.getRequestDataStructure();
+        HashMap<String, Object> pathParams = request.getPathParams();
+
+        assertEquals(accountID, pathParams.get("accountID").toString());
+        assertEquals(tradeID, pathParams.get("tradeSpecifier").toString());
+
+        String a ="";
+    }
+
 
     private String getRequestAccount(PricingGetRequest request) {
         return request.getPathParams().get(ACCOUNT_ID).toString();
@@ -454,21 +210,4 @@ public class OandaRequestBuilderTest {
         return request.getPathParams().get(INSTRUMENT).toString();
     }
 
-
-
-    //    //////////
-//    @Test(expected = NullArgumentException.class)
-//    public void WhenCallCreateRequestWithNullSettings_Exception(){
-//        request.getPriceRequest(null, null);
-//    }
-//
-//    @Test(expected = NullArgumentException.class)
-//    public void WhenCallCreateRequestWithAccountIdKeyNameNull_Exception(){
-//        request.getPriceRequest(null, EXPECTED_INSTRUMENT);
-//    }
-//
-//    @Test(expected = NullArgumentException.class)
-//    public void WhenCallCreateRequestWithInstrumentKeyNameNull_Exception(){
-//        request.getPriceRequest(EXPECTED_ACCOUNT_ID,null);
-//    }
 }

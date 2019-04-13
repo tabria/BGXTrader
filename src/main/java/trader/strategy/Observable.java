@@ -1,7 +1,7 @@
 package trader.strategy;
 
 import trader.observer.Observer;
-import trader.price.Price;
+import trader.entity.price.Price;
 
 public interface Observable {
 

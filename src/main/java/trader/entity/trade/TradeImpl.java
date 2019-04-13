@@ -27,7 +27,7 @@ public final class TradeImpl implements Trade {
     @Override
     public void setDirection(String direction) {
         if (verifyInput(direction)) return;
-        this.direction = Direction.valueOf(direction.toUpperCase());
+        this.direction = Direction.valueOf(direction.trim().toUpperCase());
     }
 
     @Override
@@ -38,7 +38,7 @@ public final class TradeImpl implements Trade {
     @Override
     public void setTradable(String tradable) {
         if (verifyInput(tradable)) return;
-        this.tradable = Boolean.parseBoolean(tradable);
+        this.tradable = Boolean.parseBoolean(tradable.trim());
     }
 
     @Override
@@ -49,8 +49,8 @@ public final class TradeImpl implements Trade {
     @Override
     public void setEntryPrice(String entryPrice) {
         if (verifyInput(entryPrice)) return;
-        checkForNegativeNumbers(entryPrice);
-        this.entryPrice = new BigDecimal(entryPrice);
+        checkForNegativeNumbers(entryPrice.trim());
+        this.entryPrice = new BigDecimal(entryPrice.trim());
     }
 
 
@@ -62,8 +62,8 @@ public final class TradeImpl implements Trade {
     @Override
     public void setStopLossPrice(String stopLossPrice) {
         if (verifyInput(stopLossPrice)) return;
-        checkForNegativeNumbers(stopLossPrice);
-        this.stopLossPrice = new BigDecimal(stopLossPrice);
+        checkForNegativeNumbers(stopLossPrice.trim());
+        this.stopLossPrice = new BigDecimal(stopLossPrice.trim());
     }
 
     @Override
@@ -76,8 +76,8 @@ public final class TradeImpl implements Trade {
                 '}';
     }
 
-    private boolean verifyInput(String direction) {
-        return direction == null || direction.trim().isEmpty();
+    private boolean verifyInput(String str) {
+        return str == null || str.trim().isEmpty();
     }
 
     private void checkForNegativeNumbers(String entryPrice) {

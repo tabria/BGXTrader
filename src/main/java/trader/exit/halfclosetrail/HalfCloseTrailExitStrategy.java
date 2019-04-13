@@ -1,93 +1,181 @@
-//package trader.exit.halfclosetrail;
+package trader.exit.halfclosetrail;
+
+
+import com.oanda.v20.order.OrderCreateResponse;
+import trader.broker.BrokerGateway;
+import trader.configuration.TradingStrategyConfiguration;
+import trader.entity.candlestick.Candlestick;
+import trader.entity.trade.BrokerTradeDetails;
+import trader.exception.NullArgumentException;
+import trader.exit.ExitStrategy;
+import trader.entity.price.Price;
+
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+
+/**
+ * This exit strategy will close part of the position when price hit first target point. After that it will trail position's stop behind previous bar high(for short) or low(for long).
+ * For short trade stop will be moved if last closed candlestick's close is below current low and last closed candlestick's high is also below current high.
+ * For long trade stop will be moved if last closed candlestick's close is above current high and last closed candlestick's low is also above current low;
+ */
+public final class HalfCloseTrailExitStrategy implements ExitStrategy {
+
+    private static final BigDecimal FIRST_TARGET_DISTANCE = BigDecimal.valueOf(0.0032);
+    private static final BigDecimal PARTS_TO_CLOSE = BigDecimal.valueOf(2);
+    private static final BigDecimal BREAK_EVEN_DISTANCE = BigDecimal.valueOf(0.0025);
+    private static final int FIRST_TRADE = 0;
+
+
+    private List<Candlestick> candlesticks;
+    private TradingStrategyConfiguration configuration;
+    private BrokerGateway brokerGateway;
+    private HashMap<String, String> settings;
+
+ //   private ServiceExitStrategy serviceExitStrategy;
+    private OrderCreateResponse halfTradeResponse;
+ //   private TradeSetDependentOrdersResponse tradeSetDependentOrdersResponse;
+    private BigDecimal exitBarHigh;
+    private BigDecimal exitBarLow;
+
+
+    public HalfCloseTrailExitStrategy() {
+//        this.serviceExitStrategy = new ServiceExitStrategy();
+        this.exitBarHigh = null;
+        this.exitBarLow = null;
+        candlesticks = new ArrayList<>();
+        settings = new HashMap<>();
+
+    }
+
+    public void setConfiguration(TradingStrategyConfiguration configuration) {
+        if(configuration == null)
+            throw new NullArgumentException();
+        this.configuration = configuration;
+    }
+
+    public void setBrokerGateway(BrokerGateway brokerGateway) {
+        if(brokerGateway == null)
+            throw new NullArgumentException();
+        this.brokerGateway = brokerGateway;
+    }
+
+    public void updateCandles(Price price) {
+        if (price == null)
+            throw new NullArgumentException();
+        if(settings.size() == 0)
+            initializeRequestSettings();
+        else
+            setUpdateQuantityInSettings();
+
+        List<Candlestick> candles = brokerGateway.getCandles(settings);
+        if(candlesticks.size() >0)
+            candlesticks.add(candles.get(candles.size()-1));
+        else
+            candlesticks.addAll(candles);
+    }
+
+    private void setUpdateQuantityInSettings() {
+        if(candlesticks.size() != 0)
+            settings.put("quantity", String.valueOf(configuration.getUpdateCandlesQuantity()));
+    }
+
+    private void initializeRequestSettings(){
+        settings.put("instrument", configuration.getInstrument());
+        settings.put("quantity", String.valueOf(configuration.getInitialCandlesQuantity()));
+        settings.put("granularity", configuration.getExitGranularity().toString());
+    }
+
+
+    @Override
+    public void execute(Price price) {
+        updateCandles(price);
+        BrokerTradeDetails tradeDetails = brokerGateway.getTradeDetails(FIRST_TRADE);
+
+        moveToBreakEven(tradeDetails, price);
+
+
+
+//        if (isFilterPassed(currentUnits, breakEvenPrice, ask, bid)){
+//            TradeID id = trade.getId();
 //
-//import com.oanda.v20.Context;
-//import com.oanda.v20.account.Account;
-//import com.oanda.v20.order.*;
-//import com.oanda.v20.primitives.DateTime;
-//import com.oanda.v20.trade.*;
-//import com.oanda.v20.transaction.TransactionID;
-//import trader.broker.BrokerGateway;
-//import trader.configuration.TradingStrategyConfiguration;
-//import trader.entity.candlestick.Candlestick;
-//import trader.entity.indicator.updater.CandlesUpdater;
-//import trader.entity.candlestick.candle.CandleGranularity;
-//import trader.exception.NullArgumentException;
-//import trader.exit.service.ServiceExitStrategy;
-//import trader.exit.ExitStrategy;
-//import trader.price.Price;
+//            this.tradeSetDependentOrdersResponse = this.serviceExitStrategy.changeStopLoss(id, tradeOpenPrice);
+//        }
+
+    }
+
+    private void moveToBreakEven(BrokerTradeDetails tradeDetails, Price price) {
+        BigDecimal stopLossPrice = tradeDetails.getStopLossPrice();
+        BigDecimal tradeOpenPrice = tradeDetails.getOpenPrice();
+        BigDecimal currentUnits = tradeDetails.getCurrentUnits();
+
+        if (!isShortTrade(currentUnits) && isAbove(stopLossPrice, tradeOpenPrice))
+            return;
+        if (isShortTrade(currentUnits) && isBelow(stopLossPrice, tradeOpenPrice))
+            return;
+        BigDecimal breakEvenPrice = isShortTrade(currentUnits) ?
+                subtract(tradeOpenPrice, BREAK_EVEN_DISTANCE) :
+                add(tradeOpenPrice, BREAK_EVEN_DISTANCE);
+
+                //for short trade
+        boolean shortCondition =
+                isShortTrade(currentUnits) && isAbove(breakEvenPrice, price.getAsk());
+        boolean longCondition =
+                !isShortTrade(currentUnits) && isBelow(breakEvenPrice, price.getBid());
+
+        if(shortCondition || longCondition){
+             String id = tradeDetails.getTradeID();
 //
+//        TradeSpecifier tradeSpecifier = new TradeSpecifier(id);
+//        StopLossDetails stopLossDetails = new StopLossDetails().setPrice(tradeOpenPrice);
 //
-//import java.math.BigDecimal;
-//import java.util.HashMap;
-//import java.util.List;
-//
-//
-///**
-// * This exit strategy will close part of the position when price hit first target point. After that it will trail position's stop behind previous bar high(for short) or low(for long).
-// * For short trade stop will be moved if last closed candlestick's close is below current low and last closed candlestick's high is also below current high.
-// * For long trade stop will be moved if last closed candlestick's close is above current high and last closed candlestick's low is also above current low;
-// */
-//public final class HalfCloseTrailExitStrategy implements ExitStrategy {
-//
-//    private static final BigDecimal FIRST_TARGET_DISTANCE = BigDecimal.valueOf(0.0032);
-//    private static final BigDecimal PARTS_TO_CLOSE = BigDecimal.valueOf(2);
-//    private static final BigDecimal BREAK_EVEN_DISTANCE = BigDecimal.valueOf(0.0025);
-//
-//
-//    private List<Candlestick> candlesticks;
-//    private TradingStrategyConfiguration configuration;
-//    private BrokerGateway brokerGateway;
-//    private HashMap<String, String> settings;
-//
-// //   private ServiceExitStrategy serviceExitStrategy;
-//    private OrderCreateResponse halfTradeResponse;
-//    private TradeSetDependentOrdersResponse tradeSetDependentOrdersResponse;
-//    private BigDecimal exitBarHigh;
-//    private BigDecimal exitBarLow;
-//
-//
-//    public HalfCloseTrailExitStrategy() {
-////        this.serviceExitStrategy = new ServiceExitStrategy();
-//        this.exitBarHigh = null;
-//        this.exitBarLow = null;
-//        settings = new HashMap<>();
-//        initializeRequestSettings();
-//    }
-//
-//
-//    public void updateCandles(Price price) {
-//        if (price == null)
-//            throw new NullArgumentException();
-//        setUpdateQuantityInSettings();
-//        List<Candlestick> candles = brokerGateway.getCandles(settings);
-//        if(candlesticks.size() >0)
-//            candlesticks.add(candles.get(candles.size()-1));
-//        else
-//            candlesticks.addAll(candles);
-//    }
-//
-//    private void setUpdateQuantityInSettings() {
-//        if(candlesticks.size() != 0)
-//            settings.put("quantity", String.valueOf(configuration.getUpdateCandlesQuantity()));
-//    }
-//
-//    private void initializeRequestSettings(){
-//        settings.put("instrument", configuration.getInstrument());
-//        settings.put("quantity", String.valueOf(configuration.getInitialCandlesQuantity()));
-//        settings.put("granularity", configuration.getExitGranularity().toString());
-//    }
-//
-//
+//        TradeSetDependentOrdersRequest tradeSetDependentOrdersRequest = new TradeSetDependentOrdersRequest(Config.ACCOUNTID, tradeSpecifier).setStopLoss(stopLossDetails);
+//            try {
+//                return this.context.trade.setDependentOrders(tradeSetDependentOrdersRequest);
+//            } catch (RequestException | ExecuteException e) {
+//                throw new RuntimeException(e);
+//            }
+        }
+
+
+    }
+
+    private boolean isAbove(BigDecimal breakEvenPrice, BigDecimal ask) {
+        return breakEvenPrice.compareTo(ask) >= 0;
+    }
+
+    private boolean isBelow(BigDecimal breakEvenPrice, BigDecimal bid) {
+        return breakEvenPrice.compareTo(bid) <= 0;
+    }
+
+    private boolean isShortTrade(BigDecimal currentUnits) {
+        return currentUnits.compareTo(BigDecimal.ZERO) < 0;
+    }
+
+    private BigDecimal subtract(BigDecimal NumberA, BigDecimal NumberB) {
+        return NumberA.subtract(NumberB)
+                .setScale(5, BigDecimal.ROUND_HALF_UP);
+    }
+
+    private BigDecimal add(BigDecimal NumberA, BigDecimal NumberB) {
+        return NumberA.add(NumberB)
+                .setScale(5, BigDecimal.ROUND_HALF_UP);
+    }
+
+
 //    @Override
 //    public void execute(Price price) {
-//
+//----------------------------------------------------------------
 //        if (account == null){
 //            throw new NullPointerException("account is null");
 //        }
 //      //  TradeSummary trade = account.getTrades().get(TRADE_INDEX);
 //
 //     //   this.candlesUpdater.updateCandles(dateTime);
-//
+//-------------------------------------------------------------------------------
 //        this.moveToBreakEven(account, trade, ask, bid);
 //
 //        BigDecimal stopLossPrice = BigDecimal.ZERO;
@@ -120,7 +208,7 @@
 //            this.tradeSetDependentOrdersResponse = this.serviceExitStrategy.changeStopLoss(id, tradeOpenPrice);
 //        }
 //
-//
+//==================================================================================
 //        this.closeHalfPosition(trade, ask, bid);
 //
 //        //if 1st half is closed then trail the rest after prev bar extremes
@@ -358,4 +446,4 @@
 //        TransactionID lastTransactionID = this.tradeSetDependentOrdersResponse.getLastTransactionID();
 //        System.out.println("TradeImpl with id: " + lastTransactionID+" StopLoss moved to: " + newStopLoss);
 //    }
-//}
+}

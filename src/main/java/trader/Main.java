@@ -7,8 +7,6 @@ import trader.config.Config;
 import trader.strategy.bgxstrategy.BGXStrategyMain;
 import trader.strategy.Strategy;
 import trader.strategy.ThreadedStrategy;
-import trader.exit.ExitStrategy;
-import trader.exit.fullclose.FullCloseExitStrategy;
 
 import java.lang.reflect.InvocationTargetException;
 

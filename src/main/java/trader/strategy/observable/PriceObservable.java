@@ -4,8 +4,8 @@ import trader.broker.BrokerGateway;
 import trader.configuration.TradingStrategyConfiguration;
 import trader.observer.Observer;
 import trader.exception.NullArgumentException;
-import trader.price.Price;
-import trader.price.PriceImpl;
+import trader.entity.price.Price;
+import trader.entity.price.PriceImpl;
 import trader.strategy.Observable;
 
 import java.util.concurrent.CopyOnWriteArrayList;

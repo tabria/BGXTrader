@@ -3,7 +3,9 @@ package trader.broker.connector.oanda;
 import com.oanda.v20.Context;
 import com.oanda.v20.ExecuteException;
 import com.oanda.v20.RequestException;
+import com.oanda.v20.account.AccountID;
 import com.oanda.v20.instrument.InstrumentCandlesResponse;
+import com.oanda.v20.order.OrderSpecifier;
 import com.oanda.v20.pricing.PricingGetResponse;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,11 +17,15 @@ import trader.CommonTestClassMembers;
 import trader.OandaAPIMock.OandaAPIMockInstrument;
 import trader.OandaAPIMock.OandaAPIMockOrder;
 import trader.OandaAPIMock.OandaAPIMockPricing;
+import trader.OandaAPIMock.OandaAPIMockTrade;
 import trader.connection.Connection;
 import trader.exception.EmptyArgumentException;
 import trader.exception.NullArgumentException;
 import trader.requestor.Request;
 import trader.responder.Response;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
@@ -36,6 +42,7 @@ public class OandaResponseBuilderTest {
     private OandaAPIMockPricing oandaAPIMockPricing;
     private OandaAPIMockInstrument oandaAPIMockInstrument;
     private OandaAPIMockOrder oandaAPIMockOrder;
+    private OandaAPIMockTrade oandaAPIMockTrade;
     private OandaResponseBuilder responseBuilder;
     private CommonTestClassMembers commonMembers;
 
@@ -44,6 +51,7 @@ public class OandaResponseBuilderTest {
         oandaAPIMockPricing = new OandaAPIMockPricing();
         oandaAPIMockInstrument = new OandaAPIMockInstrument(2);
         oandaAPIMockOrder = new OandaAPIMockOrder();
+        oandaAPIMockTrade = new OandaAPIMockTrade();
         oandaAPIMockPricing.setMockPricingGetResponse(oandaAPIMockPricing.getMockPricingGetResponse());
         contextMock = oandaAPIMockPricing.getContext();
         requestMock = mock(Request.class);
@@ -119,6 +127,7 @@ public class OandaResponseBuilderTest {
         oandaAPIMockPricing.setMockPricingGetResponseToThrowException(RequestException.class);
         setStaticConnectonWaitToReturnTrue();
         Response<PricingGetResponse> actualResponse = this.responseBuilder.buildResponse("price", requestMock);
+
         assertNull(actualResponse);
     }
 
@@ -176,6 +185,65 @@ public class OandaResponseBuilderTest {
         assertNull(response);
     }
 
+    @Test
+    public void WhenCallBuildResponseWithResponseForCancelOrderResponse_CorrectResponse(){
+        createFakeOrderCancelRequest();
+        Response response = responseBuilder.buildResponse("cancelOrder", requestMock);
+
+        assertEquals(oandaAPIMockOrder.getMockOrderCancelResponse(), response.getResponseDataStructure());
+    }
+
+
+    @Test(expected = RuntimeException.class)
+    public void WhenBuildResponseForResponseForCancelOrderResponseThrowUnexpectedException_ThrowRuntimeException() throws RequestException, ExecuteException {
+        createFakeOrderCancelRequest();
+        oandaAPIMockOrder.setMockOrderCancelResponseToThrowException(RuntimeException.class);
+        responseBuilder.buildResponse("cancelOrder", requestMock);
+    }
+
+    @Test
+    public void WhenBuildResponseForCancelOrderResponseThrowExecuteException_ReturnNull() throws RequestException, ExecuteException {
+        setStaticConnectonWaitToReturnTrue();
+        createFakeOrderCancelRequest();
+        oandaAPIMockOrder.setMockOrderCancelResponseToThrowException(RequestException.class);
+        Response response = responseBuilder.buildResponse("cancelOrder", requestMock);
+
+        assertNull(response);
+    }
+
+    @Test
+    public void WhenCallBuildResponseWithResponseForSetStopLossPriceResponse_CorrectResponse(){
+        setFakeTradeSetDependentRequest();
+        Response response = responseBuilder.buildResponse("setStopLossPrice", requestMock);
+
+        assertEquals(oandaAPIMockTrade.getTradeSetDependentOrdersResponseMock(), response.getResponseDataStructure());
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void WhenBuildResponseForResponseForCetStopLossPriceResponseThrowUnexpectedException_ThrowRuntimeException() throws RequestException, ExecuteException {
+        setFakeTradeSetDependentRequest();
+        oandaAPIMockTrade.setDependentOrderResponseToThrowException(RuntimeException.class);
+        responseBuilder.buildResponse("setStopLossPrice", requestMock);
+    }
+
+    @Test
+    public void WhenBuildResponseForetStopLossPriceResponseThrowExecuteException_ReturnNull() throws RequestException, ExecuteException {
+        setStaticConnectonWaitToReturnTrue();
+        setFakeTradeSetDependentRequest();
+        oandaAPIMockTrade.setDependentOrderResponseToThrowException(RequestException.class);
+        Response response = responseBuilder.buildResponse("setStopLossPrice", requestMock);
+
+        assertNull(response);
+    }
+
+
+
+    private void setFakeTradeSetDependentRequest() {
+        responseBuilder = new OandaResponseBuilder(oandaAPIMockTrade.getContext(), URL);
+        when(requestMock.getRequestDataStructure()).thenReturn(oandaAPIMockTrade.getTradeSetDependentOrdersRequestMock());
+        oandaAPIMockTrade.setSetDependentOrdersMock();
+    }
+
     private <T extends Throwable> void setOrderCreateResponseToThrowException(Class<T> exception) throws ExecuteException, RequestException {
         createFakeOrderCreateRequest();
         oandaAPIMockOrder.setMockOrderCreateResponseToThrowException(exception);
@@ -184,6 +252,18 @@ public class OandaResponseBuilderTest {
     private <T extends Throwable> void setInstrumentCandleResponseToThrowException(Class<T> exception) throws ExecuteException, RequestException {
         createFakeInstrumentCandleRequest();
         oandaAPIMockInstrument.setMockInstrumentCandlesResponseToThrowException(exception);
+    }
+
+    private void createFakeOrderCancelRequest() {
+        List<Object> objects = new ArrayList<>();
+        AccountID accountIDMock = mock(AccountID.class);
+        OrderSpecifier orderSpecifierMock = mock(OrderSpecifier.class);
+        objects.add(accountIDMock);
+        objects.add(orderSpecifierMock);
+
+        responseBuilder = new OandaResponseBuilder(oandaAPIMockOrder.getContext(), URL);
+        when(requestMock.getRequestDataStructure()).thenReturn(objects);
+        oandaAPIMockOrder.setOrderCancelResponse(accountIDMock, orderSpecifierMock);
     }
 
     private void createFakeInstrumentCandleRequest() {

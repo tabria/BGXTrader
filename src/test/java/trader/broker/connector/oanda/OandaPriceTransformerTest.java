@@ -10,7 +10,8 @@ import com.oanda.v20.primitives.DateTime;
 import com.oanda.v20.primitives.DecimalNumber;
 import org.junit.Before;
 import org.junit.Test;
-import trader.price.Price;
+import trader.broker.connector.oanda.transformer.OandaPriceTransformer;
+import trader.entity.price.Price;
 import trader.responder.Response;
 
 import java.math.BigDecimal;

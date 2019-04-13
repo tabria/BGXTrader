@@ -7,7 +7,7 @@ import trader.entity.trade.Trade;
 import trader.entry.EntryStrategy;
 import trader.exception.NullArgumentException;
 import trader.order.OrderStrategy;
-import trader.price.Price;
+import trader.entity.price.Price;
 
 import java.math.BigDecimal;
 

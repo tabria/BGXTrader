@@ -4,7 +4,6 @@ import trader.broker.BrokerGateway;
 import trader.broker.connector.BaseGateway;
 import trader.broker.connector.BrokerConnector;
 import trader.controller.TraderController;
-import trader.broker.connector.ApiConnector;
 import trader.controller.*;
 import trader.entity.indicator.Indicator;
 import trader.entry.EntryStrategy;
@@ -52,11 +51,6 @@ public final class BGXStrategyMain implements Strategy {
 
     private Observer positionObserver;
 
-    private ApiConnector apiConnector;
-
-
-
-
 
 
     public BGXStrategyMain(String brokerName, String configurationFileName, String brokerConfigurationFileName) {
@@ -82,13 +76,6 @@ public final class BGXStrategyMain implements Strategy {
         addIndicatorsToObservable(priceObservable, indicatorList);
         new PricePull("PricePull", priceObservable);
 
-
-
-        if(haveOpenTrades())
-            exitStrategy.execute();
-    //    if (haveOpenOrders())
-        //    orderStrategy.closeUnfilledOrder();
-      //  orderStrategy.submitNewOrder();
     }
 
     @Override
@@ -184,13 +171,6 @@ public final class BGXStrategyMain implements Strategy {
         BrokerGateway brokerGateway = BaseGateway.create(brokerName, connector);
       //  brokerGateway.validateConnector();
         return brokerGateway;
-    }
-
-
-
-
-    private boolean haveOpenTrades() {
-        return apiConnector.getOpenTrades().size()>0;
     }
 
 }

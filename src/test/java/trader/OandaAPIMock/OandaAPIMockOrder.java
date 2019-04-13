@@ -3,11 +3,11 @@ package trader.OandaAPIMock;
 import com.oanda.v20.Context;
 import com.oanda.v20.ExecuteException;
 import com.oanda.v20.RequestException;
+import com.oanda.v20.account.AccountID;
 import com.oanda.v20.order.*;
-import com.oanda.v20.transaction.OrderCancelTransaction;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 public class OandaAPIMockOrder extends OandaAPIMock {
@@ -55,6 +55,14 @@ public class OandaAPIMockOrder extends OandaAPIMock {
         return mockOrderCancelResponse;
     }
 
+    public void setOrderCancelResponse(AccountID accountID, OrderSpecifier specifier){
+        try {
+            when(mockOrderContext.cancel(accountID, specifier)).thenReturn(mockOrderCancelResponse);
+        } catch (RequestException | ExecuteException e) {
+            e.printStackTrace();
+        }
+    }
+
     public MarketIfTouchedOrder getMockMarketIfTouchedOrder() {
         return mockMarketIfTouchedOrder;
     }
@@ -65,6 +73,10 @@ public class OandaAPIMockOrder extends OandaAPIMock {
 
     public <T extends Throwable> void setMockOrderCreateResponseToThrowException(Class<T> exception) throws ExecuteException, RequestException {
         when(mockContext.order.create(mockOrderCreateRequest)).thenThrow(exception);
+    }
+
+    public <T extends Throwable> void setMockOrderCancelResponseToThrowException(Class<T> exception) throws ExecuteException, RequestException {
+        when(mockContext.order.cancel(any(AccountID.class), any(OrderSpecifier.class))).thenThrow(exception);
     }
 
     private void init(){

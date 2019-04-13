@@ -5,8 +5,11 @@ import com.oanda.v20.instrument.CandlestickGranularity;
 import com.oanda.v20.instrument.InstrumentCandlesRequest;
 import com.oanda.v20.order.MarketIfTouchedOrderRequest;
 import com.oanda.v20.order.OrderCreateRequest;
+import com.oanda.v20.order.OrderSpecifier;
 import com.oanda.v20.pricing.PricingGetRequest;
 import com.oanda.v20.primitives.InstrumentName;
+import com.oanda.v20.trade.TradeSetDependentOrdersRequest;
+import com.oanda.v20.trade.TradeSpecifier;
 import com.oanda.v20.transaction.StopLossDetails;
 import trader.controller.enums.SettingsFieldNames;
 import trader.entity.candlestick.candle.CandleGranularity;
@@ -28,31 +31,53 @@ class OandaRequestBuilder implements RequestBuilder {
     private static final String UNITS_SIZE = "unitsSize";
     private static final String TRADE_ENTRY_PRICE = "tradeEntryPrice";
     private static final String TRADE_STOP_LOSS_PRICE = "tradeStopLossPrice";
+    private static final String ORDER_ID = "orderID";
+    private static final String TRADE_ID = "tradeID";
 
     @Override
     public Request<?> build(String requestType, HashMap<String, String> settings) {
         initialInputValidation(requestType, settings);
-        if(requestType.trim().equalsIgnoreCase("price")){
-            validateRequestInput(settings, ACCOUNT_ID, INSTRUMENT);
+        if(requestType.trim().equalsIgnoreCase("price"))
             return buildPricingRequest(settings);
-        }
-        if(requestType.trim().equalsIgnoreCase("candle")){
-            validateRequestInput(settings, QUANTITY, INSTRUMENT, GRANULARITY);
-            validateGranularity(settings);
-            long quantity = parseQuantity(settings);
-            return buildCandlesRequest(settings.get(INSTRUMENT), quantity ,settings.get(GRANULARITY));
-        }
-        if(requestType.trim().equalsIgnoreCase(ACCOUNT_ID)){
-            validateRequestInput(settings, ACCOUNT_ID);
-            Request<AccountID> accountIDRequest = new RequestImpl<>();
-            accountIDRequest.setRequestDataStructure(new AccountID(settings.get(ACCOUNT_ID)));
-            return accountIDRequest;
-        }
-        if(requestType.trim().equalsIgnoreCase("createMarketIfTouchedOrder")){
-            validateRequestInput(settings, ACCOUNT_ID, INSTRUMENT, UNITS_SIZE, TRADE_ENTRY_PRICE, TRADE_STOP_LOSS_PRICE);
+        if(requestType.trim().equalsIgnoreCase("candle"))
+            return buildCandlesRequest(settings);
+        if(requestType.trim().equalsIgnoreCase(ACCOUNT_ID))
+            return buildAccountIDRequest(settings);
+        if(requestType.trim().equalsIgnoreCase("createMarketIfTouchedOrder"))
             return buildCreateMarketIfTouchedOrderRequest(settings);
-        }
+        if(requestType.trim().equalsIgnoreCase("orderSpecifier"))
+            return buildOrderSpecifierRequest(settings);
+        if(requestType.trim().equalsIgnoreCase("setStopLossPrice"))
+            return buildSetStopLossPriceRequest(settings);
+
         throw new NoSuchDataStructureException();
+    }
+
+    private Request<PricingGetRequest> buildPricingRequest(HashMap<String, String> settings) {
+        List<String> instruments = new ArrayList<>();
+        instruments.add(settings.get(INSTRUMENT));
+        AccountID accountId = new AccountID(settings.get(ACCOUNT_ID));
+        Request<PricingGetRequest> request = new RequestImpl<>();
+        request.setRequestDataStructure(new PricingGetRequest(accountId, instruments));
+        return request;
+    }
+
+    private Request<InstrumentCandlesRequest> buildCandlesRequest(HashMap<String, String> settings){
+        Request<InstrumentCandlesRequest> request = new RequestImpl<>();
+        validateGranularity(settings);
+        request.setRequestDataStructure(
+                new InstrumentCandlesRequest(new InstrumentName(settings.get(INSTRUMENT)))
+                        .setCount(parseQuantity(settings))
+                        .setGranularity(extractGranularity(settings.get(GRANULARITY).toUpperCase()))
+                        .setSmooth(false)
+        );
+        return request;
+    }
+
+    private Request<?> buildAccountIDRequest(HashMap<String, String> settings) {
+        Request<AccountID> accountIDRequest = new RequestImpl<>();
+        accountIDRequest.setRequestDataStructure(new AccountID(settings.get(ACCOUNT_ID)));
+        return accountIDRequest;
     }
 
     private Request<OrderCreateRequest> buildCreateMarketIfTouchedOrderRequest(HashMap<String, String> settings) {
@@ -71,23 +96,24 @@ class OandaRequestBuilder implements RequestBuilder {
         return request;
     }
 
-    private Request<PricingGetRequest> buildPricingRequest(HashMap<String, String> settings) {
-        List<String> instruments = new ArrayList<>();
-        instruments.add(settings.get(INSTRUMENT));
-        AccountID accountId = new AccountID(settings.get(ACCOUNT_ID));
-        Request<PricingGetRequest> request = new RequestImpl<>();
-        request.setRequestDataStructure(new PricingGetRequest(accountId, instruments));
+    private Request<List<Object>> buildOrderSpecifierRequest(HashMap<String,String> settings) {
+        Request<List<Object>> request = new RequestImpl<>();
+        OrderSpecifier orderSpecifier = new OrderSpecifier(settings.get("orderID"));
+        AccountID accountID = new AccountID(settings.get(ACCOUNT_ID));
+        List<Object> sets = new ArrayList<>();
+        sets.add(accountID);
+        sets.add(orderSpecifier);
+        request.setRequestDataStructure(sets);
         return request;
     }
 
-    private Request<InstrumentCandlesRequest> buildCandlesRequest(String instrument, long candlesQuantity, String granularity){
-        Request<InstrumentCandlesRequest> request = new RequestImpl<>();
-        request.setRequestDataStructure(
-                new InstrumentCandlesRequest(new InstrumentName(instrument))
-                        .setCount(candlesQuantity)
-                        .setGranularity(extractGranularity(granularity.toUpperCase()))
-                        .setSmooth(false)
-        );
+    private Request<TradeSetDependentOrdersRequest> buildSetStopLossPriceRequest(HashMap<String,String> settings) {
+        Request<TradeSetDependentOrdersRequest> request = new RequestImpl<>();
+        TradeSpecifier tradeSpecifier = new TradeSpecifier(settings.get("tradeID"));
+        StopLossDetails stopLossDetails = new StopLossDetails().setPrice(settings.get("price"));
+        AccountID accountID = new AccountID(settings.get(ACCOUNT_ID));
+        TradeSetDependentOrdersRequest tradeSetDependentOrdersRequest = new TradeSetDependentOrdersRequest(accountID, tradeSpecifier).setStopLoss(stopLossDetails);
+        request.setRequestDataStructure(tradeSetDependentOrdersRequest);
         return request;
     }
 
@@ -96,21 +122,6 @@ class OandaRequestBuilder implements RequestBuilder {
             throw new NullArgumentException();
         if(settings.size() == 0)
             throw new EmptyArgumentException();
-    }
-
-    private void validateRequestInput(HashMap<String, String> settings, String... options) {
-        for (String option : options) {
-            if(!settings.containsKey(option))
-                throw new BadRequestException();
-            if(settings.get(option) == null)
-                throw new NullArgumentException();
-            if(isEmpty(settings, option))
-                throw new EmptyArgumentException();
-        }
-    }
-
-    private boolean isEmpty(HashMap<String, String> settings, String element) {
-        return settings.get(element).trim().isEmpty();
     }
 
     private double parseStringToDouble(String str){

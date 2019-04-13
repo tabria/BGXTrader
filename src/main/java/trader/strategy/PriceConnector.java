@@ -1,6 +1,6 @@
 package trader.strategy;
 
-import trader.price.Price;
+import trader.entity.price.Price;
 
 public interface PriceConnector {
 

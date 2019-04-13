@@ -6,7 +6,7 @@ import trader.controller.enums.SettingsFieldNames;
 import trader.entity.candlestick.Candlestick;
 import trader.exception.NullArgumentException;
 import trader.entity.indicator.Indicator;
-import trader.price.Price;
+import trader.entity.price.Price;
 
 import java.util.HashMap;
 import java.util.List;

@@ -1,8 +1,7 @@
-package trader.price;
+package trader.entity.price;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.internal.matchers.Null;
 import trader.exception.NegativeNumberException;
 import trader.exception.NullArgumentException;
 

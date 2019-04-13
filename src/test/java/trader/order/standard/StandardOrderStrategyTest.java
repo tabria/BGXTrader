@@ -2,6 +2,7 @@ package trader.order.standard;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import trader.CommonTestClassMembers;
 import trader.broker.BrokerGateway;
 import trader.broker.connector.BrokerConnector;
@@ -13,8 +14,7 @@ import trader.entity.trade.Trade;
 import trader.exception.BadRequestException;
 import trader.exception.EmptyArgumentException;
 import trader.exception.NullArgumentException;
-import trader.order.standard.StandardOrderStrategy;
-import trader.price.Price;
+import trader.entity.price.Price;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -23,9 +23,7 @@ import java.util.HashMap;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class StandardOrderStrategyTest {
 

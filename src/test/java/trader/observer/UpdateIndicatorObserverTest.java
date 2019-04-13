@@ -10,7 +10,7 @@ import trader.entity.candlestick.Candlestick;
 import trader.entity.candlestick.candle.CandleGranularity;
 import trader.entity.indicator.Indicator;
 import trader.exception.NullArgumentException;
-import trader.price.Price;
+import trader.entity.price.Price;
 import java.math.BigDecimal;
 import java.util.*;
 import static org.junit.Assert.*;

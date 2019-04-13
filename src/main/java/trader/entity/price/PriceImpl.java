@@ -1,4 +1,4 @@
-package trader.price;
+package trader.entity.price;
 
 import trader.exception.NegativeNumberException;
 import trader.exception.NullArgumentException;

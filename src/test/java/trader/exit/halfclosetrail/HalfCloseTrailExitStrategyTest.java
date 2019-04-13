@@ -1,4 +1,28 @@
-//package trader.exit.halfclosetrail;
+package trader.exit.halfclosetrail;
+
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import trader.CommonTestClassMembers;
+import trader.broker.BrokerGateway;
+import trader.configuration.TradingStrategyConfiguration;
+import trader.entity.candlestick.Candlestick;
+import trader.entity.candlestick.candle.Candle;
+import trader.entity.candlestick.candle.CandleGranularity;
+import trader.entity.price.Price;
+import trader.entity.trade.BrokerTradeDetails;
+import trader.exception.NullArgumentException;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 //
 //import com.oanda.v20.Context;
 //import com.oanda.v20.ExecuteException;
@@ -25,7 +49,125 @@
 //import static org.mockito.Mockito.mock;
 //import static org.mockito.Mockito.when;
 //
-//public class HalfCloseTrailExitStrategyTest {
+public class HalfCloseTrailExitStrategyTest {
+
+    private List<Candlestick> candlesticks;
+    private Price priceMock;
+    private Candlestick candlestickMock;
+    private BrokerGateway brokerGatewayMock;
+    private HalfCloseTrailExitStrategy exitStrategy;
+    private TradingStrategyConfiguration configurationMock;
+    private BrokerTradeDetails tradeDetailsMock;
+    private CommonTestClassMembers commonMembers;
+
+    @Before
+    public void setUp() throws Exception {
+
+        priceMock = mock(Price.class);
+        candlestickMock = mock(Candlestick.class);
+        candlesticks = new ArrayList<>();
+        configurationMock = mock(TradingStrategyConfiguration.class);
+        brokerGatewayMock = mock(BrokerGateway.class);
+        exitStrategy = new HalfCloseTrailExitStrategy();
+        exitStrategy.setConfiguration(configurationMock);
+        exitStrategy.setBrokerGateway(brokerGatewayMock);
+        tradeDetailsMock = mock(BrokerTradeDetails.class);
+        commonMembers = new CommonTestClassMembers();
+    }
+
+    @Test(expected = NullArgumentException.class)
+    public void WhenCallSetConfigurationWithNull_Exception(){
+        HalfCloseTrailExitStrategy halfCloseTrailExitStrategy = new HalfCloseTrailExitStrategy();
+        halfCloseTrailExitStrategy.setConfiguration(null);
+    }
+
+    @Test(expected = NullArgumentException.class)
+    public void WhenCallSetBrokerGatewayWithNull_Exception(){
+        HalfCloseTrailExitStrategy halfCloseTrailExitStrategy = new HalfCloseTrailExitStrategy();
+        halfCloseTrailExitStrategy.setBrokerGateway(null);
+    }
+
+    @Test
+    public void WhenCallSetConfigurationWithCorrectValue_CorrectUpdate(){
+        Object configuration = commonMembers.extractFieldObject(exitStrategy, "configuration");
+
+       assertEquals(configurationMock.getClass(), configuration.getClass());
+    }
+
+    @Test
+    public void WhenCallSetBrokerGatewayWithCorrectValue_CorrectUpdate(){
+        Object gateway = commonMembers.extractFieldObject(exitStrategy, "brokerGateway");
+
+        assertEquals(brokerGatewayMock.getClass(), gateway.getClass());
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void WhenCallUpdateCandleInitializeSettingsIfNotInitialized(){
+        when(brokerGatewayMock.getCandles(any(HashMap.class))).thenThrow(RuntimeException.class);
+
+        fillSettings();
+
+        HashMap<String, String> settings = (HashMap<String, String>) commonMembers.extractFieldObject(exitStrategy, "settings");
+
+        assertEquals("EUR_USD", settings.get("instrument"));
+        assertEquals("200", settings.get("quantity"));
+        assertEquals("M10", settings.get("granularity"));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void WhenCallUpdateCandleWithAlreadyInitializedSettingsIf_ChangeOnlyQuantity(){
+        candlesticks.add(candlestickMock);
+        when(brokerGatewayMock.getCandles(any(HashMap.class))).thenReturn(candlesticks);
+        fillSettings();
+        fillSettings();
+        HashMap<String, String> settings = (HashMap<String, String>) commonMembers.extractFieldObject(exitStrategy, "settings");
+
+        assertEquals("EUR_USD", settings.get("instrument"));
+        assertEquals("2", settings.get("quantity"));
+        assertEquals("M10", settings.get("granularity"));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void WhenCallExecuteAndTradeHaveNullStopLossOrderID_Exception(){
+        fillSettings();
+        setFakeBrokerTradeDetails(0, "12", null, 1.2345, 100  );
+        exitStrategy.execute(priceMock);
+    }
+
+
+
+
+
+
+
+
+    private void fillSettings() {
+        setFakeConfigurations("EUR_USD", 200, CandleGranularity.M10, 2 );
+        exitStrategy.setBrokerGateway(brokerGatewayMock);
+        try {
+            exitStrategy.updateCandles(priceMock);
+        } catch(Exception e){ }
+    }
+
+    private void setFakeConfigurations(String instrument, long initialCandleQuantity, CandleGranularity granularity, long updateQuantity){
+        when(configurationMock.getInstrument()).thenReturn(instrument);
+        when(configurationMock.getInitialCandlesQuantity()).thenReturn(initialCandleQuantity);
+        when(configurationMock.getExitGranularity()).thenReturn(granularity);
+        when(configurationMock.getUpdateCandlesQuantity()).thenReturn(updateQuantity);
+    }
+
+    private void setFakeBrokerTradeDetails(int tradeIndex ,String tradeId, String orderID, double entryPrice, double units){
+        when(brokerGatewayMock.getTradeDetails(tradeIndex)).thenReturn(tradeDetailsMock);
+        when(tradeDetailsMock.getTradeID()).thenReturn(tradeId);
+        when(tradeDetailsMock.getStopLossOrderID()).thenReturn(orderID);
+        when(tradeDetailsMock.getOpenPrice()).thenReturn(BigDecimal.valueOf(entryPrice));
+        when(tradeDetailsMock.getCurrentUnits()).thenReturn(BigDecimal.valueOf( units));
+    }
+
+
+}
 //
 //    private static final BigDecimal INITIAL_UNITS = BigDecimal.valueOf(100);
 //    private static final BigDecimal CURRENT_UNITS = BigDecimal.valueOf(50);
