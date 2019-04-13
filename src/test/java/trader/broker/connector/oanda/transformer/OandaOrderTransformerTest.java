@@ -1,4 +1,4 @@
-package trader.broker.connector.oanda;
+package trader.broker.connector.oanda.transformer;
 
 import com.oanda.v20.order.MarketIfTouchedOrder;
 import com.oanda.v20.order.OrderID;

@@ -36,7 +36,7 @@ public class OandaTransformer implements Transformable {
 
     @Override
     public <T> List<Candlestick> transformCandlesticks(Response<T> response){
-        return  transformCandlesticks(response);
+        return  oandaCandlesTransformer.transformCandlesticks(response);
     };
 
     @Override

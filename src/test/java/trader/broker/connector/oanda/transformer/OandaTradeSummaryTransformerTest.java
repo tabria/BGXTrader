@@ -1,4 +1,4 @@
-package trader.broker.connector.oanda;
+package trader.broker.connector.oanda.transformer;
 
 import com.oanda.v20.order.Order;
 import com.oanda.v20.order.OrderID;
@@ -22,7 +22,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class OandaTradeSummaryTransformableTest {
+public class OandaTradeSummaryTransformerTest {
 
     private OandaTradeSummaryTransformer transformer;
 
