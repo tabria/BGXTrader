@@ -176,25 +176,6 @@ public class OandaGatewayTest {
     }
 
     @Test
-    public void WhenCallPlaceMarketIfTouchedOrder_CorrectResult(){
-        String expectedID = "18";
-        String result = makeFakeMarketIfTouchedOrderCall(expectedID);
-
-        assertEquals(expectedID, result);
-    }
-
-    @Test
-    public void WhenCallPlaceMarketIfTouchedOrder_ValidSettings(){
-        String expectedID = "2";
-        makeFakeMarketIfTouchedOrderCall(expectedID);
-        verify(mockRequestBuilder).build(anyString(), argument.capture());
-        HashMap<String, String> settings = argument.getValue();
-
-        assertEquals(1, settings.size());
-        assertEquals(FAKE_ACCOUNT_ID, settings.get("accountID"));
-    }
-
-    @Test
     public void WhenCallGetOrderAndThereAreNoOrders_ReturnNull(){
         setFakeContext();
         setFakeBuilders();
@@ -219,6 +200,49 @@ public class OandaGatewayTest {
         trader.entity.order.Order order = oandaGateway.getOrder(trader.entity.order.enums.OrderType.MARKET_IF_TOUCHED);
 
         assertEquals(order, expected);
+    }
+
+    @Test
+    public void WhenCallPlaceMarketIfTouchedOrder_CorrectResult(){
+        String expectedID = "18";
+        makeFakeOrder(expectedID);
+        String result = oandaGateway.placeMarketIfTouchedOrder(new HashMap<>());
+
+
+        assertEquals(expectedID, result);
+    }
+
+    @Test
+    public void WhenCallPlaceMarketIfTouchedOrderCheckForValidSettings(){
+        String expectedID = "2";
+        makeFakeOrder(expectedID);
+        oandaGateway.placeMarketIfTouchedOrder(new HashMap<>());
+        verify(mockRequestBuilder).build(anyString(), argument.capture());
+        HashMap<String, String> settings = argument.getValue();
+
+        assertEquals(1, settings.size());
+        assertEquals(FAKE_ACCOUNT_ID, settings.get("accountID"));
+    }
+
+    @Test
+    public void WhenCallPlaceMarketOrder_CorrectResult(){
+        String expectedID = "13";
+        makeFakeOrder(expectedID);
+        String result = oandaGateway.placeMarketOrder(new HashMap<>());
+
+        assertEquals(expectedID, result);
+    }
+
+    @Test
+    public void WhenCallPlaceMarketOrderCheckForValidSettings(){
+        String expectedID = "2";
+        makeFakeOrder(expectedID);
+        oandaGateway.placeMarketOrder(new HashMap<>());
+        verify(mockRequestBuilder).build(anyString(), argument.capture());
+        HashMap<String, String> settings = argument.getValue();
+
+        assertEquals(1, settings.size());
+        assertEquals(FAKE_ACCOUNT_ID, settings.get("accountID"));
     }
 
     @Test(expected = BadRequestException.class)
@@ -350,7 +374,7 @@ public class OandaGatewayTest {
         return orderMock;
     }
 
-    private String makeFakeMarketIfTouchedOrderCall(String transactionID) {
+    private void makeFakeOrder(String transactionID) {
         setFakeContext();
         setFakeBuilders();
         setFakeConnector();
@@ -358,7 +382,7 @@ public class OandaGatewayTest {
         OrderCreateResponse orderResponseMock = mock(OrderCreateResponse.class);
         when(orderResponseMock.getOrderCreateTransaction()).thenReturn(transactionMock);
         when(responseMock.getResponseDataStructure()).thenReturn(orderResponseMock);
-        return oandaGateway.placeMarketIfTouchedOrder(new HashMap<>());
+        //return oandaGateway.placeMarketIfTouchedOrder(new HashMap<>());
     }
 
     private void setFakeTransaction(String expectedID) {

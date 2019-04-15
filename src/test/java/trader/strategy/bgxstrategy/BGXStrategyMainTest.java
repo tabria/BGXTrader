@@ -78,40 +78,6 @@ public class BGXStrategyMainTest {
 
     }
 
-    @Test(expected = NullArgumentException.class)
-    public void WhenBrokerNameIsNull_Exception(){
-    new BGXStrategyMain(null, BGX_STRATEGY_CONFIG_FILE_NAME, BROKER_CONFIG_FILE_NAME);
-    }
-
-    @Test(expected = NullArgumentException.class)
-    public void WhenStrategyConfigFileNameIsNull_Exception(){
-        new BGXStrategyMain(BROKER_NAME, null, BROKER_CONFIG_FILE_NAME);
-    }
-    @Test(expected = NullArgumentException.class)
-    public void WhenBrokerConfigFileNameIsNull_Exception(){
-        new BGXStrategyMain(BROKER_NAME, BGX_STRATEGY_CONFIG_FILE_NAME, null);
-    }
-
-    @Test
-    public void WhenCreateWithNotNullConfiguration_ConfigurationNotNull(){
-        TradingStrategyConfiguration configuration = bgxStrategyMain.getConfiguration();
-        assertNotNull(configuration);
-    }
-
-    @Test(expected = EmptyArgumentException.class)
-    public void WhenBrokerNameIsEmpty_Exception(){
-        new BGXStrategyMain("  ", BGX_STRATEGY_CONFIG_FILE_NAME, BROKER_CONFIG_FILE_NAME);
-    }
-
-    @Test(expected = EmptyArgumentException.class)
-    public void WhenStrategyConfigFileNameIsEmpty_Exception(){
-        new BGXStrategyMain(BROKER_NAME, "  ", BROKER_CONFIG_FILE_NAME);
-    }
-    @Test(expected = EmptyArgumentException.class)
-    public void WhenBrokerConfigFileNameIsEmpty_Exception(){
-        new BGXStrategyMain(BROKER_NAME, BGX_STRATEGY_CONFIG_FILE_NAME, "  ");
-    }
-
     @Test
     public void WhenCreateWithNotNullBrokerConfiguration_BrokerGatewayNotNull(){
         BrokerGateway brokerGateway = bgxStrategyMain.getBrokerGateway();

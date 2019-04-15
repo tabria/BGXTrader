@@ -3,9 +3,7 @@ package trader.broker.connector.oanda;
 import com.oanda.v20.account.AccountID;
 import com.oanda.v20.instrument.CandlestickGranularity;
 import com.oanda.v20.instrument.InstrumentCandlesRequest;
-import com.oanda.v20.order.MarketIfTouchedOrderRequest;
-import com.oanda.v20.order.OrderCreateRequest;
-import com.oanda.v20.order.OrderSpecifier;
+import com.oanda.v20.order.*;
 import com.oanda.v20.pricing.PricingGetRequest;
 import com.oanda.v20.primitives.InstrumentName;
 import com.oanda.v20.trade.TradeSetDependentOrdersRequest;
@@ -45,6 +43,8 @@ class OandaRequestBuilder implements RequestBuilder {
             return buildAccountIDRequest(settings);
         if(requestType.trim().equalsIgnoreCase("createMarketIfTouchedOrder"))
             return buildCreateMarketIfTouchedOrderRequest(settings);
+        if(requestType.trim().equalsIgnoreCase("createMarketOrder"))
+            return buildCreateMarketOrderRequest(settings);
         if(requestType.trim().equalsIgnoreCase("orderSpecifier"))
             return buildOrderSpecifierRequest(settings);
         if(requestType.trim().equalsIgnoreCase("setStopLossPrice"))
@@ -82,18 +82,36 @@ class OandaRequestBuilder implements RequestBuilder {
 
     private Request<OrderCreateRequest> buildCreateMarketIfTouchedOrderRequest(HashMap<String, String> settings) {
         AccountID accountID = new AccountID(settings.get(ACCOUNT_ID));
+        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(accountID)
+                .setOrder(createMarketIfTouchedOrderRequest(settings));
+        Request<OrderCreateRequest> request = new RequestImpl<>();
+        request.setRequestDataStructure(orderCreateRequest);
+        return request;
+    }
+
+    private Request<OrderCreateRequest> buildCreateMarketOrderRequest(HashMap<String, String> settings) {
+        AccountID accountID = new AccountID(settings.get(ACCOUNT_ID));
+        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(accountID)
+                .setOrder(createMarketOrderRequest(settings));
+        Request<OrderCreateRequest> request = new RequestImpl<>();
+        request.setRequestDataStructure(orderCreateRequest);
+        return request;
+    }
+
+    private OrderRequest createMarketOrderRequest(HashMap<String, String> settings){
+        return  new MarketOrderRequest()
+                .setInstrument(settings.get(INSTRUMENT))
+                .setUnits(parseStringToDouble(settings.get(UNITS_SIZE)));
+    }
+
+    private OrderRequest createMarketIfTouchedOrderRequest(HashMap<String, String> settings){
         StopLossDetails stopLossDetails = new StopLossDetails()
                 .setPrice(parseStringToDouble(settings.get(TRADE_STOP_LOSS_PRICE)));
-        MarketIfTouchedOrderRequest marketIfTouchedOrderRequest = new MarketIfTouchedOrderRequest()
+        return   new MarketIfTouchedOrderRequest()
                 .setInstrument(settings.get(INSTRUMENT))
                 .setUnits(parseStringToDouble(settings.get(UNITS_SIZE)))
                 .setStopLossOnFill(stopLossDetails)
                 .setPrice(parseStringToDouble(settings.get(TRADE_ENTRY_PRICE)));
-        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(accountID)
-                .setOrder(marketIfTouchedOrderRequest);
-        Request<OrderCreateRequest> request = new RequestImpl<>();
-        request.setRequestDataStructure(orderCreateRequest);
-        return request;
     }
 
     private Request<List<Object>> buildOrderSpecifierRequest(HashMap<String,String> settings) {

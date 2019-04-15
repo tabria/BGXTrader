@@ -19,6 +19,10 @@ public interface BrokerTradeDetails {
 
     void setStopLossPrice(String stopLossPrice);
 
+    BigDecimal getInitialUnits();
+
+    void setInitialUnits(String initialUnits);
+
     BigDecimal getCurrentUnits();
 
     void setCurrentUnits(String currentUnits);

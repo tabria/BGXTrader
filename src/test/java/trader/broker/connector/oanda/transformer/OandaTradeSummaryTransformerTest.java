@@ -10,7 +10,6 @@ import com.oanda.v20.trade.TradeID;
 import com.oanda.v20.trade.TradeSummary;
 import org.junit.Before;
 import org.junit.Test;
-import trader.broker.connector.oanda.transformer.OandaTradeSummaryTransformer;
 import trader.entity.trade.BrokerTradeDetails;
 import trader.exception.NullArgumentException;
 
@@ -44,7 +43,7 @@ public class OandaTradeSummaryTransformerTest {
 
     @Test
     public void WhenCallTransformWithCorrectTradeSummaryAndStopLossOrderID_CorrectResult(){
-        TradeSummary tradeSummaryMock = createFakeTradeSummary("12", "13", "1.1234", "-124");
+        TradeSummary tradeSummaryMock = createFakeTradeSummary("12", "13", "1.1234", "-154", "-124");
         StopLossOrder stopLossOrder = setFakeStopLossOrder("1.1212", "13");
         List<Order> orders = new ArrayList<>();
         orders.add(stopLossOrder);
@@ -54,13 +53,14 @@ public class OandaTradeSummaryTransformerTest {
         assertEquals("12", tradeDetails.getTradeID());
         assertEquals("13", tradeDetails.getStopLossOrderID());
         assertEquals(new BigDecimal("1.1234"), tradeDetails.getOpenPrice());
+        assertEquals(new BigDecimal("-154"), tradeDetails.getInitialUnits());
         assertEquals(new BigDecimal("-124"), tradeDetails.getCurrentUnits());
         assertEquals(new BigDecimal("1.1212"), tradeDetails.getStopLossPrice());
     }
 
     @Test
     public void WhenCallTransformWithCorrectTradeSummaryAndStopLossOrderIDDoNotMatch_StopLostPriceMustBeZero(){
-        TradeSummary tradeSummaryMock = createFakeTradeSummary("12", "13", "1.1234", "-124");
+        TradeSummary tradeSummaryMock = createFakeTradeSummary("12", "13", "1.1234", "-154", "-124");
         StopLossOrder stopLossOrder = setFakeStopLossOrder("1.1212", "17");
         List<Order> orders = new ArrayList<>();
         orders.add(stopLossOrder);
@@ -70,25 +70,29 @@ public class OandaTradeSummaryTransformerTest {
         assertEquals("12", tradeDetails.getTradeID());
         assertEquals("13", tradeDetails.getStopLossOrderID());
         assertEquals(new BigDecimal("1.1234"), tradeDetails.getOpenPrice());
+        assertEquals(new BigDecimal("-154"), tradeDetails.getInitialUnits());
         assertEquals(new BigDecimal("-124"), tradeDetails.getCurrentUnits());
         assertEquals(new BigDecimal("0"), tradeDetails.getStopLossPrice());
     }
 
-    private TradeSummary createFakeTradeSummary(String tradeID, String orderID, String openPrice, String units) {
+    private TradeSummary createFakeTradeSummary(String tradeID, String orderID, String openPrice, String initialUnits, String currentUnits) {
 
         TradeID tradeIDMock = setFakeTradeID(tradeID);
         OrderID orderIDMock = setFakeOrderID(orderID);
         PriceValue priceValueMock = setFakePriceValue(openPrice);
-        DecimalNumber decimalNumberMock = setFakeDecimalNumber(units);
+        DecimalNumber initialDecimalNumberMock = setFakeDecimalNumber(initialUnits);
+        DecimalNumber decimalNumberMock = setFakeDecimalNumber(currentUnits);
 
-        return setFakeTradeSummary(tradeIDMock, orderIDMock, priceValueMock, decimalNumberMock);
+
+        return setFakeTradeSummary(tradeIDMock, orderIDMock, priceValueMock, initialDecimalNumberMock, decimalNumberMock);
     }
 
-    private TradeSummary setFakeTradeSummary(TradeID tradeIDMock, OrderID orderIDMock, PriceValue priceValueMock, DecimalNumber decimalNumberMock){
+    private TradeSummary setFakeTradeSummary(TradeID tradeIDMock, OrderID orderIDMock, PriceValue priceValueMock, DecimalNumber initialDecimalNumberMock, DecimalNumber decimalNumberMock){
         TradeSummary tradeSummaryMock = mock(TradeSummary.class);
         when(tradeSummaryMock.getId()).thenReturn(tradeIDMock);
         when(tradeSummaryMock.getStopLossOrderID()).thenReturn(orderIDMock);
         when(tradeSummaryMock.getPrice()).thenReturn(priceValueMock);
+        when(tradeSummaryMock.getInitialUnits()).thenReturn(initialDecimalNumberMock);
         when(tradeSummaryMock.getCurrentUnits()).thenReturn(decimalNumberMock);
         return tradeSummaryMock;
     }

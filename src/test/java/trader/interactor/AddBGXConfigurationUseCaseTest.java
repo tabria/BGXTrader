@@ -6,7 +6,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.mockito.Mockito;
 import org.yaml.snakeyaml.error.YAMLException;
+import trader.controller.AddExitStrategyController;
 import trader.exception.BadRequestException;
 import trader.exception.EmptyArgumentException;
 import trader.exception.NullArgumentException;
@@ -128,6 +130,7 @@ public class AddBGXConfigurationUseCaseTest {
 
         when(configurationMock.getFileLocation()).thenReturn("ggs.yaml");
         when(requestMock.getRequestDataStructure()).thenReturn(configurationMock);
+
         addBgxConfigurationUseCase.execute(requestMock);
     }
 

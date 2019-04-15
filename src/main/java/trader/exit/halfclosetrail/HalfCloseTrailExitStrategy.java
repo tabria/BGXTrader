@@ -98,12 +98,38 @@ public final class HalfCloseTrailExitStrategy implements ExitStrategy {
         moveToBreakEven(tradeDetails, price);
 
 
+        BigDecimal initialUnits = tradeDetails.getInitialUnits();
+        BigDecimal currentUnits = tradeDetails.getCurrentUnits();
+        BigDecimal tradeOpenPrice = tradeDetails.getOpenPrice();
 
-//        if (isFilterPassed(currentUnits, breakEvenPrice, ask, bid)){
-//            TradeID id = trade.getId();
-//
-//            this.tradeSetDependentOrdersResponse = this.serviceExitStrategy.changeStopLoss(id, tradeOpenPrice);
-//        }
+        if (initialUnits.compareTo(currentUnits) != 0)
+            return;
+
+        BigDecimal firstTargetPrice =  isShortTrade(currentUnits) ?
+                subtract(tradeOpenPrice, FIRST_TARGET_DISTANCE):
+                add(tradeOpenPrice, FIRST_TARGET_DISTANCE);
+
+        if(isAbleToSetStopLoss(currentUnits, firstTargetPrice, price)){
+
+                if (PARTS_TO_CLOSE == null || PARTS_TO_CLOSE.compareTo(BigDecimal.ONE)< 0){
+                    throw new IllegalArgumentException("parts is less than 1");
+                }
+                //multiply with -1 to reverse units size. This will open trade with opposite direction to the current trade
+                BigDecimal unitsToClose = currentUnits
+                        .divide(PARTS_TO_CLOSE, 0, BigDecimal.ROUND_HALF_UP)
+                        .multiply(BigDecimal.valueOf(-1)).setScale(0, BigDecimal.ROUND_HALF_UP);
+
+//                MarketOrderRequest marketOrderRequest = new MarketOrderRequest()
+//                        .setInstrument(Config.INSTRUMENT)
+//                        .setUnits(unitsToClose);
+//                OrderCreateRequest halfTradeRequest = new OrderCreateRequest(Config.ACCOUNTID).setOrder(marketOrderRequest);
+//                try {
+//                    return this.context.order.create(halfTradeRequest);
+//                } catch (RequestException | ExecuteException e) {
+//                    throw new RuntimeException(e);
+//                }
+        }
+
 
     }
 
@@ -111,7 +137,6 @@ public final class HalfCloseTrailExitStrategy implements ExitStrategy {
         BigDecimal stopLossPrice = tradeDetails.getStopLossPrice();
         BigDecimal tradeOpenPrice = tradeDetails.getOpenPrice();
         BigDecimal currentUnits = tradeDetails.getCurrentUnits();
-
         if (!isShortTrade(currentUnits) && isAbove(stopLossPrice, tradeOpenPrice))
             return;
         if (isShortTrade(currentUnits) && isBelow(stopLossPrice, tradeOpenPrice))
@@ -119,36 +144,25 @@ public final class HalfCloseTrailExitStrategy implements ExitStrategy {
         BigDecimal breakEvenPrice = isShortTrade(currentUnits) ?
                 subtract(tradeOpenPrice, BREAK_EVEN_DISTANCE) :
                 add(tradeOpenPrice, BREAK_EVEN_DISTANCE);
+        if(isAbleToSetStopLoss(currentUnits, breakEvenPrice, price))
+            brokerGateway.setTradeStopLossPrice(tradeDetails.getTradeID(), tradeOpenPrice.toString());
+    }
 
-                //for short trade
+    private boolean isAbleToSetStopLoss(BigDecimal currentUnits, BigDecimal breakEvenPrice, Price price){
         boolean shortCondition =
                 isShortTrade(currentUnits) && isAbove(breakEvenPrice, price.getAsk());
         boolean longCondition =
                 !isShortTrade(currentUnits) && isBelow(breakEvenPrice, price.getBid());
 
-        if(shortCondition || longCondition){
-             String id = tradeDetails.getTradeID();
-//
-//        TradeSpecifier tradeSpecifier = new TradeSpecifier(id);
-//        StopLossDetails stopLossDetails = new StopLossDetails().setPrice(tradeOpenPrice);
-//
-//        TradeSetDependentOrdersRequest tradeSetDependentOrdersRequest = new TradeSetDependentOrdersRequest(Config.ACCOUNTID, tradeSpecifier).setStopLoss(stopLossDetails);
-//            try {
-//                return this.context.trade.setDependentOrders(tradeSetDependentOrdersRequest);
-//            } catch (RequestException | ExecuteException e) {
-//                throw new RuntimeException(e);
-//            }
-        }
-
-
+        return shortCondition || longCondition;
     }
 
-    private boolean isAbove(BigDecimal breakEvenPrice, BigDecimal ask) {
-        return breakEvenPrice.compareTo(ask) >= 0;
+    private boolean isAbove(BigDecimal priceA, BigDecimal priceB) {
+        return priceA.compareTo(priceB) >= 0;
     }
 
-    private boolean isBelow(BigDecimal breakEvenPrice, BigDecimal bid) {
-        return breakEvenPrice.compareTo(bid) <= 0;
+    private boolean isBelow(BigDecimal priceA, BigDecimal priceB) {
+        return priceA.compareTo(priceB) <= 0;
     }
 
     private boolean isShortTrade(BigDecimal currentUnits) {
@@ -162,6 +176,15 @@ public final class HalfCloseTrailExitStrategy implements ExitStrategy {
 
     private BigDecimal add(BigDecimal NumberA, BigDecimal NumberB) {
         return NumberA.add(NumberB)
+                .setScale(5, BigDecimal.ROUND_HALF_UP);
+    }
+
+    private BigDecimal divide(BigDecimal NumberA, BigDecimal NumberB) {
+        return NumberA.divide(NumberB,5, BigDecimal.ROUND_HALF_UP);
+    }
+
+    private BigDecimal multiply(BigDecimal NumberA, BigDecimal NumberB) {
+        return NumberA.multiply(NumberB)
                 .setScale(5, BigDecimal.ROUND_HALF_UP);
     }
 

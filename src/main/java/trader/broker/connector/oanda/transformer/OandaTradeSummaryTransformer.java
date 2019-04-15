@@ -24,6 +24,7 @@ public class OandaTradeSummaryTransformer {
         tradeDetails.setTradeID(summary.getId().toString());
         tradeDetails.setOpenPrice(summary.getPrice().toString());
         tradeDetails.setStopLossOrderID(summary.getStopLossOrderID().toString());
+        tradeDetails.setInitialUnits(summary.getInitialUnits().toString());
         tradeDetails.setCurrentUnits(summary.getCurrentUnits().toString());
         tradeDetails.setStopLossPrice(getStopLossOrderPrice(orders, summary.getStopLossOrderID()));
         return tradeDetails;

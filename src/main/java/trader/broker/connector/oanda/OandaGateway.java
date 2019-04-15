@@ -34,6 +34,7 @@ public class OandaGateway extends BaseGateway {
     private static final String ORDER_ID = "orderID";
     private static final String CANCEL_ORDER = "cancelOrder";
     private static final String SET_STOP_LOSS_PRICE = "setStopLossPrice";
+    private static final String CREATE_MARKET_ORDER = "createMarketOrder";
 
     private Context context;
     private BrokerConnector connector;
@@ -108,11 +109,12 @@ public class OandaGateway extends BaseGateway {
 
     @Override
     public String placeMarketIfTouchedOrder(HashMap<String, String> settings){
-        settings.put(ACCOUNT_ID, getConnector().getAccountID());
-        Request<?> marketIfTouchedOrderRequest = oandaRequestBuilder.build(CREATE_MARKET_IF_TOUCHED_ORDER, settings);
-        Response<OrderCreateResponse> marketIfTouchedOrderResponse = oandaResponseBuilder.buildResponse(CREATE_MARKET_IF_TOUCHED_ORDER, marketIfTouchedOrderRequest);
-        OrderCreateResponse orderResponse = marketIfTouchedOrderResponse.getResponseDataStructure();
-        return orderResponse.getOrderCreateTransaction().getId().toString();
+        return placeOrder(settings, CREATE_MARKET_IF_TOUCHED_ORDER);
+    }
+
+    @Override
+    public String placeMarketOrder(HashMap<String, String> settings){
+        return placeOrder(settings, CREATE_MARKET_ORDER);
     }
 
     @Override
@@ -151,19 +153,8 @@ public class OandaGateway extends BaseGateway {
 
         TradeSetDependentOrdersResponse responseDataStructure = tradeSetDependentOrdersResponse.getResponseDataStructure();
         return responseDataStructure.getLastTransactionID().toString();
-//        TradeSpecifier tradeSpecifier = new TradeSpecifier(id);
-//        StopLossDetails stopLossDetails = new StopLossDetails().setPrice(tradeOpenPrice);
-//
-//        TradeSetDependentOrdersRequest tradeSetDependentOrdersRequest = new TradeSetDependentOrdersRequest(Config.ACCOUNTID, tradeSpecifier).setStopLoss(stopLossDetails);
-//        try {
-//            return this.context.trade.setDependentOrders(tradeSetDependentOrdersRequest);
-//        } catch (RequestException | ExecuteException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
     }
 
-    //to be tested
     @Override
     public String cancelOrder(String orderID) {
         validateStringInput(orderID);
@@ -203,5 +194,13 @@ public class OandaGateway extends BaseGateway {
         HashMap<String, String> settings = new HashMap<>();
         settings.put(ACCOUNT_ID, connector.getAccountID());
         return settings;
+    }
+
+    private String placeOrder(HashMap<String, String> settings, String createMarketOrder) {
+        settings.put(ACCOUNT_ID, getConnector().getAccountID());
+        Request<?> marketOrderRequest = oandaRequestBuilder.build(createMarketOrder, settings);
+        Response<OrderCreateResponse> marketOrderResponse = oandaResponseBuilder.buildResponse(createMarketOrder, marketOrderRequest);
+        OrderCreateResponse orderResponse = marketOrderResponse.getResponseDataStructure();
+        return orderResponse.getOrderCreateTransaction().getId().toString();
     }
 }

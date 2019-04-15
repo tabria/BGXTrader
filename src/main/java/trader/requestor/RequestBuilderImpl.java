@@ -5,8 +5,6 @@ import trader.entity.indicator.Indicator;
 import trader.entity.indicator.ma.MovingAverageBuilder;
 import trader.entity.indicator.ma.enums.MAType;
 import trader.entity.indicator.rsi.RSIBuilder;
-import trader.entity.trade.point.Point;
-import trader.entity.trade.point.PointImpl;
 import trader.entity.trade.Trade;
 import trader.entity.trade.TradeImpl;
 import trader.entry.EntryStrategy;
@@ -20,7 +18,6 @@ import trader.order.OrderStrategy;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
 import java.util.HashMap;
 
 public class RequestBuilderImpl implements RequestBuilder {

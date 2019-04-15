@@ -6,7 +6,6 @@ import trader.exception.BadRequestException;
 import trader.exception.EmptyArgumentException;
 import trader.exception.NullArgumentException;
 import trader.requestor.Request;
-import trader.requestor.UseCase;
 import trader.responder.Response;
 import trader.configuration.TradingStrategyConfiguration;
 

@@ -11,21 +11,18 @@ public class BrokerTradeDetailsImpl implements BrokerTradeDetails {
     private static final BigDecimal DEFAULT_VALUE = BigDecimal.valueOf(0.0001);
     private static final String DEFAULT_ID = "0";
 
-    ////getStopLossOrderID
-////getPrice
-////getCurrentUnits
-////tradeID
-
     private String tradeID;
     private String stopLossOrderID;
     private BigDecimal openPrice;
     private BigDecimal stopLossPrice;
+    private BigDecimal initialUnits;
     private BigDecimal currentUnits;
 
     public BrokerTradeDetailsImpl() {
         tradeID = DEFAULT_ID;
         openPrice = DEFAULT_VALUE;
         stopLossPrice = DEFAULT_VALUE;
+        initialUnits = DEFAULT_VALUE;
         currentUnits = DEFAULT_VALUE;
     }
 
@@ -73,6 +70,17 @@ public class BrokerTradeDetailsImpl implements BrokerTradeDetails {
         validateInput(stopLossPrice);
         checkForNegativeNumbers(stopLossPrice.trim());
         this.stopLossPrice = new BigDecimal(stopLossPrice.trim());
+    }
+
+    @Override
+    public BigDecimal getInitialUnits() {
+        return initialUnits;
+    }
+
+    @Override
+    public void setInitialUnits(String initialUnits) {
+        validateInput(initialUnits);
+        this.initialUnits = new BigDecimal(initialUnits.trim());
     }
 
     @Override

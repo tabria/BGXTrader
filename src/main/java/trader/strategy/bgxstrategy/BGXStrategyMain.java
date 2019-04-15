@@ -7,8 +7,6 @@ import trader.controller.TraderController;
 import trader.controller.*;
 import trader.entity.indicator.Indicator;
 import trader.entry.EntryStrategy;
-import trader.exception.EmptyArgumentException;
-import trader.exception.NullArgumentException;
 import trader.observer.Observer;
 import trader.observer.PositionObserver;
 import trader.observer.UpdateIndicatorObserver;
@@ -24,6 +22,8 @@ import trader.strategy.observable.PriceObservable;
 import trader.strategy.Strategy;
 import trader.exit.ExitStrategy;
 import trader.strategy.observable.PricePull;
+import trader.validation.Validator;
+import trader.validation.ValidatorImpl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,6 +38,8 @@ public final class BGXStrategyMain implements Strategy {
     private static final String ORDER_STRATEGY_KEY_NAME = "orderStrategy";
     private static final String EXIT_STRATEGY_KEY_NAME = "exitStrategy";
 
+
+    private final Validator validator;
     private RequestBuilder requestBuilder;
     private UseCaseFactory useCaseFactory;
     private List<Indicator> indicatorList;
@@ -54,7 +56,8 @@ public final class BGXStrategyMain implements Strategy {
 
 
     public BGXStrategyMain(String brokerName, String configurationFileName, String brokerConfigurationFileName) {
-        validateInput(brokerName, configurationFileName, brokerConfigurationFileName);
+        validator = new ValidatorImpl();
+        validator.validateString(brokerName, configurationFileName, brokerConfigurationFileName);
         requestBuilder = new RequestBuilderImpl();
         useCaseFactory = new UseCaseFactoryImpl();
         configuration = setConfiguration(configurationFileName);
@@ -117,13 +120,6 @@ public final class BGXStrategyMain implements Strategy {
 
 
 ///// not tested//////////////
-
-    private void validateInput(String brokerName, String configurationFileName, String brokerConfigurationFileName) {
-        if(brokerName == null || configurationFileName == null || brokerConfigurationFileName == null)
-            throw new NullArgumentException();
-        if(brokerName.trim().isEmpty() || configurationFileName.trim().isEmpty() || brokerConfigurationFileName.trim().isEmpty())
-            throw new EmptyArgumentException();
-    }
 
     private ExitStrategy setExitStrategy() {
         HashMap<String, String> settings = new HashMap<>();

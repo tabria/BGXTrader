@@ -111,18 +111,36 @@ public class BrokerTradeDetailsTest {
         assertEquals(new BigDecimal("1.1234"), tradeDetails.getStopLossPrice());
     }
 
+
     @Test(expected = NullArgumentException.class)
-    public void WhenSetUnitsWithNull_Exception(){
+    public void WhenSetInitialUnitsWithNull_Exception(){
+        tradeDetails.setInitialUnits(null);
+    }
+
+    @Test(expected = EmptyArgumentException.class)
+    public void WhenSetInitialUnitsWithEmptyString_Exception(){
+        tradeDetails.setInitialUnits("  ");
+    }
+
+    @Test
+    public void WhenSetInitialUnitsWithCorrectStringWithSpaces_CorrectUpdate(){
+        tradeDetails.setInitialUnits(" -200  ");
+
+        assertEquals(new BigDecimal("-200"), tradeDetails.getInitialUnits());
+    }
+
+    @Test(expected = NullArgumentException.class)
+    public void WhenSetCurrentUnitsWithNull_Exception(){
         tradeDetails.setCurrentUnits(null);
     }
 
     @Test(expected = EmptyArgumentException.class)
-    public void WhenSetUnitsWithEmptyString_Exception(){
+    public void WhenSetCurrentUnitsWithEmptyString_Exception(){
         tradeDetails.setCurrentUnits("  ");
     }
 
     @Test
-    public void WhenSetUnitsWithCorrectStringWithSpaces_CorrectUpdate(){
+    public void WhenSetCurrentUnitsWithCorrectStringWithSpaces_CorrectUpdate(){
         tradeDetails.setCurrentUnits(" -200  ");
 
         assertEquals(new BigDecimal("-200"), tradeDetails.getCurrentUnits());
