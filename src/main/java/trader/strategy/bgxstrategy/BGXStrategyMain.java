@@ -23,7 +23,6 @@ import trader.strategy.Strategy;
 import trader.exit.ExitStrategy;
 import trader.strategy.observable.PricePull;
 import trader.validation.Validator;
-import trader.validation.ValidatorImpl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,7 +55,7 @@ public final class BGXStrategyMain implements Strategy {
 
 
     public BGXStrategyMain(String brokerName, String configurationFileName, String brokerConfigurationFileName) {
-        validator = new ValidatorImpl();
+        validator = new Validator();
         validator.validateString(brokerName, configurationFileName, brokerConfigurationFileName);
         requestBuilder = new RequestBuilderImpl();
         useCaseFactory = new UseCaseFactoryImpl();

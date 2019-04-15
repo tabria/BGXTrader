@@ -1,12 +1,11 @@
-package trader.interactor;
+package trader.requestor;
 
 import org.junit.Before;
 import org.junit.Test;
 import trader.exception.EmptyArgumentException;
 import trader.exception.NoSuchUseCaseException;
 import trader.exception.NullArgumentException;
-import trader.requestor.UseCase;
-import trader.requestor.UseCaseFactoryImpl;
+import trader.interactor.CreateIndicatorUseCase;
 
 import static org.junit.Assert.*;
 

@@ -5,25 +5,21 @@ import org.junit.Test;
 import trader.exception.EmptyArgumentException;
 import trader.exception.NullArgumentException;
 
-public class ValidatorImplTest {
+public class ValidatorTest {
 
-
-    private Validator validator;
 
     @Before
     public void setUp(){
-
-        validator = new ValidatorImpl();
 
     }
 
     @Test(expected = NullArgumentException.class)
     public void givenNullString_WhenCallValidateString_ThenThrowException() {
-        validator.validateString(null, " ");
+        Validator.validateString(null, " ");
     }
 
     @Test(expected = EmptyArgumentException.class)
     public void givenEmptyString_WhenCallValidateString_ThenThrowException(){
-        validator.validateString("     ");
+        Validator.validateString("     ");
     }
 }

@@ -1,4 +1,4 @@
-package trader.interactor;
+package trader.requestor;
 
 import org.junit.Before;
 import org.junit.Test;
