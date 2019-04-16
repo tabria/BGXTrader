@@ -7,7 +7,7 @@ public class ResponseImpl<T> implements Response<T> {
     private T dataStructure;
 
     @Override
-    public T getResponseDataStructure() {
+    public T getBody() {
         return dataStructure;
     }
 

@@ -17,7 +17,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 
-public class OandaRequestBuilderTest {
+public class OandaRequestOLDBuilderTest {
 
     public static final String ORDER_SPECIFIER = "orderSpecifier";
     private static final String ACCOUNT_ID = "accountID";
@@ -62,7 +62,7 @@ public class OandaRequestBuilderTest {
         settings.put(ACCOUNT_ID,EXPECTED_ACCOUNT_ID);
         settings.put(INSTRUMENT, EXPECTED_INSTRUMENT);
         Request<?> price = this.request.build("price", settings);
-        PricingGetRequest pricingRequest = (PricingGetRequest) price.getRequestDataStructure();
+        PricingGetRequest pricingRequest = (PricingGetRequest) price.getbody();
 
         assertEquals(PricingGetRequest.class, pricingRequest.getClass());
         assertEquals(EXPECTED_ACCOUNT_ID, getRequestAccount(pricingRequest));
@@ -100,7 +100,7 @@ public class OandaRequestBuilderTest {
         settings.put(INSTRUMENT, EXPECTED_INSTRUMENT);
         settings.put(GRANULARITY, EXPECTED_GRANULARITY);
         Request<?> candleRequest = this.request.build("candle", settings);
-        InstrumentCandlesRequest actualRequest = (InstrumentCandlesRequest) candleRequest.getRequestDataStructure();
+        InstrumentCandlesRequest actualRequest = (InstrumentCandlesRequest) candleRequest.getbody();
 
         assertEquals(EXPECTED_INSTRUMENT, getCandlesRequestInstrument(actualRequest));
 
@@ -116,7 +116,7 @@ public class OandaRequestBuilderTest {
         String accountId = "17";
         settings.put(ACCOUNT_ID, accountId);
         Request<AccountID> accountIDRequest = (Request<AccountID>) request.build(ACCOUNT_ID, settings);
-        AccountID requestDataStructure = accountIDRequest.getRequestDataStructure();
+        AccountID requestDataStructure = accountIDRequest.getbody();
 
         assertEquals(accountId, requestDataStructure.toString());
     }
@@ -157,7 +157,7 @@ public class OandaRequestBuilderTest {
         settings.put("tradeEntryPrice", "1.1200");
         settings.put("tradeStopLossPrice", "1.1980");
         Request<?> marketIfTouchedRequest = this.request.build(CREATE_MARKET_IF_TOUCHED_ORDER, settings);
-        OrderCreateRequest request = (OrderCreateRequest) marketIfTouchedRequest.getRequestDataStructure();
+        OrderCreateRequest request = (OrderCreateRequest) marketIfTouchedRequest.getbody();
         HashMap<String, Object> pathParams = request.getPathParams();
         AccountID accountID = (AccountID) pathParams.get("accountID");
 
@@ -171,7 +171,7 @@ public class OandaRequestBuilderTest {
         settings.put("accountID", accountID);
         settings.put("orderID", orderID);
         Request<?> orderSpecifierRequest = this.request.build("orderSpecifier", settings);
-        List<Object> request = (List<Object>) orderSpecifierRequest.getRequestDataStructure();
+        List<Object> request = (List<Object>) orderSpecifierRequest.getbody();
         AccountID account = (AccountID) request.get(0);
         OrderSpecifier order = (OrderSpecifier) request.get(1);
 
@@ -187,7 +187,7 @@ public class OandaRequestBuilderTest {
         settings.put("tradeID", tradeID);
         settings.put("price", "1.234");
         Request<?> setStopLossPriceRequest = this.request.build("setStopLossPrice", settings);
-        TradeSetDependentOrdersRequest request = (TradeSetDependentOrdersRequest) setStopLossPriceRequest.getRequestDataStructure();
+        TradeSetDependentOrdersRequest request = (TradeSetDependentOrdersRequest) setStopLossPriceRequest.getbody();
         HashMap<String, Object> pathParams = request.getPathParams();
 
         assertEquals(accountID, pathParams.get("accountID").toString());

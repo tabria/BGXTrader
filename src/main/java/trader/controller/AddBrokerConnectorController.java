@@ -3,7 +3,7 @@ package trader.controller;
 import trader.exception.NullArgumentException;
 import trader.requestor.UseCase;
 import trader.requestor.Request;
-import trader.requestor.RequestBuilder;
+import trader.requestor.RequestOLDBuilder;
 import trader.requestor.UseCaseFactory;
 import trader.responder.Response;
 
@@ -11,13 +11,13 @@ import java.util.HashMap;
 
 public class AddBrokerConnectorController<T> implements TraderController<T> {
 
-    private RequestBuilder requestBuilder;
+    private RequestOLDBuilder requestOLDBuilder;
     private UseCaseFactory useCaseFactory;
 
-    public AddBrokerConnectorController(RequestBuilder requestBuilder, UseCaseFactory useCaseFactory) {
-        if(requestBuilder == null || useCaseFactory == null)
+    public AddBrokerConnectorController(RequestOLDBuilder requestOLDBuilder, UseCaseFactory useCaseFactory) {
+        if(requestOLDBuilder == null || useCaseFactory == null)
             throw new NullArgumentException();
-        this.requestBuilder = requestBuilder;
+        this.requestOLDBuilder = requestOLDBuilder;
         this.useCaseFactory = useCaseFactory;
     }
 
@@ -29,7 +29,7 @@ public class AddBrokerConnectorController<T> implements TraderController<T> {
     }
 
     Request<?> getRequest(String controllerName, HashMap<String, String> settings) {
-        return requestBuilder.build(controllerName, settings);
+        return requestOLDBuilder.build(controllerName, settings);
     }
 
     UseCase make(String controllerName){

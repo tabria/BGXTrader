@@ -18,7 +18,7 @@ public class OandaCandleTransformer{
     public <T> List<Candlestick> transformCandlesticks(Response<T> response) {
         List<Candlestick> traderCandlestickList = new ArrayList<>();
         if(response != null){
-            InstrumentCandlesResponse responseDataStructure = (InstrumentCandlesResponse) response.getResponseDataStructure();
+            InstrumentCandlesResponse responseDataStructure = (InstrumentCandlesResponse) response.getBody();
             List<com.oanda.v20.instrument.Candlestick> oandaCandles = responseDataStructure.getCandles();
             for (com.oanda.v20.instrument.Candlestick oandaCandlestick : oandaCandles) {
                 if (oandaCandlestick.getComplete()){

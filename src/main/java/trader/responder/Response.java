@@ -2,7 +2,7 @@ package trader.responder;
 
 public interface Response<T> {
 
-    T getResponseDataStructure();
+    T getBody();
 
     void setResponseDataStructure(T dataStructure);
 

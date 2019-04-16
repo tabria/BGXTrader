@@ -20,7 +20,7 @@ public class AddExitStrategyControllerTest extends BaseControllerTest {
     public void setUp() throws Exception {
         super.setUp();
         exitStrategyStrategy = mock(ExitStrategy.class);
-        controller = new AddExitStrategyController<>(requestBuilderMock, useCaseFactoryMock);
+        controller = new AddExitStrategyController<>(requestOLDBuilderMock, useCaseFactoryMock);
     }
 
     @Test(expected = NullArgumentException.class)
@@ -30,16 +30,16 @@ public class AddExitStrategyControllerTest extends BaseControllerTest {
 
     @Test(expected = NullArgumentException.class)
     public void WhenCreateControllerWithNullUseCaseFactory_Exception(){
-        new AddExitStrategyController<>(requestBuilderMock, null);
+        new AddExitStrategyController<>(requestOLDBuilderMock, null);
     }
 
     @Test
     public void WhenCallGetRequestWithCorrectSettings_ReturnCorrectResult(){
         setExecuteSettings("AddExitStrategyController");
-        when(responseMock.getResponseDataStructure()).thenReturn(exitStrategyStrategy);
+        when(responseMock.getBody()).thenReturn(exitStrategyStrategy);
         Response<ExitStrategy> response = controller.execute(settings);
 
-        assertEquals(exitStrategyStrategy, response.getResponseDataStructure());
+        assertEquals(exitStrategyStrategy, response.getBody());
     }
 
 }

@@ -14,13 +14,13 @@ import trader.entity.candlestick.candle.CandleGranularity;
 import trader.exception.*;
 import trader.interactor.RequestImpl;
 import trader.requestor.Request;
-import trader.requestor.RequestBuilder;
+import trader.requestor.RequestOLDBuilder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-class OandaRequestBuilder implements RequestBuilder {
+class OandaRequestBuilder implements RequestOLDBuilder {
 
     private static final String ACCOUNT_ID = "accountID";
     private static final String INSTRUMENT = SettingsFieldNames.INSTRUMENT.toString();

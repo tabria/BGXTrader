@@ -24,7 +24,7 @@ import java.lang.reflect.InvocationTargetException;
  *
  * There are 2 strategy for exiting:
  *  First: When price hit +32 pips, half of the position will be liquidated and stop will be set to break even. Then the stop will be trailed after each bar's extreme.
- *  Second: When price hit +32 pips, stop loss is moved to +16 pips for the hole trade and then will be trailed after significant extremes. For example for long, when price make high, then low and then higher high than the first one, the significant extreme is the low and the stop will be placed there. For shorts is reversed.
+ *  Second: When price hit +32 pips, stop loss is moved to +16 pips for the hole trade and then will be trailed after significant extremes. For example for long, when price build high, then low and then higher high than the first one, the significant extreme is the low and the stop will be placed there. For shorts is reversed.
  *
  * </p>
  *

@@ -2,8 +2,6 @@ package trader.interactor;
 
 import org.junit.Before;
 import org.junit.Test;
-import trader.exception.NullArgumentException;
-import trader.entity.indicator.Indicator;
 import trader.requestor.Request;
 
 import java.util.ArrayList;
@@ -25,7 +23,7 @@ public class RequestTest {
         ArrayList<String> arrayList = new ArrayList<>();
         arrayList.add("Test");
         request.setRequestDataStructure(arrayList);
-        ArrayList<String> requestDataStructure = request.getRequestDataStructure();
+        ArrayList<String> requestDataStructure = request.getbody();
 
         assertEquals("Test", requestDataStructure.get(0));
     }

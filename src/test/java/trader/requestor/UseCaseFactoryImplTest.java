@@ -19,27 +19,22 @@ public class UseCaseFactoryImplTest {
     }
 
     @Test(expected = NullArgumentException.class)
-    public void WhenCallMakeWithNull_Exception(){
+    public void  givenNullUseCaseName_WhenCallMake_ThenException(){
         useCaseFactory.make(null);
     }
 
     @Test(expected = EmptyArgumentException.class)
-    public void WhenCallMakeWithEmptyString_Exception(){
-        useCaseFactory.make("");
-    }
-
-    @Test(expected = EmptyArgumentException.class)
-    public void WhenCallMakeWithStringComposedOfSpaces_Exception(){
-        useCaseFactory.make("     ");
+    public void givenEmptyStringForUseCaseName_WhenCallMake_ThenException(){
+        useCaseFactory.make("  ");
     }
 
     @Test(expected = NoSuchUseCaseException.class)
-    public void WhenCallWithBadUseCaseName_Exception(){
+    public void givenBadNameForUseCase_WhenCallMake_ThenException(){
         useCaseFactory.make("BlqUseCase");
     }
 
     @Test
-    public void WhenCallWithCorrectUseCaseName_ReturnCorrectObject(){
+    public void givenCorrectUseCaseName_WhenCallMake_ReturnCorrectObject(){
         UseCase useCase = useCaseFactory.make("CreateIndicatorController");
         UseCase spacedUseCase = useCaseFactory.make("   CreateIndicatorController   ");
 

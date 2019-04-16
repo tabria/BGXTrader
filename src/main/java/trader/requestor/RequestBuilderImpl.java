@@ -20,8 +20,10 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 
-public class RequestBuilderImpl implements RequestBuilder {
+public class RequestBuilderImpl implements RequestOLDBuilder {
 
+
+    //must be deleted
 
     private static final String LOCATION = "location";
     private static final String BROKER_NAME = "brokerName";

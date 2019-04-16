@@ -1,11 +1,9 @@
 package trader.requestor;
 
-import java.util.HashMap;
-
+import java.util.Map;
 
 public interface RequestBuilder {
 
-  Request<?> build(String controllerName, HashMap<String, String> settings);
-
+    Request build(Map<String, Object> settings);
 
 }

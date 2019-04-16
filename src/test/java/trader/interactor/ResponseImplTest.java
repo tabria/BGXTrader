@@ -1,6 +1,5 @@
 package trader.interactor;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import trader.responder.Response;
@@ -23,7 +22,7 @@ public class ResponseImplTest {
         ArrayList<String> arrayList = new ArrayList<>();
         arrayList.add("Test");
         response.setResponseDataStructure(arrayList);
-        ArrayList<String> responseDataStructure = response.getResponseDataStructure();
+        ArrayList<String> responseDataStructure = response.getBody();
 
         assertEquals("Test", responseDataStructure.get(0));
     }

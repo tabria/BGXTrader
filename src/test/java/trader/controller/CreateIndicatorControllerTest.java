@@ -6,9 +6,9 @@ import trader.broker.BrokerGateway;
 import trader.configuration.TradingStrategyConfiguration;
 import trader.entity.indicator.Indicator;
 import trader.exception.NullArgumentException;
+import trader.requestor.RequestOLDBuilder;
 import trader.requestor.UseCase;
 import trader.requestor.Request;
-import trader.requestor.RequestBuilder;
 import trader.requestor.UseCaseFactory;
 import trader.responder.Response;
 import trader.strategy.observable.PriceObservable;
@@ -27,7 +27,7 @@ public class CreateIndicatorControllerTest {
     private Indicator indicatorMock;
     private UseCase useCaseMock;
     private Request requestMock;
-    private RequestBuilder requestBuilderMock;
+    private RequestOLDBuilder requestOLDBuilderMock;
     private UseCaseFactory useCaseFactoryMock;
     private HashMap<String, String> settings;
     private CreateIndicatorController createIndicatorController;
@@ -40,11 +40,11 @@ public class CreateIndicatorControllerTest {
         indicatorMock = mock(Indicator.class);
         useCaseMock = mock(UseCase.class);
         requestMock = mock(Request.class);
-        requestBuilderMock = mock(RequestBuilder.class);
+        requestOLDBuilderMock = mock(RequestOLDBuilder.class);
         useCaseFactoryMock = mock(UseCaseFactory.class);
         gatewayMock = mock(BrokerGateway.class);
         settings = new HashMap<>();
-        createIndicatorController = new CreateIndicatorController(requestBuilderMock, useCaseFactoryMock);
+        createIndicatorController = new CreateIndicatorController(requestOLDBuilderMock, useCaseFactoryMock);
     }
 
     @Test(expected = NullArgumentException.class)
@@ -54,16 +54,16 @@ public class CreateIndicatorControllerTest {
 
     @Test(expected = NullArgumentException.class)
     public void WhenCreateControllerWithNullUserCaseFactory_Exception(){
-        new CreateIndicatorController(requestBuilderMock, null);
+        new CreateIndicatorController(requestOLDBuilderMock, null);
     }
 
     @Test
     public void WhenCallGetRequestWithCorrectSettings_ReturnCorrectResult(){
-        when(requestMock.getRequestDataStructure()).thenReturn(indicatorMock);
-        when(requestBuilderMock.build(ADD_INDICATOR_CONTROLLER_NAME, settings)).thenReturn(requestMock);
+        when(requestMock.getbody()).thenReturn(indicatorMock);
+        when(requestOLDBuilderMock.build(ADD_INDICATOR_CONTROLLER_NAME, settings)).thenReturn(requestMock);
         Request<?> rsiIndicatorRequest = createIndicatorController.getRequest(ADD_INDICATOR_CONTROLLER_NAME, settings);
 
-        assertEquals(indicatorMock, rsiIndicatorRequest.getRequestDataStructure());
+        assertEquals(indicatorMock, rsiIndicatorRequest.getbody());
     }
 
     @Test
@@ -80,15 +80,15 @@ public class CreateIndicatorControllerTest {
         setExecuteSettings();
         Response<Indicator> response = createIndicatorController.execute(settings);
 
-        assertEquals(indicatorMock, response.getResponseDataStructure());
+        assertEquals(indicatorMock, response.getBody());
     }
 
     private void setExecuteSettings() {
         Response responseMock = mock(Response.class);
-        when(responseMock.getResponseDataStructure()).thenReturn(indicatorMock);
+        when(responseMock.getBody()).thenReturn(indicatorMock);
         when(useCaseFactoryMock.make(anyString())).thenReturn(useCaseMock);
         when(useCaseMock.execute(requestMock)).thenReturn(responseMock);
-        when(requestBuilderMock.build(ADD_INDICATOR_CONTROLLER_NAME, settings)).thenReturn(requestMock);
+        when(requestOLDBuilderMock.build(ADD_INDICATOR_CONTROLLER_NAME, settings)).thenReturn(requestMock);
     }
 
 }

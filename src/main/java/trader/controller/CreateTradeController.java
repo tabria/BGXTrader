@@ -1,10 +1,9 @@
 package trader.controller;
 
 
-import trader.configuration.TradingStrategyConfiguration;
 import trader.exception.NullArgumentException;
 import trader.requestor.Request;
-import trader.requestor.RequestBuilder;
+import trader.requestor.RequestOLDBuilder;
 import trader.requestor.UseCase;
 import trader.requestor.UseCaseFactory;
 import trader.responder.Response;
@@ -13,22 +12,22 @@ import java.util.HashMap;
 
 public class CreateTradeController<T> implements TraderController<T> {
 
-    private RequestBuilder requestBuilder;
+    private RequestOLDBuilder requestOLDBuilder;
     private UseCaseFactory useCaseFactory;
 
 
-    public CreateTradeController(RequestBuilder requestBuilder, UseCaseFactory useCaseFactory) {
-        if(requestBuilder == null || useCaseFactory == null)
+    public CreateTradeController(RequestOLDBuilder requestOLDBuilder, UseCaseFactory useCaseFactory) {
+        if(requestOLDBuilder == null || useCaseFactory == null)
             throw new NullArgumentException();
-        this.requestBuilder = requestBuilder;
+        this.requestOLDBuilder = requestOLDBuilder;
         this.useCaseFactory = useCaseFactory;
     }
 
-    @Override
+
     public Response<T> execute(HashMap<String, String> settings) {
         String controllerName = this.getClass().getSimpleName();
         UseCase useCase = useCaseFactory.make(controllerName);
-        Request<?> request = requestBuilder.build(controllerName, settings);
+        Request<?> request = requestOLDBuilder.build(controllerName, settings);
         return useCase.execute(request);
     }
 }

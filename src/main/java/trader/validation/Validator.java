@@ -7,12 +7,16 @@ public class Validator {
 
     public Validator() { }
 
-    public static void validateString(String... stringArguments) {
+    public static void validateStrings(String... stringArguments) {
         for (String str: stringArguments) {
-            if(str == null)
-                throw new NullArgumentException();
+            validateForNull(str);
             if(str.trim().isEmpty())
                 throw new EmptyArgumentException();
         }
+    }
+
+    public static void validateForNull(Object object) {
+        if(object == null)
+            throw new NullArgumentException();
     }
 }

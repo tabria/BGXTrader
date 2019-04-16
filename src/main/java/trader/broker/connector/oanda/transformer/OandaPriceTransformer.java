@@ -18,7 +18,7 @@ public class OandaPriceTransformer {
 
         PricingGetResponse pricingGetResponse = null;
         if(response != null)
-            pricingGetResponse = (PricingGetResponse) response.getResponseDataStructure();
+            pricingGetResponse = (PricingGetResponse) response.getBody();
         if(isPriceTradeable(pricingGetResponse))
             return new PriceImpl.PriceBuilder().setIsTradable(false).build();
 

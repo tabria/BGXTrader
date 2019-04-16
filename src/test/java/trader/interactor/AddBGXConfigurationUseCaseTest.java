@@ -6,9 +6,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.mockito.Mockito;
 import org.yaml.snakeyaml.error.YAMLException;
-import trader.controller.AddExitStrategyController;
 import trader.exception.BadRequestException;
 import trader.exception.EmptyArgumentException;
 import trader.exception.NullArgumentException;
@@ -44,7 +42,7 @@ public class AddBGXConfigurationUseCaseTest {
 
     @Test(expected = NullArgumentException.class)
     public void WhenCallExecuteWithNull_Exception(){
-        addBgxConfigurationUseCase.execute(null);
+       // addBgxConfigurationUseCase.execute(null);
     }
 
     @Test(expected = NullPointerException.class)
@@ -129,7 +127,7 @@ public class AddBGXConfigurationUseCaseTest {
         exception.expectCause(IsInstanceOf.instanceOf(YAMLException.class));
 
         when(configurationMock.getFileLocation()).thenReturn("ggs.yaml");
-        when(requestMock.getRequestDataStructure()).thenReturn(configurationMock);
+        when(requestMock.getbody()).thenReturn(configurationMock);
 
         addBgxConfigurationUseCase.execute(requestMock);
     }
@@ -137,10 +135,10 @@ public class AddBGXConfigurationUseCaseTest {
     @Test
     public void WhenCallExecuteWithCorrectRequest_CorrectResult(){
         when(configurationMock.getFileLocation()).thenReturn(DEFAULT_BGX_CONFIG_FILE_LOCATION);
-        when(requestMock.getRequestDataStructure()).thenReturn(configurationMock);
+        when(requestMock.getbody()).thenReturn(configurationMock);
         Response<TradingStrategyConfiguration> bgxConfigurationResponse = addBgxConfigurationUseCase.execute(requestMock);
 
-        TradingStrategyConfiguration configuration = bgxConfigurationResponse.getResponseDataStructure();
+        TradingStrategyConfiguration configuration = bgxConfigurationResponse.getBody();
 
         Assert.assertEquals(configurationMock, configuration);
     }

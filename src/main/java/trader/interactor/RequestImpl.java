@@ -7,7 +7,7 @@ public class RequestImpl<T> implements Request<T> {
     private T dataStructure;
 
     @Override
-    public T getRequestDataStructure() {
+    public T getbody() {
         return dataStructure;
     }
 

@@ -19,7 +19,7 @@ public class AddEntryStrategyControllerTest extends BaseControllerTest {
     public void setUp() throws Exception {
         super.setUp();
         entryStrategyMock = mock(EntryStrategy.class);
-        controller = new AddEntryStrategyController<>(requestBuilderMock, useCaseFactoryMock);
+        controller = new AddEntryStrategyController<>(requestOLDBuilderMock, useCaseFactoryMock);
     }
 
     @Test(expected = NullArgumentException.class)
@@ -29,17 +29,17 @@ public class AddEntryStrategyControllerTest extends BaseControllerTest {
 
     @Test(expected = NullArgumentException.class)
     public void WhenCreateControllerWithNullUseCaseFactory_Exception(){
-        new AddEntryStrategyController<>(requestBuilderMock, null);
+        new AddEntryStrategyController<>(requestOLDBuilderMock, null);
     }
 
     @Test
     public void WhenCallGetRequestWithCorrectSettings_ReturnCorrectResult(){
 
         setExecuteSettings("AddEntryStrategyController");
-        when(responseMock.getResponseDataStructure()).thenReturn(entryStrategyMock);
+        when(responseMock.getBody()).thenReturn(entryStrategyMock);
         Response<EntryStrategy> response = controller.execute(settings);
 
-        assertEquals(entryStrategyMock, response.getResponseDataStructure());
+        assertEquals(entryStrategyMock, response.getBody());
     }
 
 }

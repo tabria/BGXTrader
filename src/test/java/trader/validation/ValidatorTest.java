@@ -15,11 +15,17 @@ public class ValidatorTest {
 
     @Test(expected = NullArgumentException.class)
     public void givenNullString_WhenCallValidateString_ThenThrowException() {
-        Validator.validateString(null, " ");
+        Validator.validateStrings(null, " ");
     }
 
     @Test(expected = EmptyArgumentException.class)
     public void givenEmptyString_WhenCallValidateString_ThenThrowException(){
-        Validator.validateString("     ");
+        Validator.validateStrings("     ");
     }
+
+    @Test(expected = NullArgumentException.class)
+    public void givenNullObject_WhenCallValidateForNull_ThenException(){
+        Validator.validateForNull(null);
+    }
+
 }

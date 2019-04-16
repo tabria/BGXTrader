@@ -35,7 +35,8 @@ public class AddBrokerConnectorUseCaseTest {
 
     @Test(expected = NullArgumentException.class)
     public void WhenCallExecuteWithNull_Exception(){
-        addBrokerConnectorUseCase.execute(null);
+
+        //addBrokerConnectorUseCase.execute(null);
     }
     @Test
     public void whenCallExecuteWithBadFileLocation_Exception(){
@@ -43,17 +44,17 @@ public class AddBrokerConnectorUseCaseTest {
         exception.expectCause(IsInstanceOf.instanceOf(YAMLException.class));
 
         when(configurationMock.getFileLocation()).thenReturn("broker.yaml");
-        when(requestMock.getRequestDataStructure()).thenReturn(configurationMock);
+        when(requestMock.getbody()).thenReturn(configurationMock);
         addBrokerConnectorUseCase.execute(requestMock);
     }
 
     @Test
     public void WhenCallExecuteWithCorrectRequest_CorrectResult(){
         when(configurationMock.getFileLocation()).thenReturn(TEST_BROKER_CONFIG_FILE_LOCATION);
-        when(requestMock.getRequestDataStructure()).thenReturn(configurationMock);
+        when(requestMock.getbody()).thenReturn(configurationMock);
         Response<BrokerConnector> brokerConnectorResponse = addBrokerConnectorUseCase.execute(requestMock);
 
-        BrokerConnector configuration = brokerConnectorResponse.getResponseDataStructure();
+        BrokerConnector configuration = brokerConnectorResponse.getBody();
 
         assertEquals(configurationMock, configuration);
     }

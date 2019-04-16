@@ -5,6 +5,10 @@ import trader.responder.Response;
 
 public interface UseCase {
 
-   <T, E> Response<E> execute(Request<T> request);
+//    ///////////////to be removed//////////////////////////
+//   default <T, E> Response<E> execute(Request<T> request){return null;}
+//   ///////////to be removed//////////////////////////////////
+
+  default <T, E> Response<E> execute(Request<T> request){return null;}
 
 }

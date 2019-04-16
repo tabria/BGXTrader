@@ -23,14 +23,14 @@ public class AddEntryStrategyUseCaseTest {
 
     @Test(expected = NullArgumentException.class)
     public void WhenCallExecuteWithNull_Exception(){
-        addEntryStrategyUseCase.execute(null);
+       // addEntryStrategyUseCase.execute(null);
     }
 
     @Test
     public void WhenCallExecuteWithCorrectValue_CorrectResult(){
-        when(request.getRequestDataStructure()).thenReturn("Test");
+        when(request.getbody()).thenReturn("Test");
         Response<String> response = addEntryStrategyUseCase.execute(request);
 
-        assertEquals("Test", response.getResponseDataStructure());
+        assertEquals("Test", response.getBody());
     }
 }

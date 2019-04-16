@@ -3,10 +3,8 @@ package trader.interactor;
 import org.yaml.snakeyaml.Yaml;
 import trader.broker.connector.BrokerConnector;
 import trader.exception.BadRequestException;
-import trader.exception.EmptyArgumentException;
 import trader.exception.NullArgumentException;
 import trader.requestor.Request;
-import trader.requestor.UseCase;
 import trader.responder.Response;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,7 +21,7 @@ public class AddBrokerConnectorUseCase extends BaseUseCase {
     public <T, E> Response<E> execute(Request<T> request) {
         if(request == null)
             throw new NullArgumentException();
-        BrokerConnector brokerConnector = (BrokerConnector) request.getRequestDataStructure();
+        BrokerConnector brokerConnector = (BrokerConnector) request.getbody();
         setConfigurations(brokerConnector);
         return setResponse((E) brokerConnector);
     }

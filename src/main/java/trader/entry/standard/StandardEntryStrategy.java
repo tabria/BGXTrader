@@ -125,9 +125,10 @@ public final class StandardEntryStrategy implements EntryStrategy {
             throw new NoSuchStrategyException();
     }
 
+    //uncomment when remove execute(HashMap<String, String> from tradeController
     private Trade defaultTrade() {
-        Response<Trade> tradeResponse = createTradeController.execute(new HashMap<>());
-        return tradeResponse.getResponseDataStructure();
+        Response<Trade> tradeResponse = null;// createTradeController.execute(new HashMap<>());
+        return tradeResponse.getBody();
     }
 
     private Trade generateTradeAfterIntersection(LineSegment fastSegment, LineSegment middleSegment){
@@ -153,9 +154,9 @@ public final class StandardEntryStrategy implements EntryStrategy {
     }
 
     private Trade getTrade(Point intersectionPoint, List<BigDecimal> dailyValues) {
-        HashMap<String, String> settings = getTradeSettings(intersectionPoint, dailyValues);
-        Response<Trade> tradeResponse = createTradeController.execute(settings);
-        return tradeResponse.getResponseDataStructure();
+//        HashMap<String, String> settings = getTradeSettings(intersectionPoint, dailyValues);
+//        Response<Trade> tradeResponse = createTradeController.execute(settings);
+        return null; //tradeResponse.getResponseDataStructure();
     }
 
     private HashMap<String, String> getTradeSettings(Point intersectionPoint, List<BigDecimal> dailyValues) {

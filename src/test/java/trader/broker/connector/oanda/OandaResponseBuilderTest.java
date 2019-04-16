@@ -56,7 +56,7 @@ public class OandaResponseBuilderTest {
         contextMock = oandaAPIMockPricing.getContext();
         requestMock = mock(Request.class);
         commonMembers = new CommonTestClassMembers();
-        when(requestMock.getRequestDataStructure()).thenReturn(oandaAPIMockPricing.getMockPricingGetRequest());
+        when(requestMock.getbody()).thenReturn(oandaAPIMockPricing.getMockPricingGetRequest());
         responseBuilder = new OandaResponseBuilder(contextMock, URL);
     }
 
@@ -116,7 +116,7 @@ public class OandaResponseBuilderTest {
     @Test
     public void WhenCallBuildResponseWithCorrectValues_ReturnCorrectResult(){
         Response<PricingGetResponse> actualResponse = this.responseBuilder.buildResponse("price", requestMock);
-        PricingGetResponse response = actualResponse.getResponseDataStructure();
+        PricingGetResponse response = actualResponse.getBody();
         PricingGetResponse expectedResponse = oandaAPIMockPricing.getMockPricingGetResponse();
 
         assertEquals(expectedResponse, response);
@@ -140,10 +140,10 @@ public class OandaResponseBuilderTest {
     @Test
     public void WhenCallBuildResponseWithCandle_CorrectResponse(){
         OandaResponseBuilder responseBuilder = new OandaResponseBuilder(oandaAPIMockInstrument.getContext(), URL);
-        when(requestMock.getRequestDataStructure()).thenReturn(oandaAPIMockInstrument.getMockRequest());
+        when(requestMock.getbody()).thenReturn(oandaAPIMockInstrument.getMockRequest());
         Response response = responseBuilder.buildResponse("candle", requestMock);
 
-        assertEquals(oandaAPIMockInstrument.getMockResponse(), response.getResponseDataStructure());
+        assertEquals(oandaAPIMockInstrument.getMockResponse(), response.getBody());
     }
 
     @Test
@@ -167,7 +167,7 @@ public class OandaResponseBuilderTest {
         createFakeOrderCreateRequest();
         Response response = responseBuilder.buildResponse("marketIfTouchedOrder", requestMock);
 
-        assertEquals(oandaAPIMockOrder.getMockOrderCreateResponse(), response.getResponseDataStructure());
+        assertEquals(oandaAPIMockOrder.getMockOrderCreateResponse(), response.getBody());
     }
 
     @Test(expected = RuntimeException.class)
@@ -190,7 +190,7 @@ public class OandaResponseBuilderTest {
         createFakeOrderCancelRequest();
         Response response = responseBuilder.buildResponse("cancelOrder", requestMock);
 
-        assertEquals(oandaAPIMockOrder.getMockOrderCancelResponse(), response.getResponseDataStructure());
+        assertEquals(oandaAPIMockOrder.getMockOrderCancelResponse(), response.getBody());
     }
 
 
@@ -216,7 +216,7 @@ public class OandaResponseBuilderTest {
         setFakeTradeSetDependentRequest();
         Response response = responseBuilder.buildResponse("setStopLossPrice", requestMock);
 
-        assertEquals(oandaAPIMockTrade.getTradeSetDependentOrdersResponseMock(), response.getResponseDataStructure());
+        assertEquals(oandaAPIMockTrade.getTradeSetDependentOrdersResponseMock(), response.getBody());
     }
 
     @Test(expected = RuntimeException.class)
@@ -240,7 +240,7 @@ public class OandaResponseBuilderTest {
 
     private void setFakeTradeSetDependentRequest() {
         responseBuilder = new OandaResponseBuilder(oandaAPIMockTrade.getContext(), URL);
-        when(requestMock.getRequestDataStructure()).thenReturn(oandaAPIMockTrade.getTradeSetDependentOrdersRequestMock());
+        when(requestMock.getbody()).thenReturn(oandaAPIMockTrade.getTradeSetDependentOrdersRequestMock());
         oandaAPIMockTrade.setSetDependentOrdersMock();
     }
 
@@ -262,18 +262,18 @@ public class OandaResponseBuilderTest {
         objects.add(orderSpecifierMock);
 
         responseBuilder = new OandaResponseBuilder(oandaAPIMockOrder.getContext(), URL);
-        when(requestMock.getRequestDataStructure()).thenReturn(objects);
+        when(requestMock.getbody()).thenReturn(objects);
         oandaAPIMockOrder.setOrderCancelResponse(accountIDMock, orderSpecifierMock);
     }
 
     private void createFakeInstrumentCandleRequest() {
         responseBuilder = new OandaResponseBuilder(oandaAPIMockInstrument.getContext(), URL);
-        when(requestMock.getRequestDataStructure()).thenReturn(oandaAPIMockInstrument.getMockRequest());
+        when(requestMock.getbody()).thenReturn(oandaAPIMockInstrument.getMockRequest());
     }
 
     private void createFakeOrderCreateRequest() {
         responseBuilder = new OandaResponseBuilder(oandaAPIMockOrder.getContext(), URL);
-        when(requestMock.getRequestDataStructure()).thenReturn(oandaAPIMockOrder.getMockOrderCreateRequest());
+        when(requestMock.getbody()).thenReturn(oandaAPIMockOrder.getMockOrderCreateRequest());
     }
 
 

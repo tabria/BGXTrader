@@ -11,10 +11,8 @@ import com.oanda.v20.order.OrderCreateRequest;
 import com.oanda.v20.order.OrderCreateResponse;
 import com.oanda.v20.order.OrderSpecifier;
 import com.oanda.v20.pricing.*;
-import com.oanda.v20.primitives.DateTime;
 import com.oanda.v20.trade.TradeSetDependentOrdersRequest;
 import com.oanda.v20.trade.TradeSetDependentOrdersResponse;
-import com.oanda.v20.transaction.TransactionID;
 import trader.connection.Connection;
 import trader.exception.EmptyArgumentException;
 import trader.exception.NullArgumentException;
@@ -55,7 +53,7 @@ public class OandaResponseBuilder {
 
     private <T> TradeSetDependentOrdersResponse createSetStopLossPriceResponse(Request<T> request) {
 
-        TradeSetDependentOrdersRequest requestDataStructure = (TradeSetDependentOrdersRequest) request.getRequestDataStructure();
+        TradeSetDependentOrdersRequest requestDataStructure = (TradeSetDependentOrdersRequest) request.getbody();
         try {
             return this.context.trade.setDependentOrders(requestDataStructure);
         } catch (ExecuteException | RequestException e) {
@@ -69,7 +67,7 @@ public class OandaResponseBuilder {
     private <T> OrderCancelResponse createCancelOrderResponce(Request<T> request) {
         try {
 
-            List<Object> requestDataStructure = (List<Object>) request.getRequestDataStructure();
+            List<Object> requestDataStructure = (List<Object>) request.getbody();
             AccountID account = (AccountID) requestDataStructure.get(0);
             OrderSpecifier order = (OrderSpecifier) requestDataStructure.get(1);
             return context.order.cancel(account, order);
@@ -83,7 +81,7 @@ public class OandaResponseBuilder {
 
     private <T> OrderCreateResponse createOrderCreateResponse(Request<T> createMarketIfTouchedOrderRequest) {
         try {
-            OrderCreateRequest request = (OrderCreateRequest) createMarketIfTouchedOrderRequest.getRequestDataStructure();
+            OrderCreateRequest request = (OrderCreateRequest) createMarketIfTouchedOrderRequest.getbody();
             return context.order.create(request);
         } catch (ExecuteException | RequestException e) {
             Connection.waitToConnect(url);
@@ -95,7 +93,7 @@ public class OandaResponseBuilder {
 
     private <T> PricingGetResponse createPriceResponse(Request<T> priceRequest) {
         try {
-            PricingGetRequest request = (PricingGetRequest) priceRequest.getRequestDataStructure();
+            PricingGetRequest request = (PricingGetRequest) priceRequest.getbody();
             return context.pricing.get(request);
         } catch (ExecuteException | RequestException e) {
             Connection.waitToConnect(url);
@@ -107,7 +105,7 @@ public class OandaResponseBuilder {
 
     private <T> InstrumentCandlesResponse createCandlesResponse(Request<T> candlesRequest) {
         try{
-            InstrumentCandlesRequest request = (InstrumentCandlesRequest) candlesRequest.getRequestDataStructure();
+            InstrumentCandlesRequest request = (InstrumentCandlesRequest) candlesRequest.getbody();
             return context.instrument.candles(request);
         } catch (ExecuteException | RequestException e) {
             Connection.waitToConnect(url);

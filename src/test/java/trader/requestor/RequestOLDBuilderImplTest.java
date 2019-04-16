@@ -11,12 +11,9 @@ import trader.exit.ExitStrategy;
 import trader.exit.fullclose.FullCloseExitStrategy;
 import trader.order.OrderStrategy;
 import trader.order.standard.StandardOrderStrategy;
-import trader.requestor.Request;
-import trader.requestor.RequestBuilder;
 import trader.entity.indicator.ma.SimpleMovingAverage;
 import trader.entity.indicator.rsi.RelativeStrengthIndex;
 import trader.configuration.BGXConfigurationImpl;
-import trader.requestor.RequestBuilderImpl;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -26,71 +23,71 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class RequestBuilderImplTest {
+public class RequestOLDBuilderImplTest {
 
     private static final String BGX_STRATEGY_CONFIG_FILE_NAME = "bgxStrategyConfig.yaml";
     private static final String BROKER_CONFIG_FILE_NAME = "oandaBrokerConfig.yaml";
     private static final String CONNECTOR_NAME = "Oanda";
 
-    private RequestBuilder requestBuilder;
+    private RequestOLDBuilder requestOLDBuilder;
     private HashMap<String, String> settings;
 
     @Before
     public void setUp(){
-        requestBuilder = new RequestBuilderImpl();
+        requestOLDBuilder = new RequestBuilderImpl();
         settings = new HashMap<>();
 
     }
 
     @Test(expected = NullArgumentException.class)
     public void WhenCallBuildWithNullDataStructureName_Exception(){
-        requestBuilder.build(null, null);
+        requestOLDBuilder.build(null, null);
     }
 
     @Test(expected = EmptyArgumentException.class)
     public void WhenCallBuildWithEmptyDataStructureName_Exception(){
-        requestBuilder.build("",new HashMap<>());
+        requestOLDBuilder.build("",new HashMap<>());
     }
 
     @Test(expected = NullArgumentException.class)
     public void whenCallBuildWithNullSettings_Exception(){
-        requestBuilder.build("tr", null);
+        requestOLDBuilder.build("tr", null);
     }
 
     @Test(expected = NoSuchDataStructureException.class)
     public void whenCallBuildWithNotExistingDataStructureName_Exception(){
-        requestBuilder.build("trah", settings);
+        requestOLDBuilder.build("trah", settings);
     }
 
     @Test(expected = EmptyArgumentException.class)
     public void whenBuildIndicatorWithZeroLengthSettings_Exception(){
-        requestBuilder.build("CreateIndicatorController", settings);
+        requestOLDBuilder.build("CreateIndicatorController", settings);
     }
 
     @Test(expected = WrongIndicatorSettingsException.class)
     public void whenBuildIndicatorWithoutTypeInSettings_Exception(){
         settings.put("ro", "ds");
-        requestBuilder.build("CreateIndicatorController", settings);
+        requestOLDBuilder.build("CreateIndicatorController", settings);
     }
 
     @Test(expected = WrongIndicatorSettingsException.class)
     public void WhenBuildIndicatorWithNullTypeValue_Exception(){
         settings.put("type", null);
-        requestBuilder.build("CreateIndicatorController", settings);
+        requestOLDBuilder.build("CreateIndicatorController", settings);
     }
 
     @Test(expected = WrongIndicatorSettingsException.class)
     public void WhenBuildIndicatorWithEmptyTypeValue_Exception(){
         settings.put("type", "");
-        requestBuilder.build("CreateIndicatorController", settings);
+        requestOLDBuilder.build("CreateIndicatorController", settings);
     }
 
     @Test
     public void whenCallBuildWithRSIIndicatorDataStructureName_ReturnRSIRequest(){
         settings.put("type", "rsi");
-        Request<?> rsiIndicatorRequest = requestBuilder.build("CreateIndicatorController", settings);
+        Request<?> rsiIndicatorRequest = requestOLDBuilder.build("CreateIndicatorController", settings);
 
-        assertEquals(RelativeStrengthIndex.class, rsiIndicatorRequest.getRequestDataStructure().getClass());
+        assertEquals(RelativeStrengthIndex.class, rsiIndicatorRequest.getbody().getClass());
     }
 
     //sma
@@ -98,31 +95,31 @@ public class RequestBuilderImplTest {
     public void whenCallBuildWithMovingAverageIndicatorDataStructureName_ReturnMARequest(){
         settings.put("type", "simple");
         settings.put("position", "middle");
-        Request<?> smaIndicator = requestBuilder.build("CreateIndicatorController", settings);
+        Request<?> smaIndicator = requestOLDBuilder.build("CreateIndicatorController", settings);
 
-        assertEquals(SimpleMovingAverage.class, smaIndicator.getRequestDataStructure().getClass());
+        assertEquals(SimpleMovingAverage.class, smaIndicator.getbody().getClass());
     }
 
     @Test(expected = NoSuchDataStructureException.class)
     public void whenCallBuildWithUnknownIndicator_Exception(){
         settings.put("type", "mxxxx");
-        requestBuilder.build("CreateIndicatorController", settings);
+        requestOLDBuilder.build("CreateIndicatorController", settings);
     }
 
     @Test
     public void whenCallBuildWithBGXConfigurationControllerName_ReturnBGXConfigurationRequest() {
         settings.put("location", BGX_STRATEGY_CONFIG_FILE_NAME);
-        Request<?> bgxConfigurationRequest = requestBuilder.build("AddBGXConfigurationController", settings);
+        Request<?> bgxConfigurationRequest = requestOLDBuilder.build("AddBGXConfigurationController", settings);
 
-        assertEquals(BGXConfigurationImpl.class, bgxConfigurationRequest.getRequestDataStructure().getClass());
+        assertEquals(BGXConfigurationImpl.class, bgxConfigurationRequest.getbody().getClass());
     }
 
     @Test
     public void whenCallBuildWithBrokerConfigurationControllerName_ReturnBrokerConfigurationRequest() {
         settings.put("brokerName", CONNECTOR_NAME);
         settings.put("location", BROKER_CONFIG_FILE_NAME);
-        Request<?> brokerConnectorRequest = requestBuilder.build("AddBrokerConnectorController", settings);
-        String actual = brokerConnectorRequest.getRequestDataStructure().getClass().getSimpleName();
+        Request<?> brokerConnectorRequest = requestOLDBuilder.build("AddBrokerConnectorController", settings);
+        String actual = brokerConnectorRequest.getbody().getClass().getSimpleName();
         String expected = CONNECTOR_NAME + "Connector";
 
         assertEquals(expected, actual);
@@ -131,8 +128,8 @@ public class RequestBuilderImplTest {
     @Test
     public void WhenCallBuildWithCreateTradeControllerWithEmptySettings_DefaultTrade(){
         settings.clear();
-        Request<?> createTradeRequest = requestBuilder.build("CreateTradeController", settings);
-        Trade trade = (Trade) createTradeRequest.getRequestDataStructure();
+        Request<?> createTradeRequest = requestOLDBuilder.build("CreateTradeController", settings);
+        Trade trade = (Trade) createTradeRequest.getbody();
 
         assertFalse(trade.getTradable());
         assertEquals(Direction.FLAT, trade.getDirection());
@@ -146,8 +143,8 @@ public class RequestBuilderImplTest {
         settings.put("tradable", "true");
         settings.put("entryPrice", "1.12345");
         settings.put("stopLossPrice", "5.1234");
-        Request<?> createTradeRequest = requestBuilder.build("CreateTradeController", settings);
-        Trade trade = (Trade) createTradeRequest.getRequestDataStructure();
+        Request<?> createTradeRequest = requestOLDBuilder.build("CreateTradeController", settings);
+        Trade trade = (Trade) createTradeRequest.getbody();
 
         assertTrue(trade.getTradable());
         assertEquals(Direction.DOWN, trade.getDirection());
@@ -158,32 +155,32 @@ public class RequestBuilderImplTest {
     @Test(expected = NullArgumentException.class)
     public void WhenCallBuildWithAddEntryStrategyControllerWithBadKeyNameInSettings_Exception(){
         settings.put("entry", "standard");
-        requestBuilder.build("AddEntryStrategyController", settings);
+        requestOLDBuilder.build("AddEntryStrategyController", settings);
     }
 
     @Test(expected = NullArgumentException.class)
     public void WhenCallBuildWithAddEntryStrategyControllerWithNullValueInSettings_Exception(){
         settings.put("entryStrategy", null);
-        requestBuilder.build("AddEntryStrategyController", settings);
+        requestOLDBuilder.build("AddEntryStrategyController", settings);
     }
 
     @Test(expected = NoSuchStrategyException.class)
     public void WhenCallBuildWithAddEntryStrategyControllerWithEmptyValueInSettings_Exception(){
         settings.put("entryStrategy", "   ");
-        requestBuilder.build("AddEntryStrategyController", settings);
+        requestOLDBuilder.build("AddEntryStrategyController", settings);
     }
 
     @Test(expected = NoSuchStrategyException.class)
     public void WhenCallBuildWithAddEntryStrategyControllerWithENonExistingStrtegy_Exception(){
         settings.put("entryStrategy", "non");
-        requestBuilder.build("AddEntryStrategyController", settings);
+        requestOLDBuilder.build("AddEntryStrategyController", settings);
     }
 
     @Test
     public void WhenCallBuildWithAddEntryStrategyControllerWithCorrectSettings_CorrectEntryStrategy(){
         settings.put("entryStrategy", " standard ");
-        Request<?> entryStrategyRequest = requestBuilder.build("AddEntryStrategyController", settings);
-        EntryStrategy entryStrategy = (EntryStrategy) entryStrategyRequest.getRequestDataStructure();
+        Request<?> entryStrategyRequest = requestOLDBuilder.build("AddEntryStrategyController", settings);
+        EntryStrategy entryStrategy = (EntryStrategy) entryStrategyRequest.getbody();
 
         assertEquals(StandardEntryStrategy.class, entryStrategy.getClass());
     }
@@ -191,32 +188,32 @@ public class RequestBuilderImplTest {
     @Test(expected = NullArgumentException.class)
     public void WhenCallBuildWithAddOrderStrategyControllerWithBadKeyNameInSettings_Exception(){
         settings.put("order", "standard");
-        requestBuilder.build("AddOrderStrategyController", settings);
+        requestOLDBuilder.build("AddOrderStrategyController", settings);
     }
 
     @Test(expected = NullArgumentException.class)
     public void WhenCallBuildWithAddOrderStrategyControllerWithNullValueInSettings_Exception(){
         settings.put("orderStrategy", null);
-        requestBuilder.build("AddOrderStrategyController", settings);
+        requestOLDBuilder.build("AddOrderStrategyController", settings);
     }
 
     @Test(expected = NoSuchStrategyException.class)
     public void WhenCallBuildWithAddOrderStrategyControllerWithEmptyValueInSettings_Exception(){
         settings.put("orderStrategy", "   ");
-        requestBuilder.build("AddOrderStrategyController", settings);
+        requestOLDBuilder.build("AddOrderStrategyController", settings);
     }
 
     @Test(expected = NoSuchStrategyException.class)
     public void WhenCallBuildWithAddOrderStrategyControllerWithENonExistingStrtegy_Exception(){
         settings.put("orderStrategy", "non");
-        requestBuilder.build("AddOrderStrategyController", settings);
+        requestOLDBuilder.build("AddOrderStrategyController", settings);
     }
 
     @Test
     public void WhenCallBuildWithAddOrderStrategyControllerWithCorrectSettings_CorrectOrderStrategy(){
         settings.put("orderStrategy", " standard ");
-        Request<?> orderStrategyRequest = requestBuilder.build("AddOrderStrategyController", settings);
-        OrderStrategy orderStrategy = (OrderStrategy) orderStrategyRequest.getRequestDataStructure();
+        Request<?> orderStrategyRequest = requestOLDBuilder.build("AddOrderStrategyController", settings);
+        OrderStrategy orderStrategy = (OrderStrategy) orderStrategyRequest.getbody();
 
         assertEquals(StandardOrderStrategy.class, orderStrategy.getClass());
     }
@@ -224,32 +221,32 @@ public class RequestBuilderImplTest {
     @Test(expected = NullArgumentException.class)
     public void WhenCallBuildWithAddExitStrategyControllerWithBadKeyNameInSettings_Exception(){
         settings.put("exit", "fullClose");
-        requestBuilder.build("AddExitStrategyController", settings);
+        requestOLDBuilder.build("AddExitStrategyController", settings);
     }
 
     @Test(expected = NullArgumentException.class)
     public void WhenCallBuildWithAddExitStrategyControllerWithNullValueInSettings_Exception(){
         settings.put("exitStrategy", null);
-        requestBuilder.build("AddExitStrategyController", settings);
+        requestOLDBuilder.build("AddExitStrategyController", settings);
     }
 
     @Test(expected = NoSuchStrategyException.class)
     public void WhenCallBuildWithAddExitStrategyControllerWithEmptyValueInSettings_Exception(){
         settings.put("exitStrategy", "   ");
-        requestBuilder.build("AddExitStrategyController", settings);
+        requestOLDBuilder.build("AddExitStrategyController", settings);
     }
 
     @Test(expected = NoSuchStrategyException.class)
     public void WhenCallBuildWithAddExitStrategyControllerWithENonExistingStrategy_Exception(){
         settings.put("exitStrategy", "non");
-        requestBuilder.build("AddExitStrategyController", settings);
+        requestOLDBuilder.build("AddExitStrategyController", settings);
     }
 
     @Test
     public void WhenCallBuildWithAddExitStrategyControllerWithCorrectSettings_CorrectExitStrategy(){
         settings.put("exitStrategy", " fullClose ");
-        Request<?> exitStrategyRequest = requestBuilder.build("AddExitStrategyController", settings);
-        ExitStrategy exitStrategy = (ExitStrategy) exitStrategyRequest.getRequestDataStructure();
+        Request<?> exitStrategyRequest = requestOLDBuilder.build("AddExitStrategyController", settings);
+        ExitStrategy exitStrategy = (ExitStrategy) exitStrategyRequest.getbody();
 
         assertEquals(FullCloseExitStrategy.class, exitStrategy.getClass());
     }

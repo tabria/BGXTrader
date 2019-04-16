@@ -15,9 +15,6 @@ import trader.CommonTestClassMembers;
 import trader.broker.connector.BaseGateway;
 import trader.broker.connector.BrokerConnector;
 import trader.broker.connector.Transformable;
-import trader.broker.connector.oanda.transformer.OandaCandleTransformer;
-import trader.broker.connector.oanda.transformer.OandaOrderTransformer;
-import trader.broker.connector.oanda.transformer.OandaPriceTransformer;
 import trader.broker.connector.oanda.transformer.OandaTransformer;
 import trader.entity.candlestick.Candlestick;
 import trader.entity.price.Price;
@@ -180,7 +177,7 @@ public class OandaGatewayTest {
         setFakeContext();
         setFakeBuilders();
         List<Order> orderList = new ArrayList<>();
-        when(responseMock.getResponseDataStructure()).thenReturn(accountMock);
+        when(responseMock.getBody()).thenReturn(accountMock);
         when(accountMock.getOrders()).thenReturn(orderList);
 
         trader.entity.order.Order order = oandaGateway.getOrder(trader.entity.order.enums.OrderType.MARKET_IF_TOUCHED);
@@ -250,7 +247,7 @@ public class OandaGatewayTest {
         setFakeContext();
         setFakeBuilders();
         List<TradeSummary> tradesList = new ArrayList<>();
-        when(responseMock.getResponseDataStructure()).thenReturn(accountMock);
+        when(responseMock.getBody()).thenReturn(accountMock);
         when(accountMock.getTrades()).thenReturn(tradesList);
 
         oandaGateway.getTradeDetails(2);
@@ -305,7 +302,7 @@ public class OandaGatewayTest {
         TradeSetDependentOrdersResponse response = mock(TradeSetDependentOrdersResponse.class);
         TransactionID transactionID = setFakeTransactionID(expectedID);
         when(response.getLastTransactionID()).thenReturn(transactionID);
-        when(responseMock.getResponseDataStructure()).thenReturn(response);
+        when(responseMock.getBody()).thenReturn(response);
 
         String actual = oandaGateway.setTradeStopLossPrice(tradeID, price);
         verify(mockRequestBuilder).build(anyString(), argument.capture());
@@ -338,7 +335,7 @@ public class OandaGatewayTest {
         OrderCancelResponse orderCancelResponseMock = mock(OrderCancelResponse.class);
         TransactionID transactionID = setFakeTransactionID(expectedID);
         when(orderCancelResponseMock.getLastTransactionID()).thenReturn(transactionID);
-        when(responseMock.getResponseDataStructure()).thenReturn(orderCancelResponseMock);
+        when(responseMock.getBody()).thenReturn(orderCancelResponseMock);
 
         String actual = oandaGateway.cancelOrder(orderID);
         verify(mockRequestBuilder).build(anyString(), argument.capture());
@@ -358,7 +355,7 @@ public class OandaGatewayTest {
     private void setFakeOrderList(MarketIfTouchedOrder orderMock) {
         List<Order> orderList = new ArrayList<>();
         orderList.add(orderMock);
-        when(responseMock.getResponseDataStructure()).thenReturn(accountMock);
+        when(responseMock.getBody()).thenReturn(accountMock);
         when(accountMock.getOrders()).thenReturn(orderList);
     }
 
@@ -381,7 +378,7 @@ public class OandaGatewayTest {
         setFakeTransaction(transactionID);
         OrderCreateResponse orderResponseMock = mock(OrderCreateResponse.class);
         when(orderResponseMock.getOrderCreateTransaction()).thenReturn(transactionMock);
-        when(responseMock.getResponseDataStructure()).thenReturn(orderResponseMock);
+        when(responseMock.getBody()).thenReturn(orderResponseMock);
         //return oandaGateway.placeMarketIfTouchedOrder(new HashMap<>());
     }
 
@@ -395,14 +392,14 @@ public class OandaGatewayTest {
         when(accountUnitsMock.bigDecimalValue()).thenReturn(BigDecimal.TEN);
         setFakeContext();
         setFakeBuilders();
-        when(responseMock.getResponseDataStructure()).thenReturn(accountMock);
+        when(responseMock.getBody()).thenReturn(accountMock);
         return accountUnitsMock;
     }
 
     private void setFakeTradeSummaryList(List<TradeSummary> trades) {
         setFakeContext();
         setFakeBuilders();
-        when(responseMock.getResponseDataStructure()).thenReturn(accountMock);
+        when(responseMock.getBody()).thenReturn(accountMock);
         when(accountMock.getTrades()).thenReturn(trades);
     }
 

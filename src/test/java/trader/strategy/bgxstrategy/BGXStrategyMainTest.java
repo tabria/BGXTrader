@@ -2,6 +2,7 @@ package trader.strategy.bgxstrategy;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.powermock.api.mockito.PowerMockito;
 import trader.CommonTestClassMembers;
 import trader.broker.BrokerGateway;
 import trader.configuration.BGXConfigurationImpl;
@@ -15,6 +16,8 @@ import trader.entity.indicator.Indicator;
 import trader.exception.NullArgumentException;
 import trader.configuration.TradingStrategyConfiguration;
 import trader.order.standard.StandardOrderStrategy;
+import trader.requestor.*;
+import trader.responder.Response;
 import trader.strategy.Observable;
 import trader.strategy.observable.PriceObservable;
 
@@ -39,8 +42,14 @@ public class BGXStrategyMainTest {
     private static final String ENTRY_STRATEGY_NAME = "standard";
     private static final String ORDER_STRATEGY_NAME = "standard";
 
+    private RequestBuilder requestBuilderMock;
+    private Request requestMock;
+    private UseCaseFactory useCaseFactoryMock;
+    private UseCase useCaseMock = mock(UseCase.class);
+    private Response responseMock = mock(Response.class);
+    private TradingStrategyConfiguration configurationMock;
     private BGXStrategyMain bgxStrategyMain;
-    private TradingStrategyConfiguration bgxConfigurationMock;
+
     private List<HashMap<String, String>> falseIndicators;
     private CommonTestClassMembers commonMembers;
 
@@ -72,10 +81,70 @@ public class BGXStrategyMainTest {
 //        applySettings();
 //        fillCandlestickList();
         commonMembers = new CommonTestClassMembers();
-        bgxConfigurationMock = mock(TradingStrategyConfiguration.class);
+        requestBuilderMock = mock(RequestBuilder.class);
+        requestMock = mock(Request.class);
+        useCaseFactoryMock = mock(UseCaseFactory.class);
+        useCaseMock = mock(UseCase.class);
+        responseMock = mock(Response.class);
+        configurationMock = mock(TradingStrategyConfiguration.class);
+        setFakeRequest();
+        setFakeResponse();
+        setFakeConfiguration();
         setFalseInitialIndicators();
         bgxStrategyMain = new BGXStrategyMain(BROKER_NAME, BGX_STRATEGY_CONFIG_FILE_NAME, BROKER_CONFIG_FILE_NAME);
 
+    }
+
+    @Test(expected = NullArgumentException.class)
+    public void givenNullBrokerName_WhenInitialize_ThenException(){
+    new BGXStrategyMain(null, BGX_STRATEGY_CONFIG_FILE_NAME, BROKER_CONFIG_FILE_NAME);
+    }
+
+    @Test(expected = NullArgumentException.class)
+    public void givenNullStrategyConfigFileName_WhenInitialize_ThenException (){
+        new BGXStrategyMain(BROKER_NAME, null, BROKER_CONFIG_FILE_NAME);
+    }
+
+    @Test(expected = NullArgumentException.class)
+    public void givenNullBrokerConfigFileName_WhenInitialize_ThenException(){
+        new BGXStrategyMain(BROKER_NAME, BGX_STRATEGY_CONFIG_FILE_NAME, null);
+    }
+
+    @Test(expected = EmptyArgumentException.class)
+    public void givenEmptyBrokerName_WhenInitialize_ThenException(){
+        new BGXStrategyMain("  ", BGX_STRATEGY_CONFIG_FILE_NAME, BROKER_CONFIG_FILE_NAME);
+    }
+
+    @Test(expected = EmptyArgumentException.class)
+    public void givenEmptyStrategyConfigFileName_WhenInitialize_ThenException(){
+        new BGXStrategyMain(BROKER_NAME, "  ", BROKER_CONFIG_FILE_NAME);
+    }
+
+    @Test(expected = EmptyArgumentException.class)
+    public void givenEmptyBrokerConfigFileName_WhenInitialize_ThenException(){
+        new BGXStrategyMain(BROKER_NAME, BGX_STRATEGY_CONFIG_FILE_NAME, "  ");
+    }
+
+    @Test
+    public void givenCorrectSettings_WhenInitialize_ThenConfigurationFieldMustNotBeNull(){
+        TradingStrategyConfiguration configuration = bgxStrategyMain.getConfiguration();
+
+        assertNotNull(configuration);
+    }
+
+    private void setFakeRequest(){
+        PowerMockito.mockStatic(RequestBuilderCreator.class);
+        PowerMockito.when(RequestBuilderCreator.create(any())).thenReturn(requestBuilderMock);
+        when(requestBuilderMock.build(any(HashMap.class))).thenReturn(requestMock);
+    }
+
+    private void setFakeResponse(){
+        when(useCaseMock.execute(requestMock)).thenReturn(responseMock);
+        when(useCaseFactoryMock.make(anyString())).thenReturn(useCaseMock);
+    }
+
+    private void setFakeConfiguration(){
+        when(responseMock.getBody()).thenReturn(configurationMock);
     }
 
     @Test

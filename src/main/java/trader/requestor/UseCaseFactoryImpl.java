@@ -9,10 +9,6 @@ import java.lang.reflect.InvocationTargetException;
 
 public class UseCaseFactoryImpl implements UseCaseFactory {
 
-    private static final String USE_CASE_LOCATION = "trader.interactor.";
-    private static final String USE_CASE = "UseCase";
-    private static final String CONTROLLER = "Controller";
-
     @Override
     public UseCase make(String useCaseName) {
         checkInputName(useCaseName);
@@ -28,7 +24,7 @@ public class UseCaseFactoryImpl implements UseCaseFactory {
 
     private UseCase createUseCaseInstance(String useCaseName) {
         try {
-            Class<?> useCaseClass = Class.forName(USE_CASE_LOCATION + composeUseCaseClassName(useCaseName));
+            Class<?> useCaseClass = Class.forName(composeUseCaseClassName(useCaseName));
             Constructor<?> declaredConstructor = useCaseClass.getDeclaredConstructor();
             return (UseCase) declaredConstructor.newInstance();
         } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
@@ -37,6 +33,6 @@ public class UseCaseFactoryImpl implements UseCaseFactory {
     }
 
     private String composeUseCaseClassName(String inputName){
-        return inputName.replace(CONTROLLER, USE_CASE).trim();
+        return String.format("%s.%s.%s", "trader", "interactor", inputName.replace("Controller", "UseCase").trim());
     }
 }

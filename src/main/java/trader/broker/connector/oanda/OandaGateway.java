@@ -151,7 +151,7 @@ public class OandaGateway extends BaseGateway {
         Request<?> tradeSetDependentOrderRequest = oandaRequestBuilder.build(SET_STOP_LOSS_PRICE, settings);
         Response<TradeSetDependentOrdersResponse> tradeSetDependentOrdersResponse = oandaResponseBuilder.buildResponse(SET_STOP_LOSS_PRICE, tradeSetDependentOrderRequest);
 
-        TradeSetDependentOrdersResponse responseDataStructure = tradeSetDependentOrdersResponse.getResponseDataStructure();
+        TradeSetDependentOrdersResponse responseDataStructure = tradeSetDependentOrdersResponse.getBody();
         return responseDataStructure.getLastTransactionID().toString();
     }
 
@@ -162,7 +162,7 @@ public class OandaGateway extends BaseGateway {
         settings.put(ORDER_ID, orderID);
         Request<?> orderCancelRequest = oandaRequestBuilder.build(CANCEL_ORDER, settings);
         Response<OrderCancelResponse> cancelOrderResponse = oandaResponseBuilder.buildResponse("orderSpecifier",orderCancelRequest);
-        OrderCancelResponse responseDataStructure = cancelOrderResponse.getResponseDataStructure();
+        OrderCancelResponse responseDataStructure = cancelOrderResponse.getBody();
         return responseDataStructure.getLastTransactionID().toString();
     }
 
@@ -180,7 +180,7 @@ public class OandaGateway extends BaseGateway {
     private Account getAccount(){
         Request<?> accountRequest = oandaRequestBuilder.build(ACCOUNT_ID, accountSettings);
         Response<Account> accountResponse = oandaResponseBuilder.buildResponse(ACCOUNT_ID, accountRequest);
-        return accountResponse.getResponseDataStructure();
+        return accountResponse.getBody();
     }
 
     private void setContext(){
@@ -200,7 +200,7 @@ public class OandaGateway extends BaseGateway {
         settings.put(ACCOUNT_ID, getConnector().getAccountID());
         Request<?> marketOrderRequest = oandaRequestBuilder.build(createMarketOrder, settings);
         Response<OrderCreateResponse> marketOrderResponse = oandaResponseBuilder.buildResponse(createMarketOrder, marketOrderRequest);
-        OrderCreateResponse orderResponse = marketOrderResponse.getResponseDataStructure();
+        OrderCreateResponse orderResponse = marketOrderResponse.getBody();
         return orderResponse.getOrderCreateTransaction().getId().toString();
     }
 }

@@ -39,7 +39,7 @@ public class AddBGXConfigurationUseCase extends BaseUseCase {
     public <T, E> Response<E> execute(Request<T> request) {
         if(request == null)
             throw new NullArgumentException();
-        TradingStrategyConfiguration bgxConfiguration = (TradingStrategyConfiguration) request.getRequestDataStructure();
+        TradingStrategyConfiguration bgxConfiguration = (TradingStrategyConfiguration) request.getbody();
         setConfigurations(bgxConfiguration);
         return setResponse((E) bgxConfiguration);
     }

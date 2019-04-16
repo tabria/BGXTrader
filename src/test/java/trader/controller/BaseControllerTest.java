@@ -1,33 +1,42 @@
 package trader.controller;
 
 import org.junit.Before;
-import trader.requestor.UseCase;
-import trader.requestor.Request;
-import trader.requestor.RequestBuilder;
-import trader.requestor.UseCaseFactory;
+import trader.requestor.*;
 import trader.responder.Response;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public abstract class BaseControllerTest<T> {
+////////////to be deleted///////////////
+    RequestOLDBuilder requestOLDBuilderMock;
+    HashMap<String, String> settings2 = new HashMap<>();
+/////////////// to be deleted/////////////////
     Response responseMock;
-    HashMap<String, String> settings;
+    Map<String, Object> settings;
     RequestBuilder requestBuilderMock;
-    UseCaseFactory useCaseFactoryMock;
     Request requestMock;
+    UseCaseFactory useCaseFactoryMock;
+
     UseCase useCaseMock;
     T configurationMock;
 
 
     @Before
     public void setUp() throws Exception {
-        requestBuilderMock = mock(RequestBuilder.class);
-        useCaseFactoryMock = mock(UseCaseFactory.class);
+        ////////////// to be deleted////////////
+        requestOLDBuilderMock = mock(RequestOLDBuilder.class);
         requestMock = mock(Request.class);
+        ////////////// to be deleted////////////////////
+
+;
+        requestBuilderMock = mock(RequestBuilder.class);
+        requestMock = mock(Request.class);
+        useCaseFactoryMock = mock(UseCaseFactory.class);
         useCaseMock = mock(UseCase.class);
         responseMock = mock(Response.class);
         settings = new HashMap<>();
@@ -38,9 +47,13 @@ public abstract class BaseControllerTest<T> {
     }
 
     protected void setExecuteSettings(String controllerName) {
-        when(responseMock.getResponseDataStructure()).thenReturn(configurationMock);
+        when(responseMock.getBody()).thenReturn(configurationMock);
         when(useCaseFactoryMock.make(anyString())).thenReturn(useCaseMock);
         when(useCaseMock.execute(requestMock)).thenReturn(responseMock);
-        when(requestBuilderMock.build(controllerName, settings)).thenReturn(requestMock);
+
+
+        //////////// to be removed///////////////
+        when(requestOLDBuilderMock.build(controllerName, settings2)).thenReturn(requestMock);
+        ///////////to be removed/////////////////
     }
 }

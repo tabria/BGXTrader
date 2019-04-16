@@ -65,7 +65,7 @@ public class StandardEntryStrategyTest {
     public void before(){
         tradeMock = mock(Trade.class);
         responseMock = mock(Response.class);
-        when(responseMock.getResponseDataStructure()).thenReturn(tradeMock);
+        when(responseMock.getBody()).thenReturn(tradeMock);
         tradeControllerMock = mock(TraderController.class);
         when(tradeControllerMock.execute(any(HashMap.class))).thenReturn(responseMock);;
         argument = ArgumentCaptor.forClass(HashMap.class);
@@ -339,7 +339,7 @@ public class StandardEntryStrategyTest {
     private void assertForTradableTrade() {
         Response responseMock = mock(Response.class);
         Point pointMock = mock(Point.class);
-        when(responseMock.getResponseDataStructure()).thenReturn(pointMock);
+        when(responseMock.getBody()).thenReturn(pointMock);
         standardEntryStrategy = new StandardEntryStrategy();
         when(configurationMock.getRsiFilter()).thenReturn(RSI_FILTER);
         standardEntryStrategy.setConfiguration(configurationMock);

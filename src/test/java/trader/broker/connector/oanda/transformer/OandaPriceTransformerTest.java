@@ -10,7 +10,6 @@ import com.oanda.v20.primitives.DateTime;
 import com.oanda.v20.primitives.DecimalNumber;
 import org.junit.Before;
 import org.junit.Test;
-import trader.broker.connector.oanda.transformer.OandaPriceTransformer;
 import trader.entity.price.Price;
 import trader.responder.Response;
 
@@ -45,7 +44,7 @@ public class OandaPriceTransformerTest {
         priceTransformer = new OandaPriceTransformer();
         responseMock = mock(PricingGetResponse.class);
         response = mock(Response.class);
-        when(response.getResponseDataStructure()).thenReturn(responseMock);
+        when(response.getBody()).thenReturn(responseMock);
     }
 
     @Test

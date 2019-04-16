@@ -6,7 +6,6 @@ import com.oanda.v20.pricing_common.PriceValue;
 import com.oanda.v20.primitives.DateTime;
 import org.junit.Before;
 import org.junit.Test;
-import trader.broker.connector.oanda.transformer.OandaCandleTransformer;
 import trader.entity.candlestick.Candlestick;
 import trader.responder.Response;
 import java.math.BigDecimal;
@@ -85,7 +84,7 @@ public class OandaCandleTransformerTest {
         CandlestickData candlestickDataMock = mock(CandlestickData.class);
         PriceValue priceValueClosePriceMock = mock(PriceValue.class);
         DateTime dateTimeMock = mock(DateTime.class);
-        when(responseMock.getResponseDataStructure()).thenReturn(instrumentCandlesResponseMock);
+        when(responseMock.getBody()).thenReturn(instrumentCandlesResponseMock);
         setFakeCandleComplete(oandaCandlestickMock, complete);
         setFakeCandlestickData(oandaCandlestickMock, candlestickDataMock);
         setFakeCandlePrices(candlestickDataMock, priceValueClosePriceMock);

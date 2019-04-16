@@ -24,15 +24,15 @@ public class AddExitStrategyUseCaseTest {
 
     @Test(expected = NullArgumentException.class)
     public void WhenCallExecuteWithNull_Exception(){
-        addExitStrategyUseCase.execute(null);
+        //addExitStrategyUseCase.execute(null);
     }
 
     @Test
     public void WhenCallExecuteWithCorrectValue_CorrectResult(){
-        when(request.getRequestDataStructure()).thenReturn("Test");
+        when(request.getbody()).thenReturn("Test");
         Response<String> response = addExitStrategyUseCase.execute(request);
 
-        assertEquals("Test", response.getResponseDataStructure());
+        assertEquals("Test", response.getBody());
     }
 
 }

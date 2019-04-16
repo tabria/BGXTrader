@@ -1,37 +1,28 @@
 package trader.controller;
 
-import trader.exception.NullArgumentException;
-import trader.requestor.UseCase;
-import trader.requestor.Request;
-import trader.requestor.RequestBuilder;
-import trader.requestor.UseCaseFactory;
+import trader.requestor.*;
 import trader.responder.Response;
-
-import java.util.HashMap;
+import java.util.Map;
 
 public class AddBGXConfigurationController<T> implements TraderController<T> {
 
-
-    private RequestBuilder requestBuilder;
     private UseCaseFactory useCaseFactory;
 
-    public AddBGXConfigurationController(RequestBuilder requestBuilder, UseCaseFactory useCaseFactory) {
-        if(requestBuilder == null || useCaseFactory == null)
-            throw new NullArgumentException();
-        this.requestBuilder = requestBuilder;
+    public AddBGXConfigurationController(UseCaseFactory useCaseFactory) {
         this.useCaseFactory = useCaseFactory;
     }
 
     @Override
-    public Response<T> execute(HashMap<String, String> settings) {
+    public Response<T> execute(Map<String, Object> settings) {
         String controllerName = this.getClass().getSimpleName().trim();
-        Request<?> request = getRequest(controllerName, settings);
+        Request request = getRequest(controllerName, settings);
         UseCase useCase = make(controllerName);
         return useCase.execute(request);
     }
 
-    Request<?> getRequest(String controllerName, HashMap<String, String> settings) {
-        return requestBuilder.build(controllerName, settings);
+    Request getRequest(String controllerName, Map<String, Object> settings) {
+        RequestBuilder factory = RequestBuilderCreator.create(controllerName);
+        return  factory.build(settings);
     }
 
     UseCase make(String controllerName){
