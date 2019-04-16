@@ -11,7 +11,7 @@ abstract class BaseUseCase implements UseCase {
     public <T, E> Response<E> execute(Request<T> request) {
         if(request == null)
             throw new NullArgumentException();
-        T dataResult = request.getbody();
+        T dataResult = request.getBody();
         Response<E> tradeResponse = new ResponseImpl<>();
         tradeResponse.setResponseDataStructure((E) dataResult);
         return tradeResponse;

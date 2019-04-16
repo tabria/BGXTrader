@@ -44,14 +44,14 @@ public class AddBrokerConnectorUseCaseTest {
         exception.expectCause(IsInstanceOf.instanceOf(YAMLException.class));
 
         when(configurationMock.getFileLocation()).thenReturn("broker.yaml");
-        when(requestMock.getbody()).thenReturn(configurationMock);
+        when(requestMock.getBody()).thenReturn(configurationMock);
         addBrokerConnectorUseCase.execute(requestMock);
     }
 
     @Test
     public void WhenCallExecuteWithCorrectRequest_CorrectResult(){
         when(configurationMock.getFileLocation()).thenReturn(TEST_BROKER_CONFIG_FILE_LOCATION);
-        when(requestMock.getbody()).thenReturn(configurationMock);
+        when(requestMock.getBody()).thenReturn(configurationMock);
         Response<BrokerConnector> brokerConnectorResponse = addBrokerConnectorUseCase.execute(requestMock);
 
         BrokerConnector configuration = brokerConnectorResponse.getBody();

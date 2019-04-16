@@ -2,7 +2,7 @@ package trader.requestor;
 
 public interface Request<T> {
 
-    T getbody();
+    T getBody();
 
-    void setRequestDataStructure(T dataStructure);
+    void setBody(T dataStructure);
 }

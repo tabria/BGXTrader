@@ -1,4 +1,4 @@
-package trader.interactor;
+package trader.interactor.addbgxconfiguration;
 
 import org.hamcrest.core.IsInstanceOf;
 import org.junit.Assert;
@@ -10,6 +10,7 @@ import org.yaml.snakeyaml.error.YAMLException;
 import trader.exception.BadRequestException;
 import trader.exception.EmptyArgumentException;
 import trader.exception.NullArgumentException;
+import trader.interactor.addbgxconfiguration.AddBGXConfigurationUseCase;
 import trader.requestor.Request;
 import trader.responder.Response;
 import trader.configuration.TradingStrategyConfiguration;
@@ -127,7 +128,7 @@ public class AddBGXConfigurationUseCaseTest {
         exception.expectCause(IsInstanceOf.instanceOf(YAMLException.class));
 
         when(configurationMock.getFileLocation()).thenReturn("ggs.yaml");
-        when(requestMock.getbody()).thenReturn(configurationMock);
+        when(requestMock.getBody()).thenReturn(configurationMock);
 
         addBgxConfigurationUseCase.execute(requestMock);
     }
@@ -135,7 +136,7 @@ public class AddBGXConfigurationUseCaseTest {
     @Test
     public void WhenCallExecuteWithCorrectRequest_CorrectResult(){
         when(configurationMock.getFileLocation()).thenReturn(DEFAULT_BGX_CONFIG_FILE_LOCATION);
-        when(requestMock.getbody()).thenReturn(configurationMock);
+        when(requestMock.getBody()).thenReturn(configurationMock);
         Response<TradingStrategyConfiguration> bgxConfigurationResponse = addBgxConfigurationUseCase.execute(requestMock);
 
         TradingStrategyConfiguration configuration = bgxConfigurationResponse.getBody();

@@ -21,7 +21,7 @@ public class AddBrokerConnectorUseCase extends BaseUseCase {
     public <T, E> Response<E> execute(Request<T> request) {
         if(request == null)
             throw new NullArgumentException();
-        BrokerConnector brokerConnector = (BrokerConnector) request.getbody();
+        BrokerConnector brokerConnector = (BrokerConnector) request.getBody();
         setConfigurations(brokerConnector);
         return setResponse((E) brokerConnector);
     }

@@ -59,11 +59,11 @@ public class CreateIndicatorControllerTest {
 
     @Test
     public void WhenCallGetRequestWithCorrectSettings_ReturnCorrectResult(){
-        when(requestMock.getbody()).thenReturn(indicatorMock);
+        when(requestMock.getBody()).thenReturn(indicatorMock);
         when(requestOLDBuilderMock.build(ADD_INDICATOR_CONTROLLER_NAME, settings)).thenReturn(requestMock);
         Request<?> rsiIndicatorRequest = createIndicatorController.getRequest(ADD_INDICATOR_CONTROLLER_NAME, settings);
 
-        assertEquals(indicatorMock, rsiIndicatorRequest.getbody());
+        assertEquals(indicatorMock, rsiIndicatorRequest.getBody());
     }
 
     @Test

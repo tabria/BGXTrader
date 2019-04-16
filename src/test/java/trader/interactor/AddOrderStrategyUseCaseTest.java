@@ -30,7 +30,7 @@ public class AddOrderStrategyUseCaseTest {
 
     @Test
     public void WhenCallExecuteWithCorrectValue_CorrectResult(){
-        when(request.getbody()).thenReturn("Test");
+        when(request.getBody()).thenReturn("Test");
         Response<String> response = addOrderStrategyUseCase.execute(request);
 
         assertEquals("Test", response.getBody());

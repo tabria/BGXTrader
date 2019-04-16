@@ -4,15 +4,14 @@ import trader.requestor.Request;
 
 public class RequestImpl<T> implements Request<T> {
 
-    private T dataStructure;
+    private T body;
 
-    @Override
-    public T getbody() {
-        return dataStructure;
+    public T getBody() {
+        return body;
     }
 
     @Override
-    public void setRequestDataStructure(T dataStructure) {
-        this.dataStructure = dataStructure;
+    public void setBody(T dataStructure) {
+        this.body = dataStructure;
     }
 }

@@ -87,7 +87,7 @@ public class RequestOLDBuilderImplTest {
         settings.put("type", "rsi");
         Request<?> rsiIndicatorRequest = requestOLDBuilder.build("CreateIndicatorController", settings);
 
-        assertEquals(RelativeStrengthIndex.class, rsiIndicatorRequest.getbody().getClass());
+        assertEquals(RelativeStrengthIndex.class, rsiIndicatorRequest.getBody().getClass());
     }
 
     //sma
@@ -97,7 +97,7 @@ public class RequestOLDBuilderImplTest {
         settings.put("position", "middle");
         Request<?> smaIndicator = requestOLDBuilder.build("CreateIndicatorController", settings);
 
-        assertEquals(SimpleMovingAverage.class, smaIndicator.getbody().getClass());
+        assertEquals(SimpleMovingAverage.class, smaIndicator.getBody().getClass());
     }
 
     @Test(expected = NoSuchDataStructureException.class)
@@ -111,7 +111,7 @@ public class RequestOLDBuilderImplTest {
         settings.put("location", BGX_STRATEGY_CONFIG_FILE_NAME);
         Request<?> bgxConfigurationRequest = requestOLDBuilder.build("AddBGXConfigurationController", settings);
 
-        assertEquals(BGXConfigurationImpl.class, bgxConfigurationRequest.getbody().getClass());
+        assertEquals(BGXConfigurationImpl.class, bgxConfigurationRequest.getBody().getClass());
     }
 
     @Test
@@ -119,7 +119,7 @@ public class RequestOLDBuilderImplTest {
         settings.put("brokerName", CONNECTOR_NAME);
         settings.put("location", BROKER_CONFIG_FILE_NAME);
         Request<?> brokerConnectorRequest = requestOLDBuilder.build("AddBrokerConnectorController", settings);
-        String actual = brokerConnectorRequest.getbody().getClass().getSimpleName();
+        String actual = brokerConnectorRequest.getBody().getClass().getSimpleName();
         String expected = CONNECTOR_NAME + "Connector";
 
         assertEquals(expected, actual);
@@ -129,7 +129,7 @@ public class RequestOLDBuilderImplTest {
     public void WhenCallBuildWithCreateTradeControllerWithEmptySettings_DefaultTrade(){
         settings.clear();
         Request<?> createTradeRequest = requestOLDBuilder.build("CreateTradeController", settings);
-        Trade trade = (Trade) createTradeRequest.getbody();
+        Trade trade = (Trade) createTradeRequest.getBody();
 
         assertFalse(trade.getTradable());
         assertEquals(Direction.FLAT, trade.getDirection());
@@ -144,7 +144,7 @@ public class RequestOLDBuilderImplTest {
         settings.put("entryPrice", "1.12345");
         settings.put("stopLossPrice", "5.1234");
         Request<?> createTradeRequest = requestOLDBuilder.build("CreateTradeController", settings);
-        Trade trade = (Trade) createTradeRequest.getbody();
+        Trade trade = (Trade) createTradeRequest.getBody();
 
         assertTrue(trade.getTradable());
         assertEquals(Direction.DOWN, trade.getDirection());
@@ -180,7 +180,7 @@ public class RequestOLDBuilderImplTest {
     public void WhenCallBuildWithAddEntryStrategyControllerWithCorrectSettings_CorrectEntryStrategy(){
         settings.put("entryStrategy", " standard ");
         Request<?> entryStrategyRequest = requestOLDBuilder.build("AddEntryStrategyController", settings);
-        EntryStrategy entryStrategy = (EntryStrategy) entryStrategyRequest.getbody();
+        EntryStrategy entryStrategy = (EntryStrategy) entryStrategyRequest.getBody();
 
         assertEquals(StandardEntryStrategy.class, entryStrategy.getClass());
     }
@@ -213,7 +213,7 @@ public class RequestOLDBuilderImplTest {
     public void WhenCallBuildWithAddOrderStrategyControllerWithCorrectSettings_CorrectOrderStrategy(){
         settings.put("orderStrategy", " standard ");
         Request<?> orderStrategyRequest = requestOLDBuilder.build("AddOrderStrategyController", settings);
-        OrderStrategy orderStrategy = (OrderStrategy) orderStrategyRequest.getbody();
+        OrderStrategy orderStrategy = (OrderStrategy) orderStrategyRequest.getBody();
 
         assertEquals(StandardOrderStrategy.class, orderStrategy.getClass());
     }
@@ -246,7 +246,7 @@ public class RequestOLDBuilderImplTest {
     public void WhenCallBuildWithAddExitStrategyControllerWithCorrectSettings_CorrectExitStrategy(){
         settings.put("exitStrategy", " fullClose ");
         Request<?> exitStrategyRequest = requestOLDBuilder.build("AddExitStrategyController", settings);
-        ExitStrategy exitStrategy = (ExitStrategy) exitStrategyRequest.getbody();
+        ExitStrategy exitStrategy = (ExitStrategy) exitStrategyRequest.getBody();
 
         assertEquals(FullCloseExitStrategy.class, exitStrategy.getClass());
     }

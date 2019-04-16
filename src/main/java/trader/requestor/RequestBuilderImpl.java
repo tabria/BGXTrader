@@ -58,21 +58,21 @@ public class RequestBuilderImpl implements RequestOLDBuilder {
     private Request<?> buildExitStrategy(HashMap<String,String> settings) {
         Request<ExitStrategy> request = new RequestImpl<>();
         ExitStrategy exitStrategy = createExitStrategyInstance(settings);
-        request.setRequestDataStructure(exitStrategy);
+        request.setBody(exitStrategy);
         return request;
     }
 
     private Request<?> buildOrderStrategy(HashMap<String,String> settings) {
         Request<OrderStrategy> request = new RequestImpl<>();
         OrderStrategy orderStrategy = createOrderStrategyInstance(settings);
-        request.setRequestDataStructure(orderStrategy);
+        request.setBody(orderStrategy);
         return request;
     }
 
     private Request<?> buildEntryStrategy(HashMap<String,String> settings) {
         Request<EntryStrategy> request = new RequestImpl<>();
         EntryStrategy entryStrategy = createEntryStrategyInstance(settings);
-        request.setRequestDataStructure(entryStrategy);
+        request.setBody(entryStrategy);
         return request;
     }
 
@@ -80,7 +80,7 @@ public class RequestBuilderImpl implements RequestOLDBuilder {
         Request<Trade> request = new RequestImpl<>();
         Trade trade = new TradeImpl();
         setTradeValues(settings, trade);
-        request.setRequestDataStructure(trade);
+        request.setBody(trade);
         return request;
     }
 
@@ -88,7 +88,7 @@ public class RequestBuilderImpl implements RequestOLDBuilder {
         Request<BrokerConnector> request = new RequestImpl<>();
         BrokerConnector brokerConnector = BrokerConnector.create(settings.get(BROKER_NAME));
         brokerConnector.setFileLocation(settings.get(LOCATION));
-        request.setRequestDataStructure(brokerConnector);
+        request.setBody(brokerConnector);
         return request;
     }
 
@@ -96,7 +96,7 @@ public class RequestBuilderImpl implements RequestOLDBuilder {
         Request<TradingStrategyConfiguration> request = new RequestImpl<>();
         BGXConfigurationImpl bgxConfiguration = new BGXConfigurationImpl();
         bgxConfiguration.setFileLocation(settings.get(LOCATION));
-        request.setRequestDataStructure(bgxConfiguration);
+        request.setBody(bgxConfiguration);
         return request;
     }
 
@@ -104,10 +104,10 @@ public class RequestBuilderImpl implements RequestOLDBuilder {
         Request<Indicator> request = new RequestImpl<>();
         String dataStructureType = getDataStructureType(settings).toLowerCase();
         if (dataStructureType.contains(RSI)) {
-            request.setRequestDataStructure(new RSIBuilder().build(settings));
+            request.setBody(new RSIBuilder().build(settings));
             return request;
         } else if(isMovingAverage(dataStructureType)) {
-            request.setRequestDataStructure(new MovingAverageBuilder().build(settings));
+            request.setBody(new MovingAverageBuilder().build(settings));
             return request;
         }
         throw new NoSuchDataStructureException();

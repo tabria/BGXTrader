@@ -53,7 +53,7 @@ public class OandaResponseBuilder {
 
     private <T> TradeSetDependentOrdersResponse createSetStopLossPriceResponse(Request<T> request) {
 
-        TradeSetDependentOrdersRequest requestDataStructure = (TradeSetDependentOrdersRequest) request.getbody();
+        TradeSetDependentOrdersRequest requestDataStructure = (TradeSetDependentOrdersRequest) request.getBody();
         try {
             return this.context.trade.setDependentOrders(requestDataStructure);
         } catch (ExecuteException | RequestException e) {
@@ -67,7 +67,7 @@ public class OandaResponseBuilder {
     private <T> OrderCancelResponse createCancelOrderResponce(Request<T> request) {
         try {
 
-            List<Object> requestDataStructure = (List<Object>) request.getbody();
+            List<Object> requestDataStructure = (List<Object>) request.getBody();
             AccountID account = (AccountID) requestDataStructure.get(0);
             OrderSpecifier order = (OrderSpecifier) requestDataStructure.get(1);
             return context.order.cancel(account, order);
@@ -81,7 +81,7 @@ public class OandaResponseBuilder {
 
     private <T> OrderCreateResponse createOrderCreateResponse(Request<T> createMarketIfTouchedOrderRequest) {
         try {
-            OrderCreateRequest request = (OrderCreateRequest) createMarketIfTouchedOrderRequest.getbody();
+            OrderCreateRequest request = (OrderCreateRequest) createMarketIfTouchedOrderRequest.getBody();
             return context.order.create(request);
         } catch (ExecuteException | RequestException e) {
             Connection.waitToConnect(url);
@@ -93,7 +93,7 @@ public class OandaResponseBuilder {
 
     private <T> PricingGetResponse createPriceResponse(Request<T> priceRequest) {
         try {
-            PricingGetRequest request = (PricingGetRequest) priceRequest.getbody();
+            PricingGetRequest request = (PricingGetRequest) priceRequest.getBody();
             return context.pricing.get(request);
         } catch (ExecuteException | RequestException e) {
             Connection.waitToConnect(url);
@@ -105,7 +105,7 @@ public class OandaResponseBuilder {
 
     private <T> InstrumentCandlesResponse createCandlesResponse(Request<T> candlesRequest) {
         try{
-            InstrumentCandlesRequest request = (InstrumentCandlesRequest) candlesRequest.getbody();
+            InstrumentCandlesRequest request = (InstrumentCandlesRequest) candlesRequest.getBody();
             return context.instrument.candles(request);
         } catch (ExecuteException | RequestException e) {
             Connection.waitToConnect(url);

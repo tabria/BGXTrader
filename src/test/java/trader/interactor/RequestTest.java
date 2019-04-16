@@ -22,8 +22,8 @@ public class RequestTest {
     public void testToReturnCorrectDataStructure(){
         ArrayList<String> arrayList = new ArrayList<>();
         arrayList.add("Test");
-        request.setRequestDataStructure(arrayList);
-        ArrayList<String> requestDataStructure = request.getbody();
+        request.setBody(arrayList);
+        ArrayList<String> requestDataStructure = request.getBody();
 
         assertEquals("Test", requestDataStructure.get(0));
     }

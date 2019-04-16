@@ -30,7 +30,7 @@ public class CreateTradeUseCaseTest {
 
     @Test
     public void WhenCallExecuteWithCorrectValue_CorrectResult(){
-        when(request.getbody()).thenReturn("Test");
+        when(request.getBody()).thenReturn("Test");
         Response<String> response = createTradeUseCase.execute(request);
 
         assertEquals("Test", response.getBody());

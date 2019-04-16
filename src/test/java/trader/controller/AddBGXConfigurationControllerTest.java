@@ -58,7 +58,7 @@ public class AddBGXConfigurationControllerTest {
 
         Request configurationRequest = addBgxConfigurationController.getRequest(BGX_CONFIGURATION_CONTROLLER, settings);
 
-        assertEquals(configurationMock.getClass(), configurationRequest.getbody().getClass());
+        assertEquals(configurationMock.getClass(), configurationRequest.getBody().getClass());
     }
 
     @Test
@@ -94,7 +94,7 @@ public class AddBGXConfigurationControllerTest {
     }
 
     private void setFakeRequestBody(){
-        when(requestMock.getbody()).thenReturn(configurationMock);
+        when(requestMock.getBody()).thenReturn(configurationMock);
     }
 
     private void setFakeUseCaseFactory(){

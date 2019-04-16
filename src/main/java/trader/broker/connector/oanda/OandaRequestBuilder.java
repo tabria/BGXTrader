@@ -58,14 +58,14 @@ class OandaRequestBuilder implements RequestOLDBuilder {
         instruments.add(settings.get(INSTRUMENT));
         AccountID accountId = new AccountID(settings.get(ACCOUNT_ID));
         Request<PricingGetRequest> request = new RequestImpl<>();
-        request.setRequestDataStructure(new PricingGetRequest(accountId, instruments));
+        request.setBody(new PricingGetRequest(accountId, instruments));
         return request;
     }
 
     private Request<InstrumentCandlesRequest> buildCandlesRequest(HashMap<String, String> settings){
         Request<InstrumentCandlesRequest> request = new RequestImpl<>();
         validateGranularity(settings);
-        request.setRequestDataStructure(
+        request.setBody(
                 new InstrumentCandlesRequest(new InstrumentName(settings.get(INSTRUMENT)))
                         .setCount(parseQuantity(settings))
                         .setGranularity(extractGranularity(settings.get(GRANULARITY).toUpperCase()))
@@ -76,7 +76,7 @@ class OandaRequestBuilder implements RequestOLDBuilder {
 
     private Request<?> buildAccountIDRequest(HashMap<String, String> settings) {
         Request<AccountID> accountIDRequest = new RequestImpl<>();
-        accountIDRequest.setRequestDataStructure(new AccountID(settings.get(ACCOUNT_ID)));
+        accountIDRequest.setBody(new AccountID(settings.get(ACCOUNT_ID)));
         return accountIDRequest;
     }
 
@@ -85,7 +85,7 @@ class OandaRequestBuilder implements RequestOLDBuilder {
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(accountID)
                 .setOrder(createMarketIfTouchedOrderRequest(settings));
         Request<OrderCreateRequest> request = new RequestImpl<>();
-        request.setRequestDataStructure(orderCreateRequest);
+        request.setBody(orderCreateRequest);
         return request;
     }
 
@@ -94,7 +94,7 @@ class OandaRequestBuilder implements RequestOLDBuilder {
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(accountID)
                 .setOrder(createMarketOrderRequest(settings));
         Request<OrderCreateRequest> request = new RequestImpl<>();
-        request.setRequestDataStructure(orderCreateRequest);
+        request.setBody(orderCreateRequest);
         return request;
     }
 
@@ -121,7 +121,7 @@ class OandaRequestBuilder implements RequestOLDBuilder {
         List<Object> sets = new ArrayList<>();
         sets.add(accountID);
         sets.add(orderSpecifier);
-        request.setRequestDataStructure(sets);
+        request.setBody(sets);
         return request;
     }
 
@@ -131,7 +131,7 @@ class OandaRequestBuilder implements RequestOLDBuilder {
         StopLossDetails stopLossDetails = new StopLossDetails().setPrice(settings.get("price"));
         AccountID accountID = new AccountID(settings.get(ACCOUNT_ID));
         TradeSetDependentOrdersRequest tradeSetDependentOrdersRequest = new TradeSetDependentOrdersRequest(accountID, tradeSpecifier).setStopLoss(stopLossDetails);
-        request.setRequestDataStructure(tradeSetDependentOrdersRequest);
+        request.setBody(tradeSetDependentOrdersRequest);
         return request;
     }
 

@@ -1,11 +1,13 @@
-package trader.interactor;
+package trader.interactor.addbgxconfiguration;
 
 import org.yaml.snakeyaml.Yaml;
 import trader.entity.candlestick.candle.CandleGranularity;
 import trader.exception.BadRequestException;
 import trader.exception.EmptyArgumentException;
 import trader.exception.NullArgumentException;
+import trader.interactor.ResponseImpl;
 import trader.requestor.Request;
+import trader.requestor.UseCase;
 import trader.responder.Response;
 import trader.configuration.TradingStrategyConfiguration;
 
@@ -15,7 +17,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AddBGXConfigurationUseCase extends BaseUseCase {
+public class AddBGXConfigurationUseCase implements UseCase {
 
 
     private static final String CANDLES_QUANTITY = "candlesQuantity";
@@ -35,11 +37,10 @@ public class AddBGXConfigurationUseCase extends BaseUseCase {
     private static final String RSI_FILTER = "rsiFilter";
     private static final String ENTRY_FILTER = "entryFilter";
 
-    @Override
     public <T, E> Response<E> execute(Request<T> request) {
         if(request == null)
             throw new NullArgumentException();
-        TradingStrategyConfiguration bgxConfiguration = (TradingStrategyConfiguration) request.getbody();
+        TradingStrategyConfiguration bgxConfiguration = (TradingStrategyConfiguration) request.getBody();
         setConfigurations(bgxConfiguration);
         return setResponse((E) bgxConfiguration);
     }

@@ -10,18 +10,18 @@ import java.util.Map;
 
 public class AddBGXConfigurationRequestTest {
 
-    private AddBGXConfigurationRequest builder;
+    private AddBGXConfigurationRequestBuilder requestBuilder;
 
     @Before
     public void setUp(){
 
-        builder = new AddBGXConfigurationRequest();
+        requestBuilder = new AddBGXConfigurationRequestBuilder();
 
     }
 
     @Test(expected = NullArgumentException.class)
     public void givenNullSettings_WhenCallBuild_ThenException(){
-        builder.make(null);
+        requestBuilder.build(null);
     }
 
     @Test
@@ -29,7 +29,7 @@ public class AddBGXConfigurationRequestTest {
         Map<String, Object> settingsDto = new HashMap<>();
         Map<String, Map<String, String>> fileSettings = new HashMap<>();
         settingsDto.put("settings", fileSettings);
-        Request request = builder.make(settingsDto);
+        Request request = requestBuilder.build(settingsDto);
     }
 
 }
