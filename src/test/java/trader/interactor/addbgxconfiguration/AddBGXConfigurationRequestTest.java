@@ -8,15 +8,15 @@ import trader.requestor.Request;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.junit.Assert.assertEquals;
+
 public class AddBGXConfigurationRequestTest {
 
     private AddBGXConfigurationRequestBuilder requestBuilder;
 
     @Before
     public void setUp(){
-
         requestBuilder = new AddBGXConfigurationRequestBuilder();
-
     }
 
     @Test(expected = NullArgumentException.class)
@@ -25,11 +25,13 @@ public class AddBGXConfigurationRequestTest {
     }
 
     @Test
-    public void givenSettings_WhenCallBuild_ThenReturnCorrectObject(){
-        Map<String, Object> settingsDto = new HashMap<>();
-        Map<String, Map<String, String>> fileSettings = new HashMap<>();
-        settingsDto.put("settings", fileSettings);
-        Request request = requestBuilder.build(settingsDto);
+    public void givenValidSettings_WhenCallBuild_ThenReturnCorrectRequest(){
+        Map<String, Object> inputSettings = new HashMap<>();
+        Map<String, Map<String, String>> outputSettings = new HashMap<>();
+        inputSettings.put("settings", outputSettings);
+        Request<Map<String, Map<String, String>>> request = requestBuilder.build(inputSettings);
+
+        assertEquals(outputSettings, request.getBody());
     }
 
 }

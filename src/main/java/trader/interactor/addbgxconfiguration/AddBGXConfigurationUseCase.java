@@ -1,20 +1,16 @@
 package trader.interactor.addbgxconfiguration;
 
-import org.yaml.snakeyaml.Yaml;
+import trader.configuration.BGXConfigurationImpl;
 import trader.entity.candlestick.candle.CandleGranularity;
-import trader.exception.BadRequestException;
 import trader.exception.EmptyArgumentException;
-import trader.exception.NullArgumentException;
 import trader.interactor.ResponseImpl;
+import trader.interactor.addbgxconfiguration.enums.Constants;
 import trader.requestor.Request;
 import trader.requestor.UseCase;
 import trader.responder.Response;
 import trader.configuration.TradingStrategyConfiguration;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.Map;
 
 public class AddBGXConfigurationUseCase implements UseCase {
@@ -38,11 +34,10 @@ public class AddBGXConfigurationUseCase implements UseCase {
     private static final String ENTRY_FILTER = "entryFilter";
 
     public <T, E> Response<E> execute(Request<T> request) {
-        if(request == null)
-            throw new NullArgumentException();
-        TradingStrategyConfiguration bgxConfiguration = (TradingStrategyConfiguration) request.getBody();
-        setConfigurations(bgxConfiguration);
-        return setResponse((E) bgxConfiguration);
+        Map<String, Map<String, String>> settings = (Map<String, Map<String, String>>) request.getBody();
+//        TradingStrategyConfiguration bgxConfiguration = (TradingStrategyConfiguration) request.getBody();
+        setConfigurations(settings);
+        return null; //setResponse((E) bgxConfiguration);
     }
 
     private <E> Response<E> setResponse(E bgxConfiguration) {
@@ -51,75 +46,70 @@ public class AddBGXConfigurationUseCase implements UseCase {
         return response;
     }
 
-    private void setConfigurations(TradingStrategyConfiguration bgxConfiguration) {
-        String location = bgxConfiguration.getFileLocation();
-        Yaml yaml = new Yaml();
-        try(InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(location)){
-            HashMap<String, HashMap<String, String>> bgxSettings = yaml.load(is);
-            setCandlesQuantities(bgxConfiguration, bgxSettings);
-            setRiskPerTrade(bgxConfiguration, bgxSettings);
-            setIndicators(bgxConfiguration, bgxSettings);
-            setEntryStrategy(bgxConfiguration, bgxSettings);
-            setOrderStrategy(bgxConfiguration, bgxSettings);
-            setExitStrategy(bgxConfiguration, bgxSettings);
-        } catch (IOException | RuntimeException e) {
-            BadRequestException badRequestException = new BadRequestException();
-            badRequestException.initCause(e);
-            throw badRequestException;
-        }
+    private void setConfigurations(Map<String, Map<String, String>> settings) {
+            TradingStrategyConfiguration bgxConfiguration = new BGXConfigurationImpl();
+            setCandlesQuantities(bgxConfiguration, settings);
+            setRiskPerTrade(bgxConfiguration, settings);
+            setIndicators(bgxConfiguration, settings);
+            setEntryStrategy(bgxConfiguration, settings);
+            setOrderStrategy(bgxConfiguration, settings);
+            setExitStrategy(bgxConfiguration, settings);
+
     }
 
-    private void setIndicators(TradingStrategyConfiguration bgxConfiguration, HashMap<String, HashMap<String, String>> bgxSettings) {
-        for (HashMap.Entry<String, HashMap<String, String>> entry : bgxSettings.entrySet()) {
+    private void setIndicators(TradingStrategyConfiguration bgxConfiguration, Map<String, Map<String, String>> bgxSettings) {
+        for (Map.Entry<String, Map<String, String>> entry : bgxSettings.entrySet()) {
             String keyName = entry.getKey();
             if(keyName.toLowerCase().trim().contains(INDICATOR)){
-                bgxConfiguration.addIndicator(entry.getValue());
+              //  bgxConfiguration.addIndicator(entry.getValue());
             }
         }
     }
 
-    void setCandlesQuantities(TradingStrategyConfiguration bgxConfiguration, HashMap<String, HashMap<String, String>> bgxSettings) {
-        if(bgxSettings.containsKey(CANDLES_QUANTITY)){
-            Map<String, String> quantitiesValues = bgxSettings.get(CANDLES_QUANTITY);
-            if(quantitiesValues.containsKey(INITIAL)){
-                long initialValue = Long.parseLong(quantitiesValues.get(INITIAL).trim());
-                bgxConfiguration.setInitialCandlesQuantity(initialValue);
+    void setCandlesQuantities(TradingStrategyConfiguration bgxConfiguration, Map<String, Map<String, String>> bgxSettings) {
+        if(containsFieldType(bgxSettings, Constants.CANDLES_QUANTITY.toString())){
+            Map<String, String> quantitiesValues = bgxSettings.get(Constants.CANDLES_QUANTITY.toString());
+            if(containsField(quantitiesValues, Constants.INITIAL.toString())){
+                long initialValue = Long.parseLong(quantitiesValues.get(Constants.INITIAL.toString()).trim());
+               // bgxConfiguration.setInitialCandlesQuantity(initialValue);
             }
-            if(quantitiesValues.containsKey(UPDATE)){
-                long updateValue = Long.parseLong(quantitiesValues.get(UPDATE).trim());
-                bgxConfiguration.setUpdateCandlesQuantity(updateValue);
+            if(containsField(quantitiesValues, Constants.UPDATE.toString())){
+                long updateValue = Long.parseLong(quantitiesValues.get(Constants.UPDATE.toString()).trim());
+              //  bgxConfiguration.setUpdateCandlesQuantity(updateValue);
             }
         }
     }
 
-    void setRiskPerTrade(TradingStrategyConfiguration bgxConfiguration, HashMap<String, HashMap<String, String>> bgxSettings) {
-        if(bgxSettings.containsKey(RISK)){
+
+
+    void setRiskPerTrade(TradingStrategyConfiguration bgxConfiguration, Map<String, Map<String, String>> bgxSettings) {
+        if(containsFieldType(bgxSettings, RISK)){
             Map<String, String> riskValue = bgxSettings.get(RISK);
-            if(riskValue.containsKey(RISK_PER_TRADE)){
+            if(containsField(riskValue, RISK_PER_TRADE)){
                 BigDecimal riskPerTrade =  new BigDecimal(riskValue.get(RISK_PER_TRADE).trim());
                 bgxConfiguration.setRiskPerTrade(riskPerTrade);
             }
         }
     }
 
-    void setEntryStrategy(TradingStrategyConfiguration bgxConfiguration, HashMap<String, HashMap<String, String>> bgxSettings) {
-        if(bgxSettings.containsKey(ENTRY)){
+    void setEntryStrategy(TradingStrategyConfiguration bgxConfiguration, Map<String, Map<String, String>> bgxSettings) {
+        if(containsFieldType(bgxSettings, ENTRY)){
             Map<String, String> entryStrategy = bgxSettings.get(ENTRY);
-            if(entryStrategy.containsKey(ENTRY_STRATEGY))
+            if(containsField(entryStrategy, ENTRY_STRATEGY))
                 bgxConfiguration.setEntryStrategy(entryStrategy.get(ENTRY_STRATEGY).trim());
-            if(entryStrategy.containsKey(STOP_LOSS_FILTER)) {
+            if(containsField(entryStrategy, STOP_LOSS_FILTER)) {
                 BigDecimal stopLossValue =  new BigDecimal(entryStrategy.get(STOP_LOSS_FILTER).trim());
                 bgxConfiguration.setStopLossFilter(stopLossValue);
             }
-            if(entryStrategy.containsKey(TARGET)) {
+            if(containsField(entryStrategy, TARGET)) {
                 BigDecimal stopLossValue =  new BigDecimal(entryStrategy.get(TARGET).trim());
                 bgxConfiguration.setTarget(stopLossValue);
             }
-            if(entryStrategy.containsKey(RSI_FILTER)) {
+            if(containsField(entryStrategy, RSI_FILTER)) {
                 BigDecimal stopLossValue =  new BigDecimal(entryStrategy.get(RSI_FILTER).trim());
                 bgxConfiguration.setRsiFilter(stopLossValue);
             }
-            if(entryStrategy.containsKey(ENTRY_FILTER)) {
+            if(containsField(entryStrategy, ENTRY_FILTER)) {
                 BigDecimal stopLossValue =  new BigDecimal(entryStrategy.get(ENTRY_FILTER).trim());
                 bgxConfiguration.setEntryFilter(stopLossValue);
             }
@@ -127,23 +117,31 @@ public class AddBGXConfigurationUseCase implements UseCase {
         }
     }
 
-    void setOrderStrategy(TradingStrategyConfiguration bgxConfiguration, HashMap<String, HashMap<String, String>> bgxSettings) {
-        if(bgxSettings.containsKey(ORDER)){
+    void setOrderStrategy(TradingStrategyConfiguration bgxConfiguration, Map<String, Map<String, String>> bgxSettings) {
+        if(containsFieldType(bgxSettings, ORDER)){
             Map<String, String> orderValues = bgxSettings.get(ORDER);
-            if(orderValues.containsKey(ORDER_STRATEGY)){
+            if(containsField(orderValues, ORDER_STRATEGY)){
                 bgxConfiguration.setOrderStrategy(orderValues.get(ORDER_STRATEGY).trim());
             }
         }
     }
 
-    void setExitStrategy(TradingStrategyConfiguration bgxConfiguration, HashMap<String, HashMap<String, String>> bgxSettings) {
-        if(bgxSettings.containsKey(EXIT)){
+    void setExitStrategy(TradingStrategyConfiguration bgxConfiguration, Map<String, Map<String, String>> bgxSettings) {
+        if(containsFieldType(bgxSettings, EXIT)){
             Map<String, String> exitValues = bgxSettings.get(EXIT);
-            if(exitValues.containsKey(EXIT_STRATEGY))
+            if(containsField(exitValues, EXIT_STRATEGY))
                 bgxConfiguration.setExitStrategy(exitValues.get(EXIT_STRATEGY).trim());
-            if(exitValues.containsKey("exitGranularity"))
+            if(containsField(exitValues, "exitGranularity"))
                  bgxConfiguration.setExitGranularity(parseGranularity(exitValues.get("exitGranularity")));
         }
+    }
+
+    private boolean containsField(Map<String, String> quantitiesValues, String s) {
+        return quantitiesValues.containsKey(s);
+    }
+
+    private boolean containsFieldType(Map<String, Map<String, String>> bgxSettings, String s) {
+        return bgxSettings.containsKey(s);
     }
 
     private CandleGranularity parseGranularity(String setting) {

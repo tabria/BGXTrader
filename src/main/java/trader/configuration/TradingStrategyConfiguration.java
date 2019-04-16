@@ -3,30 +3,26 @@ package trader.configuration;
 import trader.entity.candlestick.candle.CandleGranularity;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public interface TradingStrategyConfiguration {
-    List<HashMap<String, String>> getIndicators();
+    List<Map<String, String>> getIndicators();
 
-    void addIndicator(HashMap<String, String> indicator);
+    void addIndicator(Map<String, String> indicator);
 
     String getInstrument();
 
     BigDecimal getSpread();
 
-    String getFileLocation();
-
-    void setFileLocation(String fileLocation);
-
     long getInitialCandlesQuantity();
 
-    void setInitialCandlesQuantity(long initialCandlesQuantity);
+    void setInitialCandlesQuantity(String initialCandlesQuantity);
 
     long getUpdateCandlesQuantity();
 
-    void setUpdateCandlesQuantity(long updateCandlesQuantity);
+    void setUpdateCandlesQuantity(String updateCandlesQuantity);
 
     BigDecimal getRiskPerTrade();
 

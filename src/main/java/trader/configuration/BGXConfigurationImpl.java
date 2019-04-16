@@ -1,22 +1,19 @@
 package trader.configuration;
 
 import trader.entity.candlestick.candle.CandleGranularity;
-import trader.exception.BadRequestException;
-import trader.exception.NegativeNumberException;
-import trader.exception.NullArgumentException;
+import trader.exception.*;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class BGXConfigurationImpl implements TradingStrategyConfiguration {
 
     private static final String DEFAULT_INSTRUMENT = "EUR_USD";
-    private static final long DEFAULT_INITIAL_CANDLES_QUANTITY = 4999L;
+    private static final long MAX_CANDLES_QUANTITY = 4999L;
     private static final long DEFAULT_UPDATE_CANDLES_QUANTITY = 2L;
-    private static final String DEFAULT_BGX_CONFIG_FILE_LOCATION = "bgxStrategyConfig.yaml";
     private static final BigDecimal DEFAULT_SPREAD = BigDecimal.valueOf(0.0002).setScale(5, BigDecimal.ROUND_HALF_UP);
     private static final BigDecimal DEFAULT_RISK_PER_TRADE = BigDecimal.valueOf(0.01)
             .setScale(5, BigDecimal.ROUND_HALF_UP);
@@ -33,8 +30,7 @@ public class BGXConfigurationImpl implements TradingStrategyConfiguration {
     private static final String DEFAULT_EXIT_STRATEGY = "fullClose";
     private static final CandleGranularity DEFAULT_EXIT_GRANULARITY = CandleGranularity.M30;
 
-    private String fileLocation;
-    private List<HashMap<String, String>> indicators;
+    private List<Map<String, String>> indicators;
     private long initialCandlesQuantity;
     private long updateCandlesQuantity;
     private String instrument;
@@ -53,11 +49,10 @@ public class BGXConfigurationImpl implements TradingStrategyConfiguration {
 
     public BGXConfigurationImpl() {
         this.indicators = new ArrayList<>();
-        this.initialCandlesQuantity = DEFAULT_INITIAL_CANDLES_QUANTITY;
+        this.initialCandlesQuantity = MAX_CANDLES_QUANTITY;
         this.updateCandlesQuantity = DEFAULT_UPDATE_CANDLES_QUANTITY;
         this.instrument = DEFAULT_INSTRUMENT;
         this.spread = DEFAULT_SPREAD;
-        this.fileLocation = DEFAULT_BGX_CONFIG_FILE_LOCATION;
         this.riskPerTrade = DEFAULT_RISK_PER_TRADE;
         this.entryStrategy = DEFAULT_ENTRY_STRATEGY;
         this.stopLossFilter = DEFAULT_STOP_LOSS_FILTER;
@@ -70,12 +65,12 @@ public class BGXConfigurationImpl implements TradingStrategyConfiguration {
     }
 
     @Override
-    public List<HashMap<String, String>> getIndicators() {
+    public List<Map<String, String>> getIndicators() {
         return this.indicators;
     }
 
     @Override
-    public void addIndicator(HashMap<String, String> indicator) {
+    public void addIndicator(Map<String, String> indicator) {
         if(indicator == null)
             throw new NullArgumentException();
         this.indicators.add(indicator);
@@ -92,28 +87,34 @@ public class BGXConfigurationImpl implements TradingStrategyConfiguration {
     }
 
     @Override
-    public String getFileLocation() {
-        return fileLocation;
-    }
-
-    @Override
-    public void setFileLocation(String fileLocation) {
-        validateInputFileLocation(fileLocation);
-        if(fileLocation.isEmpty())
-            return;
-        this.fileLocation = fileLocation.trim();
-    }
-
-    @Override
     public long getInitialCandlesQuantity() {
         return initialCandlesQuantity;
     }
 
     @Override
-    public void setInitialCandlesQuantity(long initialCandlesQuantity) {
-        if(initialCandlesQuantity > 0)
-            this.initialCandlesQuantity = initialCandlesQuantity;
+    public void setInitialCandlesQuantity(String initialCandlesQuantity) {
+        if(initialCandlesQuantity != null && !initialCandlesQuantity.trim().isEmpty()){
+            long quantity = parseToLong(initialCandlesQuantity);
+            validateBoundaries(quantity, 0L, MAX_CANDLES_QUANTITY);
+            this.initialCandlesQuantity = quantity;
+        }
     }
+
+    private void validateBoundaries(long number, long minValue, long maxValue) {
+        if(number <= minValue)
+            throw new UnderflowException();
+        if(number > maxValue)
+            throw new OverflowException();
+    }
+
+    private long parseToLong(String initialCandlesQuantity) {
+        try{
+           return Long.parseLong(initialCandlesQuantity.trim());
+        } catch (Exception e){
+            throw new NotANumberException();
+        }
+    }
+
 
     @Override
     public long getUpdateCandlesQuantity() {
@@ -121,9 +122,9 @@ public class BGXConfigurationImpl implements TradingStrategyConfiguration {
     }
 
     @Override
-    public void setUpdateCandlesQuantity(long updateCandlesQuantity) {
-        if(updateCandlesQuantity > 0)
-            this.updateCandlesQuantity = updateCandlesQuantity;
+    public void setUpdateCandlesQuantity(String updateCandlesQuantity) {
+//        if(updateCandlesQuantity > 0)
+//            this.updateCandlesQuantity = updateCandlesQuantity;
     }
 
     @Override

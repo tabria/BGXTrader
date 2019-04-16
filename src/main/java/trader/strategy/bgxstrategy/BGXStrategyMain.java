@@ -64,7 +64,7 @@ public final class BGXStrategyMain implements Strategy {
 
         brokerGateway = setBrokerGateway(brokerName, brokerConfigurationFileName);
         priceObservable = PriceObservable.create(brokerGateway, configuration);
-        indicatorList = createIndicatorsFromConfiguration(configuration.getIndicators());
+    //    indicatorList = createIndicatorsFromConfiguration(configuration.getIndicators());
         entryStrategy = setEntryStrategy();
         orderStrategy = setOrderStrategy();
    //     exitStrategy = setExitStrategy();

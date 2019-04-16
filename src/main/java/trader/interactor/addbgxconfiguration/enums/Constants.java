@@ -1,6 +1,6 @@
 package trader.interactor.addbgxconfiguration.enums;
 
-public enum TradingSystemConfigurationFields {
+public enum Constants {
     CANDLES_QUANTITY {
         @Override
         public String toString() {

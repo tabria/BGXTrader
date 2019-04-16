@@ -3,9 +3,7 @@ package trader.configuration;
 import org.junit.Before;
 import org.junit.Test;
 import trader.entity.candlestick.candle.CandleGranularity;
-import trader.exception.BadRequestException;
-import trader.exception.NegativeNumberException;
-import trader.exception.NullArgumentException;
+import trader.exception.*;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -45,6 +43,7 @@ public class BGXConfigurationImplTest {
         config = new BGXConfigurationImpl();
     }
 
+    ///////////////////////////////////////
     @Test
     public void whenCallGetIndicators_ReturnList(){
         assertEquals(ArrayList.class, config.getIndicators().getClass());
@@ -63,30 +62,63 @@ public class BGXConfigurationImplTest {
 
         assertEquals(indicator, config.getIndicators().get(0));
     }
+    ////////////////////////
 
     @Test
-    public void WhenCallGetInstrument_ReturnCorrectType(){
+    public void givenInitialSettings_WhenCallGetInstrument_ReturnString(){
         assertEquals(String.class, config.getInstrument().getClass());
     }
 
     @Test
-    public void WhenCreateThenDefaultInstrument(){
+    public void givenInitialSettings_WhenInstantiate_ThenSetToDefaultInstrument(){
         assertEquals(DEFAULT_INSTRUMENT, config.getInstrument());
     }
 
     @Test
-    public void WhenCallSetInitialCandlesQuantityWithCorrectNumber_CorrectResult(){
+    public void givenNull_WhenCallInitialCandlesQuantity_ThenSetDefaultValue(){
+        config.setInitialCandlesQuantity(null);
+
+        assertEquals(DEFAULT_INITIAL_CANDLES_QUANTITY, config.getInitialCandlesQuantity());
+    }
+
+    @Test
+    public void givenEmpty_WhenCallInitialCandlesQuantity_ThenSetDefaultValue(){
+        config.setInitialCandlesQuantity("  ");
+
+        assertEquals(DEFAULT_INITIAL_CANDLES_QUANTITY, config.getInitialCandlesQuantity());
+    }
+
+    @Test(expected = NotANumberException.class)
+    public void givenNonNumberString_WhenCallInitialCandlesQuantity_ThenThrowException(){
+        config.setInitialCandlesQuantity("xxx");
+    }
+
+    @Test(expected = UnderflowException.class)
+    public void givenStringWithNegativeValueOrZero_WhenCallInitialCandlesQuantity_ThenException(){
+        config.setInitialCandlesQuantity("0");
+    }
+
+    @Test(expected = OverflowException.class)
+    public void givenStringWithMoreThanMaxQuantity_WhenCallInitialCandlesQuantity_ThenException(){
+        config.setInitialCandlesQuantity("5001");
+    }
+
+    @Test
+    public void givenCorrectString_WhenCallSetInitialQuantity_SetCorrectValue(){
         long initialCandlesQuantity = config.getInitialCandlesQuantity();
-        config.setInitialCandlesQuantity(15L);
+        config.setInitialCandlesQuantity("15");
         long initialCandlesQuantityUpdated = config.getInitialCandlesQuantity();
 
         assertNotEquals(initialCandlesQuantity, initialCandlesQuantityUpdated);
         assertEquals(15L, initialCandlesQuantityUpdated);
     }
 
+
+    ////////////////////////////////////////////////////////////
+
     @Test
     public void WhenCallSetInitialCandlesQuantityWithNegativeValue_Defaults(){
-        config.setInitialCandlesQuantity(-1L);
+        config.setInitialCandlesQuantity("-1");
 
         assertEquals(DEFAULT_INITIAL_CANDLES_QUANTITY, config.getInitialCandlesQuantity());
     }
@@ -94,7 +126,7 @@ public class BGXConfigurationImplTest {
     @Test
     public void WhenCallSetUpdateCandlesQuantityWithCorrectNumber_CorrectResult(){
         long updateCandlesQuantity = config.getUpdateCandlesQuantity();
-        config.setUpdateCandlesQuantity(7L);
+        config.setUpdateCandlesQuantity("7");
         long newUpdateCandlesQuantity = config.getUpdateCandlesQuantity();
 
         assertNotEquals(updateCandlesQuantity, newUpdateCandlesQuantity);
@@ -103,39 +135,9 @@ public class BGXConfigurationImplTest {
 
     @Test
     public void WhenCallSetUpdateCandlesQuantityWithNegativeValue_Defaults(){
-        config.setUpdateCandlesQuantity(-1L);
+        config.setUpdateCandlesQuantity("-1");
 
         assertEquals(DEFAULT_UPDATE_CANDLES_QUANTITY, config.getUpdateCandlesQuantity());
-    }
-
-    @Test
-    public void WhenCreateFilePathSetToDefault(){
-        String fileLocation = config.getFileLocation();
-
-        assertEquals(DEFAULT_BGX_CONFIG_FILE_LOCATION, fileLocation);
-    }
-
-    @Test(expected = NullArgumentException.class)
-    public void WhenCallSetFileLocationWithNull_Exception(){
-        config.setFileLocation(null);
-    }
-
-    @Test
-    public void WhenCallSetFileLocationWithEmptyString_Default(){
-        config.setFileLocation("");
-        assertEquals(DEFAULT_BGX_CONFIG_FILE_LOCATION, config.getFileLocation());
-    }
-
-    @Test(expected = BadRequestException.class)
-    public void WhenCallSetFileLocationWithStringWithoutYamlOrYmlExtension_Exception(){
-        config.setFileLocation("gtre.exe");
-    }
-
-    @Test
-    public void WhenCallSetFileLocationWithCorrectStringContainingExtraSpaces_TrimAndSet(){
-        config.setFileLocation("   bgx.yaml ");
-
-        assertEquals("bgx.yaml", config.getFileLocation());
     }
 
     @Test

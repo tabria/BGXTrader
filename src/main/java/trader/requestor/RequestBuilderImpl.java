@@ -95,7 +95,6 @@ public class RequestBuilderImpl implements RequestOLDBuilder {
     private Request<?> buildBGXConfigurationRequest(HashMap<String, String> settings) {
         Request<TradingStrategyConfiguration> request = new RequestImpl<>();
         BGXConfigurationImpl bgxConfiguration = new BGXConfigurationImpl();
-        bgxConfiguration.setFileLocation(settings.get(LOCATION));
         request.setBody(bgxConfiguration);
         return request;
     }
