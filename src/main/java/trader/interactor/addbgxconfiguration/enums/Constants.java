@@ -73,6 +73,12 @@ public enum Constants {
             return "exit";
         }
     },
+    EXIT_GRANULARITY{
+        @Override
+        public String toString() {
+            return "exitGranularity";
+        }
+    },
     STOP_LOSS_FILTER {
         @Override
         public String toString() {

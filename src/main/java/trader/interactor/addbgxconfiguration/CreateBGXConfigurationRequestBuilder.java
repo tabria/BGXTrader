@@ -7,7 +7,7 @@ import trader.validation.Validator;
 
 import java.util.Map;
 
-public class AddBGXConfigurationRequestBuilder implements RequestBuilder {
+public class CreateBGXConfigurationRequestBuilder implements RequestBuilder {
 
     @SuppressWarnings("unchecked")
     @Override

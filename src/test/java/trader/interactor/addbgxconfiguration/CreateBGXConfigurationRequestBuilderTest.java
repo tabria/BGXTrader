@@ -10,13 +10,13 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
-public class AddBGXConfigurationRequestTest {
+public class CreateBGXConfigurationRequestBuilderTest {
 
-    private AddBGXConfigurationRequestBuilder requestBuilder;
+    private CreateBGXConfigurationRequestBuilder requestBuilder;
 
     @Before
     public void setUp(){
-        requestBuilder = new AddBGXConfigurationRequestBuilder();
+        requestBuilder = new CreateBGXConfigurationRequestBuilder();
     }
 
     @Test(expected = NullArgumentException.class)

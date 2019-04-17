@@ -4,11 +4,11 @@ import trader.requestor.*;
 import trader.responder.Response;
 import java.util.Map;
 
-public class AddBGXConfigurationController<T> implements TraderController<T> {
+public class CreateBGXConfigurationController<T> implements TraderController<T> {
 
     private UseCaseFactory useCaseFactory;
 
-    public AddBGXConfigurationController(UseCaseFactory useCaseFactory) {
+    public CreateBGXConfigurationController(UseCaseFactory useCaseFactory) {
         this.useCaseFactory = useCaseFactory;
     }
 

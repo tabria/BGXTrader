@@ -2,7 +2,7 @@ package trader.strategy.bgxstrategy.service;
 
 import org.yaml.snakeyaml.Yaml;
 import trader.configuration.TradingStrategyConfiguration;
-import trader.controller.AddBGXConfigurationController;
+import trader.controller.CreateBGXConfigurationController;
 import trader.controller.TraderController;
 import trader.exception.BadRequestException;
 import trader.requestor.UseCaseFactory;
@@ -31,7 +31,7 @@ public class ConfigurationService {
         }
         Map<String, Object> settings = new HashMap<>();
         settings.put("settings", bgxSettings);
-        TraderController<TradingStrategyConfiguration> controller = new AddBGXConfigurationController<>(useCaseFactory);
+        TraderController<TradingStrategyConfiguration> controller = new CreateBGXConfigurationController<>(useCaseFactory);
         Response<TradingStrategyConfiguration> configurationResponse = controller.execute(settings);
         return configurationResponse.getBody();
     }

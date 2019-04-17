@@ -109,7 +109,7 @@ public class RequestOLDBuilderImplTest {
     @Test
     public void whenCallBuildWithBGXConfigurationControllerName_ReturnBGXConfigurationRequest() {
         settings.put("location", BGX_STRATEGY_CONFIG_FILE_NAME);
-        Request<?> bgxConfigurationRequest = requestOLDBuilder.build("AddBGXConfigurationController", settings);
+        Request<?> bgxConfigurationRequest = requestOLDBuilder.build("CreateBGXConfigurationController", settings);
 
         assertEquals(BGXConfigurationImpl.class, bgxConfigurationRequest.getBody().getClass());
     }

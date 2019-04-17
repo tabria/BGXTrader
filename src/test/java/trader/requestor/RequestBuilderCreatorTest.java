@@ -4,7 +4,7 @@ import org.junit.Test;
 import trader.exception.EmptyArgumentException;
 import trader.exception.NoSuchRequestBuilderException;
 import trader.exception.NullArgumentException;
-import trader.interactor.addbgxconfiguration.AddBGXConfigurationRequestBuilder;
+import trader.interactor.addbgxconfiguration.CreateBGXConfigurationRequestBuilder;
 
 import static org.junit.Assert.*;
 
@@ -25,16 +25,16 @@ public class RequestBuilderCreatorTest {
 
     @Test
     public void givenCorrectControllerName_WhenCallComposeClassName_ThenCorrectClassName(){
-        String classForName = RequestBuilderCreator.composeClassForName("AddBGXConfigurationController");
+        String classForName = RequestBuilderCreator.composeClassForName("CreateBGXConfigurationController");
 
-        assertEquals("trader.interactor.addbgxconfiguration.AddBGXConfigurationRequestBuilder", classForName);
+        assertEquals("trader.interactor.addbgxconfiguration.CreateBGXConfigurationRequestBuilder", classForName);
     }
 
     @Test
     public void givenCorrectControllerName_WhenCallCreate_CreateCorrectRequestBuilder(){
-        RequestBuilder requestBuilder = RequestBuilderCreator.create(" AddBGXConfigurationController ");
+        RequestBuilder requestBuilder = RequestBuilderCreator.create(" CreateBGXConfigurationController ");
 
-        assertEquals(AddBGXConfigurationRequestBuilder.class, requestBuilder.getClass());
+        assertEquals(CreateBGXConfigurationRequestBuilder.class, requestBuilder.getClass());
     }
 
     @Test(expected = NoSuchRequestBuilderException.class)

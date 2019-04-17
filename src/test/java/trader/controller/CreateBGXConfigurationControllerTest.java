@@ -21,9 +21,9 @@ import static org.mockito.Mockito.when;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(RequestBuilderCreator.class)
-public class AddBGXConfigurationControllerTest {
+public class CreateBGXConfigurationControllerTest {
 
-    private static final String BGX_CONFIGURATION_CONTROLLER = "AddBGXConfigurationController";
+    private static final String BGX_CONFIGURATION_CONTROLLER = "CreateBGXConfigurationController";
 
     private Map<String, Object> settings;
     private UseCaseFactory useCaseFactoryMock;
@@ -32,9 +32,9 @@ public class AddBGXConfigurationControllerTest {
     private RequestBuilder requestBuilderMock;
     private Request requestMock;
     private Response responseMock;
-    private AddBGXConfigurationController addBgxConfigurationController;
+    private CreateBGXConfigurationController createBgxConfigurationController;
 
-    public AddBGXConfigurationControllerTest() {
+    public CreateBGXConfigurationControllerTest() {
     }
 
     @Before
@@ -47,7 +47,7 @@ public class AddBGXConfigurationControllerTest {
         requestMock = mock(Request.class);
         requestBuilderMock = mock(RequestBuilder.class);
         responseMock = mock(Response.class);
-        addBgxConfigurationController = new AddBGXConfigurationController(useCaseFactoryMock);
+        createBgxConfigurationController = new CreateBGXConfigurationController(useCaseFactoryMock);
     }
 
     @Test
@@ -56,7 +56,7 @@ public class AddBGXConfigurationControllerTest {
         setFakeRequestFactory();
         setFakeRequestBody();
 
-        Request configurationRequest = addBgxConfigurationController.getRequest(BGX_CONFIGURATION_CONTROLLER, settings);
+        Request configurationRequest = createBgxConfigurationController.getRequest(BGX_CONFIGURATION_CONTROLLER, settings);
 
         assertEquals(configurationMock.getClass(), configurationRequest.getBody().getClass());
     }
@@ -64,7 +64,7 @@ public class AddBGXConfigurationControllerTest {
     @Test
     public void givenCorrectSettings_WhenCallMake_ThenReturnCorrectUseCase(){
         setFakeUseCaseFactory();
-        UseCase useCase = addBgxConfigurationController.make(BGX_CONFIGURATION_CONTROLLER);
+        UseCase useCase = createBgxConfigurationController.make(BGX_CONFIGURATION_CONTROLLER);
 
         assertEquals(useCaseMock, useCase);
     }
@@ -79,7 +79,7 @@ public class AddBGXConfigurationControllerTest {
         setFakeResponseBody();
 
        // setExecuteSettings(BGX_CONFIGURATION_CONTROLLER);
-        Response<TradingStrategyConfiguration> bgxConfigurationResponse = addBgxConfigurationController.execute(settings);
+        Response<TradingStrategyConfiguration> bgxConfigurationResponse = createBgxConfigurationController.execute(settings);
 
         assertEquals(configurationMock, bgxConfigurationResponse.getBody());
     }
