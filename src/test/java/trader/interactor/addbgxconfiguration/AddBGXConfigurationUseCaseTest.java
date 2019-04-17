@@ -116,7 +116,7 @@ public class AddBGXConfigurationUseCaseTest {
     public void WhenCallSetSetRiskPerTradeWithCorrectValueContainingSpaces_CorrectResult(){
         Map<String, Map<String, String>> settings = setSettings("risk", "riskPerTrade", " 0.03 ");
 
-        doThrow(new RuntimeException()).when(configurationMock).setRiskPerTrade(BigDecimal.valueOf(0.03));
+        doThrow(new RuntimeException()).when(configurationMock).setRiskPerTrade("0.03");
         addBgxConfigurationUseCase.setRiskPerTrade(configurationMock, settings);
     }
 
@@ -165,7 +165,7 @@ public class AddBGXConfigurationUseCaseTest {
     public void WhenCallSetStopLossFilterWithCorrectValueContainingSpaces_CorrectResult(){
         Map<String, Map<String, String>> settings = setSettings("entry", "stopLossFilter", " 0.03 ");
 
-        doThrow(new RuntimeException()).when(configurationMock).setStopLossFilter(BigDecimal.valueOf(0.03));
+        doThrow(new RuntimeException()).when(configurationMock).setStopLossFilter("0.03");
         addBgxConfigurationUseCase.setEntryStrategy(configurationMock, settings);
     }
 
@@ -187,7 +187,7 @@ public class AddBGXConfigurationUseCaseTest {
     public void WhenCallSetTargetWithCorrectValueContainingSpaces_CorrectResult(){
         Map<String, Map<String, String>> settings = setSettings("entry", "target", " 0.03 ");
 
-        doThrow(new RuntimeException()).when(configurationMock).setTarget(BigDecimal.valueOf(0.03));
+        doThrow(new RuntimeException()).when(configurationMock).setTarget("0.03");
         addBgxConfigurationUseCase.setEntryStrategy(configurationMock, settings);
     }
 
@@ -209,7 +209,7 @@ public class AddBGXConfigurationUseCaseTest {
     public void WhenCallSetRSIFilterWithCorrectValueContainingSpaces_CorrectResult(){
         Map<String, Map<String, String>> settings = setSettings("entry", "rsiFilter", " 0.03 ");
 
-        doThrow(new RuntimeException()).when(configurationMock).setRsiFilter(BigDecimal.valueOf(0.03));
+        doThrow(new RuntimeException()).when(configurationMock).setRsiFilter("0.03");
         addBgxConfigurationUseCase.setEntryStrategy(configurationMock, settings);
     }
 
@@ -231,7 +231,7 @@ public class AddBGXConfigurationUseCaseTest {
     public void WhenCallSetEntryFilterWithCorrectValueContainingSpaces_CorrectResult(){
         Map<String, Map<String, String>> settings = setSettings("entry", "entryFilter", " 0.03 ");
 
-        doThrow(new RuntimeException()).when(configurationMock).setEntryFilter(BigDecimal.valueOf(0.03));
+        doThrow(new RuntimeException()).when(configurationMock).setEntryFilter("0.03");
         addBgxConfigurationUseCase.setEntryStrategy(configurationMock, settings);
     }
 

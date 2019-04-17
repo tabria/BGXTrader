@@ -93,28 +93,16 @@ public class BGXConfigurationImpl implements TradingStrategyConfiguration {
 
     @Override
     public void setInitialCandlesQuantity(String initialCandlesQuantity) {
-        if(initialCandlesQuantity != null && !initialCandlesQuantity.trim().isEmpty()){
+        if(haveValue(initialCandlesQuantity)){
             long quantity = parseToLong(initialCandlesQuantity);
             validateBoundaries(quantity, 0L, MAX_CANDLES_QUANTITY);
             this.initialCandlesQuantity = quantity;
         }
     }
 
-    private void validateBoundaries(long number, long minValue, long maxValue) {
-        if(number <= minValue)
-            throw new UnderflowException();
-        if(number > maxValue)
-            throw new OverflowException();
+    private boolean haveValue(String initialCandlesQuantity) {
+        return initialCandlesQuantity != null && !initialCandlesQuantity.trim().isEmpty();
     }
-
-    private long parseToLong(String initialCandlesQuantity) {
-        try{
-           return Long.parseLong(initialCandlesQuantity.trim());
-        } catch (Exception e){
-            throw new NotANumberException();
-        }
-    }
-
 
     @Override
     public long getUpdateCandlesQuantity() {
@@ -123,8 +111,11 @@ public class BGXConfigurationImpl implements TradingStrategyConfiguration {
 
     @Override
     public void setUpdateCandlesQuantity(String updateCandlesQuantity) {
-//        if(updateCandlesQuantity > 0)
-//            this.updateCandlesQuantity = updateCandlesQuantity;
+        if(haveValue(updateCandlesQuantity)){
+            long quantity = parseToLong(updateCandlesQuantity);
+            validateBoundaries(quantity, 0L, MAX_CANDLES_QUANTITY);
+            this.updateCandlesQuantity = quantity;
+        }
     }
 
     @Override
@@ -133,9 +124,12 @@ public class BGXConfigurationImpl implements TradingStrategyConfiguration {
     }
 
     @Override
-    public void setRiskPerTrade(BigDecimal riskPerTrade) {
-        validateBigDecimalInput(riskPerTrade);
-        this.riskPerTrade = riskPerTrade;
+    public void setRiskPerTrade(String strRiskPerTrade) {
+        if(haveValue(strRiskPerTrade)){
+            BigDecimal risk = parseBigDecimal(strRiskPerTrade);
+            validateBoundaries(risk);
+            this.riskPerTrade = risk;
+        }
     }
 
     @Override
@@ -145,7 +139,7 @@ public class BGXConfigurationImpl implements TradingStrategyConfiguration {
 
     @Override
     public void setEntryStrategy(String entryStrategy) {
-        if(entryStrategy != null && !entryStrategy.trim().isEmpty())
+        if(haveValue(entryStrategy))
             this.entryStrategy = entryStrategy.trim();
     }
 
@@ -156,7 +150,7 @@ public class BGXConfigurationImpl implements TradingStrategyConfiguration {
 
     @Override
     public void setOrderStrategy(String orderStrategy) {
-        if(orderStrategy != null && !orderStrategy.trim().isEmpty())
+        if(haveValue(orderStrategy))
             this.orderStrategy = orderStrategy.trim();
     }
 
@@ -167,7 +161,7 @@ public class BGXConfigurationImpl implements TradingStrategyConfiguration {
 
     @Override
     public void setExitStrategy(String exitStrategy) {
-        if(exitStrategy != null && !exitStrategy.trim().isEmpty())
+        if(haveValue(exitStrategy))
             this.exitStrategy = exitStrategy.trim();
     }
 
@@ -177,9 +171,12 @@ public class BGXConfigurationImpl implements TradingStrategyConfiguration {
     }
 
     @Override
-    public void setStopLossFilter(BigDecimal stopLossFilter) {
-        validateBigDecimalInput(stopLossFilter);
-        this.stopLossFilter = stopLossFilter;
+    public void setStopLossFilter(String strStopLossFilter) {
+        if(haveValue(strStopLossFilter)){
+            BigDecimal stopLossFilter = parseBigDecimal(strStopLossFilter);
+            validateBoundaries(stopLossFilter);
+            this.stopLossFilter = stopLossFilter;
+        }
     }
 
     @Override
@@ -188,9 +185,12 @@ public class BGXConfigurationImpl implements TradingStrategyConfiguration {
     }
 
     @Override
-    public void setTarget(BigDecimal target) {
-        validateBigDecimalInput(target);
-        this.target = target;
+    public void setTarget(String strTarget) {
+        if(haveValue(strTarget)){
+            BigDecimal target = parseBigDecimal(strTarget);
+            validateBoundaries(target);
+            this.target = target;
+        }
     }
 
     @Override
@@ -199,9 +199,12 @@ public class BGXConfigurationImpl implements TradingStrategyConfiguration {
     }
 
     @Override
-    public void setRsiFilter(BigDecimal rsiFilter) {
-        validateBigDecimalInput(rsiFilter);
-        this.rsiFilter = rsiFilter;
+    public void setRsiFilter(String strRsiFilter) {
+        if(haveValue(strRsiFilter)){
+            BigDecimal rsiFilter = parseBigDecimal(strRsiFilter);
+            validateBoundaries(rsiFilter);
+            this.rsiFilter = rsiFilter;
+        }
     }
 
     @Override
@@ -210,9 +213,12 @@ public class BGXConfigurationImpl implements TradingStrategyConfiguration {
     }
 
     @Override
-    public void setEntryFilter(BigDecimal entryFilter) {
-        validateBigDecimalInput(entryFilter);
-        this.entryFilter = entryFilter;
+    public void setEntryFilter(String strEntryFilter) {
+        if(haveValue(strEntryFilter)){
+            BigDecimal entryFilter = parseBigDecimal(strEntryFilter);
+            validateBoundaries(entryFilter);
+            this.entryFilter = entryFilter;
+        }
     }
 
     @Override
@@ -221,30 +227,44 @@ public class BGXConfigurationImpl implements TradingStrategyConfiguration {
     }
 
     @Override
-    public void setExitGranularity(CandleGranularity exitGranularity) {
-        if(exitGranularity != null)
-            this.exitGranularity = exitGranularity;
+    public void setExitGranularity(String strExitGranularity) {
+        if(haveValue(strExitGranularity))
+            this.exitGranularity = parseGranularity(strExitGranularity);
     }
 
-    private void validateBigDecimalInput(BigDecimal number) {
-        if(number == null)
-            throw new NullArgumentException();
-        if(number.compareTo(BigDecimal.ZERO) < 0)
-            throw new NegativeNumberException();
+    private void validateBoundaries(long number, long minValue, long maxValue) {
+        if(number <= minValue)
+            throw new UnderflowException();
+        if(number > maxValue)
+            throw new OverflowException();
     }
 
-    private void validateInputFileLocation(String fileLocation) {
-        if(fileLocation == null)
-            throw new NullArgumentException();
-        if(isNotYamlFile(fileLocation))
-            throw new BadRequestException();
+    private void validateBoundaries(BigDecimal number) {
+        if(number.compareTo(BigDecimal.ZERO) <= 0)
+            throw new UnderflowException();
     }
 
-    private boolean isNotYamlFile(String fileLocation) {
-        if(fileLocation.isEmpty())
-            return false;
-        if(fileLocation.contains(".yaml"))
-            return false;
-        return !fileLocation.contains(".yml");
+    private long parseToLong(String initialCandlesQuantity) {
+        try{
+            return Long.parseLong(initialCandlesQuantity.trim());
+        } catch (Exception e){
+            throw new NotANumberException();
+        }
+    }
+
+    private BigDecimal parseBigDecimal(String strNumber) {
+        try{
+            return new BigDecimal(strNumber.trim());
+        } catch (Exception e){
+            throw new NotANumberException();
+        }
+    }
+
+    private CandleGranularity parseGranularity(String setting) {
+        try {
+            return CandleGranularity.valueOf(setting.trim().toUpperCase());
+        } catch (Exception e) {
+            throw new EmptyArgumentException();
+        }
     }
 }

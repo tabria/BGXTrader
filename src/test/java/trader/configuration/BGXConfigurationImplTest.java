@@ -43,26 +43,24 @@ public class BGXConfigurationImplTest {
         config = new BGXConfigurationImpl();
     }
 
-    ///////////////////////////////////////
     @Test
     public void whenCallGetIndicators_ReturnList(){
         assertEquals(ArrayList.class, config.getIndicators().getClass());
     }
 
     @Test(expected = NullArgumentException.class)
-    public void WhenCallAddIndicatorWithNullIndicator_Exception(){
+    public void givenNull_WhenCallAddIndicator_ThenThrowException(){
         config.addIndicator(null);
     }
 
     @Test
-    public void WhenCallAddIndicatorWithCorrectInput_CorrectResult(){
+    public void givenCorrectSettings_WhenCallAddIndicator_ThenReturnCorrectResult(){
         HashMap<String, String> indicator = new HashMap<>();
         indicator.put("type", "ema");
         config.addIndicator(indicator);
 
         assertEquals(indicator, config.getIndicators().get(0));
     }
-    ////////////////////////
 
     @Test
     public void givenInitialSettings_WhenCallGetInstrument_ReturnString(){
@@ -75,32 +73,37 @@ public class BGXConfigurationImplTest {
     }
 
     @Test
-    public void givenNull_WhenCallInitialCandlesQuantity_ThenSetDefaultValue(){
+    public void givenCorrectSettings_WhenCallGetSpread_ThenReturnDefaultValue(){
+        assertEquals(DEFAULT_SPREAD ,config.getSpread());
+    }
+
+    @Test
+    public void givenNull_WhenCallSetInitialCandlesQuantity_ThenSetDefaultValue(){
         config.setInitialCandlesQuantity(null);
 
         assertEquals(DEFAULT_INITIAL_CANDLES_QUANTITY, config.getInitialCandlesQuantity());
     }
 
     @Test
-    public void givenEmpty_WhenCallInitialCandlesQuantity_ThenSetDefaultValue(){
+    public void givenEmpty_WhenCallSetInitialCandlesQuantity_ThenSetDefaultValue(){
         config.setInitialCandlesQuantity("  ");
 
         assertEquals(DEFAULT_INITIAL_CANDLES_QUANTITY, config.getInitialCandlesQuantity());
     }
 
     @Test(expected = NotANumberException.class)
-    public void givenNonNumberString_WhenCallInitialCandlesQuantity_ThenThrowException(){
+    public void givenNonNumberString_WhenCallSetInitialCandlesQuantity_ThenThrowException(){
         config.setInitialCandlesQuantity("xxx");
     }
 
     @Test(expected = UnderflowException.class)
-    public void givenStringWithNegativeValueOrZero_WhenCallInitialCandlesQuantity_ThenException(){
+    public void givenStringWithNegativeValuedOrZero_WhenCallSetInitialCandlesQuantity_ThenException(){
         config.setInitialCandlesQuantity("0");
     }
 
     @Test(expected = OverflowException.class)
-    public void givenStringWithMoreThanMaxQuantity_WhenCallInitialCandlesQuantity_ThenException(){
-        config.setInitialCandlesQuantity("5001");
+    public void givenStringWithMoreThanMaxQuantity_WhenCallSetInitialCandlesQuantity_ThenException(){
+        config.setInitialCandlesQuantity("5000");
     }
 
     @Test
@@ -113,226 +116,321 @@ public class BGXConfigurationImplTest {
         assertEquals(15L, initialCandlesQuantityUpdated);
     }
 
-
-    ////////////////////////////////////////////////////////////
-
     @Test
-    public void WhenCallSetInitialCandlesQuantityWithNegativeValue_Defaults(){
-        config.setInitialCandlesQuantity("-1");
-
-        assertEquals(DEFAULT_INITIAL_CANDLES_QUANTITY, config.getInitialCandlesQuantity());
-    }
-
-    @Test
-    public void WhenCallSetUpdateCandlesQuantityWithCorrectNumber_CorrectResult(){
-        long updateCandlesQuantity = config.getUpdateCandlesQuantity();
-        config.setUpdateCandlesQuantity("7");
-        long newUpdateCandlesQuantity = config.getUpdateCandlesQuantity();
-
-        assertNotEquals(updateCandlesQuantity, newUpdateCandlesQuantity);
-        assertEquals(7L, newUpdateCandlesQuantity);
-    }
-
-    @Test
-    public void WhenCallSetUpdateCandlesQuantityWithNegativeValue_Defaults(){
-        config.setUpdateCandlesQuantity("-1");
+    public void givenNull_WhenCallSetUpdateCandlesQuantity_ThenSetDefaultValue(){
+        config.setUpdateCandlesQuantity(null);
 
         assertEquals(DEFAULT_UPDATE_CANDLES_QUANTITY, config.getUpdateCandlesQuantity());
     }
 
     @Test
-    public void whenCallGetSpreadThenReturnDefaultValue(){
-        assertEquals(DEFAULT_SPREAD ,config.getSpread());
+    public void givenEmpty_WhenCallSetUpdateCandlesQuantity_ThenSetDefaultValue(){
+        config.setUpdateCandlesQuantity("  ");
+
+        assertEquals(DEFAULT_UPDATE_CANDLES_QUANTITY, config.getUpdateCandlesQuantity());
     }
 
-    @Test(expected = NullArgumentException.class)
-    public void whenCallSetRiskPerTradeWithNull_Exception(){
-        config.setRiskPerTrade(null);
+    @Test(expected = NotANumberException.class)
+    public void givenNonNumberString_WhenCallSetUpdateCandlesQuantity_ThenThrowException(){
+        config.setUpdateCandlesQuantity("xxx");
     }
 
-    @Test(expected = NegativeNumberException.class)
-    public void WhenCallSetRiskPerTradeWithNegativeValue_Exception(){
-        config.setRiskPerTrade(new BigDecimal(-20));
+    @Test(expected = UnderflowException.class)
+    public void givenStringWithNegativeValuedOrZero_WhenCallSetUpdateCandlesQuantity_ThenException(){
+        config.setUpdateCandlesQuantity("0");
+    }
+
+    @Test(expected = OverflowException.class)
+    public void givenStringWithMoreThanMaxQuantity_WhenCallSetUpdateCandlesQuantity_ThenException(){
+        config.setUpdateCandlesQuantity("5000");
     }
 
     @Test
-    public void WhenCallSetRiskPerTradeWithCorrectValue_CorrectResult(){
-        BigDecimal expected = new BigDecimal(0.07);
-        config.setRiskPerTrade(expected);
+    public void givenCorrectString_WhenCallSetUpdateQuantity_SetCorrectValue(){
+        long updateCandlesQuantity = config.getUpdateCandlesQuantity();
+        config.setUpdateCandlesQuantity("22");
+        long updateCandlesQuantityActual = config.getUpdateCandlesQuantity();
 
-        assertEquals(expected, config.getRiskPerTrade());
+        assertNotEquals(updateCandlesQuantity, updateCandlesQuantityActual);
+        assertEquals(22L, updateCandlesQuantityActual);
     }
 
     @Test
-    public void WhenCallGetRiskPerTradeAfterInitializing_Default(){
+    public void givenInitialSettings_WhenInstantiateRiskPerTrade_ThenDefaultValue(){
         assertEquals(DEFAULT_RISK_PER_TRADE, config.getRiskPerTrade());
     }
 
     @Test
-    public void WhenCallSetEntryStrategyWithNull_Default(){
+    public void givenNull_WhenCallSetRiskPerTrade_ThenDefaultValue(){
+        config.setRiskPerTrade(null);
+
+        assertEquals(DEFAULT_RISK_PER_TRADE, config.getRiskPerTrade());
+    }
+
+
+    @Test
+    public void givenEmpty_WhenCallSetRiskPerTrade_ThenSetDefaultValue(){
+        config.setRiskPerTrade("  ");
+
+        assertEquals(DEFAULT_RISK_PER_TRADE, config.getRiskPerTrade());
+    }
+
+    @Test(expected = NotANumberException.class)
+    public void givenNonNumberString_WhenCallSetRiskPerTrade_ThenThrowException(){
+        config.setRiskPerTrade("xxx");
+    }
+
+    @Test(expected = UnderflowException.class)
+    public void givenNegativeValuedString_WhenCallSetRiskPerTrade_ThenThrowException(){
+        config.setRiskPerTrade("-20");
+    }
+
+    @Test
+    public void givenCorrectSettings_WhenCallSetRiskPerTrade_ThenReturnCorrectValue(){
+        String expected = " 0.07 ";
+        config.setRiskPerTrade(expected);
+
+        assertEquals(new BigDecimal(expected.trim()), config.getRiskPerTrade());
+    }
+
+    @Test
+    public void givenNull_WhenCallSetEntryStrategy_ThenDefaultValue(){
         config.setEntryStrategy(null);
 
         assertEquals(DEFAULT_ENTRY_STRATEGY, config.getEntryStrategy());
     }
 
     @Test
-    public void WhenCallSetOrderStrategyWithNull_Default(){
-        config.setOrderStrategy(null);
-
-        assertEquals(DEFAULT_ORDER_STRATEGY, config.getOrderStrategy());
-    }
-
-    @Test
-    public void WhenCallSetExitStrategyWithNull_Default(){
-        config.setExitStrategy(null);
-
-        assertEquals(DEFAULT_EXIT_STRATEGY, config.getExitStrategy());
-    }
-
-    @Test
-    public void WhenCallSetEntryStrategyWithEmpty_Default(){
+    public void givenEmpty_WhenCallSetEntryStrategy_ThenDefault(){
         config.setEntryStrategy("  ");
 
         assertEquals(DEFAULT_ENTRY_STRATEGY, config.getEntryStrategy());
     }
 
     @Test
-    public void WhenCallSetOrderStrategyWithEmpty_Default(){
-        config.setOrderStrategy("  ");
-
-        assertEquals(DEFAULT_ORDER_STRATEGY, config.getOrderStrategy());
-    }
-
-    @Test
-    public void WhenCallSetExitStrategyWithEmpty_Default(){
-        config.setExitStrategy("   ");
-
-        assertEquals(DEFAULT_EXIT_STRATEGY, config.getExitStrategy());
-    }
-
-    @Test
-    public void WhenCallSetEntryStrategyWithCorrectSetting_CorrectUpdate(){
+    public void givenCorrectSettings_WhenCallSetEntryStrategy_ThenCorrectUpdate(){
         config.setEntryStrategy(" bestEntry ");
 
         assertEquals("bestEntry", config.getEntryStrategy());
     }
 
     @Test
-    public void WhenCallSetOrderStrategyWithCorrectSetting_CorrectUpdate(){
+    public void givenNull_WhenCallSetOrderStrategy_ThenDefaultValue(){
+        config.setOrderStrategy(null);
+
+        assertEquals(DEFAULT_ORDER_STRATEGY, config.getOrderStrategy());
+    }
+
+    @Test
+    public void givenEmpty_WhenCallSetOrderStrategy_ThenDefaultValue(){
+        config.setOrderStrategy("  ");
+
+        assertEquals(DEFAULT_ORDER_STRATEGY, config.getOrderStrategy());
+    }
+
+    @Test
+    public void givenCorrectSettings_WhenCallSetOrderStrategy_CorrectUpdate(){
         config.setOrderStrategy(" bestOrder ");
 
         assertEquals("bestOrder", config.getOrderStrategy());
     }
 
     @Test
-    public void WhenCallSetExitStrategyWithCorrectSetting_CorrectUpdate(){
+    public void givenNull_WhenCallSetExitStrategy_ThenrDefaultValue(){
+        config.setExitStrategy(null);
+
+        assertEquals(DEFAULT_EXIT_STRATEGY, config.getExitStrategy());
+    }
+
+    @Test
+    public void givenEmpty_WhenCallSetExitStrategy_ThenDefaultValue(){
+        config.setExitStrategy("   ");
+
+        assertEquals(DEFAULT_EXIT_STRATEGY, config.getExitStrategy());
+    }
+
+    @Test
+    public void givenCorrectSettings_WhenCallSetExitStrategy_CorrectUpdate(){
         config.setExitStrategy("  bestExit  ");
 
         assertEquals("bestExit", config.getExitStrategy());
     }
 
-    @Test(expected = NullArgumentException.class)
-    public void whenCallStopLossFilterWithNull_Exception(){
-        config.setStopLossFilter(null);
-    }
-
-    @Test(expected = NegativeNumberException.class)
-    public void WhenCallSetStopLossFilterWithNegativeValue_Exception(){
-        config.setStopLossFilter(new BigDecimal(-20));
-    }
-
     @Test
-    public void WhenCallSetStopLossFilterWithCorrectValue_CorrectResult(){
-        BigDecimal expected = new BigDecimal(0.07);
-        config.setStopLossFilter(expected);
-
-        assertEquals(expected, config.getStopLossFilter());
-    }
-
-    @Test
-    public void WhenCallGetStopLossFilterAfterInitializing_Default(){
+    public void givenInitialSettings_WhenInitializeStopLossFilter_ThenDefaultValue(){
         assertEquals(DEFAULT_STOP_LOSS_FILTER, config.getStopLossFilter());
     }
 
-    @Test(expected = NullArgumentException.class)
-    public void whenCallTargetWithNull_Exception(){
-        config.setTarget(null);
-    }
+    @Test
+    public void givenNull_WhenCallSetStopLossFilter_ThenDefaultValue(){
+        config.setStopLossFilter(null);
 
-    @Test(expected = NegativeNumberException.class)
-    public void WhenCallSetTargetWithNegativeValue_Exception(){
-        config.setTarget(new BigDecimal(-20));
+        assertEquals(DEFAULT_STOP_LOSS_FILTER, config.getStopLossFilter());
     }
 
     @Test
-    public void WhenCallSetTargetWithCorrectValue_CorrectResult(){
-        BigDecimal expected = new BigDecimal(0.07);
-        config.setTarget(expected);
+    public void givenEmpty_WhenCallSetStopLossFilter_ThenDefaultValue(){
+        config.setStopLossFilter(" ");
 
-        assertEquals(expected, config.getTarget());
+        assertEquals(DEFAULT_STOP_LOSS_FILTER, config.getStopLossFilter());
+    }
+
+    @Test(expected = NotANumberException.class)
+    public void givenNonNumberString_WhenCallSetStopLossFilter_ThenThrowException(){
+        config.setStopLossFilter("xxx");
+    }
+
+    @Test(expected = UnderflowException.class)
+    public void givenNegativeValuedString_WhenCallSetStopLossFilter_ThenThrowException(){
+        config.setStopLossFilter("-1");
     }
 
     @Test
-    public void WhenCallGetTargetAfterInitializing_Default(){
+    public void givenCorrectSettings_WhenCallSetStopLossFilter_ThenReturnCorrectValue(){
+        String expected = " 0.01 ";
+        config.setStopLossFilter(expected);
+
+        assertEquals(new BigDecimal(expected.trim()), config.getStopLossFilter());
+    }
+
+    @Test
+    public void givenInitialSettings_WhenInitializeTarget_ThenDefaultValue(){
         assertEquals(FIRST_TARGET, config.getTarget());
     }
 
-    @Test(expected = NullArgumentException.class)
-    public void whenCallRSIFilterWithNull_Exception(){
-        config.setRsiFilter(null);
-    }
+    @Test
+    public void givenNull_WhenCallSetTarget_ThenDefaultValue(){
+        config.setTarget(null);
 
-    @Test(expected = NegativeNumberException.class)
-    public void WhenCallSetRSIFilterWithNegativeValue_Exception(){
-        config.setRsiFilter(new BigDecimal(-20));
+        assertEquals(FIRST_TARGET, config.getTarget());
     }
 
     @Test
-    public void WhenCallSetRSIFilterWithCorrectValue_CorrectResult(){
-        BigDecimal expected = new BigDecimal(0.07);
-        config.setRsiFilter(expected);
+    public void givenEmpty_WhenCallSetTarget_ThenDefaultValue(){
+        config.setTarget(" ");
 
-        assertEquals(expected, config.getRsiFilter());
+        assertEquals(FIRST_TARGET, config.getTarget());
+    }
+
+    @Test(expected = NotANumberException.class)
+    public void givenNonNumberString_WhenCallSetTarget_ThenThrowException(){
+        config.setTarget(" xxx ");
+    }
+
+    @Test(expected = UnderflowException.class)
+    public void givenNegativeValuedString_WhenCallSetTarget_ThenThrowException(){
+        config.setTarget("0");
     }
 
     @Test
-    public void WhenCallGetRSIFilterAfterInitializing_Default(){
+    public void givenCorrectSettings_WhenCallSetTarget_ThenReturnCorrectValue(){
+        String expected = " 0.08 ";
+        config.setTarget(expected);
+
+        assertEquals(new BigDecimal(expected.trim()), config.getTarget());
+    }
+
+    @Test
+    public void givenInitialSettings_WhenInitializeRSIFilter_ThenDefaultValue(){
         assertEquals(RSI_FILTER, config.getRsiFilter());
     }
 
-    @Test(expected = NullArgumentException.class)
-    public void whenCallEntryFilterWithNull_Exception(){
-        config.setEntryFilter(null);
-    }
+    @Test
+    public void givenNull_WhenCallSetRSIFilter_ThenDefaultValue(){
+        config.setRsiFilter(null);
 
-    @Test(expected = NegativeNumberException.class)
-    public void WhenCallSetEntryFilterWithNegativeValue_Exception(){
-        config.setEntryFilter(new BigDecimal(-20));
+        assertEquals(RSI_FILTER, config.getRsiFilter());
     }
 
     @Test
-    public void WhenCallSetEntryFilterWithCorrectValue_CorrectResult(){
-        BigDecimal expected = new BigDecimal(0.07);
-        config.setEntryFilter(expected);
+    public void givenEmpty_WhenCallSetRSIFilter_ThenDefaultValue(){
+        config.setRsiFilter(" ");
 
-        assertEquals(expected, config.getEntryFilter());
+        assertEquals(RSI_FILTER, config.getRsiFilter());
+    }
+
+    @Test(expected = NotANumberException.class)
+    public void givenNonNumberString_WhenCallSetRSIFilter_ThenThrowException(){
+        config.setRsiFilter(" xxx ");
+    }
+
+    @Test(expected = UnderflowException.class)
+    public void givenNegativeValuedString_WhenCallSetRSIFilter_ThenThrowException(){
+        config.setRsiFilter("0");
     }
 
     @Test
-    public void WhenCallGetEntryFilterInitializing_Default(){
+    public void givenCorrectSettings_WhenCallSetRSIFilter_ThenReturnCorrectValue(){
+        String expected = " 0.08 ";
+        config.setRsiFilter(expected);
+
+        assertEquals(new BigDecimal(expected.trim()), config.getRsiFilter());
+    }
+
+    @Test
+    public void givenInitialSettings_WhenInitializeEntryFilter_ThenDefaultValue(){
         assertEquals(DEFAULT_ENTRY_FILTER, config.getEntryFilter());
     }
 
     @Test
-    public void WhenCallSetExitGranularityWithNull_Default(){
+    public void givenNull_WhenCallSetEntryFilter_ThenDefaultValue(){
+        config.setEntryFilter(null);
+
+        assertEquals(DEFAULT_ENTRY_FILTER, config.getEntryFilter());
+    }
+
+    @Test
+    public void givenEmpty_WhenCallSetEntryFilter_ThenDefaultValue(){
+        config.setEntryFilter(" ");
+
+        assertEquals(DEFAULT_ENTRY_FILTER, config.getEntryFilter());
+    }
+
+    @Test(expected = NotANumberException.class)
+    public void givenNonNumberString_WhenCallSetEntryFilter_ThenThrowException(){
+        config.setEntryFilter(" xxx ");
+    }
+
+    @Test(expected = UnderflowException.class)
+    public void givenNegativeValuedString_WhenCallSetEntryFilter_ThenThrowException(){
+        config.setEntryFilter("0");
+    }
+
+    @Test
+    public void givenCorrectSettings_WhenCallSetEntryFilter_ThenReturnCorrectValue(){
+        String expected = " 0.08 ";
+        config.setEntryFilter(expected);
+
+        assertEquals(new BigDecimal(expected.trim()), config.getEntryFilter());
+    }
+
+    @Test
+    public void givenInitialSettings_WhenInitializeExitGranularity_ThenDefaultValue(){
+        assertEquals(DEFAULT_EXIT_GRANULARITY, config.getExitGranularity());
+    }
+
+    @Test
+    public void givenNull_WhenCallSetExitGranularity_ThenDefaultValue(){
         config.setExitGranularity(null);
 
         assertEquals(DEFAULT_EXIT_GRANULARITY, config.getExitGranularity());
     }
 
     @Test
-    public void WhenCallSetExitGranularityWithCorrectValue_CorrectUpdate(){
-        config.setExitGranularity(CandleGranularity.M1);
+    public void givenEmpty_WhenCallSetExitGranularity_ThenDefaultValue(){
+        config.setExitGranularity(" ");
+
+        assertEquals(DEFAULT_EXIT_GRANULARITY, config.getExitGranularity());
+    }
+
+    @Test(expected = EmptyArgumentException.class)
+    public void givenNotExistentGranularity_WhenCallSetExitGranularity_ThenThrowException(){
+        config.setExitGranularity(" MR ");
+    }
+
+    @Test
+    public void givenCorrectSettings_WhenCallSetExitGranularity_CorrectUpdate(){
+        config.setExitGranularity(" M1 ");
 
         assertEquals(CandleGranularity.M1, config.getExitGranularity());
     }

@@ -26,7 +26,7 @@ public interface TradingStrategyConfiguration {
 
     BigDecimal getRiskPerTrade();
 
-    void setRiskPerTrade(BigDecimal riskPerTrade);
+    void setRiskPerTrade(String riskPerTrade);
 
     String getEntryStrategy();
 
@@ -42,21 +42,21 @@ public interface TradingStrategyConfiguration {
 
     BigDecimal getStopLossFilter();
 
-    void setStopLossFilter(BigDecimal stopLossFilter);
+    void setStopLossFilter(String stopLossFilter);
 
     BigDecimal getTarget();
 
-    void setTarget(BigDecimal target);
+    void setTarget(String target);
 
     BigDecimal getRsiFilter();
 
-    void setRsiFilter(BigDecimal rsiFilter);
+    void setRsiFilter(String rsiFilter);
 
     BigDecimal getEntryFilter();
 
-    void setEntryFilter(BigDecimal entryFilter);
+    void setEntryFilter(String entryFilter);
 
     CandleGranularity getExitGranularity();
 
-    void setExitGranularity(CandleGranularity exitGranularity);
+    void setExitGranularity(String exitGranularity);
 }

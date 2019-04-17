@@ -86,8 +86,8 @@ public class AddBGXConfigurationUseCase implements UseCase {
         if(containsFieldType(bgxSettings, RISK)){
             Map<String, String> riskValue = bgxSettings.get(RISK);
             if(containsField(riskValue, RISK_PER_TRADE)){
-                BigDecimal riskPerTrade =  new BigDecimal(riskValue.get(RISK_PER_TRADE).trim());
-                bgxConfiguration.setRiskPerTrade(riskPerTrade);
+              //  BigDecimal riskPerTrade =  new BigDecimal(riskValue.get(RISK_PER_TRADE).trim());
+                bgxConfiguration.setRiskPerTrade(null);
             }
         }
     }
@@ -99,19 +99,19 @@ public class AddBGXConfigurationUseCase implements UseCase {
                 bgxConfiguration.setEntryStrategy(entryStrategy.get(ENTRY_STRATEGY).trim());
             if(containsField(entryStrategy, STOP_LOSS_FILTER)) {
                 BigDecimal stopLossValue =  new BigDecimal(entryStrategy.get(STOP_LOSS_FILTER).trim());
-                bgxConfiguration.setStopLossFilter(stopLossValue);
+                bgxConfiguration.setStopLossFilter(null); // stopLossValue);
             }
             if(containsField(entryStrategy, TARGET)) {
                 BigDecimal stopLossValue =  new BigDecimal(entryStrategy.get(TARGET).trim());
-                bgxConfiguration.setTarget(stopLossValue);
+                bgxConfiguration.setTarget(null);//stopLossValue);
             }
             if(containsField(entryStrategy, RSI_FILTER)) {
                 BigDecimal stopLossValue =  new BigDecimal(entryStrategy.get(RSI_FILTER).trim());
-                bgxConfiguration.setRsiFilter(stopLossValue);
+                bgxConfiguration.setRsiFilter(null);//stopLossValue);
             }
             if(containsField(entryStrategy, ENTRY_FILTER)) {
                 BigDecimal stopLossValue =  new BigDecimal(entryStrategy.get(ENTRY_FILTER).trim());
-                bgxConfiguration.setEntryFilter(stopLossValue);
+                bgxConfiguration.setEntryFilter(null);//stopLossValue);
             }
 
         }
@@ -132,7 +132,7 @@ public class AddBGXConfigurationUseCase implements UseCase {
             if(containsField(exitValues, EXIT_STRATEGY))
                 bgxConfiguration.setExitStrategy(exitValues.get(EXIT_STRATEGY).trim());
             if(containsField(exitValues, "exitGranularity"))
-                 bgxConfiguration.setExitGranularity(parseGranularity(exitValues.get("exitGranularity")));
+                 bgxConfiguration.setExitGranularity(null);//parseGranularity(exitValues.get("exitGranularity")));
         }
     }
 
