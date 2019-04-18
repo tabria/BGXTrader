@@ -14,6 +14,7 @@ import trader.order.OrderStrategy;
 import trader.configuration.TradingStrategyConfiguration;
 import trader.strategy.bgxstrategy.service.BrokerService;
 import trader.strategy.bgxstrategy.service.ConfigurationService;
+import trader.strategy.bgxstrategy.service.IndicatorService;
 import trader.strategy.observable.PriceObservable;
 import trader.strategy.Strategy;
 import trader.exit.ExitStrategy;
@@ -104,9 +105,13 @@ public final class BGXStrategyMain implements Strategy {
         return brokerService.createBrokerGateway(brokerName, brokerConfigurationFileName);
     }
 
+    private List<Indicator> setIndicators(List<Map<String, String>> indicators){
+        IndicatorService indicatorService = new IndicatorService(useCaseFactory);
+        return indicatorService.createIndicators(indicators);
+    }
 
     List<Indicator> createIndicatorsFromConfiguration(List<Map<String, String>> indicators){
-        TraderController<Indicator> createIndicatorController = new CreateIndicatorController<>(requestOLDBuilder, useCaseFactory);
+        TraderController<Indicator> createIndicatorController = new CreateIndicatorController<>(useCaseFactory);
         List<Indicator> indicatorList = new ArrayList<>();
         for (Map<String, String> indicator :indicators) {
 //            Response<Indicator> indicatorResponse = addIndicatorController.execute(indicator);

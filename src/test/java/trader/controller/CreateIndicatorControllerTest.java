@@ -2,93 +2,104 @@ package trader.controller;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import trader.broker.BrokerGateway;
+import trader.broker.connector.BrokerConnector;
 import trader.configuration.TradingStrategyConfiguration;
 import trader.entity.indicator.Indicator;
 import trader.exception.NullArgumentException;
-import trader.requestor.RequestOLDBuilder;
-import trader.requestor.UseCase;
-import trader.requestor.Request;
-import trader.requestor.UseCaseFactory;
+import trader.requestor.*;
 import trader.responder.Response;
 import trader.strategy.observable.PriceObservable;
 import java.util.HashMap;
+import java.util.Map;
+
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(RequestBuilderCreator.class)
 public class CreateIndicatorControllerTest {
 
-    private static final String ADD_INDICATOR_CONTROLLER_NAME = "CreateIndicatorController";
+    private static final String CREATE_INDICATOR_CONTROLLER_NAME = "CreateIndicatorController";
 
-    private PriceObservable priceObservableMock;
-    private TradingStrategyConfiguration configurationMock;
-    private Indicator indicatorMock;
-    private UseCase useCaseMock;
-    private Request requestMock;
-    private RequestOLDBuilder requestOLDBuilderMock;
+    private Map<String, Object> settings;
     private UseCaseFactory useCaseFactoryMock;
-    private HashMap<String, String> settings;
+    private UseCase useCaseMock;
+    private RequestBuilder requestBuilderMock;
+    private Request requestMock;
+    private Response responseMock;
+    private Indicator indicatorMock;
     private CreateIndicatorController createIndicatorController;
-    private BrokerGateway gatewayMock;
 
     @Before
     public void setUp() {
-        priceObservableMock = mock(PriceObservable.class);
-        configurationMock = mock(TradingStrategyConfiguration.class);
-        indicatorMock = mock(Indicator.class);
+        settings = new HashMap<>();
+        useCaseFactoryMock = mock(UseCaseFactory.class);
         useCaseMock = mock(UseCase.class);
         requestMock = mock(Request.class);
-        requestOLDBuilderMock = mock(RequestOLDBuilder.class);
-        useCaseFactoryMock = mock(UseCaseFactory.class);
-        gatewayMock = mock(BrokerGateway.class);
-        settings = new HashMap<>();
-        createIndicatorController = new CreateIndicatorController(requestOLDBuilderMock, useCaseFactoryMock);
-    }
-
-    @Test(expected = NullArgumentException.class)
-    public void WhenCreateControllerWithNullRequestBuilder_Exception(){
-        new CreateIndicatorController(null, useCaseFactoryMock);
-    }
-
-    @Test(expected = NullArgumentException.class)
-    public void WhenCreateControllerWithNullUserCaseFactory_Exception(){
-        new CreateIndicatorController(requestOLDBuilderMock, null);
+        requestBuilderMock = mock(RequestBuilder.class);
+        responseMock = mock(Response.class);
+        indicatorMock = mock(Indicator.class);
+        createIndicatorController = new CreateIndicatorController(useCaseFactoryMock);
     }
 
     @Test
-    public void WhenCallGetRequestWithCorrectSettings_ReturnCorrectResult(){
-        when(requestMock.getBody()).thenReturn(indicatorMock);
-        when(requestOLDBuilderMock.build(ADD_INDICATOR_CONTROLLER_NAME, settings)).thenReturn(requestMock);
-        Request<?> rsiIndicatorRequest = createIndicatorController.getRequest(ADD_INDICATOR_CONTROLLER_NAME, settings);
+    public void givenCorrectSettings_WhenCallGetRequestThenReturnCorrectRequest() {
+        setFakeRequestFactoryCreator();
+        setFakeRequestFactory();
 
-        assertEquals(indicatorMock, rsiIndicatorRequest.getBody());
+        Request brokerConnectorRequest = createIndicatorController.getRequest(CREATE_INDICATOR_CONTROLLER_NAME, settings);
+
+        assertEquals(requestMock, brokerConnectorRequest);
     }
 
     @Test
-    public void WhenCallMakeWithCorrectSetting_CorrectResult(){
-        String useCaseName = "CreateIndicatorController";
-        when(useCaseFactoryMock.make(useCaseName)).thenReturn(useCaseMock);
-        UseCase useCase = createIndicatorController.make(useCaseName);
+    public void givenCorrectSettings_WhenCallMake_ThenReturnCorrectUseCase(){
+        setFakeUseCaseFactory();
+        UseCase useCase = createIndicatorController.make(CREATE_INDICATOR_CONTROLLER_NAME);
 
         assertEquals(useCaseMock, useCase);
     }
 
     @Test
-    public void WhenCallExecuteWithCorrectSettings_CorrectResponse(){
-        setExecuteSettings();
-        Response<Indicator> response = createIndicatorController.execute(settings);
+    public void givenCorrectSettings_WhenCallExecute_ThenReturnCorrectResponse(){
+        setFakeRequestFactoryCreator();
+        setFakeRequestFactory();
+        setFakeRequestFactory();
+        setFakeUseCaseFactory();
+        setFakeUseCase();
+        setFakeResponseBody();
 
+        Response<Indicator> response = createIndicatorController.execute(settings);
         assertEquals(indicatorMock, response.getBody());
     }
 
-    private void setExecuteSettings() {
-        Response responseMock = mock(Response.class);
-        when(responseMock.getBody()).thenReturn(indicatorMock);
+    private void setFakeRequestFactoryCreator(){
+        PowerMockito.mockStatic(RequestBuilderCreator.class);
+        PowerMockito.when(RequestBuilderCreator.create(any())).thenReturn(requestBuilderMock);
+    }
+
+    private void setFakeRequestFactory(){
+        when(requestBuilderMock.build(settings)).thenReturn(requestMock);
+    }
+
+    private void setFakeUseCaseFactory(){
         when(useCaseFactoryMock.make(anyString())).thenReturn(useCaseMock);
+    }
+
+    private void setFakeUseCase(){
         when(useCaseMock.execute(requestMock)).thenReturn(responseMock);
-        when(requestOLDBuilderMock.build(ADD_INDICATOR_CONTROLLER_NAME, settings)).thenReturn(requestMock);
+    }
+
+    private void setFakeResponseBody(){
+        when(responseMock.getBody()).thenReturn(indicatorMock);
     }
 
 }

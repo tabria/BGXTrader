@@ -5,8 +5,6 @@ import trader.exception.NullArgumentException;
 
 public class Validator {
 
-    public Validator() { }
-
     public static void validateStrings(String... stringArguments) {
         for (String str: stringArguments) {
             validateForNull(str);

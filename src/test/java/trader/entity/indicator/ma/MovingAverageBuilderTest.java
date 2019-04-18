@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
 public class MovingAverageBuilderTest extends BaseBuilderTest {
 
     private static final MAType DEFAULT_MA_TYPE = MAType.SIMPLE;
-    private static final String MA_TYPE = "maType";
+    private static final String MA_TYPE = "type";
 
     private MovingAverageBuilder builder;
 

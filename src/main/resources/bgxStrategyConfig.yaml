@@ -1,7 +1,8 @@
 #available options:
 #indicator: type, period, candlePriceType, granularity
 #### candlePriceType can have one of 5 values: OPEN, CLOSE, HIGH, LOW, MEDIUM
-#### maType can have one of 3 values: SIMPLE, EXPONENTIAL, WEIGHTED
+#### type can have one of 3 values: SIMPLE, EXPONENTIAL, WEIGHTED
+#### position: price, fast, middle, slow, daily
 #### granularity can have one of : S5, S10, S15, S30, M1, M2, M4, M5, M10, M15, M30, H1, H2, H3, H4, H6, H8, H12, D, W, M;
 # candlesQuantity have:
 #### initial - initial number of candles for calculating indicators

@@ -7,8 +7,8 @@ import trader.exception.OutOfBoundaryException;
 import trader.exception.WrongIndicatorSettingsException;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public abstract class BaseIndicatorBuilder {
     private static final long DEFAULT_INDICATOR_PERIOD = 14L;
@@ -31,36 +31,36 @@ public abstract class BaseIndicatorBuilder {
         this.candlestickList = new ArrayList<>();
     }
 
-    public BaseIndicatorBuilder setPeriod(HashMap<String, String> settings) {
+    public BaseIndicatorBuilder setPeriod(Map<String, String> settings) {
         long indicatorPeriod = parsePeriod(settings);
         checkPeriodBoundaries(indicatorPeriod);
         this.indicatorPeriod = indicatorPeriod;
         return this;
     }
 
-    public BaseIndicatorBuilder setCandlePriceType(HashMap<String, String> settings) {
+    public BaseIndicatorBuilder setCandlePriceType(Map<String, String> settings) {
         this.candlePriceType = parseCandlePriceType(settings);
         return this;
     }
 
-    public BaseIndicatorBuilder setGranularity(HashMap<String, String> settings){
+    public BaseIndicatorBuilder setGranularity(Map<String, String> settings){
         this.granularity = parseGranularity(settings);
         return this;
     }
 
-    public BaseIndicatorBuilder setPosition(HashMap<String,String> settings){
+    public BaseIndicatorBuilder setPosition(Map<String,String> settings){
         verifyPositionExistence(settings);
         this.position = settings.get(SETTINGS_POSITION_NAME);
         return this;
     }
 
-    protected boolean isNotDefault(HashMap<String, String> settings, String settingKeyName) {
+    protected boolean isNotDefault(Map<String, String> settings, String settingKeyName) {
         return  settings.containsKey(settingKeyName) &&
                 settings.get(settingKeyName) != null &&
                 !settings.get(settingKeyName).isEmpty();
     }
 
-    private long parsePeriod(HashMap<String, String> settings) {
+    private long parsePeriod(Map<String, String> settings) {
         if(isNotDefault(settings, SETTINGS_PERIOD_KEY_NAME))
             return parseStringToLong(settings.get(SETTINGS_PERIOD_KEY_NAME));
         return DEFAULT_INDICATOR_PERIOD;
@@ -79,7 +79,7 @@ public abstract class BaseIndicatorBuilder {
             throw  new OutOfBoundaryException();
     }
 
-    private void verifyPositionExistence(HashMap<String, String> settings) {
+    private void verifyPositionExistence(Map<String, String> settings) {
         if (settings == null ||
                 !settings.containsKey(SETTINGS_POSITION_NAME) ||
                 settings.get(SETTINGS_POSITION_NAME) == null ||
@@ -87,7 +87,7 @@ public abstract class BaseIndicatorBuilder {
             throw new WrongIndicatorSettingsException();
     }
 
-    private CandlePriceType parseCandlePriceType(HashMap<String, String> settings) {
+    private CandlePriceType parseCandlePriceType(Map<String, String> settings) {
         if (isNotDefault(settings, SETTINGS_CANDLE_PRICE_TYPE_KEY_NAME)) {
             try {
                 return CandlePriceType.valueOf(settings.get(SETTINGS_CANDLE_PRICE_TYPE_KEY_NAME).trim().toUpperCase());
@@ -98,7 +98,7 @@ public abstract class BaseIndicatorBuilder {
         return DEFAULT_CANDLESTICK_PRICE_TYPE;
     }
 
-    private CandleGranularity parseGranularity(HashMap<String, String> settings) {
+    private CandleGranularity parseGranularity(Map<String, String> settings) {
         if (isNotDefault(settings, SETTINGS_GRANULARITY_NAME)) {
             try {
                 return CandleGranularity.valueOf(settings.get(SETTINGS_GRANULARITY_NAME).trim().toUpperCase());

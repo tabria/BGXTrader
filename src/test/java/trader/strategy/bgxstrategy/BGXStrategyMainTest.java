@@ -134,17 +134,17 @@ public class BGXStrategyMainTest {
         new BGXStrategyMain(BROKER_NAME, BGX_STRATEGY_CONFIG_FILE_NAME, "  ");
     }
 
+//    @Test
+//    public void givenCorrectSettings_WhenInstantiate_ThenConfigurationMustHaveValue(){
+//        bgxStrategyMain = new BGXStrategyMain(BROKER_NAME, BGX_STRATEGY_CONFIG_FILE_NAME, BROKER_CONFIG_FILE_NAME);
+//
+//        Object configuration = commonMembers.extractFieldObject(bgxStrategyMain, "configuration");
+//
+//        assertNotNull(configuration);
+//    }
+
     @Test
-    public void givenCorrectSettings_WhenInstantiate_ThenConfigurationMustHaveValue(){
-        bgxStrategyMain = new BGXStrategyMain(BROKER_NAME, BGX_STRATEGY_CONFIG_FILE_NAME, BROKER_CONFIG_FILE_NAME);
-
-        Object configuration = commonMembers.extractFieldObject(bgxStrategyMain, "configuration");
-
-        assertNotNull(configuration);
-    }
-
-    @Test
-    public void givenCorrectSettings_WhenInstantiate_ThenBrokerGatewayMustHaveValue(){
+    public void givenCorrectSettings_WhenInstantiate_ThenFieldsMustHaveValue(){
         when(requestMock.getBody()).thenReturn(setFakeConnectorSettings());
         BaseGateway gateway = mock(BaseGateway.class);
         PowerMockito.mockStatic(BaseGateway.class);
@@ -152,9 +152,11 @@ public class BGXStrategyMainTest {
 
         bgxStrategyMain = new BGXStrategyMain(BROKER_NAME, BGX_STRATEGY_CONFIG_FILE_NAME, BROKER_CONFIG_FILE_NAME);
 
+        Object configuration = commonMembers.extractFieldObject(bgxStrategyMain, "configuration");
         Object brokerGateway = commonMembers.extractFieldObject(bgxStrategyMain, "brokerGateway");
 
         assertNotNull(brokerGateway);
+        assertNotNull(configuration);
         assertEquals(gateway, brokerGateway);
     }
 

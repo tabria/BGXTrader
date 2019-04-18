@@ -9,18 +9,19 @@ import trader.entity.indicator.ma.enums.MAType;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.Map;
 
 
 public final class MovingAverageBuilder extends BaseIndicatorBuilder {
 
     private static final MAType SETTINGS_DEFAULT_MA_TYPE = MAType.SIMPLE;
-    private static final String SETTINGS_MA_TYPE_KEY_NAME = "maType";
+    private static final String SETTINGS_MA_TYPE_KEY_NAME = "type";
     private static final String MA_LOCATION = "trader.entity.indicator.ma.";
     private static final String MOVING_AVERAGE = "MovingAverage";
 
     private MAType maType;
 
-    public Indicator build(HashMap<String, String> settings){
+    public Indicator build(Map<String, String> settings){
         if (settings == null)
             throw new WrongIndicatorSettingsException();
         setPeriod(settings);
@@ -31,12 +32,12 @@ public final class MovingAverageBuilder extends BaseIndicatorBuilder {
         return instantiatesIndicator();
     }
 
-    public MovingAverageBuilder setMAType(HashMap<String, String> settings) {
+    public MovingAverageBuilder setMAType(Map<String, String> settings) {
         this.maType = parseMAType(settings);
         return this;
     }
 
-    private MAType parseMAType(HashMap<String, String> settings) {
+    private MAType parseMAType(Map<String, String> settings) {
         if (isNotDefault(settings, SETTINGS_MA_TYPE_KEY_NAME)) {
             try {
                 return MAType.valueOf(settings.get(SETTINGS_MA_TYPE_KEY_NAME).trim().toUpperCase());

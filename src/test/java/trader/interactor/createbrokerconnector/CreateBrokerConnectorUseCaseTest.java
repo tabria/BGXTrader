@@ -4,7 +4,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import trader.broker.connector.BrokerConnector;
 import trader.broker.connector.oanda.OandaConnector;
 import trader.exception.NoSuchConnectorException;
 import trader.requestor.Request;

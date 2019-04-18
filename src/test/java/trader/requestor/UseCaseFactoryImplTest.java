@@ -5,7 +5,6 @@ import org.junit.Test;
 import trader.exception.EmptyArgumentException;
 import trader.exception.NoSuchUseCaseException;
 import trader.exception.NullArgumentException;
-import trader.interactor.CreateIndicatorUseCase;
 import trader.interactor.createbgxconfiguration.CreateBGXConfigurationUseCase;
 
 import static org.junit.Assert.*;

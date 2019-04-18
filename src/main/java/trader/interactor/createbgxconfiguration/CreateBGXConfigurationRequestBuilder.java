@@ -11,7 +11,7 @@ public class CreateBGXConfigurationRequestBuilder implements RequestBuilder {
 
     @SuppressWarnings("unchecked")
     @Override
-    public Request<Map<String, Map<String, String>>> build(Map<String, Object> inputSettings) {
+    public  Request<Map<String, Map<String, String>>> build(Map<String, Object> inputSettings) {
         Validator.validateForNull(inputSettings);
         Map<String, Map<String, String>> outputSettings = (Map<String, Map<String, String>>) inputSettings.get("settings");
         Request<Map<String, Map<String, String>>> request = new RequestImpl<>();

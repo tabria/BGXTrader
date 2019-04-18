@@ -20,7 +20,7 @@ public class CreateBGXConfigurationController<T> implements TraderController<T> 
         return useCase.execute(request);
     }
 
-    Request getRequest(String controllerName, Map<String, Object> settings) {
+    Request<?> getRequest(String controllerName, Map<String, Object> settings) {
         RequestBuilder builder = RequestBuilderCreator.create(controllerName);
         return  builder.build(settings);
     }

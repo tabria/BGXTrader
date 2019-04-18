@@ -1,43 +1,33 @@
 package trader.controller;
-import trader.exception.NullArgumentException;
-import trader.requestor.UseCase;
-import trader.requestor.Request;
-import trader.requestor.RequestOLDBuilder;
-import trader.requestor.UseCaseFactory;
+
+import trader.requestor.*;
 import trader.responder.Response;
-import java.util.HashMap;
+import java.util.Map;
 
 
 public class CreateIndicatorController<T> implements TraderController<T> {
 
-    private RequestOLDBuilder requestOLDBuilder;
     private UseCaseFactory useCaseFactory;
 
-    public CreateIndicatorController(RequestOLDBuilder requestOLDBuilder, UseCaseFactory useCaseFactory) {
-        if(requestOLDBuilder == null || useCaseFactory == null)
-            throw new NullArgumentException();
-        this.requestOLDBuilder = requestOLDBuilder;
+    public CreateIndicatorController(UseCaseFactory useCaseFactory) {
         this.useCaseFactory = useCaseFactory;
     }
 
-
-    public Response<T> execute(HashMap<String, String> settings) {
-        return getIndicatorResponse(settings);
-    }
-
-    Request<?> getRequest(String controllerName, HashMap<String, String> settings){
-        return requestOLDBuilder.build(controllerName, settings);
-    }
-
-    UseCase make(String controllerName){
-        return useCaseFactory.make(controllerName);
-    }
-
-    private Response<T> getIndicatorResponse(HashMap<String, String> settings) {
+    @Override
+    public Response<T> execute(Map<String, Object> settings) {
         String controllerName = this.getClass().getSimpleName();
         UseCase useCase = make(controllerName);
         Request<?> request = getRequest(controllerName, settings);
         return useCase.execute(request);
+    }
+
+    Request<?> getRequest(String controllerName, Map<String, Object> settings) {
+        RequestBuilder builder = RequestBuilderCreator.create(controllerName);
+        return  builder.build(settings);
+    }
+
+    UseCase make(String controllerName){
+        return useCaseFactory.make(controllerName);
     }
 
 }
