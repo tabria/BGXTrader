@@ -12,7 +12,7 @@ public class ResponseImpl<T> implements Response<T> {
     }
 
     @Override
-    public void setResponseDataStructure(T dataStructure) {
+    public void setBody(T dataStructure) {
         this.dataStructure = dataStructure;
     }
 }

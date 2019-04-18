@@ -6,6 +6,7 @@ import trader.exception.EmptyArgumentException;
 import trader.exception.NoSuchUseCaseException;
 import trader.exception.NullArgumentException;
 import trader.interactor.CreateIndicatorUseCase;
+import trader.interactor.createbgxconfiguration.CreateBGXConfigurationUseCase;
 
 import static org.junit.Assert.*;
 
@@ -35,10 +36,10 @@ public class UseCaseFactoryImplTest {
 
     @Test
     public void givenCorrectUseCaseName_WhenCallMake_ReturnCorrectObject(){
-        UseCase useCase = useCaseFactory.make("CreateIndicatorController");
-        UseCase spacedUseCase = useCaseFactory.make("   CreateIndicatorController   ");
+        UseCase useCase = useCaseFactory.make("CreateBGXConfigurationController");
+        UseCase spacedUseCase = useCaseFactory.make("   CreateBGXConfigurationController   ");
 
-        assertEquals(CreateIndicatorUseCase.class, useCase.getClass());
-        assertEquals(CreateIndicatorUseCase.class, spacedUseCase.getClass());
+        assertEquals(CreateBGXConfigurationUseCase.class, useCase.getClass());
+        assertEquals(CreateBGXConfigurationUseCase.class, spacedUseCase.getClass());
     }
 }

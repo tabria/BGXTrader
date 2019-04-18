@@ -73,6 +73,8 @@ public class BGXConfigurationImpl implements TradingStrategyConfiguration {
     public void addIndicator(Map<String, String> indicator) {
         if(indicator == null)
             throw new NullArgumentException();
+        if(indicator.size() < 1)
+            throw new EmptyArgumentException();
         this.indicators.add(indicator);
     }
 

@@ -13,7 +13,7 @@ abstract class BaseUseCase implements UseCase {
             throw new NullArgumentException();
         T dataResult = request.getBody();
         Response<E> tradeResponse = new ResponseImpl<>();
-        tradeResponse.setResponseDataStructure((E) dataResult);
+        tradeResponse.setBody((E) dataResult);
         return tradeResponse;
     }
 }

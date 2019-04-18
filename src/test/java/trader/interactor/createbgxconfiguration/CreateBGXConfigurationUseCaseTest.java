@@ -1,4 +1,4 @@
-package trader.interactor.addbgxconfiguration;
+package trader.interactor.createbgxconfiguration;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -19,7 +19,6 @@ import static org.mockito.Mockito.*;
 public class CreateBGXConfigurationUseCaseTest {
 
     private Request requestMock;
-
     private TradingStrategyConfiguration configurationMock;
     private CreateBGXConfigurationUseCase createBgxConfigurationUseCase;
 
@@ -32,7 +31,6 @@ public class CreateBGXConfigurationUseCaseTest {
         configurationMock = mock(TradingStrategyConfiguration.class);
         createBgxConfigurationUseCase = new CreateBGXConfigurationUseCase();
     }
-    
 
     @Test
     public void givenNotExistingCandlesQuantity_WhenCallSetCandlesQuantity_ThenNoUpdate(){

@@ -126,7 +126,7 @@ public class OandaResponseBuilder {
         Response<E> response = new ResponseImpl<>();
         if(responseValue == null)
             return null;
-        response.setResponseDataStructure(responseValue);
+        response.setBody(responseValue);
         return response;
     }
 }

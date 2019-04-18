@@ -1,4 +1,4 @@
-package trader.interactor.addbgxconfiguration;
+package trader.interactor.createbrokerconnector;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -10,13 +10,14 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
-public class CreateBGXConfigurationRequestBuilderTest {
+public class CreateBrokerConnectorRequestBuilderTest {
 
-    private CreateBGXConfigurationRequestBuilder requestBuilder;
+
+    private CreateBrokerConnectorRequestBuilder requestBuilder;
 
     @Before
     public void setUp(){
-        requestBuilder = new CreateBGXConfigurationRequestBuilder();
+        requestBuilder = new CreateBrokerConnectorRequestBuilder();
     }
 
     @Test(expected = NullArgumentException.class)
@@ -27,11 +28,11 @@ public class CreateBGXConfigurationRequestBuilderTest {
     @Test
     public void givenValidSettings_WhenCallBuild_ThenReturnCorrectRequest(){
         Map<String, Object> inputSettings = new HashMap<>();
-        Map<String, Map<String, String>> outputSettings = new HashMap<>();
-        inputSettings.put("settings", outputSettings);
-        Request<Map<String, Map<String, String>>> request = requestBuilder.build(inputSettings);
+        inputSettings.put("brokerName", "Oanda");
+        inputSettings.put("settings", new HashMap<>());
+        Request<Map<String, Object>> request = requestBuilder.build(inputSettings);
 
-        assertEquals(outputSettings, request.getBody());
+        assertEquals(inputSettings, request.getBody());
     }
 
 }

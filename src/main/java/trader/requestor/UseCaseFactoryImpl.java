@@ -33,6 +33,7 @@ public class UseCaseFactoryImpl implements UseCaseFactory {
     }
 
     private String composeUseCaseClassName(String inputName){
-        return String.format("%s.%s.%s", "trader", "interactor", inputName.replace("Controller", "UseCase").trim());
+        String noControllerExtensions = inputName.trim().replace("Controller", "");
+        return String.format("%s.%s.%s.%s", "trader", "interactor", noControllerExtensions.toLowerCase(), noControllerExtensions + "UseCase");
     }
 }

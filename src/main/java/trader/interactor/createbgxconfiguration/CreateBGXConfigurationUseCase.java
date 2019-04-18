@@ -1,8 +1,8 @@
-package trader.interactor.addbgxconfiguration;
+package trader.interactor.createbgxconfiguration;
 
 import trader.configuration.BGXConfigurationImpl;
 import trader.interactor.ResponseImpl;
-import trader.interactor.addbgxconfiguration.enums.Constants;
+import trader.interactor.createbgxconfiguration.enums.Constants;
 import trader.requestor.Request;
 import trader.requestor.UseCase;
 import trader.responder.Response;
@@ -21,7 +21,7 @@ public class CreateBGXConfigurationUseCase implements UseCase {
 
     private <E> Response<E> setResponse(E bgxConfiguration) {
         Response<E> response = new ResponseImpl<>();
-        response.setResponseDataStructure(bgxConfiguration);
+        response.setBody(bgxConfiguration);
         return response;
     }
 

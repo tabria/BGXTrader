@@ -1,4 +1,4 @@
-package trader.interactor.addbgxconfiguration.enums;
+package trader.interactor.createbgxconfiguration.enums;
 
 public enum Constants {
     CANDLES_QUANTITY {

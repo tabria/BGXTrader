@@ -118,7 +118,7 @@ public class RequestOLDBuilderImplTest {
     public void whenCallBuildWithBrokerConfigurationControllerName_ReturnBrokerConfigurationRequest() {
         settings.put("brokerName", CONNECTOR_NAME);
         settings.put("location", BROKER_CONFIG_FILE_NAME);
-        Request<?> brokerConnectorRequest = requestOLDBuilder.build("AddBrokerConnectorController", settings);
+        Request<?> brokerConnectorRequest = requestOLDBuilder.build("CreateBrokerConnectorController", settings);
         String actual = brokerConnectorRequest.getBody().getClass().getSimpleName();
         String expected = CONNECTOR_NAME + "Connector";
 

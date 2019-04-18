@@ -1,4 +1,4 @@
-package trader.interactor.addbgxconfiguration;
+package trader.interactor.createbgxconfiguration;
 
 import trader.interactor.RequestImpl;
 import trader.requestor.Request;

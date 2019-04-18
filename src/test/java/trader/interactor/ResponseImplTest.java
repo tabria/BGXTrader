@@ -21,7 +21,7 @@ public class ResponseImplTest {
     public void testToReturnCorrectDataStructure(){
         ArrayList<String> arrayList = new ArrayList<>();
         arrayList.add("Test");
-        response.setResponseDataStructure(arrayList);
+        response.setBody(arrayList);
         ArrayList<String> responseDataStructure = response.getBody();
 
         assertEquals("Test", responseDataStructure.get(0));

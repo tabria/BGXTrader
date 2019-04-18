@@ -12,6 +12,7 @@ import trader.requestor.*;
 import trader.strategy.Observable;
 import trader.order.OrderStrategy;
 import trader.configuration.TradingStrategyConfiguration;
+import trader.strategy.bgxstrategy.service.BrokerService;
 import trader.strategy.bgxstrategy.service.ConfigurationService;
 import trader.strategy.observable.PriceObservable;
 import trader.strategy.Strategy;
@@ -23,6 +24,7 @@ import trader.validation.Validator;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public final class BGXStrategyMain implements Strategy {
@@ -59,12 +61,13 @@ public final class BGXStrategyMain implements Strategy {
         Validator.validateStrings(brokerName, configurationFileName, brokerConfigurationFileName);
         requestBuilderCreator = new RequestBuilderCreator();
         useCaseFactory = new UseCaseFactoryImpl();
-
         configuration = setConfiguration(configurationFileName);
-
         brokerGateway = setBrokerGateway(brokerName, brokerConfigurationFileName);
+
+        indicatorList = createIndicatorsFromConfiguration(configuration.getIndicators());
+
         priceObservable = PriceObservable.create(brokerGateway, configuration);
-    //    indicatorList = createIndicatorsFromConfiguration(configuration.getIndicators());
+
         entryStrategy = setEntryStrategy();
         orderStrategy = setOrderStrategy();
    //     exitStrategy = setExitStrategy();
@@ -96,14 +99,16 @@ public final class BGXStrategyMain implements Strategy {
         return configService.createConfiguration(configurationFileName);
     }
 
-    BrokerGateway getBrokerGateway() {
-        return brokerGateway;
+    private BrokerGateway setBrokerGateway(String brokerName, String brokerConfigurationFileName) {
+        BrokerService brokerService = new BrokerService(useCaseFactory);
+        return brokerService.createBrokerGateway(brokerName, brokerConfigurationFileName);
     }
 
-    List<Indicator> createIndicatorsFromConfiguration(List<HashMap<String, String>> indicators){
-        TraderController<Indicator> addIndicatorController = new CreateIndicatorController<>(requestOLDBuilder, useCaseFactory);
+
+    List<Indicator> createIndicatorsFromConfiguration(List<Map<String, String>> indicators){
+        TraderController<Indicator> createIndicatorController = new CreateIndicatorController<>(requestOLDBuilder, useCaseFactory);
         List<Indicator> indicatorList = new ArrayList<>();
-        for (HashMap<String, String> indicator :indicators) {
+        for (Map<String, String> indicator :indicators) {
 //            Response<Indicator> indicatorResponse = addIndicatorController.execute(indicator);
 //            indicatorList.add(indicatorResponse.getResponseDataStructure());
         }
@@ -117,6 +122,9 @@ public final class BGXStrategyMain implements Strategy {
         }
     }
 
+    BrokerGateway getBrokerGateway() {
+        return brokerGateway;
+    }
 
     //////////////////////////////////////////////////// not tested/////////
     Observer setPositionObserver(){
@@ -157,18 +165,6 @@ public final class BGXStrategyMain implements Strategy {
 //        entryStrategy.setIndicators(indicatorList);
 //        entryStrategy.setCreateTradeController(new CreateTradeController<>(requestOLDBuilder, useCaseFactory));
         return null; //entryStrategy;
-    }
-
-    private BrokerGateway setBrokerGateway(String brokerName, String brokerConfigurationFileName) {
-//        HashMap<String, String> settings = new HashMap<>();
-//        settings.put(BROKER_NAME, brokerName);
-//        settings.put(LOCATION, brokerConfigurationFileName);
-//        TraderController<BrokerGateway> controller = new AddBrokerConnectorController<>(requestOLDBuilder, useCaseFactory);
-//        Response<BrokerGateway> brokerResponse = controller.execute(settings);
-//        BrokerConnector connector = (BrokerConnector) brokerResponse.getResponseDataStructure();
-//        BrokerGateway brokerGateway = BaseGateway.create(brokerName, connector);
-//      //  brokerGateway.validateConnector();
-        return null; //brokerGateway;
     }
 
 }

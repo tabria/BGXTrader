@@ -53,6 +53,11 @@ public class BGXConfigurationImplTest {
         config.addIndicator(null);
     }
 
+    @Test(expected = EmptyArgumentException.class)
+    public void givenEmptyMap_WhenCallAddIndicator_ThenThrowException(){
+        config.addIndicator(new HashMap<>());
+    }
+
     @Test
     public void givenCorrectSettings_WhenCallAddIndicator_ThenReturnCorrectResult(){
         HashMap<String, String> indicator = new HashMap<>();
