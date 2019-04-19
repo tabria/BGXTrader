@@ -25,17 +25,12 @@ public class CreateTradeControllerTest extends BaseControllerTest<TradingStrateg
         super.setUp();
         commonMembers = new CommonTestClassMembers();
         tradeMock = mock(Trade.class);
-        controller = new CreateTradeController<Trade>(requestOLDBuilderMock, useCaseFactoryMock);
+        controller = new CreateTradeController<Trade>(useCaseFactoryMock);
     }
 
     @Test(expected = NullArgumentException.class)
     public void WhenCreatedWithNullUseCaseFactory_Exception(){
-        new CreateTradeController<Trade>(requestOLDBuilderMock, null);
-    }
-
-    @Test(expected = NullArgumentException.class)
-    public void WhenCreatedWithNullRequestBuilder_Exception(){
-        new CreateTradeController<Trade>(null, useCaseFactoryMock);
+        new CreateTradeController<Trade>(null);
     }
 
     @Test

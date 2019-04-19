@@ -155,31 +155,31 @@ public class RequestOLDBuilderImplTest {
     @Test(expected = NullArgumentException.class)
     public void WhenCallBuildWithAddEntryStrategyControllerWithBadKeyNameInSettings_Exception(){
         settings.put("entry", "standard");
-        requestOLDBuilder.build("AddEntryStrategyController", settings);
+        requestOLDBuilder.build("CreateEntryStrategyController", settings);
     }
 
     @Test(expected = NullArgumentException.class)
     public void WhenCallBuildWithAddEntryStrategyControllerWithNullValueInSettings_Exception(){
         settings.put("entryStrategy", null);
-        requestOLDBuilder.build("AddEntryStrategyController", settings);
+        requestOLDBuilder.build("CreateEntryStrategyController", settings);
     }
 
     @Test(expected = NoSuchStrategyException.class)
     public void WhenCallBuildWithAddEntryStrategyControllerWithEmptyValueInSettings_Exception(){
         settings.put("entryStrategy", "   ");
-        requestOLDBuilder.build("AddEntryStrategyController", settings);
+        requestOLDBuilder.build("CreateEntryStrategyController", settings);
     }
 
     @Test(expected = NoSuchStrategyException.class)
     public void WhenCallBuildWithAddEntryStrategyControllerWithENonExistingStrtegy_Exception(){
         settings.put("entryStrategy", "non");
-        requestOLDBuilder.build("AddEntryStrategyController", settings);
+        requestOLDBuilder.build("CreateEntryStrategyController", settings);
     }
 
     @Test
     public void WhenCallBuildWithAddEntryStrategyControllerWithCorrectSettings_CorrectEntryStrategy(){
         settings.put("entryStrategy", " standard ");
-        Request<?> entryStrategyRequest = requestOLDBuilder.build("AddEntryStrategyController", settings);
+        Request<?> entryStrategyRequest = requestOLDBuilder.build("CreateEntryStrategyController", settings);
         EntryStrategy entryStrategy = (EntryStrategy) entryStrategyRequest.getBody();
 
         assertEquals(StandardEntryStrategy.class, entryStrategy.getClass());

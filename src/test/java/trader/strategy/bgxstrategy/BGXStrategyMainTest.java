@@ -134,15 +134,6 @@ public class BGXStrategyMainTest {
         new BGXStrategyMain(BROKER_NAME, BGX_STRATEGY_CONFIG_FILE_NAME, "  ");
     }
 
-//    @Test
-//    public void givenCorrectSettings_WhenInstantiate_ThenConfigurationMustHaveValue(){
-//        bgxStrategyMain = new BGXStrategyMain(BROKER_NAME, BGX_STRATEGY_CONFIG_FILE_NAME, BROKER_CONFIG_FILE_NAME);
-//
-//        Object configuration = commonMembers.extractFieldObject(bgxStrategyMain, "configuration");
-//
-//        assertNotNull(configuration);
-//    }
-
     @Test
     public void givenCorrectSettings_WhenInstantiate_ThenFieldsMustHaveValue(){
         when(requestMock.getBody()).thenReturn(setFakeConnectorSettings());
@@ -188,13 +179,13 @@ public class BGXStrategyMainTest {
         return wrapper;
     }
 
-    @Test
-    public void WhenCallCreateIndicatorsFromConfiguration_CorrectResult(){
-        List<Indicator> indicatorsFromConfiguration = bgxStrategyMain.createIndicatorsFromConfiguration(falseIndicators);
-
-        assertEquals(falseIndicators.size(), indicatorsFromConfiguration.size());
-        assertIndicatorsEquality(indicatorsFromConfiguration);
-    }
+//    @Test
+//    public void WhenCallCreateIndicatorsFromConfiguration_CorrectResult(){
+//        List<Indicator> indicatorsFromConfiguration = bgxStrategyMain.createIndicatorsFromConfiguration(falseIndicators);
+//
+//        assertEquals(falseIndicators.size(), indicatorsFromConfiguration.size());
+//        assertIndicatorsEquality(indicatorsFromConfiguration);
+//    }
 
     @Test
     public void addIndicatorsToPriceObservable_CorrectResult(){

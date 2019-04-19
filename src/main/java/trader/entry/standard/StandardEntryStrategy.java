@@ -79,13 +79,6 @@ public final class StandardEntryStrategy implements EntryStrategy {
         return defaultTrade();
     }
 
-    private void validateIndicatorExistence() {
-        if(rsi == null || priceSMA == null || slowWMA == null ||
-                fastWMA == null || dailySMA == null || middleWMA == null)
-            throw new NullArgumentException();
-    }
-
-
     @Override
     public void setIndicators(List<Indicator> indicators) {
         validateInput(indicators);
@@ -108,6 +101,12 @@ public final class StandardEntryStrategy implements EntryStrategy {
                     throw new BadRequestException();
             }
         }
+    }
+
+    private void validateIndicatorExistence() {
+        if(rsi == null || priceSMA == null || slowWMA == null ||
+                fastWMA == null || dailySMA == null || middleWMA == null)
+            throw new NullArgumentException();
     }
 
     private void validateConfigurationExistence() {

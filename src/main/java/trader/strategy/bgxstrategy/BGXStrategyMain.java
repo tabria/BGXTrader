@@ -14,6 +14,7 @@ import trader.order.OrderStrategy;
 import trader.configuration.TradingStrategyConfiguration;
 import trader.strategy.bgxstrategy.service.BrokerService;
 import trader.strategy.bgxstrategy.service.ConfigurationService;
+import trader.strategy.bgxstrategy.service.EntryService;
 import trader.strategy.bgxstrategy.service.IndicatorService;
 import trader.strategy.observable.PriceObservable;
 import trader.strategy.Strategy;
@@ -64,13 +65,13 @@ public final class BGXStrategyMain implements Strategy {
         useCaseFactory = new UseCaseFactoryImpl();
         configuration = setConfiguration(configurationFileName);
         brokerGateway = setBrokerGateway(brokerName, brokerConfigurationFileName);
-
-        indicatorList = createIndicatorsFromConfiguration(configuration.getIndicators());
-
+        indicatorList = setIndicators(configuration.getIndicators());
         priceObservable = PriceObservable.create(brokerGateway, configuration);
-
         entryStrategy = setEntryStrategy();
+
         orderStrategy = setOrderStrategy();
+
+
    //     exitStrategy = setExitStrategy();
 
 
@@ -110,14 +111,9 @@ public final class BGXStrategyMain implements Strategy {
         return indicatorService.createIndicators(indicators);
     }
 
-    List<Indicator> createIndicatorsFromConfiguration(List<Map<String, String>> indicators){
-        TraderController<Indicator> createIndicatorController = new CreateIndicatorController<>(useCaseFactory);
-        List<Indicator> indicatorList = new ArrayList<>();
-        for (Map<String, String> indicator :indicators) {
-//            Response<Indicator> indicatorResponse = addIndicatorController.execute(indicator);
-//            indicatorList.add(indicatorResponse.getResponseDataStructure());
-        }
-        return indicatorList;
+    private EntryStrategy setEntryStrategy() {
+        EntryService entryService = new EntryService(useCaseFactory);
+        return entryService.createEntryStrategy(configuration.getEntryStrategy(), indicatorList);
     }
 
     void addIndicatorsToObservable(Observable observable, List<Indicator> indicators){
@@ -161,15 +157,6 @@ public final class BGXStrategyMain implements Strategy {
         return null; // orderResponse.getResponseDataStructure();
     }
 
-    private EntryStrategy setEntryStrategy() {
-//        HashMap<String, String> settings = new HashMap<>();
-//        settings.put(ENTRY_STRATEGY_KEY_NAME, configuration.getEntryStrategy());
-//        TraderController<EntryStrategy> controller = new AddEntryStrategyController<>(requestOLDBuilder, useCaseFactory);
-//        Response<EntryStrategy> entryResponse = controller.execute(settings);
-//        EntryStrategy entryStrategy = entryResponse.getResponseDataStructure();
-//        entryStrategy.setIndicators(indicatorList);
-//        entryStrategy.setCreateTradeController(new CreateTradeController<>(requestOLDBuilder, useCaseFactory));
-        return null; //entryStrategy;
-    }
+
 
 }
