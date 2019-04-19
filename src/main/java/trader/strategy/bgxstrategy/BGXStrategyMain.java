@@ -8,6 +8,8 @@ import trader.entry.EntryStrategy;
 import trader.observer.Observer;
 import trader.observer.PositionObserver;
 import trader.observer.UpdateIndicatorObserver;
+import trader.presenter.ConsolePresenter;
+import trader.presenter.Presenter;
 import trader.requestor.*;
 import trader.strategy.Observable;
 import trader.order.OrderStrategy;
@@ -19,9 +21,6 @@ import trader.exit.ExitStrategy;
 import trader.strategy.observable.PricePull;
 import trader.validation.Validator;
 
-
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,7 +36,8 @@ public final class BGXStrategyMain implements Strategy {
 //    // to be removed
 //    private RequestOLDBuilder requestOLDBuilder;
 //    // to be removed
-    private final RequestBuilderCreator requestBuilderCreator;
+
+    private Presenter presenter;
     private UseCaseFactory useCaseFactory;
     private List<Indicator> indicatorList;
     private TradingStrategyConfiguration configuration;
@@ -45,6 +45,7 @@ public final class BGXStrategyMain implements Strategy {
     private Observable priceObservable;
     private EntryStrategy entryStrategy;
     private OrderStrategy orderStrategy;
+
 
     private ExitStrategy exitStrategy;
 
@@ -58,8 +59,8 @@ public final class BGXStrategyMain implements Strategy {
 //        // to be removed
 
         Validator.validateStrings(brokerName, configurationFileName, brokerConfigurationFileName);
-        requestBuilderCreator = new RequestBuilderCreator();
         useCaseFactory = new UseCaseFactoryImpl();
+        presenter = new ConsolePresenter();
         configuration = setConfiguration(configurationFileName);
         brokerGateway = setBrokerGateway(brokerName, brokerConfigurationFileName);
         indicatorList = setIndicators(configuration.getIndicators());
@@ -83,37 +84,37 @@ public final class BGXStrategyMain implements Strategy {
         return "bgxstrategy";
     }
 
-    TradingStrategyConfiguration getConfiguration() {
-        return configuration;
-    }
+//    TradingStrategyConfiguration getConfiguration() {
+//        return configuration;
+//    }
 
     private TradingStrategyConfiguration setConfiguration(String configurationFileName) {
-        ConfigurationService configService = new ConfigurationService(useCaseFactory);
+        ConfigurationService configService = new ConfigurationService(useCaseFactory, presenter);
         return configService.createConfiguration(configurationFileName);
     }
 
     private BrokerGateway setBrokerGateway(String brokerName, String brokerConfigurationFileName) {
-        BrokerService brokerService = new BrokerService(useCaseFactory);
+        BrokerService brokerService = new BrokerService(useCaseFactory, presenter);
         return brokerService.createBrokerGateway(brokerName, brokerConfigurationFileName);
     }
 
     private List<Indicator> setIndicators(List<Map<String, String>> indicators){
-        IndicatorService indicatorService = new IndicatorService(useCaseFactory);
+        IndicatorService indicatorService = new IndicatorService(useCaseFactory, presenter);
         return indicatorService.createIndicators(indicators);
     }
 
     private EntryStrategy setEntryStrategy() {
-        EntryService entryService = new EntryService(useCaseFactory);
+        EntryService entryService = new EntryService(useCaseFactory, presenter);
         return entryService.createEntryStrategy(configuration.getEntryStrategy(), indicatorList);
     }
 
     private OrderStrategy setOrderStrategy() {
-        OrderService orderService = new OrderService(useCaseFactory);
+        OrderService orderService = new OrderService(useCaseFactory, presenter);
         return orderService.createOrderStrategy(configuration.getOrderStrategy());
     }
 
     private ExitStrategy setExitStrategy() {
-        ExitService exitService = new ExitService(useCaseFactory);
+        ExitService exitService = new ExitService(useCaseFactory, presenter);
         return exitService.createOrderStrategy(configuration.getExitStrategy());
     }
 
@@ -124,9 +125,9 @@ public final class BGXStrategyMain implements Strategy {
         }
     }
 
-    BrokerGateway getBrokerGateway() {
-        return brokerGateway;
-    }
+//    BrokerGateway getBrokerGateway() {
+//        return brokerGateway;
+//    }
 
     //////////////////////////////////////////////////// not tested/////////
     Observer setPositionObserver(){

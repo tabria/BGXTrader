@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import trader.entity.indicator.Indicator;
 import trader.exception.EmptyArgumentException;
+import trader.presenter.Presenter;
 import trader.requestor.Request;
 import trader.requestor.UseCase;
 import trader.requestor.UseCaseFactory;
@@ -27,15 +28,18 @@ public class IndicatorServiceTest {
     private Response responseMock;
     private Indicator indicatorMock;
     private IndicatorService service;
+    private Presenter presenterMock;
 
 
     @Before
     public void setUp() throws Exception {
+
         useCaseFactoryMock = mock(UseCaseFactory.class);
         useCaseMock = mock(UseCase.class);
         responseMock = mock(Response.class);
         indicatorMock = mock(Indicator.class);
-        service = new IndicatorService(useCaseFactoryMock);
+        presenterMock = mock(Presenter.class);
+        service = new IndicatorService(useCaseFactoryMock, presenterMock);
     }
 
     @Test(expected = EmptyArgumentException.class)
@@ -55,7 +59,7 @@ public class IndicatorServiceTest {
         indicatorsSettings.add(setIndicatorSettings("weighted", "fast"));
         indicatorsSettings.add(setIndicatorSettings("simple", "middle"));
 
-        when(useCaseFactoryMock.make(anyString())).thenReturn(useCaseMock);
+        when(useCaseFactoryMock.make(anyString(), any(Presenter.class))).thenReturn(useCaseMock);
         when(useCaseMock.execute(any(Request.class))).thenReturn(responseMock);
         when(responseMock.getBody()).thenReturn(indicatorMock);
 

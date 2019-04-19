@@ -24,7 +24,7 @@ public class CreateBGXConfigurationControllerTest extends BaseControllerTest {
     public void setUp() throws Exception {
         super.setUp();
         configurationMock = mock(TradingStrategyConfiguration.class);
-        createBgxConfigurationController = new CreateBGXConfigurationController(useCaseFactoryMock);
+        createBgxConfigurationController = new CreateBGXConfigurationController(useCaseFactoryMock, presenterMock);
     }
 
     @Test
@@ -40,7 +40,7 @@ public class CreateBGXConfigurationControllerTest extends BaseControllerTest {
     @Test
     public void givenCorrectSettings_WhenCallMake_ThenReturnCorrectUseCase(){
         setFakeUseCaseFactory();
-        UseCase useCase = createBgxConfigurationController.make(BGX_CONFIGURATION_CONTROLLER);
+        UseCase useCase = createBgxConfigurationController.make(BGX_CONFIGURATION_CONTROLLER, presenterMock);
 
         assertEquals(useCaseMock, useCase);
     }

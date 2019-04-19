@@ -21,11 +21,11 @@ public class RequestTest {
     @Test
     public void testToReturnCorrectDataStructure(){
         ArrayList<String> arrayList = new ArrayList<>();
-        arrayList.add("Test");
+        arrayList.add("DiffTest");
         request.setBody(arrayList);
         ArrayList<String> requestDataStructure = request.getBody();
 
-        assertEquals("Test", requestDataStructure.get(0));
+        assertEquals("DiffTest", requestDataStructure.get(0));
     }
 
 }

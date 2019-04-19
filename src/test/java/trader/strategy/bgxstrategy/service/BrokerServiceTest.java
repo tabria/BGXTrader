@@ -11,6 +11,7 @@ import trader.broker.connector.BaseGateway;
 import trader.broker.connector.BrokerConnector;
 import trader.exception.BadRequestException;
 import trader.exception.NoSuchGatewayException;
+import trader.presenter.Presenter;
 import trader.requestor.Request;
 import trader.requestor.UseCase;
 import trader.requestor.UseCaseFactory;
@@ -32,6 +33,7 @@ public class BrokerServiceTest {
     private Response responseMock;
     private BrokerConnector connectorMock;
     private BrokerService service;
+    private Presenter presenterMock;
 
     @Before
     public void setUp(){
@@ -41,7 +43,8 @@ public class BrokerServiceTest {
         useCaseMock = mock(UseCase.class);
         responseMock = mock(Response.class);
         connectorMock = mock(BrokerConnector.class);
-        service = new BrokerService(useCaseFactoryMock);
+        presenterMock = mock(Presenter.class);
+        service = new BrokerService(useCaseFactoryMock, presenterMock);
     }
 
     @Test
@@ -76,7 +79,7 @@ public class BrokerServiceTest {
     }
 
     private void setFakeUseCase() {
-        when(useCaseFactoryMock.make(anyString())).thenReturn(useCaseMock);
+        when(useCaseFactoryMock.make(anyString(), any(Presenter.class))).thenReturn(useCaseMock);
         when(useCaseMock.execute(any(Request.class))).thenReturn(responseMock);
     }
 

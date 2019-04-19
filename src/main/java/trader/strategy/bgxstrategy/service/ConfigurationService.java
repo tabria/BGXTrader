@@ -5,6 +5,7 @@ import trader.configuration.TradingStrategyConfiguration;
 import trader.controller.CreateBGXConfigurationController;
 import trader.controller.TraderController;
 import trader.exception.BadRequestException;
+import trader.presenter.Presenter;
 import trader.requestor.UseCaseFactory;
 import trader.responder.Response;
 
@@ -16,9 +17,11 @@ import java.util.Map;
 public class ConfigurationService {
 
     private UseCaseFactory useCaseFactory;
+    private Presenter presenter;
 
-    public ConfigurationService(UseCaseFactory useCaseFactory) {
+    public ConfigurationService(UseCaseFactory useCaseFactory, Presenter presenter) {
         this.useCaseFactory = useCaseFactory;
+        this.presenter = presenter;
     }
 
     public TradingStrategyConfiguration createConfiguration(String configurationFileName) {
@@ -31,7 +34,7 @@ public class ConfigurationService {
         }
         Map<String, Object> settings = new HashMap<>();
         settings.put("settings", bgxSettings);
-        TraderController<TradingStrategyConfiguration> controller = new CreateBGXConfigurationController<>(useCaseFactory);
+        TraderController<TradingStrategyConfiguration> controller = new CreateBGXConfigurationController<>(useCaseFactory, presenter);
         Response<TradingStrategyConfiguration> configurationResponse = controller.execute(settings);
         return configurationResponse.getBody();
     }

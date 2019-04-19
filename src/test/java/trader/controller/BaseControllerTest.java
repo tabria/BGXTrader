@@ -7,6 +7,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import trader.configuration.TradingStrategyConfiguration;
+import trader.presenter.Presenter;
 import trader.requestor.*;
 import trader.responder.Response;
 
@@ -15,6 +16,7 @@ import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -27,6 +29,7 @@ public abstract class BaseControllerTest {
     protected RequestBuilder requestBuilderMock;
     protected Request requestMock;
     protected Response responseMock;
+    protected Presenter presenterMock;
 
 
     @Before
@@ -37,6 +40,7 @@ public abstract class BaseControllerTest {
         requestMock = mock(Request.class);
         requestBuilderMock = mock(RequestBuilder.class);
         responseMock = mock(Response.class);
+        presenterMock = mock(Presenter.class);
     }
 
     void setFakeRequestFactoryCreator(){
@@ -49,11 +53,12 @@ public abstract class BaseControllerTest {
     }
 
     void setFakeUseCaseFactory(){
-        when(useCaseFactoryMock.make(anyString())).thenReturn(useCaseMock);
+        when(useCaseFactoryMock.make(anyString(), any(Presenter.class))).thenReturn(useCaseMock);
     }
 
     void setFakeUseCase(){
         when(useCaseMock.execute(requestMock)).thenReturn(responseMock);
+        doNothing().when(presenterMock).execute(responseMock);
     }
 
     protected void setFakes() {

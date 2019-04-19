@@ -7,6 +7,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import trader.entity.trade.Trade;
+import trader.presenter.Presenter;
 import trader.requestor.*;
 import trader.responder.Response;
 
@@ -30,7 +31,7 @@ public class CreateTradeControllerTest extends BaseControllerTest {
     public void setUp() throws Exception {
         super.setUp();
         tradeMock = mock(Trade.class);
-        controller = new CreateTradeController<>(useCaseFactoryMock);
+        controller = new CreateTradeController<>(useCaseFactoryMock, presenterMock);
     }
 
     @Test
@@ -48,14 +49,14 @@ public class CreateTradeControllerTest extends BaseControllerTest {
         setFakes();
         setFakeResponseBody();
 
-        UseCase useCase = controller.make(CREATE_TRADE_CONTROLLER);
+        UseCase useCase = controller.make(CREATE_TRADE_CONTROLLER, presenterMock);
 
         assertEquals(useCaseMock, useCase);
     }
 
     @Test
     public void givenSettings_WhenCallExecute_ThenReturnTrade(){
-        when(useCaseFactoryMock.make(anyString())).thenReturn(useCaseMock);
+        when(useCaseFactoryMock.make(anyString(), any(Presenter.class))).thenReturn(useCaseMock);
         when(useCaseMock.execute(any(Request.class))).thenReturn(responseMock);
         when(responseMock.getBody()).thenReturn(tradeMock);
         Response<Trade> createTradeResponse = controller.execute(settings);

@@ -3,6 +3,7 @@ package trader.strategy.bgxstrategy.service;
 import org.junit.Before;
 import org.junit.Test;
 import trader.exception.NullArgumentException;
+import trader.presenter.Presenter;
 import trader.requestor.UseCaseFactory;
 
 import static org.mockito.Mockito.mock;
@@ -11,12 +12,13 @@ public class ExitServiceTest {
 
     private UseCaseFactory useCaseFactoryMock;
     private ExitService service;
+    private Presenter presenterMock;
 
     @Before
     public void setUp() throws Exception {
 
         useCaseFactoryMock = mock(UseCaseFactory.class);
-        service = new ExitService(useCaseFactoryMock);
+        service = new ExitService(useCaseFactoryMock, presenterMock);
     }
 
     @Test(expected = NullArgumentException.class)

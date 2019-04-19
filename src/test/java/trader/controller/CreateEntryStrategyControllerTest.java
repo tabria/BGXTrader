@@ -20,7 +20,7 @@ public class CreateEntryStrategyControllerTest extends BaseControllerTest {
     public void setUp() throws Exception {
         super.setUp();
         entryStrategyMock = mock(EntryStrategy.class);
-        controller = new CreateEntryStrategyController(useCaseFactoryMock);
+        controller = new CreateEntryStrategyController(useCaseFactoryMock, presenterMock);
     }
 
     @Test
@@ -36,7 +36,7 @@ public class CreateEntryStrategyControllerTest extends BaseControllerTest {
     @Test
     public void givenCorrectSettings_WhenCallMake_ThenReturnCorrectUseCase(){
         setFakeUseCaseFactory();
-        UseCase useCase = controller.make(CREATE_ENTRY_STRATEGY_CONTROLLER);
+        UseCase useCase = controller.make(CREATE_ENTRY_STRATEGY_CONTROLLER, presenterMock);
 
         assertEquals(useCaseMock, useCase);
     }

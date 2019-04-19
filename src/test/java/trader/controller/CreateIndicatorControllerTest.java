@@ -34,7 +34,7 @@ public class CreateIndicatorControllerTest extends BaseControllerTest {
     public void setUp() throws Exception {
         super.setUp();
         indicatorMock = mock(Indicator.class);
-        createIndicatorController = new CreateIndicatorController(useCaseFactoryMock);
+        createIndicatorController = new CreateIndicatorController(useCaseFactoryMock, presenterMock);
     }
 
     @Test
@@ -50,7 +50,7 @@ public class CreateIndicatorControllerTest extends BaseControllerTest {
     @Test
     public void givenCorrectSettings_WhenCallMake_ThenReturnCorrectUseCase(){
         setFakeUseCaseFactory();
-        UseCase useCase = createIndicatorController.make(CREATE_INDICATOR_CONTROLLER_NAME);
+        UseCase useCase = createIndicatorController.make(CREATE_INDICATOR_CONTROLLER_NAME, presenterMock);
 
         assertEquals(useCaseMock, useCase);
     }

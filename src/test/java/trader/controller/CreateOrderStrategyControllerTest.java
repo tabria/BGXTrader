@@ -21,7 +21,7 @@ public class CreateOrderStrategyControllerTest extends BaseControllerTest {
     public void setUp() throws Exception {
         super.setUp();
         orderStrategyMock = mock(OrderStrategy.class);
-        controller = new CreateOrderStrategyController<>(useCaseFactoryMock);
+        controller = new CreateOrderStrategyController<>(useCaseFactoryMock, presenterMock);
     }
 
     @Test
@@ -37,7 +37,7 @@ public class CreateOrderStrategyControllerTest extends BaseControllerTest {
     @Test
     public void givenCorrectSettings_WhenCallMake_ThenReturnCorrectUseCase(){
         setFakeUseCaseFactory();
-        UseCase useCase = controller.make(CREATE_ORDER_STRATEGY_CONTROLLER);
+        UseCase useCase = controller.make(CREATE_ORDER_STRATEGY_CONTROLLER, presenterMock);
 
         assertEquals(useCaseMock, useCase);
     }

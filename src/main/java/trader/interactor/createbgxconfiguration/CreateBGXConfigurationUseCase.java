@@ -3,6 +3,7 @@ package trader.interactor.createbgxconfiguration;
 import trader.configuration.BGXConfigurationImpl;
 import trader.interactor.ResponseImpl;
 import trader.interactor.createbgxconfiguration.enums.Constants;
+import trader.presenter.Presenter;
 import trader.requestor.Request;
 import trader.requestor.UseCase;
 import trader.responder.Response;
@@ -12,11 +13,18 @@ import java.util.Map;
 
 public class CreateBGXConfigurationUseCase implements UseCase {
 
+    private Presenter presenter;
+
+    public CreateBGXConfigurationUseCase(Presenter presenter) {
+        this.presenter = presenter;
+    }
 
     public <T, E> Response<E> execute(Request<T> request) {
         Map<String, Map<String, String>> settings = (Map<String, Map<String, String>>) request.getBody();
         TradingStrategyConfiguration bgxConfiguration = setConfigurations(settings);
-        return setResponse((E) bgxConfiguration);
+        Response<E> response = setResponse((E) bgxConfiguration);
+        presenter.execute(response);
+        return response;
     }
 
     private <E> Response<E> setResponse(E bgxConfiguration) {

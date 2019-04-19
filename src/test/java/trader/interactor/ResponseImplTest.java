@@ -20,11 +20,11 @@ public class ResponseImplTest {
     @Test
     public void testToReturnCorrectDataStructure(){
         ArrayList<String> arrayList = new ArrayList<>();
-        arrayList.add("Test");
+        arrayList.add("GoodTest");
         response.setBody(arrayList);
         ArrayList<String> responseDataStructure = response.getBody();
 
-        assertEquals("Test", responseDataStructure.get(0));
+        assertEquals("GoodTest", responseDataStructure.get(0));
     }
 
 }

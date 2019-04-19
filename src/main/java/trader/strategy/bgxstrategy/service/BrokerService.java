@@ -7,6 +7,7 @@ import trader.broker.connector.BrokerConnector;
 import trader.controller.CreateBrokerConnectorController;
 import trader.controller.TraderController;
 import trader.exception.BadRequestException;
+import trader.presenter.Presenter;
 import trader.requestor.UseCaseFactory;
 import trader.responder.Response;
 
@@ -18,9 +19,11 @@ import java.util.Map;
 public class BrokerService {
 
     private UseCaseFactory useCaseFactory;
+    private Presenter presenter;
 
-    public BrokerService(UseCaseFactory useCaseFactory) {
+    public BrokerService(UseCaseFactory useCaseFactory, Presenter presenter) {
         this.useCaseFactory = useCaseFactory;
+        this.presenter = presenter;
     }
 
     public BrokerGateway createBrokerGateway(String brokerName, String brokerConfigurationFileName) {
@@ -34,7 +37,7 @@ public class BrokerService {
         brokerSettings.put("brokerName", brokerName);
         Map<String, Object> settings = new HashMap<>();
         settings.put("settings", brokerSettings);
-        TraderController<BrokerConnector> controller = new CreateBrokerConnectorController<>(useCaseFactory);
+        TraderController<BrokerConnector> controller = new CreateBrokerConnectorController<>(useCaseFactory, presenter);
         Response<BrokerConnector> brokerResponse = controller.execute(settings);
         BrokerConnector connector = brokerResponse.getBody();
         return BaseGateway.create(brokerName, connector);

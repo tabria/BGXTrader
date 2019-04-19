@@ -8,6 +8,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import trader.configuration.TradingStrategyConfiguration;
 import trader.exception.BadRequestException;
+import trader.presenter.Presenter;
 import trader.requestor.*;
 import trader.responder.Response;
 
@@ -30,6 +31,7 @@ public class ConfigurationServiceTest {
     private UseCaseFactory useCaseFactoryMock;
     private UseCase useCaseMock;
     private Response responseMock;
+    private Presenter presenterMock;
     private TradingStrategyConfiguration configurationMock;
     private ConfigurationService service;
 
@@ -41,8 +43,9 @@ public class ConfigurationServiceTest {
         useCaseFactoryMock = mock(UseCaseFactory.class);
         useCaseMock = mock(UseCase.class);
         responseMock = mock(Response.class);
+        presenterMock = mock(Presenter.class);
         configurationMock = mock(TradingStrategyConfiguration.class);
-        service = new ConfigurationService(useCaseFactoryMock);
+        service = new ConfigurationService(useCaseFactoryMock, presenterMock);
     }
 
     @Test(expected = BadRequestException.class)
@@ -70,7 +73,7 @@ public class ConfigurationServiceTest {
 
     private void setFakeResponse(){
         when(useCaseMock.execute(requestMock)).thenReturn(responseMock);
-        when(useCaseFactoryMock.make(anyString())).thenReturn(useCaseMock);
+        when(useCaseFactoryMock.make(anyString(), any(Presenter.class))).thenReturn(useCaseMock);
     }
 
     private void setFakeConfiguration(){

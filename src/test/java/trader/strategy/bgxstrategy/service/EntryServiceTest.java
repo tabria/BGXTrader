@@ -5,6 +5,7 @@ import org.junit.Test;
 import trader.controller.TraderController;
 import trader.entry.EntryStrategy;
 import trader.exception.NullArgumentException;
+import trader.presenter.Presenter;
 import trader.requestor.Request;
 import trader.requestor.UseCase;
 import trader.requestor.UseCaseFactory;
@@ -22,15 +23,17 @@ public class EntryServiceTest {
     private EntryStrategy entryStrategyMock;
     private UseCaseFactory useCaseFactoryMock;
     private EntryService entryService;
+    private Presenter presenterMock;
 
     @Before
     public void setUp() throws Exception {
 
+        presenterMock = mock(Presenter.class);
         responseMock = mock(Response.class);
         useCaseMock = mock(UseCase.class);
         entryStrategyMock = mock(EntryStrategy.class);
         useCaseFactoryMock = mock(UseCaseFactory.class);
-        entryService = new EntryService(useCaseFactoryMock);
+        entryService = new EntryService(useCaseFactoryMock, presenterMock);
 
     }
 
@@ -73,7 +76,8 @@ public class EntryServiceTest {
         doNothing().when(entryStrategyMock).setIndicators(anyList());
         when(responseMock.getBody()).thenReturn(entryStrategyMock);
         when(useCaseMock.execute(any(Request.class))).thenReturn(responseMock);
-        when(useCaseFactoryMock.make(anyString())).thenReturn(useCaseMock);
+        when(useCaseFactoryMock.make(anyString(), eq(presenterMock))).thenReturn(useCaseMock);
+        doNothing().when(presenterMock).execute(responseMock);
     }
 
 }

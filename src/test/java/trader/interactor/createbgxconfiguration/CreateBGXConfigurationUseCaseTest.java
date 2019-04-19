@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import trader.presenter.Presenter;
 import trader.requestor.Request;
 import trader.responder.Response;
 import trader.configuration.TradingStrategyConfiguration;
@@ -19,6 +20,7 @@ import static org.mockito.Mockito.*;
 public class CreateBGXConfigurationUseCaseTest {
 
     private Request requestMock;
+    private Presenter presenterMock;
     private TradingStrategyConfiguration configurationMock;
     private CreateBGXConfigurationUseCase createBgxConfigurationUseCase;
 
@@ -27,9 +29,10 @@ public class CreateBGXConfigurationUseCaseTest {
 
     @Before
     public void setUp() {
+        presenterMock = mock(Presenter.class);
         requestMock = mock(Request.class);
         configurationMock = mock(TradingStrategyConfiguration.class);
-        createBgxConfigurationUseCase = new CreateBGXConfigurationUseCase();
+        createBgxConfigurationUseCase = new CreateBGXConfigurationUseCase(presenterMock);
     }
 
     @Test

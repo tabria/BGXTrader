@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import trader.exception.NullArgumentException;
 import trader.order.OrderStrategy;
+import trader.presenter.Presenter;
 import trader.requestor.Request;
 import trader.requestor.UseCase;
 import trader.requestor.UseCaseFactory;
@@ -23,6 +24,7 @@ public class OrderServiceTest {
     private UseCase useCaseMock;
     private UseCaseFactory useCaseFactoryMock;
     private OrderService service;
+    private Presenter presenterMock;
 
     @Before
     public void setUp() throws Exception {
@@ -31,7 +33,8 @@ public class OrderServiceTest {
         responseMock = mock(Response.class);
         useCaseMock = mock(UseCase.class);
         useCaseFactoryMock = mock(UseCaseFactory.class);
-        service = new OrderService(useCaseFactoryMock);
+        presenterMock = mock(Presenter.class);
+        service = new OrderService(useCaseFactoryMock, presenterMock);
     }
 
     @Test(expected = NullArgumentException.class)
@@ -50,7 +53,7 @@ public class OrderServiceTest {
     private void setFakeOrderStrategy() {
         when(responseMock.getBody()).thenReturn(orderStrategyMock);
         when(useCaseMock.execute(any(Request.class))).thenReturn(responseMock);
-        when(useCaseFactoryMock.make(anyString())).thenReturn(useCaseMock);
+        when(useCaseFactoryMock.make(anyString(), any(Presenter.class))).thenReturn(useCaseMock);
     }
 
 }

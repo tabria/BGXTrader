@@ -22,6 +22,7 @@ import trader.entity.indicator.Indicator;
 import trader.exception.NullArgumentException;
 import trader.configuration.TradingStrategyConfiguration;
 import trader.order.standard.StandardOrderStrategy;
+import trader.presenter.Presenter;
 import trader.requestor.*;
 import trader.responder.Response;
 import trader.strategy.Observable;
@@ -57,6 +58,7 @@ public class BGXStrategyMainTest {
     private UseCase useCaseMock = mock(UseCase.class);
     private Response responseMock = mock(Response.class);
     private TradingStrategyConfiguration configurationMock;
+    private Presenter presenterMock;
     private BGXStrategyMain bgxStrategyMain;
 
     private List<Map<String, String>> falseIndicators;
@@ -90,6 +92,7 @@ public class BGXStrategyMainTest {
 //        applySettings();
 //        fillCandlestickList();
         commonMembers = new CommonTestClassMembers();
+        presenterMock = mock(Presenter.class);
         requestBuilderMock = mock(RequestBuilder.class);
         requestMock = mock(Request.class);
         useCaseFactoryMock = mock(UseCaseFactory.class);
@@ -160,7 +163,7 @@ public class BGXStrategyMainTest {
 
     private void setFakeResponse(){
         when(useCaseMock.execute(requestMock)).thenReturn(responseMock);
-        when(useCaseFactoryMock.make(anyString())).thenReturn(useCaseMock);
+        when(useCaseFactoryMock.make(anyString(), any(Presenter.class))).thenReturn(useCaseMock);
     }
 
     private void setFakeConfiguration(){

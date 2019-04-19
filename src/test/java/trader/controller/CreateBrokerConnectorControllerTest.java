@@ -20,7 +20,7 @@ public class CreateBrokerConnectorControllerTest extends BaseControllerTest{
     public void setUp() throws Exception {
         super.setUp();
         brokerConnectorMock = mock(BrokerConnector.class);
-        createBrokerConnectorController = new CreateBrokerConnectorController( useCaseFactoryMock);
+        createBrokerConnectorController = new CreateBrokerConnectorController( useCaseFactoryMock, presenterMock);
     }
 
     @Test
@@ -36,7 +36,7 @@ public class CreateBrokerConnectorControllerTest extends BaseControllerTest{
     @Test
     public void givenCorrectSettings_WhenCallMake_ThenReturnCorrectUseCase(){
         setFakeUseCaseFactory();
-        UseCase useCase = createBrokerConnectorController.make(BROKER_CONFIGURATION_CONTROLLER);
+        UseCase useCase = createBrokerConnectorController.make(BROKER_CONFIGURATION_CONTROLLER, presenterMock);
 
         assertEquals(useCaseMock, useCase);
     }
