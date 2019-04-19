@@ -34,9 +34,9 @@ public final class BGXStrategyMain implements Strategy {
     private static final String ORDER_STRATEGY_KEY_NAME = "orderStrategy";
     private static final String EXIT_STRATEGY_KEY_NAME = "exitStrategy";
 
-    // to be removed
-    private RequestOLDBuilder requestOLDBuilder;
-    // to be removed
+//    // to be removed
+//    private RequestOLDBuilder requestOLDBuilder;
+//    // to be removed
     private final RequestBuilderCreator requestBuilderCreator;
     private UseCaseFactory useCaseFactory;
     private List<Indicator> indicatorList;
@@ -53,9 +53,9 @@ public final class BGXStrategyMain implements Strategy {
 
 
     public BGXStrategyMain( String brokerName, String configurationFileName, String brokerConfigurationFileName ) {
-        // to be removed
-        requestOLDBuilder = new RequestBuilderImpl();
-        // to be removed
+//        // to be removed
+//        requestOLDBuilder = new RequestBuilderImpl();
+//        // to be removed
 
         Validator.validateStrings(brokerName, configurationFileName, brokerConfigurationFileName);
         requestBuilderCreator = new RequestBuilderCreator();
@@ -66,12 +66,7 @@ public final class BGXStrategyMain implements Strategy {
         priceObservable = PriceObservable.create(brokerGateway, configuration);
         entryStrategy = setEntryStrategy();
         orderStrategy = setOrderStrategy();
-
-
-   //     exitStrategy = setExitStrategy();
-
-
-       // exitStrategy = ServiceExitStrategy.createInstance();
+        exitStrategy = setExitStrategy();
     }
 
 
@@ -117,6 +112,11 @@ public final class BGXStrategyMain implements Strategy {
         return orderService.createOrderStrategy(configuration.getOrderStrategy());
     }
 
+    private ExitStrategy setExitStrategy() {
+        ExitService exitService = new ExitService(useCaseFactory);
+        return exitService.createOrderStrategy(configuration.getExitStrategy());
+    }
+
     void addIndicatorsToObservable(Observable observable, List<Indicator> indicators){
         for (Indicator indicator:indicators) {
             observable.registerObserver(
@@ -138,17 +138,6 @@ public final class BGXStrategyMain implements Strategy {
 ///// not tested//////////////
 
 
-
-
-
-    private ExitStrategy setExitStrategy() {
-//        HashMap<String, String> settings = new HashMap<>();
-//        settings.put(EXIT_STRATEGY_KEY_NAME, configuration.getExitStrategy());
-//        TraderController<ExitStrategy> controller = new AddExitStrategyController<>(requestOLDBuilder, useCaseFactory);
-//        Response<ExitStrategy> exitResponse = controller.execute(settings);
-//        ExitStrategy exitStrategy = exitResponse.getResponseDataStructure();
-        return null; // exitStrategy;
-    }
 
 
 

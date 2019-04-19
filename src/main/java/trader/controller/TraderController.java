@@ -6,9 +6,6 @@ import java.util.Map;
 
 public interface TraderController<T> {
 
-    ////////////// to be removed//////////////////
-  //  default Response<T> execute(HashMap<String, String> settings){return null;};
-    ////////////to be removed///////////////////////////////////////////
 
-    default Response<T> execute(Map<String, Object> settings) {return null;}
+    Response<T> execute(Map<String, Object> settings);
 }

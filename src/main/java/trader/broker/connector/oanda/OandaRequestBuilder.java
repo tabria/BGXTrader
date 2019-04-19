@@ -14,13 +14,11 @@ import trader.entity.candlestick.candle.CandleGranularity;
 import trader.exception.*;
 import trader.interactor.RequestImpl;
 import trader.requestor.Request;
-import trader.requestor.RequestOLDBuilder;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-class OandaRequestBuilder implements RequestOLDBuilder {
+class OandaRequestBuilder {
 
     private static final String ACCOUNT_ID = "accountID";
     private static final String INSTRUMENT = SettingsFieldNames.INSTRUMENT.toString();
@@ -32,7 +30,6 @@ class OandaRequestBuilder implements RequestOLDBuilder {
     private static final String ORDER_ID = "orderID";
     private static final String TRADE_ID = "tradeID";
 
-    @Override
     public Request<?> build(String requestType, HashMap<String, String> settings) {
         initialInputValidation(requestType, settings);
         if(requestType.trim().equalsIgnoreCase("price"))

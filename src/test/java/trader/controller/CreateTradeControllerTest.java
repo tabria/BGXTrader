@@ -19,30 +19,16 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(RequestBuilderCreator.class)
-public class CreateTradeControllerTest {
+public class CreateTradeControllerTest extends BaseControllerTest {
 
     private static final String CREATE_TRADE_CONTROLLER = "CreateTradeController";
 
-    private Map<String, Object> settings;
-    private RequestBuilder requestBuilderMock;
-    private Request requestMock;
-    private UseCaseFactory useCaseFactoryMock;
-    private UseCase useCaseMock;
-    private Response responseMock;
     private CreateTradeController<Trade> controller;
     private Trade tradeMock;
 
     @Before
     public void setUp() throws Exception {
-
-        settings = new HashMap<>();
-        requestBuilderMock = mock(RequestBuilder.class);
-        requestMock = mock(Request.class);
-        useCaseMock = mock(UseCase.class);
-        useCaseFactoryMock = mock(UseCaseFactory.class);
-        responseMock = mock(Response.class);
+        super.setUp();
         tradeMock = mock(Trade.class);
         controller = new CreateTradeController<>(useCaseFactoryMock);
     }
@@ -52,25 +38,20 @@ public class CreateTradeControllerTest {
         setFakeRequestFactoryCreator();
         setFakeRequestFactory();
 
-        Request brokerConnectorRequest = controller.getRequest(CREATE_TRADE_CONTROLLER, settings);
+        Request tradeRequest = controller.getRequest(CREATE_TRADE_CONTROLLER, settings);
 
-        assertEquals(requestMock, brokerConnectorRequest);
+        assertEquals(requestMock, tradeRequest);
     }
-
 
     @Test
     public void givenCorrectSettings_WhenCallMake_ThenReturnCorrectUseCase(){
-        setFakeRequestFactoryCreator();
-        setFakeRequestFactory();
-        setFakeUseCaseFactory();
-        setFakeUseCase();
+        setFakes();
         setFakeResponseBody();
 
         UseCase useCase = controller.make(CREATE_TRADE_CONTROLLER);
 
         assertEquals(useCaseMock, useCase);
     }
-
 
     @Test
     public void givenSettings_WhenCallExecute_ThenReturnTrade(){
@@ -80,22 +61,6 @@ public class CreateTradeControllerTest {
         Response<Trade> createTradeResponse = controller.execute(settings);
 
         assertEquals(tradeMock, createTradeResponse.getBody());
-    }
-    private void setFakeRequestFactoryCreator(){
-        PowerMockito.mockStatic(RequestBuilderCreator.class);
-        PowerMockito.when(RequestBuilderCreator.create(any())).thenReturn(requestBuilderMock);
-    }
-
-    private void setFakeRequestFactory(){
-        when(requestBuilderMock.build(settings)).thenReturn(requestMock);
-    }
-
-    private void setFakeUseCaseFactory(){
-        when(useCaseFactoryMock.make(anyString())).thenReturn(useCaseMock);
-    }
-
-    private void setFakeUseCase(){
-        when(useCaseMock.execute(requestMock)).thenReturn(responseMock);
     }
 
     private void setFakeResponseBody(){

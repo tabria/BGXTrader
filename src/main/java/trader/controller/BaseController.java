@@ -5,17 +5,15 @@ import trader.responder.Response;
 
 import java.util.Map;
 
-public class CreateOrderStrategyController<T> implements TraderController<T> {
+public abstract class BaseController<T>  implements TraderController<T> {
+    protected UseCaseFactory useCaseFactory;
 
-    private UseCaseFactory useCaseFactory;
-
-    public CreateOrderStrategyController(UseCaseFactory useCaseFactory) {
+    public BaseController(UseCaseFactory useCaseFactory) {
         this.useCaseFactory = useCaseFactory;
     }
 
-    @Override
-    public Response<T> execute(Map<String, Object> settings) {
-        String controllerName = this.getClass().getSimpleName();
+    public Response execute(Map<String, Object> settings) {
+        String controllerName = this.getClass().getSimpleName().trim();
         Request<?> request = getRequest(controllerName, settings);
         UseCase useCase = make(controllerName);
         return useCase.execute(request);

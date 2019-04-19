@@ -17,7 +17,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 
-public class OandaRequestOLDBuilderTest {
+public class OandaRequestBuilderTest {
 
     public static final String ORDER_SPECIFIER = "orderSpecifier";
     private static final String ACCOUNT_ID = "accountID";
