@@ -23,7 +23,6 @@ public class CreateOrderStrategyUseCase implements UseCase {
     }
 
     private OrderStrategy setOrderStrategy(Map<String,Object> inputSettings) {
-
         Map<String, String> settings = (Map<String, String>) inputSettings.get("settings");
         try {
             Class<?> orderStrategyClass = Class.forName(composeName(settings));

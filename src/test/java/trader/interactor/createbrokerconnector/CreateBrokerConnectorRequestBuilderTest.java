@@ -3,6 +3,8 @@ package trader.interactor.createbrokerconnector;
 import org.junit.Before;
 import org.junit.Test;
 import trader.exception.NullArgumentException;
+import trader.interactor.BaseRequestBuilder;
+import trader.interactor.BaseRequestBuilderTest;
 import trader.requestor.Request;
 
 import java.util.HashMap;
@@ -10,7 +12,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
-public class CreateBrokerConnectorRequestBuilderTest {
+public class CreateBrokerConnectorRequestBuilderTest extends BaseRequestBuilderTest {
 
 
     private CreateBrokerConnectorRequestBuilder requestBuilder;
@@ -18,11 +20,7 @@ public class CreateBrokerConnectorRequestBuilderTest {
     @Before
     public void setUp(){
         requestBuilder = new CreateBrokerConnectorRequestBuilder();
-    }
-
-    @Test(expected = NullArgumentException.class)
-    public void givenNullSettings_WhenCallBuild_ThenException(){
-        requestBuilder.build(null);
+        super.setRequestBuilder(requestBuilder);
     }
 
     @Test
@@ -30,7 +28,7 @@ public class CreateBrokerConnectorRequestBuilderTest {
         Map<String, Object> inputSettings = new HashMap<>();
         inputSettings.put("brokerName", "Oanda");
         inputSettings.put("settings", new HashMap<>());
-        Request<Map<String, Object>> request = requestBuilder.build(inputSettings);
+        Request<?> request = requestBuilder.build(inputSettings);
 
         assertEquals(inputSettings, request.getBody());
     }

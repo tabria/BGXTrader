@@ -1,17 +1,16 @@
 package trader.interactor.createbgxconfiguration;
 
+import trader.interactor.BaseRequestBuilder;
 import trader.interactor.RequestImpl;
 import trader.requestor.Request;
-import trader.requestor.RequestBuilder;
 import trader.validation.Validator;
 
 import java.util.Map;
 
-public class CreateBGXConfigurationRequestBuilder implements RequestBuilder {
+public class CreateBGXConfigurationRequestBuilder extends BaseRequestBuilder {
 
-    @SuppressWarnings("unchecked")
     @Override
-    public  Request<Map<String, Map<String, String>>> build(Map<String, Object> inputSettings) {
+    public  Request<?> build(Map<String, Object> inputSettings) {
         Validator.validateForNull(inputSettings);
         Map<String, Map<String, String>> outputSettings = (Map<String, Map<String, String>>) inputSettings.get("settings");
         Request<Map<String, Map<String, String>>> request = new RequestImpl<>();

@@ -22,7 +22,6 @@ public class CreateExitStrategyUseCase implements UseCase {
     }
 
     private ExitStrategy setExitStrategy(Map<String,Object> inputSettings) {
-
         Map<String, String> settings = (Map<String, String>) inputSettings.get("settings");
         try {
             Class<?> exitStrategyClass = Class.forName(composeName(settings));

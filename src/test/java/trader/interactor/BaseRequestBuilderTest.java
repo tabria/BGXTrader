@@ -1,23 +1,23 @@
-package trader.interactor.createorderservice;
+package trader.interactor;
 
-import org.junit.Before;
 import org.junit.Test;
 import trader.exception.NullArgumentException;
-import trader.interactor.createorderstrategy.CreateOrderStrategyRequestBuilder;
 import trader.requestor.Request;
+import trader.requestor.RequestBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
-public class CreateOrderStrategyRequestBuilderTest {
 
-    private CreateOrderStrategyRequestBuilder requestBuilder;
+public abstract class BaseRequestBuilderTest {
 
-    @Before
-    public void setUp() throws Exception {
-        requestBuilder = new CreateOrderStrategyRequestBuilder();
+
+    private RequestBuilder requestBuilder;
+
+    public void setRequestBuilder(RequestBuilder builder){
+        requestBuilder = builder;
     }
 
     @Test(expected = NullArgumentException.class)
@@ -25,16 +25,13 @@ public class CreateOrderStrategyRequestBuilderTest {
         requestBuilder.build(null);
     }
 
-
     @Test
     public void givenValidSettings_WhenCallBuild_ThenReturnCorrectRequest(){
+        Map<String, String> indicatorSettings = new HashMap<>();
         Map<String, Object> inputSettings = new HashMap<>();
-        Map<String, String> settings = new HashMap<>();
-        settings.put("orderStrategy", "standard");
-        inputSettings.put("settings", settings);
+        inputSettings.put("settings", indicatorSettings);
         Request<?> request = requestBuilder.build(inputSettings);
 
         assertEquals(inputSettings, request.getBody());
     }
-
 }

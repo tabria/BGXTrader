@@ -46,7 +46,7 @@ public class CreateTradeUseCaseTest {
     }
 
     @Test
-    public void givenCorrectSettngs_WhenCallExecute_ThenReturnNewTrade(){
+    public void givenCorrectSettings_WhenCallExecute_ThenReturnNewTrade(){
         when(request.getBody()).thenReturn(settings);
         Map<String, String> realSettings = new HashMap<>();
         realSettings.put("direction", "down");
@@ -72,20 +72,4 @@ public class CreateTradeUseCaseTest {
         assertEquals(BigDecimal.valueOf(0.00010), trade.getEntryPrice());
         assertEquals(BigDecimal.valueOf(0.00010), trade.getStopLossPrice());
     }
-//
-//    @Test
-//    public void WhenCallBuildWithCreateTradeControllerWithCorrectCustomSettings_CorrectTrade(){
-//        settings.put("direction", "down");
-//        settings.put("tradable", "true");
-//        settings.put("entryPrice", "1.12345");
-//        settings.put("stopLossPrice", "5.1234");
-//        Request<?> createTradeRequest = requestOLDBuilder.build("CreateTradeController", settings);
-//        Trade trade = (Trade) createTradeRequest.getBody();
-//
-//        assertTrue(trade.getTradable());
-//        assertEquals(Direction.DOWN, trade.getDirection());
-//        assertEquals(BigDecimal.valueOf(1.12345) ,trade.getEntryPrice());
-//        assertEquals(BigDecimal.valueOf(5.1234) ,trade.getStopLossPrice());
-//    }
-
 }

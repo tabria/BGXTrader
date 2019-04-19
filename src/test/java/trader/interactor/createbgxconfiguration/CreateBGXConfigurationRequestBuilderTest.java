@@ -2,7 +2,7 @@ package trader.interactor.createbgxconfiguration;
 
 import org.junit.Before;
 import org.junit.Test;
-import trader.exception.NullArgumentException;
+import trader.interactor.BaseRequestBuilderTest;
 import trader.requestor.Request;
 
 import java.util.HashMap;
@@ -10,18 +10,14 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
-public class CreateBGXConfigurationRequestBuilderTest {
+public class CreateBGXConfigurationRequestBuilderTest extends BaseRequestBuilderTest {
 
     private CreateBGXConfigurationRequestBuilder requestBuilder;
 
     @Before
     public void setUp(){
         requestBuilder = new CreateBGXConfigurationRequestBuilder();
-    }
-
-    @Test(expected = NullArgumentException.class)
-    public void givenNullSettings_WhenCallBuild_ThenException(){
-        requestBuilder.build(null);
+        super.setRequestBuilder(requestBuilder);
     }
 
     @Test
@@ -29,7 +25,7 @@ public class CreateBGXConfigurationRequestBuilderTest {
         Map<String, Object> inputSettings = new HashMap<>();
         Map<String, Map<String, String>> outputSettings = new HashMap<>();
         inputSettings.put("settings", outputSettings);
-        Request<Map<String, Map<String, String>>> request = requestBuilder.build(inputSettings);
+        Request<?> request = requestBuilder.build(inputSettings);
 
         assertEquals(outputSettings, request.getBody());
     }
