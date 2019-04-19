@@ -6,7 +6,8 @@ import org.junit.runner.RunWith;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import trader.entry.EntryStrategy;
+import trader.exception.NullArgumentException;
+import trader.order.OrderStrategy;
 import trader.requestor.*;
 import trader.responder.Response;
 
@@ -19,38 +20,41 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(RequestBuilderCreator.class)
-public class CreateEntryStrategyControllerTest {
+public class CreateOrderStrategyControllerTest {
 
-    private static final String CREATE_ENTRY_STRATEGY_CONTROLLER = "CreateEntryStrategyController";
+    private static final String CREATE_ORDER_STRATEGY_CONTROLLER = "CreateOrderStrategyController";
+
     private Map<String, Object> settings;
-    private UseCaseFactory useCaseFactoryMock;
-    private UseCase useCaseMock;
-    private RequestBuilder requestBuilderMock;
     private Request requestMock;
     private Response responseMock;
-    private CreateEntryStrategyController controller;
-    private EntryStrategy entryStrategyMock;
+    private RequestBuilder requestBuilderMock;
+    private UseCaseFactory useCaseFactoryMock;
+    private UseCase useCaseMock;
+    private CreateOrderStrategyController<OrderStrategy> controller;
+    private OrderStrategy orderStrategyMock;
 
     @Before
     public void setUp() throws Exception {
+
         settings = new HashMap<>();
-        useCaseFactoryMock = mock(UseCaseFactory.class);
-        useCaseMock = mock(UseCase.class);
         requestMock = mock(Request.class);
-        requestBuilderMock = mock(RequestBuilder.class);
         responseMock = mock(Response.class);
-        entryStrategyMock = mock(EntryStrategy.class);
-        controller = new CreateEntryStrategyController(useCaseFactoryMock);
+        useCaseMock = mock(UseCase.class);
+        requestBuilderMock = mock(RequestBuilder.class);
+        useCaseFactoryMock = mock(UseCaseFactory.class);
+        orderStrategyMock = mock(OrderStrategy.class);
+        controller = new CreateOrderStrategyController<>(useCaseFactoryMock);
     }
 
     @Test
-    public void givenCorrectSettings_WhenCallGetRequest_ThenReturnCorrectRequest(){
+    public void givenCorrectSettings_WhenCallGetRequestThenReturnCorrectRequest() {
         setFakeRequestFactoryCreator();
         setFakeRequestFactory();
 
-        Request request = controller.getRequest(CREATE_ENTRY_STRATEGY_CONTROLLER, settings);
+        Request request = controller.getRequest(CREATE_ORDER_STRATEGY_CONTROLLER, settings);
 
         assertEquals(requestMock, request);
     }
@@ -58,13 +62,13 @@ public class CreateEntryStrategyControllerTest {
     @Test
     public void givenCorrectSettings_WhenCallMake_ThenReturnCorrectUseCase(){
         setFakeUseCaseFactory();
-        UseCase useCase = controller.make(CREATE_ENTRY_STRATEGY_CONTROLLER);
+        UseCase useCase = controller.make(CREATE_ORDER_STRATEGY_CONTROLLER);
 
         assertEquals(useCaseMock, useCase);
     }
 
     @Test
-    public void givenCorrectSettings_WhenCallExecute_ReturnCorrectResponse(){
+    public void givenCorrectSettings_WhenCallExecute_ThenReturnCorrectResponse(){
         setFakeRequestFactoryCreator();
         setFakeRequestFactory();
         setFakeRequestFactory();
@@ -72,9 +76,8 @@ public class CreateEntryStrategyControllerTest {
         setFakeUseCase();
         setFakeResponseBody();
 
-        Response<EntryStrategy> controllerResponse = controller.execute(settings);
-
-        assertEquals(entryStrategyMock, controllerResponse.getBody());
+        Response<OrderStrategy> response = controller.execute(settings);
+        assertEquals(orderStrategyMock, response.getBody());
     }
 
     private void setFakeRequestFactoryCreator(){
@@ -95,7 +98,7 @@ public class CreateEntryStrategyControllerTest {
     }
 
     private void setFakeResponseBody(){
-        when(responseMock.getBody()).thenReturn(entryStrategyMock);
+        when(responseMock.getBody()).thenReturn(orderStrategyMock);
     }
 
 }

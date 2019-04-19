@@ -25,10 +25,12 @@ public class EntryService {
     public EntryStrategy createEntryStrategy(String entryStrategyName, List<Indicator> indicators) {
         if(entryStrategyName == null || indicators == null)
             throw new NullArgumentException();
-        Map<String, Object> settings = new HashMap<>();
+        Map<String, Object> inputSettings = new HashMap<>();
+        Map<String, String> settings = new HashMap<>();
         settings.put("entryStrategy", entryStrategyName);
+        inputSettings.put("settings", settings);
         TraderController<EntryStrategy> controller = new CreateEntryStrategyController<>(useCaseFactory);
-        Response<EntryStrategy> entryResponse = controller.execute(settings);
+        Response<EntryStrategy> entryResponse = controller.execute(inputSettings);
         EntryStrategy strategy = entryResponse.getBody();
         strategy.setIndicators(indicators);
         strategy.setCreateTradeController(new CreateTradeController<>(useCaseFactory));

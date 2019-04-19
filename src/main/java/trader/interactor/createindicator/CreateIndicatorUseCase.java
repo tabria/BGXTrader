@@ -8,7 +8,6 @@ import trader.entity.indicator.rsi.RSIBuilder;
 import trader.exception.EmptyArgumentException;
 import trader.exception.NoSuchDataStructureException;
 import trader.exception.WrongIndicatorSettingsException;
-import trader.interactor.RequestImpl;
 import trader.interactor.ResponseImpl;
 import trader.interactor.createindicator.enums.Constants;
 import trader.requestor.Request;

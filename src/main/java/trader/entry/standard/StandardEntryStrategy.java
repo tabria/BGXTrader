@@ -20,6 +20,7 @@ import trader.responder.Response;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public final class StandardEntryStrategy implements EntryStrategy {
 
@@ -124,9 +125,8 @@ public final class StandardEntryStrategy implements EntryStrategy {
             throw new NoSuchStrategyException();
     }
 
-    //uncomment when remove execute(HashMap<String, String> from tradeController
     private Trade defaultTrade() {
-        Response<Trade> tradeResponse = null;// createTradeController.execute(new HashMap<>());
+        Response<Trade> tradeResponse = createTradeController.execute(new HashMap<>());
         return tradeResponse.getBody();
     }
 
@@ -153,16 +153,17 @@ public final class StandardEntryStrategy implements EntryStrategy {
     }
 
     private Trade getTrade(Point intersectionPoint, List<BigDecimal> dailyValues) {
-//        HashMap<String, String> settings = getTradeSettings(intersectionPoint, dailyValues);
-//        Response<Trade> tradeResponse = createTradeController.execute(settings);
-        return null; //tradeResponse.getResponseDataStructure();
+        Map<String, Object> inputSettings = new HashMap<>();
+        inputSettings.put("settings", getTradeSettings(intersectionPoint, dailyValues));
+        Response<Trade> tradeResponse = createTradeController.execute(inputSettings);
+        return tradeResponse.getBody();
     }
 
-    private HashMap<String, String> getTradeSettings(Point intersectionPoint, List<BigDecimal> dailyValues) {
+    private Map<String, String> getTradeSettings(Point intersectionPoint, List<BigDecimal> dailyValues) {
         BigDecimal entryPrice = tradeCalculationService.calculateEntryPrice(intersectionPoint, direction);
         BigDecimal stopLossPrice = tradeCalculationService.calculateStopLossPrice(intersectionPoint, direction);
         boolean tradable = tradeCalculationService.setTradable(intersectionPoint, direction, dailyValues.get(dailyValues.size() - 1), entryPrice);
-        HashMap<String, String> settings = new HashMap<>();
+        Map<String, String> settings = new HashMap<>();
         settings.put("entryPrice", entryPrice.toString());
         settings.put("stopLossPrice", stopLossPrice.toString());
         settings.put("tradable", String.valueOf(tradable));

@@ -1,10 +1,9 @@
-package trader.interactor.createentrystrategy;
+package trader.interactor.createorderstrategy;
 
-import trader.entity.indicator.Indicator;
-import trader.entry.EntryStrategy;
 import trader.exception.NoSuchStrategyException;
 import trader.exception.NullArgumentException;
 import trader.interactor.ResponseImpl;
+import trader.order.OrderStrategy;
 import trader.requestor.Request;
 import trader.requestor.UseCase;
 import trader.responder.Response;
@@ -13,21 +12,23 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
-public class CreateEntryStrategyUseCase implements UseCase {
+public class CreateOrderStrategyUseCase implements UseCase {
+
 
     @Override
     public <T, E> Response<E> execute(Request<T> request) {
         Map<String, Object> settings = (Map<String, Object>) request.getBody();
-        EntryStrategy strategy = setEntryStrategy(settings);
+        OrderStrategy strategy = setOrderStrategy(settings);
         return setResponse((E) strategy);
     }
 
-    private EntryStrategy setEntryStrategy(Map<String, Object> inputSettings) {
+    private OrderStrategy setOrderStrategy(Map<String,Object> inputSettings) {
+
         Map<String, String> settings = (Map<String, String>) inputSettings.get("settings");
         try {
-            Class<?> entryStrategyClass = Class.forName(composeName(settings));
-            Constructor<?> entryStrategyConstructor = entryStrategyClass.getDeclaredConstructor();
-            return (EntryStrategy) entryStrategyConstructor.newInstance();
+            Class<?> orderStrategyClass = Class.forName(composeName(settings));
+            Constructor<?> orderStrategyConstructor = orderStrategyClass.getDeclaredConstructor();
+            return (OrderStrategy) orderStrategyConstructor.newInstance();
         } catch (ClassNotFoundException | InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException | StringIndexOutOfBoundsException e) {
             throw new NoSuchStrategyException();
         } catch (Exception e) {
@@ -35,15 +36,15 @@ public class CreateEntryStrategyUseCase implements UseCase {
         }
     }
 
-    private <E> Response<E> setResponse(E entryStrategy) {
+    private <E> Response<E> setResponse(E orderStrategy) {
         Response<E> response = new ResponseImpl<>();
-        response.setBody(entryStrategy);
+        response.setBody(orderStrategy);
         return response;
     }
 
     private String composeName(Map<String, String> settings){
-        String className = settings.get("entryStrategy").trim();
+        String className = settings.get("orderStrategy").trim();
         className = Character.toUpperCase(className.charAt(0)) + className.substring(1);
-        return String.format("%s.%s.%s.%s%s", "trader", "entry", className.toLowerCase(), className, "EntryStrategy");
+        return String.format("%s.%s.%s.%s%s", "trader", "order", className.toLowerCase(), className, "OrderStrategy");
     }
 }

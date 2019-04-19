@@ -188,31 +188,31 @@ public class RequestOLDBuilderImplTest {
     @Test(expected = NullArgumentException.class)
     public void WhenCallBuildWithAddOrderStrategyControllerWithBadKeyNameInSettings_Exception(){
         settings.put("order", "standard");
-        requestOLDBuilder.build("AddOrderStrategyController", settings);
+        requestOLDBuilder.build("CreateOrderStrategyController", settings);
     }
 
     @Test(expected = NullArgumentException.class)
     public void WhenCallBuildWithAddOrderStrategyControllerWithNullValueInSettings_Exception(){
         settings.put("orderStrategy", null);
-        requestOLDBuilder.build("AddOrderStrategyController", settings);
+        requestOLDBuilder.build("CreateOrderStrategyController", settings);
     }
 
     @Test(expected = NoSuchStrategyException.class)
     public void WhenCallBuildWithAddOrderStrategyControllerWithEmptyValueInSettings_Exception(){
         settings.put("orderStrategy", "   ");
-        requestOLDBuilder.build("AddOrderStrategyController", settings);
+        requestOLDBuilder.build("CreateOrderStrategyController", settings);
     }
 
     @Test(expected = NoSuchStrategyException.class)
     public void WhenCallBuildWithAddOrderStrategyControllerWithENonExistingStrtegy_Exception(){
         settings.put("orderStrategy", "non");
-        requestOLDBuilder.build("AddOrderStrategyController", settings);
+        requestOLDBuilder.build("CreateOrderStrategyController", settings);
     }
 
     @Test
     public void WhenCallBuildWithAddOrderStrategyControllerWithCorrectSettings_CorrectOrderStrategy(){
         settings.put("orderStrategy", " standard ");
-        Request<?> orderStrategyRequest = requestOLDBuilder.build("AddOrderStrategyController", settings);
+        Request<?> orderStrategyRequest = requestOLDBuilder.build("CreateOrderStrategyController", settings);
         OrderStrategy orderStrategy = (OrderStrategy) orderStrategyRequest.getBody();
 
         assertEquals(StandardOrderStrategy.class, orderStrategy.getClass());

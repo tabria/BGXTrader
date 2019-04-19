@@ -12,10 +12,7 @@ import trader.requestor.*;
 import trader.strategy.Observable;
 import trader.order.OrderStrategy;
 import trader.configuration.TradingStrategyConfiguration;
-import trader.strategy.bgxstrategy.service.BrokerService;
-import trader.strategy.bgxstrategy.service.ConfigurationService;
-import trader.strategy.bgxstrategy.service.EntryService;
-import trader.strategy.bgxstrategy.service.IndicatorService;
+import trader.strategy.bgxstrategy.service.*;
 import trader.strategy.observable.PriceObservable;
 import trader.strategy.Strategy;
 import trader.exit.ExitStrategy;
@@ -68,7 +65,6 @@ public final class BGXStrategyMain implements Strategy {
         indicatorList = setIndicators(configuration.getIndicators());
         priceObservable = PriceObservable.create(brokerGateway, configuration);
         entryStrategy = setEntryStrategy();
-
         orderStrategy = setOrderStrategy();
 
 
@@ -116,6 +112,11 @@ public final class BGXStrategyMain implements Strategy {
         return entryService.createEntryStrategy(configuration.getEntryStrategy(), indicatorList);
     }
 
+    private OrderStrategy setOrderStrategy() {
+        OrderService orderService = new OrderService(useCaseFactory);
+        return orderService.createOrderStrategy(configuration.getOrderStrategy());
+    }
+
     void addIndicatorsToObservable(Observable observable, List<Indicator> indicators){
         for (Indicator indicator:indicators) {
             observable.registerObserver(
@@ -147,14 +148,6 @@ public final class BGXStrategyMain implements Strategy {
 //        Response<ExitStrategy> exitResponse = controller.execute(settings);
 //        ExitStrategy exitStrategy = exitResponse.getResponseDataStructure();
         return null; // exitStrategy;
-    }
-
-    private OrderStrategy setOrderStrategy() {
-//        HashMap<String, String> settings = new HashMap<>();
-//        settings.put(ORDER_STRATEGY_KEY_NAME, configuration.getOrderStrategy());
-//        TraderController<OrderStrategy> controller = new AddOrderStrategyController<>(requestOLDBuilder, useCaseFactory);
-//        Response<OrderStrategy> orderResponse = controller.execute(settings);
-        return null; // orderResponse.getResponseDataStructure();
     }
 
 
