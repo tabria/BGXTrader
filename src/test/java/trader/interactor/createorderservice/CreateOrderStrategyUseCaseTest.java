@@ -18,7 +18,7 @@ public class CreateOrderStrategyUseCaseTest extends BaseStrategyTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        createOrderStrategyUseCase = new CreateOrderStrategyUseCase();
+        createOrderStrategyUseCase = new CreateOrderStrategyUseCase(presenterMock);
     }
 
     @Test(expected = NullArgumentException.class)

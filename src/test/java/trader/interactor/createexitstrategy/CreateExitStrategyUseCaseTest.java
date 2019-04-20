@@ -19,7 +19,7 @@ public class CreateExitStrategyUseCaseTest extends BaseStrategyTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        createExitStrategyUseCase = new CreateExitStrategyUseCase();
+        createExitStrategyUseCase = new CreateExitStrategyUseCase(presenterMock);
 
     }
 

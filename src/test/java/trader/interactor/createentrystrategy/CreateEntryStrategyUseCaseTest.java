@@ -6,9 +6,11 @@ import trader.entry.standard.StandardEntryStrategy;
 import trader.exception.NoSuchStrategyException;
 import trader.exception.NullArgumentException;
 import trader.interactor.BaseStrategyTest;
+import trader.presenter.Presenter;
 import trader.requestor.UseCase;
 import trader.responder.Response;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 
 public class CreateEntryStrategyUseCaseTest extends BaseStrategyTest {
 
@@ -18,7 +20,7 @@ public class CreateEntryStrategyUseCaseTest extends BaseStrategyTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        createEntryStrategyUseCase = new CreateEntryStrategyUseCase();
+        createEntryStrategyUseCase = new CreateEntryStrategyUseCase(presenterMock);
     }
 
     @Test(expected = NullArgumentException.class)

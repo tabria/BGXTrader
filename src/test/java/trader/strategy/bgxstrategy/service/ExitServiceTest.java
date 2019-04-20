@@ -16,14 +16,14 @@ public class ExitServiceTest {
 
     @Before
     public void setUp() throws Exception {
-
+        presenterMock = mock(Presenter.class);
         useCaseFactoryMock = mock(UseCaseFactory.class);
         service = new ExitService(useCaseFactoryMock, presenterMock);
     }
 
     @Test(expected = NullArgumentException.class)
     public void givenNullOrderStrategyName_WhenCallCreateOrderStrategy_ThenThrowException(){
-        service.createOrderStrategy(null);
+        service.createExitStrategy(null);
     }
 //
 //    @Test

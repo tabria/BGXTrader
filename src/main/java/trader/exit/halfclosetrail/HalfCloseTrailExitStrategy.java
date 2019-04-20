@@ -9,12 +9,14 @@ import trader.entity.trade.BrokerTradeDetails;
 import trader.exception.NullArgumentException;
 import trader.exit.ExitStrategy;
 import trader.entity.price.Price;
+import trader.exit.service.UpdateCandlesService;
 
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -30,10 +32,11 @@ public final class HalfCloseTrailExitStrategy implements ExitStrategy {
     private static final int FIRST_TRADE = 0;
 
 
-    private List<Candlestick> candlesticks;
+//    private List<Candlestick> candlesticks;
+    private UpdateCandlesService updateCandlesService;
     private TradingStrategyConfiguration configuration;
     private BrokerGateway brokerGateway;
-    private HashMap<String, String> settings;
+ //   private HashMap<String, String> settings;
 
  //   private ServiceExitStrategy serviceExitStrategy;
     private OrderCreateResponse halfTradeResponse;
@@ -44,10 +47,12 @@ public final class HalfCloseTrailExitStrategy implements ExitStrategy {
 
     public HalfCloseTrailExitStrategy() {
 //        this.serviceExitStrategy = new ServiceExitStrategy();
+        updateCandlesService = new UpdateCandlesService();
+
         this.exitBarHigh = null;
         this.exitBarLow = null;
-        candlesticks = new ArrayList<>();
-        settings = new HashMap<>();
+//        candlesticks = new ArrayList<>();
+//        settings = new HashMap<>();
 
     }
 
@@ -63,36 +68,9 @@ public final class HalfCloseTrailExitStrategy implements ExitStrategy {
         this.brokerGateway = brokerGateway;
     }
 
-    public void updateCandles(Price price) {
-        if (price == null)
-            throw new NullArgumentException();
-        if(settings.size() == 0)
-            initializeRequestSettings();
-        else
-            setUpdateQuantityInSettings();
-
-        List<Candlestick> candles = brokerGateway.getCandles(settings);
-        if(candlesticks.size() >0)
-            candlesticks.add(candles.get(candles.size()-1));
-        else
-            candlesticks.addAll(candles);
-    }
-
-    private void setUpdateQuantityInSettings() {
-        if(candlesticks.size() != 0)
-            settings.put("quantity", String.valueOf(configuration.getUpdateCandlesQuantity()));
-    }
-
-    private void initializeRequestSettings(){
-        settings.put("instrument", configuration.getInstrument());
-        settings.put("quantity", String.valueOf(configuration.getInitialCandlesQuantity()));
-        settings.put("granularity", configuration.getExitGranularity().toString());
-    }
-
-
     @Override
     public void execute(Price price) {
-        updateCandles(price);
+        updateCandlesService.updateCandles(brokerGateway, configuration);
         BrokerTradeDetails tradeDetails = brokerGateway.getTradeDetails(FIRST_TRADE);
 
         moveToBreakEven(tradeDetails, price);
@@ -105,32 +83,33 @@ public final class HalfCloseTrailExitStrategy implements ExitStrategy {
         if (initialUnits.compareTo(currentUnits) != 0)
             return;
 
-        BigDecimal firstTargetPrice =  isShortTrade(currentUnits) ?
-                subtract(tradeOpenPrice, FIRST_TARGET_DISTANCE):
-                add(tradeOpenPrice, FIRST_TARGET_DISTANCE);
+        BigDecimal firstTargetPrice = getFirstTarget(tradeDetails, FIRST_TARGET_DISTANCE);
 
         if(isAbleToSetStopLoss(currentUnits, firstTargetPrice, price)){
-
-                if (PARTS_TO_CLOSE == null || PARTS_TO_CLOSE.compareTo(BigDecimal.ONE)< 0){
-                    throw new IllegalArgumentException("parts is less than 1");
-                }
-                //multiply with -1 to reverse units size. This will open trade with opposite direction to the current trade
-                BigDecimal unitsToClose = currentUnits
-                        .divide(PARTS_TO_CLOSE, 0, BigDecimal.ROUND_HALF_UP)
-                        .multiply(BigDecimal.valueOf(-1)).setScale(0, BigDecimal.ROUND_HALF_UP);
-
-//                MarketOrderRequest marketOrderRequest = new MarketOrderRequest()
-//                        .setInstrument(Config.INSTRUMENT)
-//                        .setUnits(unitsToClose);
-//                OrderCreateRequest halfTradeRequest = new OrderCreateRequest(Config.ACCOUNTID).setOrder(marketOrderRequest);
-//                try {
-//                    return this.context.order.create(halfTradeRequest);
-//                } catch (RequestException | ExecuteException e) {
-//                    throw new RuntimeException(e);
-//                }
+            if (PARTS_TO_CLOSE == null || PARTS_TO_CLOSE.compareTo(BigDecimal.ONE)< 0)
+                throw new IllegalArgumentException("parts is less than 1");
+            String tradeID = brokerGateway.placeMarketOrder(createHalfCloseSettings(currentUnits));
         }
+    }
 
+    private BigDecimal getFirstTarget(BrokerTradeDetails tradeDetails, BigDecimal firstTargetDistance) {
+        return isShortTrade(tradeDetails.getCurrentUnits()) ?
+                subtract(tradeDetails.getOpenPrice(), firstTargetDistance) :
+                add(tradeDetails.getOpenPrice(), firstTargetDistance);
+    }
 
+    private HashMap<String, String> createHalfCloseSettings(BigDecimal currentUnits) {
+        HashMap<String, String> settings = new HashMap<>();
+        settings.put("instrument", configuration.getInstrument());
+        settings.put("unitsSize", reverseUnitsSizeSign(currentUnits).toString());
+        return settings;
+    }
+
+    private BigDecimal reverseUnitsSizeSign(BigDecimal currentUnits) {
+        //multiply with -1 to reverse units size. This will open trade with opposite direction to the current trade
+        return currentUnits
+                .divide(PARTS_TO_CLOSE, 0, BigDecimal.ROUND_HALF_UP)
+                .multiply(BigDecimal.valueOf(-1)).setScale(0, BigDecimal.ROUND_HALF_UP);
     }
 
     @Override
@@ -146,9 +125,10 @@ public final class HalfCloseTrailExitStrategy implements ExitStrategy {
             return;
         if (isShortTrade(currentUnits) && isBelow(stopLossPrice, tradeOpenPrice))
             return;
-        BigDecimal breakEvenPrice = isShortTrade(currentUnits) ?
-                subtract(tradeOpenPrice, BREAK_EVEN_DISTANCE) :
-                add(tradeOpenPrice, BREAK_EVEN_DISTANCE);
+        BigDecimal breakEvenPrice = getFirstTarget(tradeDetails, BREAK_EVEN_DISTANCE);
+//        BigDecimal breakEvenPrice = isShortTrade(currentUnits) ?
+//                subtract(tradeOpenPrice, BREAK_EVEN_DISTANCE) :
+//                add(tradeOpenPrice, BREAK_EVEN_DISTANCE);
         if(isAbleToSetStopLoss(currentUnits, breakEvenPrice, price))
             brokerGateway.setTradeStopLossPrice(tradeDetails.getTradeID(), tradeOpenPrice.toString());
     }
@@ -193,6 +173,16 @@ public final class HalfCloseTrailExitStrategy implements ExitStrategy {
                 .setScale(5, BigDecimal.ROUND_HALF_UP);
     }
 
+
+    //                MarketOrderRequest marketOrderRequest = new MarketOrderRequest()
+//                        .setInstrument(Config.INSTRUMENT)
+//                        .setUnits(unitsToClose);
+//                OrderCreateRequest halfTradeRequest = new OrderCreateRequest(Config.ACCOUNTID).setOrder(marketOrderRequest);
+//                try {
+//                    return this.context.order.create(halfTradeRequest);
+//                } catch (RequestException | ExecuteException e) {
+//                    throw new RuntimeException(e);
+//                }
 
 //    @Override
 //    public void execute(Price price) {

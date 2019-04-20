@@ -13,6 +13,7 @@ import trader.entity.price.Price;
 import trader.entity.trade.BrokerTradeDetails;
 import trader.exception.NullArgumentException;
 import trader.exception.UnderflowException;
+import trader.exit.service.UpdateCandlesService;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -53,9 +55,10 @@ import static org.mockito.Mockito.when;
 //
 public class HalfCloseTrailExitStrategyTest {
 
-    private List<Candlestick> candlesticks;
+ //   private List<Candlestick> candlesticks;
     private Price priceMock;
-    private Candlestick candlestickMock;
+ //   private Candlestick candlestickMock;
+    private UpdateCandlesService updateCandlesServiceMock;
     private BrokerGateway brokerGatewayMock;
     private HalfCloseTrailExitStrategy exitStrategy;
     private TradingStrategyConfiguration configurationMock;
@@ -65,9 +68,10 @@ public class HalfCloseTrailExitStrategyTest {
     @Before
     public void setUp() throws Exception {
 
+        updateCandlesServiceMock = mock(UpdateCandlesService.class);
         priceMock = mock(Price.class);
-        candlestickMock = mock(Candlestick.class);
-        candlesticks = new ArrayList<>();
+//       candlestickMock = mock(Candlestick.class);
+  //      candlesticks = new ArrayList<>();
         configurationMock = mock(TradingStrategyConfiguration.class);
         brokerGatewayMock = mock(BrokerGateway.class);
         exitStrategy = new HalfCloseTrailExitStrategy();
@@ -75,6 +79,7 @@ public class HalfCloseTrailExitStrategyTest {
         exitStrategy.setBrokerGateway(brokerGatewayMock);
         tradeDetailsMock = mock(BrokerTradeDetails.class);
         commonMembers = new CommonTestClassMembers();
+        setUpdateCandlesService();
     }
 
     @Test(expected = NullArgumentException.class)
@@ -103,40 +108,12 @@ public class HalfCloseTrailExitStrategyTest {
         assertEquals(brokerGatewayMock.getClass(), gateway.getClass());
     }
 
-    @SuppressWarnings("unchecked")
-    @Test
-    public void WhenCallUpdateCandleInitializeSettingsIfNotInitialized(){
-        when(brokerGatewayMock.getCandles(any(HashMap.class))).thenThrow(RuntimeException.class);
-
-        fillSettings();
-
-        HashMap<String, String> settings = (HashMap<String, String>) commonMembers.extractFieldObject(exitStrategy, "settings");
-
-        assertEquals("EUR_USD", settings.get("instrument"));
-        assertEquals("200", settings.get("quantity"));
-        assertEquals("M10", settings.get("granularity"));
-    }
-
-    @SuppressWarnings("unchecked")
-    @Test
-    public void WhenCallUpdateCandleWithAlreadyInitializedSettingsIf_ChangeOnlyQuantity(){
-        candlesticks.add(candlestickMock);
-        when(brokerGatewayMock.getCandles(any(HashMap.class))).thenReturn(candlesticks);
-        fillSettings();
-        fillSettings();
-        HashMap<String, String> settings = (HashMap<String, String>) commonMembers.extractFieldObject(exitStrategy, "settings");
-
-        assertEquals("EUR_USD", settings.get("instrument"));
-        assertEquals("2", settings.get("quantity"));
-        assertEquals("M10", settings.get("granularity"));
-    }
-
     @Test
     public void WhenCallExecuteAndTradeIsLongAndStopLossIsAboveTradeOpenPrice_NoMoveToTheStopLoss(){
         String transactionID = "12";
         fillSettings();
         setFakePrice(1.2407, 1.2405);
-        setFakeBrokerTradeDetails(0, "12", null, 1.2325, 1.2325 ,100  );
+        setFakeBrokerTradeDetails(0, "12", null, 1.2325, 1.2325 ,100, 100  );
         when(brokerGatewayMock.setTradeStopLossPrice(anyString(), anyString())).thenThrow(UnderflowException.class);
 
         exitStrategy.execute(priceMock);
@@ -147,7 +124,7 @@ public class HalfCloseTrailExitStrategyTest {
         String transactionID = "12";
         fillSettings();
         setFakePrice(1.2337, 1.2335);
-        setFakeBrokerTradeDetails(0, "12", null, 1.2325, 1.2315 ,100  );
+        setFakeBrokerTradeDetails(0, "12", null, 1.2325, 1.2315 ,100, 100  );
         when(brokerGatewayMock.setTradeStopLossPrice(anyString(), anyString())).thenThrow(UnderflowException.class);
 
         exitStrategy.execute(priceMock);
@@ -158,7 +135,7 @@ public class HalfCloseTrailExitStrategyTest {
         String transactionID = "22";
         fillSettings();
         setFakePrice(1.2407, 1.2405);
-        setFakeBrokerTradeDetails(0, "12", "14", 1.2345, 1.2315 ,100  );
+        setFakeBrokerTradeDetails(0, "12", "14", 1.2345, 1.2315 ,100, 100  );
         when(brokerGatewayMock.setTradeStopLossPrice(anyString(), anyString())).thenThrow(UnderflowException.class);
 
         exitStrategy.execute(priceMock);
@@ -169,18 +146,18 @@ public class HalfCloseTrailExitStrategyTest {
         String transactionID = "22";
         fillSettings();
         setFakePrice(1.2307, 1.2305);
-        setFakeBrokerTradeDetails(0, "12", "14", 1.2395, 1.2315 ,-100  );
+        setFakeBrokerTradeDetails(0, "12", "14", 1.2395, 1.2315 ,-100, -100  );
         when(brokerGatewayMock.setTradeStopLossPrice(anyString(), anyString())).thenThrow(UnderflowException.class);
 
         exitStrategy.execute(priceMock);
     }
 
     @Test
-    public void WhenCallExecuteAndTradeIsShortAndStopLossIsBelowBreakEvenPrice_NoMoveToTheStopLoss(){
+    public void givenShortTradeAndStopLossIsBelowBreakEven_WhenCallExecute_ThenDoNotMoveStopLoss(){
         String transactionID = "22";
         fillSettings();
         setFakePrice(1.2377, 1.2375);
-        setFakeBrokerTradeDetails(0, "12", "14", 1.2395, 1.2416 ,-100  );
+        setFakeBrokerTradeDetails(0, "12", "14", 1.2395, 1.2416 ,-100, -100  );
         when(brokerGatewayMock.setTradeStopLossPrice(anyString(), anyString())).thenThrow(UnderflowException.class);
 
         exitStrategy.execute(priceMock);
@@ -191,7 +168,7 @@ public class HalfCloseTrailExitStrategyTest {
         String transactionID = "22";
         fillSettings();
         setFakePrice(1.2307, 1.2305);
-        setFakeBrokerTradeDetails(0, "12", "14", 1.2395, 1.2415 ,-100  );
+        setFakeBrokerTradeDetails(0, "12", "14", 1.2395, 1.2415 ,-100, -100  );
         when(brokerGatewayMock.setTradeStopLossPrice(anyString(), anyString())).thenThrow(UnderflowException.class);
 
         exitStrategy.execute(priceMock);
@@ -208,14 +185,19 @@ public class HalfCloseTrailExitStrategyTest {
 
 
 
+    private void setUpdateCandlesService() {
+ //       when(updateCandlesServiceMock.getCandlesticks()).thenReturn(candlesticks);
+        doNothing().when(updateCandlesServiceMock).updateCandles(brokerGatewayMock, configurationMock);
 
+        commonMembers.changeFieldObject(exitStrategy, "updateCandlesService", updateCandlesServiceMock);
+    }
 
     private void fillSettings() {
         setFakeConfigurations("EUR_USD", 200, CandleGranularity.M10, 2 );
         exitStrategy.setBrokerGateway(brokerGatewayMock);
-        try {
-            exitStrategy.updateCandles(priceMock);
-        } catch(Exception e){ }
+//        try {
+//            exitStrategy.updateCandles(priceMock);
+//        } catch(Exception e){ }
     }
 
     private void setFakeConfigurations(String instrument, long initialCandleQuantity, CandleGranularity granularity, long updateQuantity){
@@ -225,13 +207,14 @@ public class HalfCloseTrailExitStrategyTest {
         when(configurationMock.getUpdateCandlesQuantity()).thenReturn(updateQuantity);
     }
 
-    private void setFakeBrokerTradeDetails(int tradeIndex ,String tradeId, String orderID, double entryPrice, double stopLossPrice , double units){
+    private void setFakeBrokerTradeDetails(int tradeIndex ,String tradeId, String orderID, double entryPrice, double stopLossPrice , double initialUnits  , double units){
         when(brokerGatewayMock.getTradeDetails(tradeIndex)).thenReturn(tradeDetailsMock);
         when(tradeDetailsMock.getTradeID()).thenReturn(tradeId);
         when(tradeDetailsMock.getStopLossOrderID()).thenReturn(orderID);
         when(tradeDetailsMock.getOpenPrice()).thenReturn(BigDecimal.valueOf(entryPrice));
         when(tradeDetailsMock.getStopLossPrice()).thenReturn(BigDecimal.valueOf(stopLossPrice));
         when(tradeDetailsMock.getCurrentUnits()).thenReturn(BigDecimal.valueOf( units));
+        when(tradeDetailsMock.getInitialUnits()).thenReturn(BigDecimal.valueOf(initialUnits));
     }
 
     private void setFakePrice(double ask, double bid){

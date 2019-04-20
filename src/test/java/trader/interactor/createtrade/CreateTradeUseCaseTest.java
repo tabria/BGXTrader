@@ -5,6 +5,7 @@ import org.junit.Test;
 import trader.entity.trade.Direction;
 import trader.entity.trade.Trade;
 import trader.exception.NullArgumentException;
+import trader.interactor.BaseStrategyTest;
 import trader.requestor.Request;
 import trader.requestor.UseCase;
 import trader.responder.Response;
@@ -19,7 +20,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class CreateTradeUseCaseTest {
+public class CreateTradeUseCaseTest extends BaseStrategyTest {
 
     private Map<String, Object> settings;
     private UseCase createTradeUseCase;
@@ -28,7 +29,7 @@ public class CreateTradeUseCaseTest {
     @Before
     public void setUp() throws Exception {
         settings = new HashMap<>();
-        createTradeUseCase = new CreateTradeUseCase();
+        createTradeUseCase = new CreateTradeUseCase(presenterMock);
         request = mock(Request.class);
     }
 
