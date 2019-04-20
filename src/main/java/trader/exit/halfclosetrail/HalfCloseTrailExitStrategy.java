@@ -10,6 +10,7 @@ import trader.exception.NullArgumentException;
 import trader.exit.ExitStrategy;
 import trader.entity.price.Price;
 import trader.exit.service.BreakEvenService;
+import trader.exit.service.ClosePositionService;
 import trader.exit.service.UpdateCandlesService;
 
 
@@ -29,13 +30,13 @@ public final class HalfCloseTrailExitStrategy implements ExitStrategy {
 
     private static final BigDecimal FIRST_TARGET_DISTANCE = BigDecimal.valueOf(0.0032);
     private static final BigDecimal PARTS_TO_CLOSE = BigDecimal.valueOf(2);
-    private static final BigDecimal BREAK_EVEN_DISTANCE = BigDecimal.valueOf(0.0025);
     private static final int FIRST_TRADE = 0;
 
 
 //    private List<Candlestick> candlesticks;
     private UpdateCandlesService updateCandlesService;
     private BreakEvenService breakEvenService;
+    private ClosePositionService closePositionService;
     private TradingStrategyConfiguration configuration;
     private BrokerGateway brokerGateway;
  //   private HashMap<String, String> settings;
@@ -51,6 +52,7 @@ public final class HalfCloseTrailExitStrategy implements ExitStrategy {
 //        this.serviceExitStrategy = new ServiceExitStrategy();
         updateCandlesService = new UpdateCandlesService();
         breakEvenService = new BreakEvenService();
+        closePositionService = new ClosePositionService();
 
         this.exitBarHigh = null;
         this.exitBarLow = null;
@@ -75,24 +77,26 @@ public final class HalfCloseTrailExitStrategy implements ExitStrategy {
     public void execute(Price price) {
         updateCandlesService.updateCandles(brokerGateway, configuration);
         BrokerTradeDetails tradeDetails = brokerGateway.getTradeDetails(FIRST_TRADE);
-
         breakEvenService.moveToBreakEven(tradeDetails, price, brokerGateway);
-        //moveToBreakEven(tradeDetails, price);
+        closePositionFirstHalf(price, tradeDetails);
+
+    }
 
 
+    @Override
+    public String toString() {
+        return "Exit strategy: HALF CLOSE, TRAIL";
+    }
+
+    private void closePositionFirstHalf(Price price, BrokerTradeDetails tradeDetails) {
         BigDecimal initialUnits = tradeDetails.getInitialUnits();
         BigDecimal currentUnits = tradeDetails.getCurrentUnits();
-        BigDecimal tradeOpenPrice = tradeDetails.getOpenPrice();
 
-        if (initialUnits.compareTo(currentUnits) != 0)
-            return;
+        if (initialUnits.compareTo(currentUnits) == 0){
+            BigDecimal firstTargetPrice = getFirstTarget(tradeDetails, FIRST_TARGET_DISTANCE);
 
-        BigDecimal firstTargetPrice = getFirstTarget(tradeDetails, FIRST_TARGET_DISTANCE);
-
-        if(isAbleToSetStopLoss(currentUnits, firstTargetPrice, price)){
-            if (PARTS_TO_CLOSE == null || PARTS_TO_CLOSE.compareTo(BigDecimal.ONE)< 0)
-                throw new IllegalArgumentException("parts is less than 1");
-            String tradeID = brokerGateway.placeMarketOrder(createHalfCloseSettings(currentUnits));
+            if(isAbleToSetStopLoss(currentUnits, firstTargetPrice, price))
+                closePositionService.closePosition(tradeDetails, brokerGateway, configuration, PARTS_TO_CLOSE);
         }
     }
 
@@ -101,41 +105,6 @@ public final class HalfCloseTrailExitStrategy implements ExitStrategy {
                 subtract(tradeDetails.getOpenPrice(), firstTargetDistance) :
                 add(tradeDetails.getOpenPrice(), firstTargetDistance);
     }
-
-    private HashMap<String, String> createHalfCloseSettings(BigDecimal currentUnits) {
-        HashMap<String, String> settings = new HashMap<>();
-        settings.put("instrument", configuration.getInstrument());
-        settings.put("unitsSize", reverseUnitsSizeSign(currentUnits).toString());
-        return settings;
-    }
-
-    private BigDecimal reverseUnitsSizeSign(BigDecimal currentUnits) {
-        //multiply with -1 to reverse units size. This will open trade with opposite direction to the current trade
-        return currentUnits
-                .divide(PARTS_TO_CLOSE, 0, BigDecimal.ROUND_HALF_UP)
-                .multiply(BigDecimal.valueOf(-1)).setScale(0, BigDecimal.ROUND_HALF_UP);
-    }
-
-    @Override
-    public String toString() {
-        return "Exit strategy: HALF CLOSE, TRAIL";
-    }
-
-//    private void moveToBreakEven(BrokerTradeDetails tradeDetails, Price price) {
-//        BigDecimal stopLossPrice = tradeDetails.getStopLossPrice();
-//        BigDecimal tradeOpenPrice = tradeDetails.getOpenPrice();
-//        BigDecimal currentUnits = tradeDetails.getCurrentUnits();
-//        if (!isShortTrade(currentUnits) && isAbove(stopLossPrice, tradeOpenPrice))
-//            return;
-//        if (isShortTrade(currentUnits) && isBelow(stopLossPrice, tradeOpenPrice))
-//            return;
-//        BigDecimal breakEvenPrice = getFirstTarget(tradeDetails, BREAK_EVEN_DISTANCE);
-////        BigDecimal breakEvenPrice = isShortTrade(currentUnits) ?
-////                subtract(tradeOpenPrice, BREAK_EVEN_DISTANCE) :
-////                add(tradeOpenPrice, BREAK_EVEN_DISTANCE);
-//        if(isAbleToSetStopLoss(currentUnits, breakEvenPrice, price))
-//            brokerGateway.setTradeStopLossPrice(tradeDetails.getTradeID(), tradeOpenPrice.toString());
-//    }
 
     private boolean isAbleToSetStopLoss(BigDecimal currentUnits, BigDecimal breakEvenPrice, Price price){
         boolean shortCondition =

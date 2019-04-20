@@ -108,72 +108,6 @@ public class HalfCloseTrailExitStrategyTest {
         assertEquals(brokerGatewayMock.getClass(), gateway.getClass());
     }
 
-//    @Test
-//    public void WhenCallExecuteAndTradeIsLongAndStopLossIsAboveTradeOpenPrice_NoMoveToTheStopLoss(){
-//        String transactionID = "12";
-//        fillSettings();
-//        setFakePrice(1.2407, 1.2405);
-//        setFakeBrokerTradeDetails(0, "12", null, 1.2325, 1.2325 ,100, 100  );
-//        when(brokerGatewayMock.setTradeStopLossPrice(anyString(), anyString())).thenThrow(UnderflowException.class);
-//
-//        exitStrategy.execute(priceMock);
-//    }
-//
-//    @Test
-//    public void WhenCallExecuteAndTradeIsLongAndStopLossIsAboveBreakEven_NoMoveToTheStopLoss(){
-//        String transactionID = "12";
-//        fillSettings();
-//        setFakePrice(1.2337, 1.2335);
-//        setFakeBrokerTradeDetails(0, "12", null, 1.2325, 1.2315 ,100, 100  );
-//        when(brokerGatewayMock.setTradeStopLossPrice(anyString(), anyString())).thenThrow(UnderflowException.class);
-//
-//        exitStrategy.execute(priceMock);
-//    }
-//
-//    @Test(expected = UnderflowException.class)
-//    public void WhenCallExecuteAndTradeIsLongMoveStopToBreakEven(){
-//        String transactionID = "22";
-//        fillSettings();
-//        setFakePrice(1.2407, 1.2405);
-//        setFakeBrokerTradeDetails(0, "12", "14", 1.2345, 1.2315 ,100, 100  );
-//        when(brokerGatewayMock.setTradeStopLossPrice(anyString(), anyString())).thenThrow(UnderflowException.class);
-//
-//        exitStrategy.execute(priceMock);
-//    }
-//
-//    @Test
-//    public void WhenCallExecuteAndTradeIsShortAndStopLossIsBelowTradeOpenPrice_NoMoveToTheStopLoss(){
-//        String transactionID = "22";
-//        fillSettings();
-//        setFakePrice(1.2307, 1.2305);
-//        setFakeBrokerTradeDetails(0, "12", "14", 1.2395, 1.2315 ,-100, -100  );
-//        when(brokerGatewayMock.setTradeStopLossPrice(anyString(), anyString())).thenThrow(UnderflowException.class);
-//
-//        exitStrategy.execute(priceMock);
-//    }
-//
-//    @Test
-//    public void givenShortTradeAndStopLossIsBelowBreakEven_WhenCallExecute_ThenDoNotMoveStopLoss(){
-//        String transactionID = "22";
-//        fillSettings();
-//        setFakePrice(1.2377, 1.2375);
-//        setFakeBrokerTradeDetails(0, "12", "14", 1.2395, 1.2416 ,-100, -100  );
-//        when(brokerGatewayMock.setTradeStopLossPrice(anyString(), anyString())).thenThrow(UnderflowException.class);
-//
-//        exitStrategy.execute(priceMock);
-//    }
-//
-//    @Test(expected = UnderflowException.class)
-//    public void WhenCallExecuteAndTradeIsShortMoveStopToBreakEven(){
-//        String transactionID = "22";
-//        fillSettings();
-//        setFakePrice(1.2307, 1.2305);
-//        setFakeBrokerTradeDetails(0, "12", "14", 1.2395, 1.2415 ,-100, -100  );
-//        when(brokerGatewayMock.setTradeStopLossPrice(anyString(), anyString())).thenThrow(UnderflowException.class);
-//
-//        exitStrategy.execute(priceMock);
-//    }
-
     @Test
     public void givenCorrectSettings_WhenCallToString_ThenReturnCorrectString(){
         assertEquals("Exit strategy: HALF CLOSE, TRAIL", exitStrategy.toString());
@@ -207,20 +141,20 @@ public class HalfCloseTrailExitStrategyTest {
         when(configurationMock.getUpdateCandlesQuantity()).thenReturn(updateQuantity);
     }
 
-    private void setFakeBrokerTradeDetails(int tradeIndex ,String tradeId, String orderID, double entryPrice, double stopLossPrice , double initialUnits  , double units){
-        when(brokerGatewayMock.getTradeDetails(tradeIndex)).thenReturn(tradeDetailsMock);
-        when(tradeDetailsMock.getTradeID()).thenReturn(tradeId);
-        when(tradeDetailsMock.getStopLossOrderID()).thenReturn(orderID);
-        when(tradeDetailsMock.getOpenPrice()).thenReturn(BigDecimal.valueOf(entryPrice));
-        when(tradeDetailsMock.getStopLossPrice()).thenReturn(BigDecimal.valueOf(stopLossPrice));
-        when(tradeDetailsMock.getCurrentUnits()).thenReturn(BigDecimal.valueOf( units));
-        when(tradeDetailsMock.getInitialUnits()).thenReturn(BigDecimal.valueOf(initialUnits));
-    }
-
-    private void setFakePrice(double ask, double bid){
-        when(priceMock.getAsk()).thenReturn(BigDecimal.valueOf(ask));
-        when(priceMock.getBid()).thenReturn(BigDecimal.valueOf(bid));
-    }
+//    private void setFakeBrokerTradeDetails(int tradeIndex ,String tradeId, String orderID, double entryPrice, double stopLossPrice , double initialUnits  , double units){
+//        when(brokerGatewayMock.getTradeDetails(tradeIndex)).thenReturn(tradeDetailsMock);
+//        when(tradeDetailsMock.getTradeID()).thenReturn(tradeId);
+//        when(tradeDetailsMock.getStopLossOrderID()).thenReturn(orderID);
+//        when(tradeDetailsMock.getOpenPrice()).thenReturn(BigDecimal.valueOf(entryPrice));
+//        when(tradeDetailsMock.getStopLossPrice()).thenReturn(BigDecimal.valueOf(stopLossPrice));
+//        when(tradeDetailsMock.getCurrentUnits()).thenReturn(BigDecimal.valueOf( units));
+//        when(tradeDetailsMock.getInitialUnits()).thenReturn(BigDecimal.valueOf(initialUnits));
+//    }
+//
+//    private void setFakePrice(double ask, double bid){
+//        when(priceMock.getAsk()).thenReturn(BigDecimal.valueOf(ask));
+//        when(priceMock.getBid()).thenReturn(BigDecimal.valueOf(bid));
+//    }
 
 
 }
