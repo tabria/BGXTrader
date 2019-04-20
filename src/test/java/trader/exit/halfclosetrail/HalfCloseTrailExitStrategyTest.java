@@ -108,71 +108,71 @@ public class HalfCloseTrailExitStrategyTest {
         assertEquals(brokerGatewayMock.getClass(), gateway.getClass());
     }
 
-    @Test
-    public void WhenCallExecuteAndTradeIsLongAndStopLossIsAboveTradeOpenPrice_NoMoveToTheStopLoss(){
-        String transactionID = "12";
-        fillSettings();
-        setFakePrice(1.2407, 1.2405);
-        setFakeBrokerTradeDetails(0, "12", null, 1.2325, 1.2325 ,100, 100  );
-        when(brokerGatewayMock.setTradeStopLossPrice(anyString(), anyString())).thenThrow(UnderflowException.class);
-
-        exitStrategy.execute(priceMock);
-    }
-
-    @Test
-    public void WhenCallExecuteAndTradeIsLongAndStopLossIsAboveBreakEven_NoMoveToTheStopLoss(){
-        String transactionID = "12";
-        fillSettings();
-        setFakePrice(1.2337, 1.2335);
-        setFakeBrokerTradeDetails(0, "12", null, 1.2325, 1.2315 ,100, 100  );
-        when(brokerGatewayMock.setTradeStopLossPrice(anyString(), anyString())).thenThrow(UnderflowException.class);
-
-        exitStrategy.execute(priceMock);
-    }
-
-    @Test(expected = UnderflowException.class)
-    public void WhenCallExecuteAndTradeIsLongMoveStopToBreakEven(){
-        String transactionID = "22";
-        fillSettings();
-        setFakePrice(1.2407, 1.2405);
-        setFakeBrokerTradeDetails(0, "12", "14", 1.2345, 1.2315 ,100, 100  );
-        when(brokerGatewayMock.setTradeStopLossPrice(anyString(), anyString())).thenThrow(UnderflowException.class);
-
-        exitStrategy.execute(priceMock);
-    }
-
-    @Test
-    public void WhenCallExecuteAndTradeIsShortAndStopLossIsBelowTradeOpenPrice_NoMoveToTheStopLoss(){
-        String transactionID = "22";
-        fillSettings();
-        setFakePrice(1.2307, 1.2305);
-        setFakeBrokerTradeDetails(0, "12", "14", 1.2395, 1.2315 ,-100, -100  );
-        when(brokerGatewayMock.setTradeStopLossPrice(anyString(), anyString())).thenThrow(UnderflowException.class);
-
-        exitStrategy.execute(priceMock);
-    }
-
-    @Test
-    public void givenShortTradeAndStopLossIsBelowBreakEven_WhenCallExecute_ThenDoNotMoveStopLoss(){
-        String transactionID = "22";
-        fillSettings();
-        setFakePrice(1.2377, 1.2375);
-        setFakeBrokerTradeDetails(0, "12", "14", 1.2395, 1.2416 ,-100, -100  );
-        when(brokerGatewayMock.setTradeStopLossPrice(anyString(), anyString())).thenThrow(UnderflowException.class);
-
-        exitStrategy.execute(priceMock);
-    }
-
-    @Test(expected = UnderflowException.class)
-    public void WhenCallExecuteAndTradeIsShortMoveStopToBreakEven(){
-        String transactionID = "22";
-        fillSettings();
-        setFakePrice(1.2307, 1.2305);
-        setFakeBrokerTradeDetails(0, "12", "14", 1.2395, 1.2415 ,-100, -100  );
-        when(brokerGatewayMock.setTradeStopLossPrice(anyString(), anyString())).thenThrow(UnderflowException.class);
-
-        exitStrategy.execute(priceMock);
-    }
+//    @Test
+//    public void WhenCallExecuteAndTradeIsLongAndStopLossIsAboveTradeOpenPrice_NoMoveToTheStopLoss(){
+//        String transactionID = "12";
+//        fillSettings();
+//        setFakePrice(1.2407, 1.2405);
+//        setFakeBrokerTradeDetails(0, "12", null, 1.2325, 1.2325 ,100, 100  );
+//        when(brokerGatewayMock.setTradeStopLossPrice(anyString(), anyString())).thenThrow(UnderflowException.class);
+//
+//        exitStrategy.execute(priceMock);
+//    }
+//
+//    @Test
+//    public void WhenCallExecuteAndTradeIsLongAndStopLossIsAboveBreakEven_NoMoveToTheStopLoss(){
+//        String transactionID = "12";
+//        fillSettings();
+//        setFakePrice(1.2337, 1.2335);
+//        setFakeBrokerTradeDetails(0, "12", null, 1.2325, 1.2315 ,100, 100  );
+//        when(brokerGatewayMock.setTradeStopLossPrice(anyString(), anyString())).thenThrow(UnderflowException.class);
+//
+//        exitStrategy.execute(priceMock);
+//    }
+//
+//    @Test(expected = UnderflowException.class)
+//    public void WhenCallExecuteAndTradeIsLongMoveStopToBreakEven(){
+//        String transactionID = "22";
+//        fillSettings();
+//        setFakePrice(1.2407, 1.2405);
+//        setFakeBrokerTradeDetails(0, "12", "14", 1.2345, 1.2315 ,100, 100  );
+//        when(brokerGatewayMock.setTradeStopLossPrice(anyString(), anyString())).thenThrow(UnderflowException.class);
+//
+//        exitStrategy.execute(priceMock);
+//    }
+//
+//    @Test
+//    public void WhenCallExecuteAndTradeIsShortAndStopLossIsBelowTradeOpenPrice_NoMoveToTheStopLoss(){
+//        String transactionID = "22";
+//        fillSettings();
+//        setFakePrice(1.2307, 1.2305);
+//        setFakeBrokerTradeDetails(0, "12", "14", 1.2395, 1.2315 ,-100, -100  );
+//        when(brokerGatewayMock.setTradeStopLossPrice(anyString(), anyString())).thenThrow(UnderflowException.class);
+//
+//        exitStrategy.execute(priceMock);
+//    }
+//
+//    @Test
+//    public void givenShortTradeAndStopLossIsBelowBreakEven_WhenCallExecute_ThenDoNotMoveStopLoss(){
+//        String transactionID = "22";
+//        fillSettings();
+//        setFakePrice(1.2377, 1.2375);
+//        setFakeBrokerTradeDetails(0, "12", "14", 1.2395, 1.2416 ,-100, -100  );
+//        when(brokerGatewayMock.setTradeStopLossPrice(anyString(), anyString())).thenThrow(UnderflowException.class);
+//
+//        exitStrategy.execute(priceMock);
+//    }
+//
+//    @Test(expected = UnderflowException.class)
+//    public void WhenCallExecuteAndTradeIsShortMoveStopToBreakEven(){
+//        String transactionID = "22";
+//        fillSettings();
+//        setFakePrice(1.2307, 1.2305);
+//        setFakeBrokerTradeDetails(0, "12", "14", 1.2395, 1.2415 ,-100, -100  );
+//        when(brokerGatewayMock.setTradeStopLossPrice(anyString(), anyString())).thenThrow(UnderflowException.class);
+//
+//        exitStrategy.execute(priceMock);
+//    }
 
     @Test
     public void givenCorrectSettings_WhenCallToString_ThenReturnCorrectString(){
