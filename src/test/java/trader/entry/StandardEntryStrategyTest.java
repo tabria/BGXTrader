@@ -336,6 +336,11 @@ public class StandardEntryStrategyTest {
         assertForTradableTrade();
     }
 
+    @Test
+    public void givenCorrectSettings_WhenCallToString_ThenReturnCorrectString(){
+        assertEquals("Entry strategy: STANDARD", standardEntryStrategy.toString());
+    }
+
     private void assertForTradableTrade() {
         Response responseMock = mock(Response.class);
         Point pointMock = mock(Point.class);

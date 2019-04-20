@@ -9,6 +9,7 @@ import trader.entity.indicator.rsi.RelativeStrengthIndex;
 import trader.exception.EmptyArgumentException;
 import trader.exception.NoSuchDataStructureException;
 import trader.exception.WrongIndicatorSettingsException;
+import trader.presenter.Presenter;
 import trader.requestor.Request;
 import trader.requestor.UseCase;
 import trader.responder.Response;
@@ -17,17 +18,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class CreateIndicatorUseCaseTest {
 
+    private Presenter presenterMock;
     private Request requestMock;
     private UseCase createIndicatorUseCase;
 
     @Before
     public void setUp() throws Exception {
-        createIndicatorUseCase = new CreateIndicatorUseCase();
+        presenterMock = mock(Presenter.class);
+        createIndicatorUseCase = new CreateIndicatorUseCase(presenterMock);
         requestMock = mock(Request.class);
     }
 
@@ -122,6 +127,7 @@ public class CreateIndicatorUseCaseTest {
         Map<String, Object> settings = new HashMap<>();
         settings.put("settings", indicatorSettings);
         when(requestMock.getBody()).thenReturn(settings);
+        doNothing().when(presenterMock).execute(any(Response.class));
     }
 
 }

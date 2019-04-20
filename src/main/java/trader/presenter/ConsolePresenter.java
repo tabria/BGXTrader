@@ -16,15 +16,16 @@ public class ConsolePresenter implements Presenter {
 
     @Override
     public void execute(Response response){
-        String text = "ds";
-        printWriter.println(getHeader()+text);
-        printWriter.close();
+        System.out.println(getHeader()+ " "+ response.getBody().toString() + " << SUCCESS >>");
+//        printWriter.println(getHeader()+ " "+ response.getBody().toString() + " << SUCCESS >>");
+//        printWriter.flush();
+//        printWriter.close();
     }
 
     private String getHeader(){
         long timeMillis = System.currentTimeMillis();
         Date date = new Date(timeMillis);
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(" --- EEE MMM dd yyyy HH:mm:ss --- ");
-        return String.format("[TRADER] %s ", simpleDateFormat.format(date));
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("---- EEE MMM dd yyyy HH:mm:ss ----");
+        return String.format("[TRADER] %s", simpleDateFormat.format(date));
     }
 }

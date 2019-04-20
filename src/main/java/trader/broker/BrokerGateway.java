@@ -35,7 +35,4 @@ public interface BrokerGateway {
     BrokerTradeDetails getTradeDetails(int index);
     int totalOpenTradesSize();
 
-
-
-
 }

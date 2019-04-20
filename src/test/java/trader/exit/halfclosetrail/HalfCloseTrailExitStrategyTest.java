@@ -197,7 +197,10 @@ public class HalfCloseTrailExitStrategyTest {
         exitStrategy.execute(priceMock);
     }
 
-
+    @Test
+    public void givenCorrectSettings_WhenCallToString_ThenReturnCorrectString(){
+        assertEquals("Exit strategy: HALF CLOSE, TRAIL", exitStrategy.toString());
+    }
 
 
 

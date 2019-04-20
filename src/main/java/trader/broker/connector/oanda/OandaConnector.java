@@ -70,6 +70,11 @@ public class OandaConnector extends BaseConnector {
         this.leverage = leverage.trim();
     }
 
+    @Override
+    public String toString() {
+        return "Connector: OANDA";
+    }
+
     private void validateInputFileLocation(String fileLocation) {
         validateInput(fileLocation);
         if(isNotYamlFile(fileLocation))

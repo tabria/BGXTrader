@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import trader.broker.connector.oanda.OandaConnector;
 import trader.exception.NoSuchConnectorException;
+import trader.presenter.Presenter;
 import trader.requestor.Request;
 import trader.responder.Response;
 import java.util.HashMap;
@@ -17,6 +18,7 @@ import static org.powermock.api.mockito.PowerMockito.when;
 public class CreateBrokerConnectorUseCaseTest {
 
     private Request requestMock;
+    private Presenter presenterMock;
     private CreateBrokerConnectorUseCase createBrokerConnectorUseCase;
 
     @Rule
@@ -24,8 +26,9 @@ public class CreateBrokerConnectorUseCaseTest {
 
     @Before
     public void setUp() throws Exception {
+        presenterMock = mock(Presenter.class);
         requestMock = mock(Request.class);
-        createBrokerConnectorUseCase = new CreateBrokerConnectorUseCase();
+        createBrokerConnectorUseCase = new CreateBrokerConnectorUseCase(presenterMock);
     }
 
 
@@ -68,8 +71,8 @@ public class CreateBrokerConnectorUseCaseTest {
     public void givenCorrectSettings_WhenCallExecute_ThenCreateCorrectConnector(){
         Map<String, Object> wrapper = changeSettings(null, null, null);
         when(requestMock.getBody()).thenReturn(wrapper);
+        doNothing().when(presenterMock).execute(any(Response.class));
         Response response = createBrokerConnectorUseCase.execute(requestMock);
-        String a = "";
 
         OandaConnector connector = (OandaConnector) response.getBody();
         assertEquals("http://sss.com", connector.getUrl());

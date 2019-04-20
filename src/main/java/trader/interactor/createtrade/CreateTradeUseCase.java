@@ -3,6 +3,7 @@ package trader.interactor.createtrade;
 import trader.entity.trade.Trade;
 import trader.entity.trade.TradeImpl;
 import trader.interactor.ResponseImpl;
+import trader.presenter.Presenter;
 import trader.requestor.Request;
 import trader.requestor.UseCase;
 import trader.responder.Response;
@@ -13,11 +14,19 @@ import static trader.interactor.createtrade.enums.Constants.*;
 
 public class CreateTradeUseCase implements UseCase {
 
+    private Presenter presenter;
+
+    public CreateTradeUseCase(Presenter presenter) {
+        this.presenter = presenter;
+    }
+
     @Override
     public <T, E> Response<E> execute(Request<T> request) {
         Map<String, Object> settings = (Map<String, Object>) request.getBody();
         Trade trade = setTrade(settings);
-        return setResponse((E) trade);
+        Response<E> response = setResponse((E) trade);
+        presenter.execute(response);
+        return response;
     }
 
     private Trade setTrade(Map<String,Object> inputSettings) {

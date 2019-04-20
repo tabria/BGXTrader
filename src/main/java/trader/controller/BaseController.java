@@ -15,7 +15,7 @@ public abstract class BaseController<T>  implements TraderController<T> {
         this.presenter = presenter;
     }
 
-    public Response execute(Map<String, Object> settings) {
+    public Response<T> execute(Map<String, Object> settings) {
         String controllerName = this.getClass().getSimpleName().trim();
         Request<?> request = getRequest(controllerName, settings);
         UseCase useCase = make(controllerName, presenter);

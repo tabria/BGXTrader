@@ -4,6 +4,7 @@ import trader.exception.NoSuchStrategyException;
 import trader.exception.NullArgumentException;
 import trader.interactor.ResponseImpl;
 import trader.order.OrderStrategy;
+import trader.presenter.Presenter;
 import trader.requestor.Request;
 import trader.requestor.UseCase;
 import trader.responder.Response;
@@ -14,12 +15,19 @@ import java.util.Map;
 
 public class CreateOrderStrategyUseCase implements UseCase {
 
+    private Presenter presenter;
+
+    public CreateOrderStrategyUseCase(Presenter presenter) {
+        this.presenter = presenter;
+    }
 
     @Override
     public <T, E> Response<E> execute(Request<T> request) {
         Map<String, Object> settings = (Map<String, Object>) request.getBody();
         OrderStrategy strategy = setOrderStrategy(settings);
-        return setResponse((E) strategy);
+        Response<E> response = setResponse((E) strategy);
+        presenter.execute(response);
+        return response;
     }
 
     private OrderStrategy setOrderStrategy(Map<String,Object> inputSettings) {

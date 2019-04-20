@@ -10,6 +10,7 @@ import trader.exception.NoSuchDataStructureException;
 import trader.exception.WrongIndicatorSettingsException;
 import trader.interactor.ResponseImpl;
 import trader.interactor.createindicator.enums.Constants;
+import trader.presenter.Presenter;
 import trader.requestor.Request;
 import trader.requestor.UseCase;
 import trader.responder.Response;
@@ -18,11 +19,19 @@ import java.util.Map;
 
 public class CreateIndicatorUseCase implements UseCase {
 
+    private Presenter presenter;
+
+    public CreateIndicatorUseCase(Presenter presenter) {
+        this.presenter = presenter;
+    }
+
     @Override
     public <T, E> Response<E> execute(Request<T> request) {
         Map<String, Object> settings = (Map<String, Object>) request.getBody();
         Indicator indicator = setIndicator(settings);
-        return setResponse((E) indicator);
+        Response<E> response = setResponse((E) indicator);
+        presenter.execute(response);
+        return response;
     }
 
     private Indicator setIndicator(Map<String,Object> inputSettings) {
@@ -30,7 +39,7 @@ public class CreateIndicatorUseCase implements UseCase {
         String dataStructureType = getDataStructureType(settings);
         if(dataStructureType.contains(Constants.RSI.toString()))
             return new RSIBuilder().build(settings);
-        if(isMovingAverage(dataStructureType))
+        if(isMovingAverage(dataStructureType.toLowerCase()))
             return new MovingAverageBuilder().build(settings);
         throw new NoSuchDataStructureException();
     }

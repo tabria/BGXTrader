@@ -100,6 +100,11 @@ public class StandardOrderStrategy implements OrderStrategy {
         return  isNotZero(unitsSize) ? divide(unitsSize, new BigDecimal(leverage), 5) : BigDecimal.ZERO;
     }
 
+    @Override
+    public String toString() {
+        return "Order strategy: STANDARD";
+    }
+
     private BigDecimal calculateStopLossAndPriceDelta(Order order, Price price){
         BigDecimal delta = null;
         if(order.getUnits().compareTo(BigDecimal.ZERO) < 0)

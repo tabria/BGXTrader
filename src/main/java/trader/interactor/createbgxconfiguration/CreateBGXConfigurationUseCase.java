@@ -78,11 +78,11 @@ public class CreateBGXConfigurationUseCase implements UseCase {
             if(fieldExist(entryStrategy, Constants.STOP_LOSS_FILTER.toString()))
                 bgxConfiguration.setStopLossFilter(getEntryValue(entryStrategy, Constants.STOP_LOSS_FILTER.toString()));
             if(fieldExist(entryStrategy, Constants.TARGET.toString()))
-                bgxConfiguration.setTarget(Constants.TARGET.toString());
+                bgxConfiguration.setTarget(getEntryValue(entryStrategy, Constants.TARGET.toString()));
             if(fieldExist(entryStrategy, Constants.RSI_FILTER.toString()))
-                bgxConfiguration.setRsiFilter(Constants.RSI_FILTER.toString());
+                bgxConfiguration.setRsiFilter(getEntryValue(entryStrategy, Constants.RSI_FILTER.toString()));
             if(fieldExist(entryStrategy, Constants.ENTRY_FILTER.toString()))
-                bgxConfiguration.setEntryFilter(Constants.ENTRY_FILTER.toString());
+                bgxConfiguration.setEntryFilter(getEntryValue(entryStrategy, Constants.ENTRY_FILTER.toString()));
         }
     }
 

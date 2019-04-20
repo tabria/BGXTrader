@@ -115,7 +115,7 @@ public final class BGXStrategyMain implements Strategy {
 
     private ExitStrategy setExitStrategy() {
         ExitService exitService = new ExitService(useCaseFactory, presenter);
-        return exitService.createOrderStrategy(configuration.getExitStrategy());
+        return exitService.createExitStrategy(configuration.getExitStrategy());
     }
 
     void addIndicatorsToObservable(Observable observable, List<Indicator> indicators){

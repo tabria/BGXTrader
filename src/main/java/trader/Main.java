@@ -43,7 +43,7 @@ public class Main {
 
 
       //  ApiConnector apiConnector = ApiConnector.create("Oanda");
-        Strategy strategy = new BGXStrategyMain("Oanda", "bgxStrategyConfig.yaml", "oandaBrokerConfig");
+        Strategy strategy = new BGXStrategyMain("Oanda", "bgxStrategyConfig.yaml", "oandaBrokerConfig.yaml");
       //  Strategy strategy = new BGXStrategyMain(apiConnector);
         ThreadedStrategy threadedStrategy = new ThreadedStrategy(strategy);
 

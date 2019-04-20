@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import trader.CommonTestClassMembers;
+import trader.broker.BrokerGateway;
 import trader.broker.connector.BaseGateway;
 import trader.broker.connector.BrokerConnector;
 import trader.broker.connector.Transformable;
@@ -344,6 +345,12 @@ public class OandaGatewayTest {
         assertEquals(expectedID, actual);
         assertEquals(FAKE_ACCOUNT_ID, settings.get("accountID"));
         assertEquals(orderID, settings.get("orderID"));
+    }
+
+    @Test
+    public void givenCorrectSettings_WhenCallToString_ThenReturnCorrectString(){
+       BrokerGateway gateway = (OandaGateway) BaseGateway.create("Oanda", connectorMock);
+        assertEquals("Gateway: OANDA", gateway.toString());
     }
 
     private TransactionID setFakeTransactionID(String id){

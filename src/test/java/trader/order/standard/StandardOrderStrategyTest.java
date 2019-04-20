@@ -257,6 +257,11 @@ public class StandardOrderStrategyTest {
         orderStrategy.closeUnfilledOrders(brokerGatewayMock, priceMock);
     }
 
+    @Test
+    public void givenCorrectSettings_WhenCallToString_ThenReturnCorrectString(){
+        assertEquals("Order strategy: STANDARD", orderStrategy.toString());
+    }
+
     private void setFakePrice(double askPrice, double bidPrice) {
         when(priceMock.getAsk()).thenReturn(BigDecimal.valueOf(askPrice));
         when(priceMock.getBid()).thenReturn(BigDecimal.valueOf(bidPrice));

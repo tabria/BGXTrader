@@ -104,6 +104,11 @@ public final class StandardEntryStrategy implements EntryStrategy {
         }
     }
 
+    @Override
+    public String toString() {
+        return "Entry strategy: STANDARD";
+    }
+
     private void validateIndicatorExistence() {
         if(rsi == null || priceSMA == null || slowWMA == null ||
                 fastWMA == null || dailySMA == null || middleWMA == null)

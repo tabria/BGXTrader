@@ -234,6 +234,11 @@ public class BGXConfigurationImpl implements TradingStrategyConfiguration {
             this.exitGranularity = parseGranularity(strExitGranularity);
     }
 
+    @Override
+    public String toString() {
+        return "BGXConfiguration";
+    }
+
     private void validateBoundaries(long number, long minValue, long maxValue) {
         if(number <= minValue)
             throw new UnderflowException();

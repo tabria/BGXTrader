@@ -133,6 +133,11 @@ public final class HalfCloseTrailExitStrategy implements ExitStrategy {
 
     }
 
+    @Override
+    public String toString() {
+        return "Exit strategy: HALF CLOSE, TRAIL";
+    }
+
     private void moveToBreakEven(BrokerTradeDetails tradeDetails, Price price) {
         BigDecimal stopLossPrice = tradeDetails.getStopLossPrice();
         BigDecimal tradeOpenPrice = tradeDetails.getOpenPrice();

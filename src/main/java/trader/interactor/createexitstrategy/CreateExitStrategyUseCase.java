@@ -4,6 +4,7 @@ import trader.exception.NoSuchStrategyException;
 import trader.exception.NullArgumentException;
 import trader.exit.ExitStrategy;
 import trader.interactor.ResponseImpl;
+import trader.presenter.Presenter;
 import trader.requestor.Request;
 import trader.requestor.UseCase;
 import trader.responder.Response;
@@ -14,11 +15,19 @@ import java.util.Map;
 
 public class CreateExitStrategyUseCase implements UseCase {
 
+    private Presenter presenter;
+
+    public CreateExitStrategyUseCase(Presenter presenter) {
+        this.presenter = presenter;
+    }
+
     @Override
     public <T, E> Response<E> execute(Request<T> request) {
         Map<String, Object> settings = (Map<String, Object>) request.getBody();
         ExitStrategy strategy = setExitStrategy(settings);
-        return setResponse((E) strategy);
+        Response<E> response = setResponse((E) strategy);
+        presenter.execute(response);
+        return response;
     }
 
     private ExitStrategy setExitStrategy(Map<String,Object> inputSettings) {

@@ -21,7 +21,7 @@ public class ExitService {
         this.presenter = presenter;
     }
 
-    public ExitStrategy createOrderStrategy(String exitStrategyName) {
+    public ExitStrategy createExitStrategy(String exitStrategyName) {
         if(exitStrategyName == null)
             throw new NullArgumentException();
         TraderController<ExitStrategy> controller = new CreateExitStrategyController<>(useCaseFactory, presenter);

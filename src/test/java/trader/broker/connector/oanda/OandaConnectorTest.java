@@ -107,4 +107,9 @@ public class OandaConnectorTest {
         connector.setLeverage(leverage);
         assertEquals(leverage.trim(), connector.getLeverage());
     }
+
+    @Test
+    public void givenCorrectSettings_WhenCallToString_ThenReturnCorrectString(){
+        assertEquals("Connector: OANDA", connector.toString());
+    }
 }

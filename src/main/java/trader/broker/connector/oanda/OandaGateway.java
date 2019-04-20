@@ -166,6 +166,11 @@ public class OandaGateway extends BaseGateway {
         return responseDataStructure.getLastTransactionID().toString();
     }
 
+    @Override
+    public String toString() {
+        return "Gateway: OANDA";
+    }
+
     Context getContext(){
         return context;
     }

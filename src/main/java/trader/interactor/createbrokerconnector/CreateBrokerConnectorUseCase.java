@@ -3,6 +3,7 @@ import trader.broker.connector.BrokerConnector;
 import trader.exception.NoSuchConnectorException;
 import trader.interactor.ResponseImpl;
 import trader.interactor.createbrokerconnector.enums.Constants;
+import trader.presenter.Presenter;
 import trader.requestor.Request;
 import trader.requestor.UseCase;
 import trader.responder.Response;
@@ -10,12 +11,19 @@ import trader.responder.Response;
 import java.util.Map;
 
 public class CreateBrokerConnectorUseCase implements UseCase {
+    private Presenter presenter;
+
+    public CreateBrokerConnectorUseCase(Presenter presenter) {
+        this.presenter = presenter;
+    }
 
     @Override
     public <T, E> Response<E> execute(Request<T> request) {
         Map<String, Object> settings = (Map<String, Object>) request.getBody();
         BrokerConnector brokerConnector = setConfigurations(settings);
-        return setResponse((E) brokerConnector);
+        Response<E> response = setResponse((E) brokerConnector);
+        presenter.execute(response);
+        return response;
     }
 
     private <E> Response<E> setResponse(E brokerConnector) {

@@ -59,4 +59,6 @@ public interface TradingStrategyConfiguration {
     CandleGranularity getExitGranularity();
 
     void setExitGranularity(String exitGranularity);
+
+    String toString();
 }

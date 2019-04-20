@@ -440,4 +440,9 @@ public class BGXConfigurationImplTest {
         assertEquals(CandleGranularity.M1, config.getExitGranularity());
     }
 
+    @Test
+    public void givenCorrectSettings_WhenCallToString_ThenReturnCorrectResult(){
+        assertEquals("BGXConfiguration", config.toString());
+    }
+
 }
