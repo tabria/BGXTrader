@@ -1,7 +1,5 @@
 package trader.exit.halfclosetrail;
 
-
-import com.oanda.v20.order.OrderCreateResponse;
 import trader.broker.BrokerGateway;
 import trader.configuration.TradingStrategyConfiguration;
 import trader.entity.candlestick.Candlestick;
@@ -11,14 +9,11 @@ import trader.exit.ExitStrategy;
 import trader.entity.price.Price;
 import trader.exit.service.BreakEvenService;
 import trader.exit.service.ClosePositionService;
+import trader.exit.service.TrailStopLossService;
 import trader.exit.service.UpdateCandlesService;
 
-
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -33,32 +28,19 @@ public final class HalfCloseTrailExitStrategy implements ExitStrategy {
     private static final int FIRST_TRADE = 0;
 
 
-//    private List<Candlestick> candlesticks;
     private UpdateCandlesService updateCandlesService;
     private BreakEvenService breakEvenService;
     private ClosePositionService closePositionService;
+    private TrailStopLossService trailStopLossService;
     private TradingStrategyConfiguration configuration;
     private BrokerGateway brokerGateway;
- //   private HashMap<String, String> settings;
-
- //   private ServiceExitStrategy serviceExitStrategy;
-    private OrderCreateResponse halfTradeResponse;
- //   private TradeSetDependentOrdersResponse tradeSetDependentOrdersResponse;
-    private BigDecimal exitBarHigh;
-    private BigDecimal exitBarLow;
 
 
     public HalfCloseTrailExitStrategy() {
-//        this.serviceExitStrategy = new ServiceExitStrategy();
         updateCandlesService = new UpdateCandlesService();
         breakEvenService = new BreakEvenService();
         closePositionService = new ClosePositionService();
-
-        this.exitBarHigh = null;
-        this.exitBarLow = null;
-//        candlesticks = new ArrayList<>();
-//        settings = new HashMap<>();
-
+        trailStopLossService = new TrailStopLossService();
     }
 
     public void setConfiguration(TradingStrategyConfiguration configuration) {
@@ -79,23 +61,34 @@ public final class HalfCloseTrailExitStrategy implements ExitStrategy {
         BrokerTradeDetails tradeDetails = brokerGateway.getTradeDetails(FIRST_TRADE);
         breakEvenService.moveToBreakEven(tradeDetails, price, brokerGateway);
         closePositionFirstHalf(price, tradeDetails);
-
+        trailPosition(tradeDetails);
     }
-
 
     @Override
     public String toString() {
         return "Exit strategy: HALF CLOSE, TRAIL";
     }
 
-    private void closePositionFirstHalf(Price price, BrokerTradeDetails tradeDetails) {
-        BigDecimal initialUnits = tradeDetails.getInitialUnits();
-        BigDecimal currentUnits = tradeDetails.getCurrentUnits();
+    private void trailPosition(BrokerTradeDetails tradeDetails) {
+        if (isTradeSizeReduced(tradeDetails) != 0){
+            List<Candlestick> candlesticks = updateCandlesService.getCandlesticks();
+            Candlestick candlestick = candlesticks.get(candlesticks.size()-2);
+            trailStopLossService.trailStopLoss(tradeDetails, candlestick, brokerGateway);
+        }
+    }
 
-        if (initialUnits.compareTo(currentUnits) == 0){
+    private int isTradeSizeReduced(BrokerTradeDetails tradeDetails){
+        BigDecimal currentUnits = tradeDetails.getCurrentUnits();
+        BigDecimal initialUnits = tradeDetails.getInitialUnits();
+        return initialUnits.compareTo(currentUnits);
+    }
+
+    private void closePositionFirstHalf(Price price, BrokerTradeDetails tradeDetails) {
+
+        if (isTradeSizeReduced(tradeDetails) == 0){
             BigDecimal firstTargetPrice = getFirstTarget(tradeDetails, FIRST_TARGET_DISTANCE);
 
-            if(isAbleToSetStopLoss(currentUnits, firstTargetPrice, price))
+            if(isAbleToSetStopLoss(tradeDetails.getCurrentUnits(), firstTargetPrice, price))
                 closePositionService.closePosition(tradeDetails, brokerGateway, configuration, PARTS_TO_CLOSE);
         }
     }
@@ -136,305 +129,4 @@ public final class HalfCloseTrailExitStrategy implements ExitStrategy {
         return NumberA.add(NumberB)
                 .setScale(5, BigDecimal.ROUND_HALF_UP);
     }
-
-    private BigDecimal divide(BigDecimal NumberA, BigDecimal NumberB) {
-        return NumberA.divide(NumberB,5, BigDecimal.ROUND_HALF_UP);
-    }
-
-    private BigDecimal multiply(BigDecimal NumberA, BigDecimal NumberB) {
-        return NumberA.multiply(NumberB)
-                .setScale(5, BigDecimal.ROUND_HALF_UP);
-    }
-
-
-    //                MarketOrderRequest marketOrderRequest = new MarketOrderRequest()
-//                        .setInstrument(Config.INSTRUMENT)
-//                        .setUnits(unitsToClose);
-//                OrderCreateRequest halfTradeRequest = new OrderCreateRequest(Config.ACCOUNTID).setOrder(marketOrderRequest);
-//                try {
-//                    return this.context.order.create(halfTradeRequest);
-//                } catch (RequestException | ExecuteException e) {
-//                    throw new RuntimeException(e);
-//                }
-
-//    @Override
-//    public void execute(Price price) {
-//----------------------------------------------------------------
-//        if (account == null){
-//            throw new NullPointerException("account is null");
-//        }
-//      //  TradeSummary trade = account.getTrades().get(TRADE_INDEX);
-//
-//     //   this.candlesUpdater.updateCandles(dateTime);
-//-------------------------------------------------------------------------------
-//        this.moveToBreakEven(account, trade, ask, bid);
-//
-//        BigDecimal stopLossPrice = BigDecimal.ZERO;
-//        BigDecimal tradeOpenPrice = trade.getPrice().bigDecimalValue();
-//        OrderID id = trade.getStopLossOrderID();
-//        if (account == null || id == null){
-//            throw new NullPointerException("account or id is null");
-//        }
-//        for (Order order:account.getOrders()) {
-//            if (order.getId().equals(id) && order.getType().equals(OrderType.STOP_LOSS)){
-//                StopLossOrder stopLossOrder = (StopLossOrder) order;
-//                stopLossPrice = stopLossOrder.getPrice().bigDecimalValue();
-//            }
-//        }
-// //       BigDecimal stopLossPrice = this.serviceExitStrategy.getStopLossOrderPriceByID(account, trade.getStopLossOrderID());
-//        BigDecimal currentUnits = trade.getCurrentUnits().bigDecimalValue();
-//
-//        if (currentUnits.compareTo(BigDecimal.ZERO) > 0 && stopLossPrice.compareTo(tradeOpenPrice) >= 0){
-//            return;
-//        }
-//
-//        if (currentUnits.compareTo(BigDecimal.ZERO) < 0 && stopLossPrice.compareTo(tradeOpenPrice) <= 0){
-//            return;
-//        }
-//
-//        BigDecimal breakEvenPrice = this.calculateTargetPrice(currentUnits, tradeOpenPrice, BREAK_EVEN_DISTANCE);
-//        if (isFilterPassed(currentUnits, breakEvenPrice, ask, bid)){
-//            TradeID id = trade.getId();
-//
-//            this.tradeSetDependentOrdersResponse = this.serviceExitStrategy.changeStopLoss(id, tradeOpenPrice);
-//        }
-//
-//==================================================================================
-//        this.closeHalfPosition(trade, ask, bid);
-//
-//        //if 1st half is closed then trail the rest after prev bar extremes
-//        this.trailStopLoss(account, trade);
-//    }
-//
-//    /**
-//     * If trade hits first target point close half, else trail after prev bar high
-//     * @param account current account
-//     * @param ask current ask price
-//     * @param bid current bid price
-//     * @param dateTime current dateTime
-//     * @see CandlesUpdater
-//     */
-//    @Override
-//    public void execute(Account account, BigDecimal ask, BigDecimal bid, DateTime dateTime) {
-//
-//        TradeSummary trade = this.serviceExitStrategy.getTrade(account);
-//
-//        this.serviceExitStrategy.updaterUpdateCandles(dateTime);
-//
-//        this.moveToBreakEven(account, trade, ask, bid);
-//
-//        this.closeHalfPosition(trade, ask, bid);
-//
-//        //if 1st half is closed then trail the rest after prev bar extremes
-//        this.trailStopLoss(account, trade);
-//    }
-//
-//    /**
-//     * Move stop loss to break even when price move X amount of pips in trade's direction
-//      * @param trade current trade
-//     * @param ask current ask price
-//     * @param bid current bid price
-//     */
-//    private void moveToBreakEven(Account account, TradeSummary trade, BigDecimal ask, BigDecimal bid){
-//        BigDecimal tradeOpenPrice = trade.getPrice().bigDecimalValue();
-//        BigDecimal stopLossPrice = this.serviceExitStrategy.getStopLossOrderPriceByID(account, trade.getStopLossOrderID());
-//        BigDecimal currentUnits = trade.getCurrentUnits().bigDecimalValue();
-//
-//        if (currentUnits.compareTo(BigDecimal.ZERO) > 0 && stopLossPrice.compareTo(tradeOpenPrice) >= 0){
-//            return;
-//        }
-//
-//        if (currentUnits.compareTo(BigDecimal.ZERO) < 0 && stopLossPrice.compareTo(tradeOpenPrice) <= 0){
-//            return;
-//        }
-//
-//        BigDecimal breakEvenPrice = this.calculateTargetPrice(currentUnits, tradeOpenPrice, BREAK_EVEN_DISTANCE);
-//        if (isFilterPassed(currentUnits, breakEvenPrice, ask, bid)){
-//            TradeID id = trade.getId();
-//
-//            this.tradeSetDependentOrdersResponse = this.serviceExitStrategy.changeStopLoss(id, tradeOpenPrice);
-//        }
-//    }
-//
-//    /**
-//     * Close half of the position if it is not already closed
-//     * @param trade current trade
-//     * @param ask current ask price
-//     * @param bid current bid price
-//     */
-//    private void closeHalfPosition(TradeSummary trade, BigDecimal ask, BigDecimal bid){
-//        TradeID id = trade.getId();
-//        BigDecimal initialUnits = trade.getInitialUnits().bigDecimalValue();
-//        BigDecimal currentUnits = trade.getCurrentUnits().bigDecimalValue();
-//        BigDecimal tradeOpenPrice = trade.getPrice().bigDecimalValue();
-//
-//        //Check if first half is closed
-//        if (initialUnits.compareTo(currentUnits) != 0) {
-//            return;
-//        }
-//
-//        BigDecimal firstTargetPrice = this.calculateTargetPrice(currentUnits, tradeOpenPrice, FIRST_TARGET_DISTANCE);
-//
-//        if (isFilterPassed(currentUnits, firstTargetPrice, ask, bid)){
-//            this.halfTradeResponse = this.serviceExitStrategy.partialTradeClose(currentUnits, PARTS_TO_CLOSE);
-//        }
-//    }
-//
-//    /**
-//     * Check if half of the trade can be closed
-//     * @param currentUnits trade current amount of units
-//     * @param firstTargetPrice price of the first target
-//     * @param ask ask price
-//     * @param bid bid price
-//     * @return {@link boolean} {@code true} if the half of the trade can be closed
-//     *                         {@code false} otherwise
-//     */
-//    private boolean isFilterPassed(BigDecimal currentUnits, BigDecimal firstTargetPrice, BigDecimal ask, BigDecimal bid){
-//        //for short trade
-//        boolean shortCondition = currentUnits.compareTo(BigDecimal.ZERO) < 0 && firstTargetPrice.compareTo(ask) >= 0;
-//        boolean longCondition = currentUnits.compareTo(BigDecimal.ZERO) > 0 && firstTargetPrice.compareTo(bid) <= 0;
-//
-//        return shortCondition || longCondition;
-//    }
-//
-//    /**
-//     * Calculate Initial Target's price
-//     * @param currentUnits units size
-//     * @param tradeOpenPrice open price of the trade
-//     * @return {@link BigDecimal} value of the price
-//     */
-//    private BigDecimal calculateTargetPrice(BigDecimal currentUnits, BigDecimal tradeOpenPrice, BigDecimal distance){
-//        if (currentUnits.compareTo(BigDecimal.ZERO) < 0){
-//
-//            return tradeOpenPrice.subtract(distance).setScale(5, BigDecimal.ROUND_HALF_UP);
-//        } else  {
-//
-//           return tradeOpenPrice.add(distance).setScale(5, BigDecimal.ROUND_HALF_UP);
-//        }
-//    }
-//
-//    /**
-//     * Trail stop loss after previous bar extreme
-//     * @param account current account
-//     * @param trade current trade
-//     */
-//    private void trailStopLoss(Account account, TradeSummary trade){
-//
-//        BigDecimal currentUnits = trade.getCurrentUnits().bigDecimalValue();
-//        BigDecimal initialUnits = trade.getInitialUnits().bigDecimalValue();
-//
-//        //Check if first half is closed
-//        if (initialUnits.compareTo(currentUnits) == 0) {
-//            return;
-//        }
-//
-//        BigDecimal lastFullCandleHigh = this.serviceExitStrategy.getLastFullCandleHigh();
-//        BigDecimal lastFullCandleLow = this.serviceExitStrategy.getLastFullCandleLow();
-//        BigDecimal lastFullCandleClose = this.serviceExitStrategy.getLastFullCandleClose();
-//
-//        //initial prev bar values
-//        this.initialSetExitBar(trade);
-//
-//        boolean isReadyToTrailStopLoss = this.isReadyToTrailStopLoss(currentUnits, lastFullCandleClose, lastFullCandleHigh, lastFullCandleLow);
-//
-//
-//        this.exitBarLow = updateExitBarComponent(this.exitBarLow, lastFullCandleLow, currentUnits);
-//        this.exitBarHigh = updateExitBarComponent(this.exitBarHigh, lastFullCandleHigh, currentUnits);
-//        //this.updateExitBarHigh(isReadyToTrailStopLoss, lastFullCandleHigh);
-//       // this.updateExitBarLow(isReadyToTrailStopLoss, lastFullCandleLow, currentUnits);
-//
-//        if (this.isReadyToSendTrailOrder(account, trade, currentUnits) && isReadyToTrailStopLoss){
-//            BigDecimal newStopLossPrice = this.setNewStopLoss(currentUnits);
-//            this.tradeSetDependentOrdersResponse = this.serviceExitStrategy.changeStopLoss(trade.getId(), newStopLossPrice);
-//
-//            this.printInformation(newStopLossPrice);
-//        }
-//    }
-//
-//    /**
-//     * Set value to exit bar's extremes. If they are {@code null} then set values to trade open price
-//     * @param trade current trade
-//     */
-//    private void initialSetExitBar(TradeSummary trade){
-//        if(this.exitBarHigh == null || this.exitBarLow == null){
-//            BigDecimal tradeOpenPrice = trade.getPrice().bigDecimalValue();
-//            this.exitBarHigh = tradeOpenPrice;
-//            this.exitBarLow = tradeOpenPrice;
-//        }
-//    }
-//
-//    /**
-//     * Check if stop loss can be trailed.
-//     * For short trade stop will be trailed if candlestick close is lower than current low and candlestick high is also lower than current high.
-//     * For long trade stop will be trailed if candlestick close is higher than current high and candlestick low is also higher than current low
-//     * @param currentUnits current size of the trade
-//     * @param lastFullCandleClose last full candlestick close
-//     * @param lastFullCandleHigh last full candlestick high
-//     * @param lastFullCandleLow last full candlestick low
-//     * @return {@link boolean} {@code true} if stop can be trailed
-//     *                         {@code false} otherwise
-//     */
-//    private boolean isReadyToTrailStopLoss(BigDecimal currentUnits, BigDecimal lastFullCandleClose,
-//                                           BigDecimal lastFullCandleHigh, BigDecimal lastFullCandleLow){
-//
-//        boolean shortCondition = currentUnits.compareTo(BigDecimal.ZERO) < 0 && lastFullCandleClose.compareTo(this.exitBarLow) < 0
-//                && lastFullCandleHigh.compareTo(this.exitBarHigh) < 0;
-//
-//        boolean longCondition = currentUnits.compareTo(BigDecimal.ZERO) > 0 && lastFullCandleClose.compareTo(this.exitBarHigh) > 0
-//                && lastFullCandleLow.compareTo(this.exitBarLow) > 0;
-//
-//        return shortCondition || longCondition;
-//    }
-//
-//    /**
-//     * Update exit bar components - low or high
-//     * @param exitBarComponent exit bar component - exitBarHigh or exitBarLow
-//     * @param lastFullCandleLow last full candlestick low
-//     * @param currentUnits trade's units
-//     */
-//    private BigDecimal updateExitBarComponent(BigDecimal exitBarComponent, BigDecimal lastFullCandleLow, BigDecimal currentUnits){
-//        if(currentUnits.compareTo(BigDecimal.ZERO) < 0){
-//            exitBarComponent = lastFullCandleLow.compareTo(exitBarComponent) < 0 ? lastFullCandleLow : exitBarComponent;
-//        } else {
-//            exitBarComponent = lastFullCandleLow.compareTo(exitBarComponent) > 0 ? lastFullCandleLow : exitBarComponent;
-//        }
-//        return exitBarComponent;
-//    }
-//
-//    /**
-//     * Check if new stopLoss order can be sent
-//     * @param account current account
-//     * @param trade current trade
-//     * @return {@link boolean} {@code true} if stopLoss can be moved
-//     *                         {@code false} otherwise
-//     */
-//    private boolean isReadyToSendTrailOrder(Account account, TradeSummary trade, BigDecimal currentUnits){
-//
-//        BigDecimal stopLossPrice = this.serviceExitStrategy.getStopLossOrderPriceByID(account, trade.getStopLossOrderID());
-//
-//        boolean shortCondition = (currentUnits.compareTo(BigDecimal.ZERO) < 0) && ( stopLossPrice.compareTo(BigDecimal.ZERO) == 0 || stopLossPrice.compareTo(this.exitBarHigh) > 0);
-//        boolean longCondition = (currentUnits.compareTo(BigDecimal.ZERO) > 0) && ( stopLossPrice.compareTo(BigDecimal.ZERO) == 0 || stopLossPrice.compareTo(this.exitBarLow) < 0);
-//
-//        return shortCondition || longCondition;
-//    }
-//
-//    /**
-//     * Set value of the new stopLoss
-//     * @param unitsSize current unit size
-//     * @return {@link BigDecimal} price value of the new stop
-//     */
-//    private BigDecimal setNewStopLoss(BigDecimal unitsSize){
-//        if (unitsSize.compareTo(BigDecimal.ZERO) < 0){
-//            return this.exitBarHigh;
-//        }
-//        return this.exitBarLow;
-//    }
-//
-//    /**
-//     * Printing id of the closed transaction
-//     */
-//    private void printInformation(BigDecimal newStopLoss){
-//        TransactionID lastTransactionID = this.tradeSetDependentOrdersResponse.getLastTransactionID();
-//        System.out.println("TradeImpl with id: " + lastTransactionID+" StopLoss moved to: " + newStopLoss);
-//    }
 }

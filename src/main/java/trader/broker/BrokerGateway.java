@@ -29,6 +29,7 @@ public interface BrokerGateway {
     int totalOpenOrdersSize();
     String cancelOrder(String orderID);
     String setTradeStopLossPrice(String tradeID, String price);
+    BigDecimal getTradeStopLossPrice(String tradeID);
     String placeMarketIfTouchedOrder(HashMap<String, String> settings);
     String placeMarketOrder(HashMap<String, String> settings);
 

@@ -104,7 +104,7 @@ public class OandaGateway extends BaseGateway {
 
     @Override
     public int totalOpenOrdersSize() {
-        return getAccount().getOrders().size();
+        return getOrders().size();
     }
 
     @Override
@@ -116,15 +116,12 @@ public class OandaGateway extends BaseGateway {
     public String placeMarketOrder(HashMap<String, String> settings){
         return placeOrder(settings, CREATE_MARKET_ORDER);
     }
-
+//changed must be tested///
     @Override
     public trader.entity.order.Order getOrder(trader.entity.order.enums.OrderType type){
-        List<Order> orders = getAccount().getOrders();
-        for (Order order : orders){
-            if (order.getType().toString().equals(type.toString())) {
-                MarketIfTouchedOrder orderToTransform = (MarketIfTouchedOrder) order;
-                return oandaTransformer.transformOrder(orderToTransform);
-            }
+        for (Order order : getOrders()){
+            if (order.getType().toString().equals(type.toString()))
+                return oandaTransformer.transformOrder(order);
         }
         return null;
     }
@@ -154,6 +151,18 @@ public class OandaGateway extends BaseGateway {
         TradeSetDependentOrdersResponse responseDataStructure = tradeSetDependentOrdersResponse.getBody();
         return responseDataStructure.getLastTransactionID().toString();
     }
+// not tested///
+    @Override
+    public BigDecimal getTradeStopLossPrice(String tradeID){
+        validateStringInput(tradeID);
+        for (Order order : getOrders()) {
+            if (order.getId().toString().equals(tradeID) && order.getType().equals(OrderType.STOP_LOSS)) {
+                StopLossOrder stopLossOrder = (StopLossOrder) order;
+                return stopLossOrder.getPrice().bigDecimalValue();
+            }
+        }
+        return BigDecimal.ZERO;
+    }
 
     @Override
     public String cancelOrder(String orderID) {
@@ -165,6 +174,7 @@ public class OandaGateway extends BaseGateway {
         OrderCancelResponse responseDataStructure = cancelOrderResponse.getBody();
         return responseDataStructure.getLastTransactionID().toString();
     }
+
 
     @Override
     public String toString() {
@@ -207,5 +217,9 @@ public class OandaGateway extends BaseGateway {
         Response<OrderCreateResponse> marketOrderResponse = oandaResponseBuilder.buildResponse(createMarketOrder, marketOrderRequest);
         OrderCreateResponse orderResponse = marketOrderResponse.getBody();
         return orderResponse.getOrderCreateTransaction().getId().toString();
+    }
+
+    private List<Order> getOrders(){
+        return  getAccount().getOrders();
     }
 }
