@@ -8,18 +8,13 @@ import java.util.Date;
 
 public class ConsolePresenter implements Presenter {
 
-    private PrintWriter printWriter;
 
     public ConsolePresenter() {
-        this.printWriter = new PrintWriter(System.out);
     }
 
     @Override
     public void execute(Response response){
-        System.out.println(getHeader()+ " "+ response.getBody().toString() + " << SUCCESS >>");
-//        printWriter.println(getHeader()+ " "+ response.getBody().toString() + " << SUCCESS >>");
-//        printWriter.flush();
-//        printWriter.close();
+        System.out.println(getHeader()+ " "+ response.getBody().toString());
     }
 
     private String getHeader(){

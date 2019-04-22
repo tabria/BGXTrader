@@ -30,12 +30,11 @@ public class OandaGateway extends BaseGateway {
     private static final String INSTRUMENT = "instrument";
     private static final String PRICE = "price";
     private static final String CANDLE = "candle";
-    private static final String CREATE_MARKET_IF_TOUCHED_ORDER = "createMarketIfTouchedOrder";
+    private static final String CREATE_MARKET_IF_TOUCHED_ORDER = "marketIfTouchedOrder";
     private static final String TRADE_ID = "tradeID";
     private static final String ORDER_ID = "orderID";
     private static final String CANCEL_ORDER = "cancelOrder";
     private static final String SET_STOP_LOSS_PRICE = "setStopLossPrice";
-    private static final String CREATE_MARKET_ORDER = "marketOrder";
 
     private Context context;
     private BrokerConnector connector;
@@ -109,15 +108,14 @@ public class OandaGateway extends BaseGateway {
     }
 
     @Override
-    public String placeMarketIfTouchedOrder(HashMap<String, String> settings){
-        return placeOrder(settings, CREATE_MARKET_IF_TOUCHED_ORDER);
+    public String placeOrder(Map<String, String> settings, String orderType) {
+        settings.put(ACCOUNT_ID, getConnector().getAccountID());
+        Request<?> marketOrderRequest = oandaRequestBuilder.build(orderType, settings);
+        Response<OrderCreateResponse> marketOrderResponse = oandaResponseBuilder.buildResponse(orderType, marketOrderRequest);
+        OrderCreateResponse orderResponse = marketOrderResponse.getBody();
+        return orderResponse.getOrderCreateTransaction().getId().toString();
     }
 
-    @Override
-    public String placeMarketOrder(HashMap<String, String> settings){
-        return placeOrder(settings, CREATE_MARKET_ORDER);
-    }
-//changed must be tested///
     @Override
     public trader.entity.order.Order getOrder(trader.entity.order.enums.OrderType type){
         for (Order order : getOrders()){
@@ -152,12 +150,12 @@ public class OandaGateway extends BaseGateway {
         TradeSetDependentOrdersResponse responseDataStructure = tradeSetDependentOrdersResponse.getBody();
         return responseDataStructure.getLastTransactionID().toString();
     }
-// not tested///
+
     @Override
     public BigDecimal getTradeStopLossPrice(String tradeID){
         validateStringInput(tradeID);
         for (Order order : getOrders()) {
-            if (order.getId().toString().equals(tradeID) && order.getType().equals(OrderType.STOP_LOSS)) {
+            if (order.getType().equals(OrderType.STOP_LOSS) && order.getId().toString().equals(tradeID) ) {
                 StopLossOrder stopLossOrder = (StopLossOrder) order;
                 return stopLossOrder.getPrice().bigDecimalValue();
             }
@@ -210,15 +208,6 @@ public class OandaGateway extends BaseGateway {
         HashMap<String, String> settings = new HashMap<>();
         settings.put(ACCOUNT_ID, connector.getAccountID());
         return settings;
-    }
-
-    @Override
-    public String placeOrder(Map<String, String> settings, String orderType) {
-        settings.put(ACCOUNT_ID, getConnector().getAccountID());
-        Request<?> marketOrderRequest = oandaRequestBuilder.build(orderType, settings);
-        Response<OrderCreateResponse> marketOrderResponse = oandaResponseBuilder.buildResponse(orderType, marketOrderRequest);
-        OrderCreateResponse orderResponse = marketOrderResponse.getBody();
-        return orderResponse.getOrderCreateTransaction().getId().toString();
     }
 
     private List<Order> getOrders(){

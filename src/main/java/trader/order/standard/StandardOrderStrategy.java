@@ -23,6 +23,7 @@ public class StandardOrderStrategy implements OrderStrategy {
     private static final String TRADE_ENTRY_PRICE = "tradeEntryPrice";
     private static final String INSTRUMENT = "instrument";
     private static final String UNITS_SIZE = "unitsSize";
+    private static final String MARKET_IF_TOUCHED_ORDER = "marketIfTouchedOrder";
 
     private String lastOrderTransactionID;
 
@@ -57,7 +58,7 @@ public class StandardOrderStrategy implements OrderStrategy {
         BigDecimal futureMargin = brokerGateway.getMarginUsed().add(tradeMargin).setScale(5, BigDecimal.ROUND_HALF_UP);
         if (availableMargin.compareTo(futureMargin)>0 && isNotZero(unitsSize)){
             HashMap<String, String> settings = gatherOrderSettings(trade, configuration, unitsSize);
-            lastOrderTransactionID = brokerGateway.placeMarketIfTouchedOrder(settings);
+            lastOrderTransactionID = brokerGateway.placeOrder(settings, MARKET_IF_TOUCHED_ORDER);
         }
     }
 

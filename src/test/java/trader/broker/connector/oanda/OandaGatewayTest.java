@@ -3,6 +3,7 @@ package trader.broker.connector.oanda;
 import com.oanda.v20.Context;
 import com.oanda.v20.account.Account;
 import com.oanda.v20.order.*;
+import com.oanda.v20.pricing_common.PriceValue;
 import com.oanda.v20.primitives.AccountUnits;
 import com.oanda.v20.trade.TradeSetDependentOrdersResponse;
 import com.oanda.v20.trade.TradeSummary;
@@ -191,7 +192,7 @@ public class OandaGatewayTest {
         setFakeContext();
         setFakeBuilders();
         MarketIfTouchedOrder orderMock = setFakeMarketIFTouchedOrder();
-        setFakeOrderList(orderMock);
+        setFakeOrderList(orderMock, 1);
         trader.entity.order.Order expected = mock(trader.entity.order.Order.class);
         setFakeOrderTransformer(expected);
 
@@ -201,20 +202,31 @@ public class OandaGatewayTest {
     }
 
     @Test
-    public void WhenCallPlaceMarketIfTouchedOrder_CorrectResult(){
+    public void  givenOrderListWithStopLossOrder_WhenCallGetOrderForMArketIfTouchedOrderType_ThenReturnNull(){
+        setFakeContext();
+        setFakeBuilders();
+        setFakeOrderList(setFakeStopLossOrder(new BigDecimal("1.1234"), "11"), 1);
+
+        trader.entity.order.Order order = oandaGateway.getOrder(trader.entity.order.enums.OrderType.MARKET_IF_TOUCHED);
+
+        assertNull(order);
+    }
+
+    @Test
+    public void WhenCallPlaceOrderWithMarketIfTouchedOrder_CorrectResult(){
         String expectedID = "18";
         makeFakeOrder(expectedID);
-        String result = oandaGateway.placeMarketIfTouchedOrder(new HashMap<>());
+        String result = oandaGateway.placeOrder(new HashMap<>(), "marketIfTouchedOrder");
 
 
         assertEquals(expectedID, result);
     }
 
     @Test
-    public void WhenCallPlaceMarketIfTouchedOrderCheckForValidSettings(){
+    public void WhenCallPlaceOrderWithMarketIfTouchedCheckForValidSettings(){
         String expectedID = "2";
         makeFakeOrder(expectedID);
-        oandaGateway.placeMarketIfTouchedOrder(new HashMap<>());
+        oandaGateway.placeOrder(new HashMap<>(), "marketIfTouchedOrder");
         verify(mockRequestBuilder).build(anyString(), argument.capture());
         HashMap<String, String> settings = argument.getValue();
 
@@ -223,7 +235,7 @@ public class OandaGatewayTest {
     }
 
     @Test
-    public void WhenCallPlaceMarketOrder_CorrectResult(){
+    public void WhenCallPlaceOrderWithMarketOrder_CorrectResult(){
         String expectedID = "13";
         makeFakeOrder(expectedID);
         String result = oandaGateway.placeOrder(new HashMap<>(), "marketOrder");
@@ -232,7 +244,7 @@ public class OandaGatewayTest {
     }
 
     @Test
-    public void WhenCallPlaceMarketOrderCheckForValidSettings(){
+    public void WhenCallPlaceOrderWithMarketOrderCheckForValidSettings(){
         String expectedID = "2";
         makeFakeOrder(expectedID);
         oandaGateway.placeOrder(new HashMap<>(),"marketOrder");
@@ -353,15 +365,77 @@ public class OandaGatewayTest {
         assertEquals("Gateway: OANDA", gateway.toString());
     }
 
+    @Test(expected = NullArgumentException.class)
+    public void givenNullTradeID_WhenCallGetTradeStopLossPrice_ThenThrowException(){
+        oandaGateway.getTradeStopLossPrice(null);
+    }
+
+    @Test(expected = EmptyArgumentException.class)
+    public void givenEmptyTradeID_WhenCallGetTradeStopLossPrice_ThenThrowException(){
+        oandaGateway.getTradeStopLossPrice("  ");
+    }
+
+    @Test
+    public void givenCorrectOrderList_WhenCallGetTradeStopLossPrice_ThenReturnCorrectValue(){
+        BigDecimal expectedPrice = new BigDecimal("1.12345");
+        setFakeContext();
+        setFakeConnector();
+        setFakeBuilders();
+        StopLossOrder stopLossOrderMock = setFakeStopLossOrder(expectedPrice, "11");
+        setFakeOrderList(stopLossOrderMock, 1);
+
+        BigDecimal tradeStopLossPrice = oandaGateway.getTradeStopLossPrice("11");
+
+        assertEquals(expectedPrice, tradeStopLossPrice);
+    }
+
+    @Test
+    public void givenOrderListWithoutStopLossOrder_WhenCallGetTradeStopLossPrice_ThenReturnZero(){
+        setFakeContext();
+        setFakeConnector();
+        setFakeBuilders();
+        setFakeOrderList(setFakeMarketIFTouchedOrder(), 1);
+
+        BigDecimal tradeStopLossPrice = oandaGateway.getTradeStopLossPrice("11");
+
+        assertEquals(BigDecimal.ZERO, tradeStopLossPrice);
+    }
+
+    @Test
+    public void givenEmptyOrderList_WhenCallGetTradeStopLossPrice_ThenReturnCorrectZero(){
+        setFakeContext();
+        setFakeConnector();
+        setFakeBuilders();
+        setFakeOrderList(mock(Order.class), 0);
+
+        BigDecimal tradeStopLossPrice = oandaGateway.getTradeStopLossPrice("11");
+
+        assertEquals(BigDecimal.ZERO, tradeStopLossPrice);
+    }
+
+    private StopLossOrder setFakeStopLossOrder(BigDecimal expectedPrice, String tradeID) {
+        StopLossOrder stopLossOrderMock = mock(StopLossOrder.class);
+        OrderID orderIDMock = mock(OrderID.class);
+        PriceValue priceValueMock = mock(PriceValue.class);
+        when(priceValueMock.bigDecimalValue()).thenReturn(expectedPrice);
+        when(orderIDMock.toString()).thenReturn(tradeID);
+        when(stopLossOrderMock.getId()).thenReturn(orderIDMock);
+        when(stopLossOrderMock.getType()).thenReturn(OrderType.STOP_LOSS);
+        when(stopLossOrderMock.getPrice()).thenReturn(priceValueMock);
+        return stopLossOrderMock;
+    }
+
+
     private TransactionID setFakeTransactionID(String id){
         TransactionID transactionID = mock(TransactionID.class);
         when((transactionID.toString())).thenReturn(id);
         return transactionID;
     }
 
-    private void setFakeOrderList(MarketIfTouchedOrder orderMock) {
+    private void setFakeOrderList(Order orderMock, int size) {
         List<Order> orderList = new ArrayList<>();
-        orderList.add(orderMock);
+        if(size > 0)
+            orderList.add(orderMock);
         when(responseMock.getBody()).thenReturn(accountMock);
         when(accountMock.getOrders()).thenReturn(orderList);
     }
@@ -409,8 +483,6 @@ public class OandaGatewayTest {
         when(responseMock.getBody()).thenReturn(accountMock);
         when(accountMock.getTrades()).thenReturn(trades);
     }
-
-
 
     private void setOandaValidator() {
         OandaAccountValidator mockValidator = mock(OandaAccountValidator.class);

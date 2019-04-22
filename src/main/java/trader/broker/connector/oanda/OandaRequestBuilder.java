@@ -39,7 +39,7 @@ class OandaRequestBuilder {
             return buildCandlesRequest(settings);
         if(requestType.trim().equalsIgnoreCase(ACCOUNT_ID))
             return buildAccountIDRequest(settings);
-        if(requestType.trim().equalsIgnoreCase("createMarketIfTouchedOrder"))
+        if(requestType.trim().equalsIgnoreCase("marketIfTouchedOrder"))
             return buildCreateMarketIfTouchedOrderRequest(settings);
         if(requestType.trim().equalsIgnoreCase("marketOrder"))
             return buildCreateMarketOrderRequest(settings);

@@ -28,7 +28,8 @@ public class OandaRequestBuilderTest {
     private static final String EXPECTED_QUANTITY = "5";
     private static final String GRANULARITY = "granularity";
     private static final String EXPECTED_GRANULARITY = "M30";
-    private static final String CREATE_MARKET_IF_TOUCHED_ORDER = "createMarketIfTouchedOrder";
+    private static final String MARKET_IF_TOUCHED_ORDER = "marketIfTouchedOrder";
+    private static final String MARKET_ORDER = "marketOrder";
 
 
     private OandaRequestBuilder request;
@@ -126,7 +127,7 @@ public class OandaRequestBuilderTest {
         settings.put("accountID", "xxx");
         settings.put("instrument", "xxx");
         settings.put("unitsSize", "xxx");
-        this.request.build(CREATE_MARKET_IF_TOUCHED_ORDER, settings);
+        this.request.build(MARKET_IF_TOUCHED_ORDER, settings);
     }
 
     @Test(expected = BadRequestException.class)
@@ -135,7 +136,7 @@ public class OandaRequestBuilderTest {
         settings.put("instrument", "xxx");
         settings.put("unitsSize", "xxx");
         settings.put("tradeEntryPrice", "xxx");
-        this.request.build(CREATE_MARKET_IF_TOUCHED_ORDER, settings);
+        this.request.build(MARKET_IF_TOUCHED_ORDER, settings);
     }
 
     @Test(expected = BadRequestException.class)
@@ -145,7 +146,7 @@ public class OandaRequestBuilderTest {
         settings.put("unitsSize", "xxx");
         settings.put("tradeEntryPrice", "xxx");
         settings.put("tradeStopLossPrice", "xxx");
-        this.request.build(CREATE_MARKET_IF_TOUCHED_ORDER, settings);
+        this.request.build(MARKET_IF_TOUCHED_ORDER, settings);
     }
 
     @Test
@@ -156,7 +157,7 @@ public class OandaRequestBuilderTest {
         settings.put("unitsSize", "100");
         settings.put("tradeEntryPrice", "1.1200");
         settings.put("tradeStopLossPrice", "1.1980");
-        Request<?> marketIfTouchedRequest = this.request.build(CREATE_MARKET_IF_TOUCHED_ORDER, settings);
+        Request<?> marketIfTouchedRequest = this.request.build(MARKET_IF_TOUCHED_ORDER, settings);
         OrderCreateRequest request = (OrderCreateRequest) marketIfTouchedRequest.getBody();
         HashMap<String, Object> pathParams = request.getPathParams();
         AccountID accountID = (AccountID) pathParams.get("accountID");
@@ -196,6 +197,28 @@ public class OandaRequestBuilderTest {
         String a ="";
     }
 
+    @Test(expected = BadRequestException.class)
+    public void givenNotANumberUnitsSize_WhenCallBuildForMarketOrder_ThenThrowException(){
+        settings.put("accountID", "xxx");
+        settings.put("instrument", "xxx");
+        settings.put("unitsSize", "xxx");
+        this.request.build(MARKET_ORDER, settings);
+    }
+
+
+    @Test
+    public void givenCorrectSettingsForMarketOrder_WhenCallBuild_ThenReturnCorrectResult(){
+        String expectedID = "12";
+        settings.put("accountID", expectedID);
+        settings.put("instrument", "EUR_USD");
+        settings.put("unitsSize", "100");
+        Request<?> marketOrderRequest = this.request.build(MARKET_ORDER, settings);
+        OrderCreateRequest request = (OrderCreateRequest) marketOrderRequest.getBody();
+        HashMap<String, Object> pathParams = request.getPathParams();
+        AccountID accountID = (AccountID) pathParams.get("accountID");
+
+        assertEquals("12", accountID.toString());
+    }
 
     private String getRequestAccount(PricingGetRequest request) {
         return request.getPathParams().get(ACCOUNT_ID).toString();

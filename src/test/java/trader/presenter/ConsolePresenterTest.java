@@ -52,7 +52,7 @@ public class ConsolePresenterTest {
         when(responseMock.getBody()).thenReturn(text);
         consolePresenter.execute(responseMock);
 
-        assertEquals(header+text, consoleContent.toString().trim());
+        assertEquals(header+" " +text, consoleContent.toString().trim());
     }
 
     @Test
@@ -60,7 +60,7 @@ public class ConsolePresenterTest {
         TradingStrategyConfiguration config = mock(BGXConfigurationImpl.class);
         when(config.toString()).thenCallRealMethod();
         when(responseMock.getBody()).thenReturn(config);
-        String expected = String.format("%s %s %s", getHeader(), "BGXConfiguration", "<< SUCCESS >>");
+        String expected = String.format("%s %s", getHeader(), "BGXConfiguration");
 
         consolePresenter.execute(responseMock);
 
@@ -72,7 +72,7 @@ public class ConsolePresenterTest {
         BrokerGateway gateway = mock(OandaGateway.class);
         when(gateway.toString()).thenCallRealMethod();
         when(responseMock.getBody()).thenReturn(gateway);
-        String expected = String.format("%s %s %s", getHeader(), "Gateway: OANDA", "<< SUCCESS >>");
+        String expected = String.format("%s %s", getHeader(), "Gateway: OANDA");
 
         consolePresenter.execute(responseMock);
 
@@ -84,7 +84,7 @@ public class ConsolePresenterTest {
         EntryStrategy entryStrategy = mock(StandardEntryStrategy.class);
         when(entryStrategy.toString()).thenCallRealMethod();
         when(responseMock.getBody()).thenReturn(entryStrategy);
-        String expected = String.format("%s %s %s", getHeader(), "Entry strategy: STANDARD", "<< SUCCESS >>");
+        String expected = String.format("%s %s", getHeader(), "Entry strategy: STANDARD");
 
         consolePresenter.execute(responseMock);
 
@@ -96,7 +96,7 @@ public class ConsolePresenterTest {
         OrderStrategy orderStrategy = mock(StandardOrderStrategy.class);
         when(orderStrategy.toString()).thenCallRealMethod();
         when(responseMock.getBody()).thenReturn(orderStrategy);
-        String expected = String.format("%s %s %s", getHeader(), "Order strategy: STANDARD", "<< SUCCESS >>");
+        String expected = String.format("%s %s", getHeader(), "Order strategy: STANDARD");
 
         consolePresenter.execute(responseMock);
 
@@ -108,7 +108,7 @@ public class ConsolePresenterTest {
         ExitStrategy orderStrategy = mock(HalfCloseTrailExitStrategy.class);
         when(orderStrategy.toString()).thenCallRealMethod();
         when(responseMock.getBody()).thenReturn(orderStrategy);
-        String expected = String.format("%s %s %s", getHeader(), "Exit strategy: HALF CLOSE, TRAIL", "<< SUCCESS >>");
+        String expected = String.format("%s %s", getHeader(), "Exit strategy: HALF CLOSE, TRAIL");
 
         consolePresenter.execute(responseMock);
 
