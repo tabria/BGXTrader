@@ -17,6 +17,7 @@ import trader.requestor.Request;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 class OandaRequestBuilder {
 
@@ -30,7 +31,7 @@ class OandaRequestBuilder {
     private static final String ORDER_ID = "orderID";
     private static final String TRADE_ID = "tradeID";
 
-    public Request<?> build(String requestType, HashMap<String, String> settings) {
+    public Request<?> build(String requestType, Map<String, String> settings) {
         initialInputValidation(requestType, settings);
         if(requestType.trim().equalsIgnoreCase("price"))
             return buildPricingRequest(settings);
@@ -40,7 +41,7 @@ class OandaRequestBuilder {
             return buildAccountIDRequest(settings);
         if(requestType.trim().equalsIgnoreCase("createMarketIfTouchedOrder"))
             return buildCreateMarketIfTouchedOrderRequest(settings);
-        if(requestType.trim().equalsIgnoreCase("createMarketOrder"))
+        if(requestType.trim().equalsIgnoreCase("marketOrder"))
             return buildCreateMarketOrderRequest(settings);
         if(requestType.trim().equalsIgnoreCase("orderSpecifier"))
             return buildOrderSpecifierRequest(settings);
@@ -50,7 +51,7 @@ class OandaRequestBuilder {
         throw new NoSuchDataStructureException();
     }
 
-    private Request<PricingGetRequest> buildPricingRequest(HashMap<String, String> settings) {
+    private Request<PricingGetRequest> buildPricingRequest(Map<String, String> settings) {
         List<String> instruments = new ArrayList<>();
         instruments.add(settings.get(INSTRUMENT));
         AccountID accountId = new AccountID(settings.get(ACCOUNT_ID));
@@ -59,7 +60,7 @@ class OandaRequestBuilder {
         return request;
     }
 
-    private Request<InstrumentCandlesRequest> buildCandlesRequest(HashMap<String, String> settings){
+    private Request<InstrumentCandlesRequest> buildCandlesRequest(Map<String, String> settings){
         Request<InstrumentCandlesRequest> request = new RequestImpl<>();
         validateGranularity(settings);
         request.setBody(
@@ -71,13 +72,13 @@ class OandaRequestBuilder {
         return request;
     }
 
-    private Request<?> buildAccountIDRequest(HashMap<String, String> settings) {
+    private Request<?> buildAccountIDRequest(Map<String, String> settings) {
         Request<AccountID> accountIDRequest = new RequestImpl<>();
         accountIDRequest.setBody(new AccountID(settings.get(ACCOUNT_ID)));
         return accountIDRequest;
     }
 
-    private Request<OrderCreateRequest> buildCreateMarketIfTouchedOrderRequest(HashMap<String, String> settings) {
+    private Request<OrderCreateRequest> buildCreateMarketIfTouchedOrderRequest(Map<String, String> settings) {
         AccountID accountID = new AccountID(settings.get(ACCOUNT_ID));
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(accountID)
                 .setOrder(createMarketIfTouchedOrderRequest(settings));
@@ -86,7 +87,7 @@ class OandaRequestBuilder {
         return request;
     }
 
-    private Request<OrderCreateRequest> buildCreateMarketOrderRequest(HashMap<String, String> settings) {
+    private Request<OrderCreateRequest> buildCreateMarketOrderRequest(Map<String, String> settings) {
         AccountID accountID = new AccountID(settings.get(ACCOUNT_ID));
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(accountID)
                 .setOrder(createMarketOrderRequest(settings));
@@ -95,13 +96,13 @@ class OandaRequestBuilder {
         return request;
     }
 
-    private OrderRequest createMarketOrderRequest(HashMap<String, String> settings){
+    private OrderRequest createMarketOrderRequest(Map<String, String> settings){
         return  new MarketOrderRequest()
                 .setInstrument(settings.get(INSTRUMENT))
                 .setUnits(parseStringToDouble(settings.get(UNITS_SIZE)));
     }
 
-    private OrderRequest createMarketIfTouchedOrderRequest(HashMap<String, String> settings){
+    private OrderRequest createMarketIfTouchedOrderRequest(Map<String, String> settings){
         StopLossDetails stopLossDetails = new StopLossDetails()
                 .setPrice(parseStringToDouble(settings.get(TRADE_STOP_LOSS_PRICE)));
         return   new MarketIfTouchedOrderRequest()
@@ -111,7 +112,7 @@ class OandaRequestBuilder {
                 .setPrice(parseStringToDouble(settings.get(TRADE_ENTRY_PRICE)));
     }
 
-    private Request<List<Object>> buildOrderSpecifierRequest(HashMap<String,String> settings) {
+    private Request<List<Object>> buildOrderSpecifierRequest(Map<String,String> settings) {
         Request<List<Object>> request = new RequestImpl<>();
         OrderSpecifier orderSpecifier = new OrderSpecifier(settings.get("orderID"));
         AccountID accountID = new AccountID(settings.get(ACCOUNT_ID));
@@ -122,7 +123,7 @@ class OandaRequestBuilder {
         return request;
     }
 
-    private Request<TradeSetDependentOrdersRequest> buildSetStopLossPriceRequest(HashMap<String,String> settings) {
+    private Request<TradeSetDependentOrdersRequest> buildSetStopLossPriceRequest(Map<String,String> settings) {
         Request<TradeSetDependentOrdersRequest> request = new RequestImpl<>();
         TradeSpecifier tradeSpecifier = new TradeSpecifier(settings.get("tradeID"));
         StopLossDetails stopLossDetails = new StopLossDetails().setPrice(settings.get("price"));
@@ -132,7 +133,7 @@ class OandaRequestBuilder {
         return request;
     }
 
-    private void initialInputValidation(String requestType, HashMap<String, String> settings) {
+    private void initialInputValidation(String requestType, Map<String, String> settings) {
         if(requestType == null || settings == null)
             throw new NullArgumentException();
         if(settings.size() == 0)
@@ -147,7 +148,7 @@ class OandaRequestBuilder {
         }
     }
 
-    private long parseQuantity(HashMap<String, String> settings) {
+    private long parseQuantity(Map<String, String> settings) {
         long candlesQuantity = 0L;
         try{
             candlesQuantity = Long.parseLong(settings.get(QUANTITY));
@@ -163,7 +164,7 @@ class OandaRequestBuilder {
             throw new OutOfBoundaryException();
     }
 
-    private void validateGranularity(HashMap<String, String> settings) {
+    private void validateGranularity(Map<String, String> settings) {
         try{
             CandleGranularity.valueOf(settings.get(GRANULARITY).trim().toUpperCase());
         } catch (RuntimeException e){

@@ -9,26 +9,22 @@ import java.util.HashMap;
 
 public class ClosePositionService {
 
+    private static final String MARKET_ORDER = "marketOrder";
+    private static final String INSTRUMENT = "instrument";
+    private static final String UNITS_SIZE = "unitsSize";
+
     public void closePosition(BrokerTradeDetails tradeDetails, BrokerGateway brokerGateway, TradingStrategyConfiguration configuration, BigDecimal partsToClose){
 
         BigDecimal currentUnits = tradeDetails.getCurrentUnits();
-
-
-//        if (initialUnits.compareTo(currentUnits) != 0)
-//            return;
-
-//        BigDecimal firstTargetPrice = getFirstTarget(tradeDetails, FIRST_TARGET_DISTANCE);
-
-//        if(isAbleToSetStopLoss(currentUnits, firstTargetPrice, price)){
-            if (partsToClose == null || partsToClose.compareTo(BigDecimal.ONE)< 0)
-                throw new IllegalArgumentException();
-            brokerGateway.placeMarketOrder(createCloseSettings(currentUnits, configuration, partsToClose));
+        if (partsToClose == null || partsToClose.compareTo(BigDecimal.ONE)< 0)
+            throw new IllegalArgumentException();
+        brokerGateway.placeOrder(createCloseSettings(currentUnits, configuration, partsToClose), MARKET_ORDER);
     }
 
     private HashMap<String, String> createCloseSettings(BigDecimal currentUnits, TradingStrategyConfiguration configuration, BigDecimal partsToClose) {
         HashMap<String, String> settings = new HashMap<>();
-        settings.put("instrument", configuration.getInstrument());
-        settings.put("unitsSize", reverseUnitsSizeSign(currentUnits, partsToClose).toString());
+        settings.put(INSTRUMENT, configuration.getInstrument());
+        settings.put(UNITS_SIZE, reverseUnitsSizeSign(currentUnits, partsToClose).toString());
         return settings;
     }
 

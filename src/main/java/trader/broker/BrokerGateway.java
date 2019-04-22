@@ -10,6 +10,7 @@ import trader.entity.trade.BrokerTradeDetails;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public interface BrokerGateway {
 
@@ -31,7 +32,9 @@ public interface BrokerGateway {
     String setTradeStopLossPrice(String tradeID, String price);
     BigDecimal getTradeStopLossPrice(String tradeID);
     String placeMarketIfTouchedOrder(HashMap<String, String> settings);
-    String placeMarketOrder(HashMap<String, String> settings);
+
+    String placeOrder(Map<String, String> settings, String orderType);
+
 
     BrokerTradeDetails getTradeDetails(int index);
     int totalOpenTradesSize();

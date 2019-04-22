@@ -117,7 +117,7 @@ public class HalfCloseTrailExitStrategyTest {
         strategy.execute(priceMock);
 
         verify(brokerGatewayMock, times(1)).setTradeStopLossPrice(anyString(), anyString());
-        verify(brokerGatewayMock, times(1)).placeMarketOrder(any(HashMap.class));
+        verify(brokerGatewayMock, times(1)).placeOrder(any(HashMap.class), anyString());
     }
 
     @Test
@@ -164,7 +164,7 @@ public class HalfCloseTrailExitStrategyTest {
         strategy.execute(priceMock);
 
         verify(brokerGatewayMock, times(1)).setTradeStopLossPrice(anyString(), anyString());
-        verify(brokerGatewayMock, times(1)).placeMarketOrder(any(HashMap.class));
+        verify(brokerGatewayMock, times(1)).placeOrder(any(HashMap.class), anyString());
     }
 
     @Test

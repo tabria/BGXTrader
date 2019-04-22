@@ -45,12 +45,12 @@ public class ClosePositionServiceTest {
         setFakeBrokerTradeDetails(11, unitsSize);
         setFakeConfigurations("EUR_USD");
         ArgumentCaptor<HashMap> captor = ArgumentCaptor.forClass(HashMap.class);
-        when(brokerGatewayMock.placeMarketOrder(any(HashMap.class))).thenReturn("12");
+        when(brokerGatewayMock.placeOrder(any(HashMap.class), anyString())).thenReturn("12");
         BigDecimal expectedUnitsSize = BigDecimal.valueOf(unitsSize * -1).divide(parts, 0, RoundingMode.HALF_UP);
 
         service.closePosition(tradeDetailsMock, brokerGatewayMock, configurationMock, parts);
 
-        verify(brokerGatewayMock, times(1)).placeMarketOrder(captor.capture());
+        verify(brokerGatewayMock, times(1)).placeOrder(captor.capture(), anyString());
         HashMap<String, String> hashMap = captor.getAllValues().get(0);
 
         assertEquals("EUR_USD", hashMap.get("instrument"));

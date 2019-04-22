@@ -21,6 +21,7 @@ import trader.responder.Response;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class OandaGateway extends BaseGateway {
@@ -34,7 +35,7 @@ public class OandaGateway extends BaseGateway {
     private static final String ORDER_ID = "orderID";
     private static final String CANCEL_ORDER = "cancelOrder";
     private static final String SET_STOP_LOSS_PRICE = "setStopLossPrice";
-    private static final String CREATE_MARKET_ORDER = "createMarketOrder";
+    private static final String CREATE_MARKET_ORDER = "marketOrder";
 
     private Context context;
     private BrokerConnector connector;
@@ -211,10 +212,11 @@ public class OandaGateway extends BaseGateway {
         return settings;
     }
 
-    private String placeOrder(HashMap<String, String> settings, String createMarketOrder) {
+    @Override
+    public String placeOrder(Map<String, String> settings, String orderType) {
         settings.put(ACCOUNT_ID, getConnector().getAccountID());
-        Request<?> marketOrderRequest = oandaRequestBuilder.build(createMarketOrder, settings);
-        Response<OrderCreateResponse> marketOrderResponse = oandaResponseBuilder.buildResponse(createMarketOrder, marketOrderRequest);
+        Request<?> marketOrderRequest = oandaRequestBuilder.build(orderType, settings);
+        Response<OrderCreateResponse> marketOrderResponse = oandaResponseBuilder.buildResponse(orderType, marketOrderRequest);
         OrderCreateResponse orderResponse = marketOrderResponse.getBody();
         return orderResponse.getOrderCreateTransaction().getId().toString();
     }

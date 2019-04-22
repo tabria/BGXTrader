@@ -226,7 +226,7 @@ public class OandaGatewayTest {
     public void WhenCallPlaceMarketOrder_CorrectResult(){
         String expectedID = "13";
         makeFakeOrder(expectedID);
-        String result = oandaGateway.placeMarketOrder(new HashMap<>());
+        String result = oandaGateway.placeOrder(new HashMap<>(), "marketOrder");
 
         assertEquals(expectedID, result);
     }
@@ -235,7 +235,7 @@ public class OandaGatewayTest {
     public void WhenCallPlaceMarketOrderCheckForValidSettings(){
         String expectedID = "2";
         makeFakeOrder(expectedID);
-        oandaGateway.placeMarketOrder(new HashMap<>());
+        oandaGateway.placeOrder(new HashMap<>(),"marketOrder");
         verify(mockRequestBuilder).build(anyString(), argument.capture());
         HashMap<String, String> settings = argument.getValue();
 
