@@ -110,7 +110,16 @@ public class TradeImplTest {
         trade.setEntryPrice("-0.1222");
     }
 
+    @Test
+    public void WhenCallToStringThenCorrectResult(){
+        trade.setDirection(Direction.FLAT.toString());
+        trade.setStopLossPrice(DEFAULT_PRICE.toString());
+        trade.setEntryPrice(DEFAULT_PRICE.toString());
+        trade.setTradable("false");
+        String expected = String.format("%s trade entry@%s, SL@%s, units:", "FLAT", DEFAULT_PRICE, DEFAULT_PRICE);
 
+        assertEquals(expected, trade.toString());
+    }
 
     private void setWithNull(String o) {
         trade.setDirection(o);
@@ -124,16 +133,5 @@ public class TradeImplTest {
         assertFalse(trade.getTradable());
         assertEquals(DEFAULT_PRICE ,trade.getEntryPrice());
         assertEquals(DEFAULT_PRICE ,trade.getStopLossPrice());
-    }
-
-    @Test
-    public void WhenCallToStringThenCorrectResult(){
-        trade.setDirection(Direction.FLAT.toString());
-        trade.setStopLossPrice(DEFAULT_PRICE.toString());
-        trade.setEntryPrice(DEFAULT_PRICE.toString());
-        trade.setTradable("false");
-        String expected = String.format("Trade{entryPrice=%s, stopLossPrice=%s, tradable=%s, direction=%s}", DEFAULT_PRICE, DEFAULT_PRICE, "false", "FLAT");
-
-        assertEquals(expected, trade.toString());
     }
 }

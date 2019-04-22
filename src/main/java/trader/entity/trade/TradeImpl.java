@@ -68,12 +68,7 @@ public final class TradeImpl implements Trade {
 
     @Override
     public String toString() {
-        return "Trade{" +
-                "entryPrice=" + entryPrice .toString() +
-                ", stopLossPrice=" + stopLossPrice.toString() +
-                ", tradable=" + tradable +
-                ", direction=" + direction.toString() +
-                '}';
+        return String.format("%s trade entry@%s, SL@%s, units:",direction.toString(),  entryPrice.toString(), stopLossPrice.toString());
     }
 
     private boolean verifyInput(String str) {

@@ -130,9 +130,10 @@ public class ConsolePresenterTest {
     }
 
     @Test
-    public void givenMultipleStringsWithPartsNotANumber_WhenCallExecute_ThenPrintCorrectMessage(){
-        consolePresenter.execute("Bok", "position closed @", "1.2345");
-        String expected = String.format("%s %s %s %s", getHeader(), "", "position closed @", "1.2345");
+    public void givenMultipleStringsWithNewOrder_WhenCallExecute_ThenPrintCorrectMessage(){
+        String trade = "UP trade entry@1.2345, SL@1.12344 units:";
+        consolePresenter.execute("EUR_USD", trade, "123");
+        String expected = String.format("%s %s %s %s", getHeader(), "[EUR_USD]", trade, "123");
         assertEquals(expected, consoleContent.toString().trim());
     }
 

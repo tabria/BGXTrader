@@ -1,13 +1,11 @@
 package trader.entity.indicator;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import trader.CommonTestClassMembers;
 import trader.entity.candlestick.candle.CandleGranularity;
 import trader.entity.candlestick.candle.CandlePriceType;
 import trader.entity.candlestick.Candlestick;
-import trader.entity.indicator.updater.*;
 
 import java.math.BigDecimal;
 import java.time.ZoneId;

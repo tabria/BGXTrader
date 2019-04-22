@@ -10,6 +10,7 @@ import trader.exception.EmptyArgumentException;
 import trader.exception.NullArgumentException;
 import trader.order.OrderStrategy;
 import trader.entity.price.Price;
+import trader.presenter.Presenter;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -25,6 +26,7 @@ public class StandardOrderStrategy implements OrderStrategy {
     private static final String UNITS_SIZE = "unitsSize";
     private static final String MARKET_IF_TOUCHED_ORDER = "marketIfTouchedOrder";
 
+    private Presenter presenter;
     private String lastOrderTransactionID;
 
     public StandardOrderStrategy() {
@@ -39,6 +41,7 @@ public class StandardOrderStrategy implements OrderStrategy {
            BigDecimal delta = calculateStopLossAndPriceDelta(order, price);
            if(delta != null && delta.compareTo(STOP_LOSS_OFFSET) > 0){
                brokerGateway.cancelOrder(order.getId());
+               presenter.execute("Order canceled");
            }
        }
     }
@@ -55,6 +58,7 @@ public class StandardOrderStrategy implements OrderStrategy {
         if (availableMargin.compareTo(futureMargin)>0 && isNotZero(unitsSize)){
             HashMap<String, String> settings = gatherOrderSettings(trade, configuration, unitsSize);
             lastOrderTransactionID = brokerGateway.placeOrder(settings, MARKET_IF_TOUCHED_ORDER);
+            presenter.execute(configuration.getInstrument(), trade.toString(), unitsSize.toString());
         }
     }
 
@@ -100,6 +104,12 @@ public class StandardOrderStrategy implements OrderStrategy {
     @Override
     public String toString() {
         return "Order strategy: STANDARD";
+    }
+
+    public void setPresenter(Presenter presenter){
+        if(presenter == null)
+            throw new NullArgumentException();
+        this.presenter = presenter;
     }
 
     private BigDecimal calculateStopLossAndPriceDelta(Order order, Price price){

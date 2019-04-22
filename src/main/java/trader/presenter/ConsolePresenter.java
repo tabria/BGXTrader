@@ -39,6 +39,8 @@ public class ConsolePresenter implements Presenter {
                 output.append("Full");
             else
                 output.append("1/").append(arg);
+        } else {
+            output.append("[").append(arg).append("]");
         }
     }
 

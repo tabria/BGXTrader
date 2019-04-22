@@ -3,6 +3,7 @@ package trader.order.standard;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.internal.matchers.Null;
 import trader.CommonTestClassMembers;
 import trader.broker.BrokerGateway;
 import trader.broker.connector.BrokerConnector;
@@ -15,6 +16,7 @@ import trader.exception.BadRequestException;
 import trader.exception.EmptyArgumentException;
 import trader.exception.NullArgumentException;
 import trader.entity.price.Price;
+import trader.presenter.Presenter;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -34,6 +36,7 @@ public class StandardOrderStrategyTest {
     private BrokerConnector connectorMock;
     private TradingStrategyConfiguration configurationMock;
     private StandardOrderStrategy orderStrategy;
+    private Presenter presenterMock;
     private CommonTestClassMembers commonMembers;
 
     @Before
@@ -45,7 +48,9 @@ public class StandardOrderStrategyTest {
         orderMock = mock(Order.class);
         connectorMock = mock(BrokerConnector.class);
         configurationMock = mock(TradingStrategyConfiguration.class);
+        presenterMock = mock(Presenter.class);
         orderStrategy = new StandardOrderStrategy();
+        orderStrategy.setPresenter(presenterMock);
         commonMembers = new CommonTestClassMembers();
     }
 
@@ -208,6 +213,7 @@ public class StandardOrderStrategyTest {
         orderStrategy.placeTradeAsOrder(brokerGatewayMock, priceMock, tradeMock, configurationMock);
         String lastID = (String) commonMembers.extractFieldObject(orderStrategy, "lastOrderTransactionID");
 
+        verify(presenterMock, times(1)).execute(anyString());
         assertNotEquals(lastOrderTransactionID, lastID);
         assertEquals(expectedID, lastID);
     }
@@ -216,33 +222,33 @@ public class StandardOrderStrategyTest {
     public void WhenCallCloseUnfilledOrdersAndNoWaitingOrders_NothingToRemove(){
         when(brokerGatewayMock.getOrder(any(OrderType.class))).thenReturn(null);
 
-        doThrow(BadRequestException.class).when(brokerGatewayMock).cancelOrder(anyString());
-
         orderStrategy.closeUnfilledOrders(brokerGatewayMock, priceMock);
+        verify(brokerGatewayMock, times(0)).cancelOrder(anyString());
+        verify(presenterMock, times(0)).execute(anyString());
     }
 
-    @Test(expected = BadRequestException.class)
+    @Test
     public void WhenCallCloseUnfilledOrdersForLongAndDifferenceBetweenStopLossAndPriceIsOverBoundary_CancelOrder(){
         String orderId = "15";
         setFakePrice(1.1221, 1.1220);
         setFalseOrder(orderId, 1.1228, 100);
         when(brokerGatewayMock.getOrder(any(OrderType.class))).thenReturn(orderMock);
 
-        doThrow(BadRequestException.class).when(brokerGatewayMock).cancelOrder(anyString());
-
         orderStrategy.closeUnfilledOrders(brokerGatewayMock, priceMock);
+        verify(brokerGatewayMock, times(1)).cancelOrder(anyString());
+        verify(presenterMock, times(1)).execute(anyString());
     }
 
-    @Test(expected = BadRequestException.class)
+    @Test
     public void WhenCallCloseUnfilledOrdersForShortAndDifferenceBetweenStopLossAndPriceIsOverBoundary_CancelOrder(){
         String orderId = "15";
         setFakePrice(1.1227, 1.1225);
         setFalseOrder(orderId, 1.1218, -100);
         when(brokerGatewayMock.getOrder(any(OrderType.class))).thenReturn(orderMock);
 
-        doThrow(BadRequestException.class).when(brokerGatewayMock).cancelOrder(anyString());
-
         orderStrategy.closeUnfilledOrders(brokerGatewayMock, priceMock);
+        verify(brokerGatewayMock, times(1)).cancelOrder(anyString());
+        verify(presenterMock, times(1)).execute(anyString());
     }
 
     @Test
@@ -252,14 +258,29 @@ public class StandardOrderStrategyTest {
         setFalseOrder(orderId, 1.1222, 100);
         when(brokerGatewayMock.getOrder(any(OrderType.class))).thenReturn(orderMock);
 
-        doThrow(BadRequestException.class).when(brokerGatewayMock).cancelOrder(anyString());
-
         orderStrategy.closeUnfilledOrders(brokerGatewayMock, priceMock);
+
+        verify(brokerGatewayMock, times(0)).cancelOrder(anyString());
+        verify(presenterMock, times(0)).execute(anyString());
     }
 
     @Test
     public void givenCorrectSettings_WhenCallToString_ThenReturnCorrectString(){
         assertEquals("Order strategy: STANDARD", orderStrategy.toString());
+    }
+
+    @Test(expected = NullArgumentException.class)
+    public void givenNullPresenter_WhenCallSetPresenter_ThenThrowException(){
+        orderStrategy.setPresenter(null);
+    }
+
+    @Test
+    public void givenCorrectPresenter_WhenCallSetPresenter_ThenSetCorrectValue(){
+        orderStrategy.setPresenter(presenterMock);
+
+        Object presenter = commonMembers.extractFieldObject(orderStrategy, "presenter");
+
+        assertEquals(presenterMock, presenter);
     }
 
     private void setFakePrice(double askPrice, double bidPrice) {
