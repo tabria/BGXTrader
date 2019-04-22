@@ -11,18 +11,26 @@ public class BreakEvenService {
     private static final BigDecimal BREAK_EVEN_DISTANCE = BigDecimal.valueOf(0.0025);
 
 
-    public void moveToBreakEven(BrokerTradeDetails tradeDetails, Price price, BrokerGateway brokerGateway) {
+    public boolean moveToBreakEven(BrokerTradeDetails tradeDetails, Price price, BrokerGateway brokerGateway) {
         BigDecimal stopLossPrice = tradeDetails.getStopLossPrice();
         BigDecimal tradeOpenPrice = tradeDetails.getOpenPrice();
         BigDecimal currentUnits = tradeDetails.getCurrentUnits();
 
         if (!isShortTrade(currentUnits) && isAbove(stopLossPrice, tradeOpenPrice))
-            return;
+            return false;
         if (isShortTrade(currentUnits) && isBelow(stopLossPrice, tradeOpenPrice))
-            return;
+            return false;
 
-        if(isAbleToSetStopLoss(currentUnits, getBreakEvenPrice(tradeDetails), price))
+        if(isAbleToSetStopLoss(currentUnits, getBreakEvenPrice(tradeDetails), price)) {
             brokerGateway.setTradeStopLossPrice(tradeDetails.getTradeID(), tradeOpenPrice.toString());
+            return true;
+        }
+        return  false;
+    }
+
+    @Override
+    public String toString() {
+        return "position to break even";
     }
 
     private BigDecimal getBreakEvenPrice(BrokerTradeDetails tradeDetails) {

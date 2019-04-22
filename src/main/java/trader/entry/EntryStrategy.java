@@ -14,6 +14,4 @@ public interface EntryStrategy {
     Trade generateTrade();
 
     void setIndicators(List<Indicator> indicators);
-
-    String toString();
 }

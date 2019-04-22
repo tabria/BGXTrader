@@ -6,6 +6,7 @@ import org.mockito.ArgumentCaptor;
 import trader.broker.BrokerGateway;
 import trader.configuration.TradingStrategyConfiguration;
 import trader.entity.trade.BrokerTradeDetails;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.HashMap;
@@ -55,6 +56,11 @@ public class ClosePositionServiceTest {
 
         assertEquals("EUR_USD", hashMap.get("instrument"));
         assertEquals(expectedUnitsSize.toString(), hashMap.get("unitsSize"));
+    }
+
+    @Test
+    public void givenService_WhenCallToString_ThenReturnCorrectString(){
+        assertEquals("position closed", service.toString());
     }
 
     private void setFakeBrokerTradeDetails(int tradeIndex , double units){

@@ -2,15 +2,20 @@ package trader.exit;
 
 import com.oanda.v20.account.Account;
 import com.oanda.v20.primitives.DateTime;
+import trader.broker.BrokerGateway;
+import trader.configuration.TradingStrategyConfiguration;
 import trader.entity.price.Price;
+import trader.presenter.Presenter;
 
 import java.math.BigDecimal;
 
 public interface ExitStrategy {
 
-   default void execute(Account account, BigDecimal ask, BigDecimal bid, DateTime dateTime){};
-
     void execute(Price price);
 
-    default void execute(){};
+    void setConfiguration(TradingStrategyConfiguration configuration);
+
+    void setBrokerGateway(BrokerGateway brokerGateway);
+
+    void setPresenter(Presenter presenter);
 }

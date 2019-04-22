@@ -1,5 +1,7 @@
 package trader.strategy.bgxstrategy.service;
 
+import trader.broker.BrokerGateway;
+import trader.configuration.TradingStrategyConfiguration;
 import trader.controller.CreateExitStrategyController;
 import trader.controller.TraderController;
 import trader.exception.NullArgumentException;
@@ -15,10 +17,14 @@ public class ExitService {
 
     private UseCaseFactory useCaseFactory;
     private Presenter presenter;
+    private BrokerGateway brokerGateway;
+    private TradingStrategyConfiguration configuration;
 
-    public ExitService(UseCaseFactory useCaseFactory, Presenter presenter) {
+    public ExitService(UseCaseFactory useCaseFactory, Presenter presenter, BrokerGateway brokerGateway, TradingStrategyConfiguration configuration) {
         this.useCaseFactory = useCaseFactory;
         this.presenter = presenter;
+        this.brokerGateway = brokerGateway;
+        this.configuration = configuration;
     }
 
     public ExitStrategy createExitStrategy(String exitStrategyName) {
@@ -29,7 +35,11 @@ public class ExitService {
         Map<String, String> settings = new HashMap<>();
         settings.put("exitStrategy", exitStrategyName);
         inputSettings.put("settings", settings);
-        Response<ExitStrategy> orderResponse = controller.execute(inputSettings);
-        return orderResponse.getBody();
+        Response<ExitStrategy> exitStrategyResponse = controller.execute(inputSettings);
+        ExitStrategy strategy = exitStrategyResponse.getBody();
+        strategy.setPresenter(presenter);
+        strategy.setBrokerGateway(brokerGateway);
+        strategy.setConfiguration(configuration);
+        return strategy;
     }
 }

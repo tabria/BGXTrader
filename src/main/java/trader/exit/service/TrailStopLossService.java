@@ -13,14 +13,20 @@ public class TrailStopLossService {
 
 
 
-    public void trailStopLoss(BrokerTradeDetails tradeDetails, Candlestick candlestick, BrokerGateway brokerGateway){
+    public boolean trailStopLoss(BrokerTradeDetails tradeDetails, Candlestick candlestick, BrokerGateway brokerGateway){
         setExitBarComponents(tradeDetails, candlestick);
         if (isReadyToSendTrailOrder(brokerGateway, tradeDetails) && isReadyToTrailStopLoss(tradeDetails, candlestick)){
             BigDecimal newStopLossPrice = getNewStopLossPrice(tradeDetails);
             brokerGateway.setTradeStopLossPrice(tradeDetails.getTradeID(), newStopLossPrice.toString());
-
+            return true;
            // this.printInformation(newStopLossPrice);
         }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return "stop loss trailed";
     }
 
     void setExitBarComponents(BrokerTradeDetails tradeDetails, Candlestick candlestick) {

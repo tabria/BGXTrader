@@ -114,7 +114,7 @@ public final class BGXStrategyMain implements Strategy {
     }
 
     private ExitStrategy setExitStrategy() {
-        ExitService exitService = new ExitService(useCaseFactory, presenter);
+        ExitService exitService = new ExitService(useCaseFactory, presenter, brokerGateway, configuration);
         return exitService.createExitStrategy(configuration.getExitStrategy());
     }
 

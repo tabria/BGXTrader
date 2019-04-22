@@ -257,6 +257,10 @@ public class TrailStopLossServiceTest {
         assertEquals(new BigDecimal("1.1127"), newStopLossPrice);
     }
 
+    @Test
+    public void givenService_WhenCallToString_ThenReturnCorrectString(){
+        assertEquals("stop loss trailed", service.toString());
+    }
 
     private void setFakeBrokerGateway(String stopLossPrice) {
         when(brokerGatewayMock.getTradeStopLossPrice(anyString())).thenReturn(new BigDecimal(stopLossPrice));

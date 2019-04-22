@@ -26,9 +26,10 @@ public class UpdateCandlesService {
         return settings;
     }
 
-    public void updateCandles(BrokerGateway brokerGateway, TradingStrategyConfiguration configuration) {
+    public boolean updateCandles(BrokerGateway brokerGateway, TradingStrategyConfiguration configuration) {
         setCandlesQuantity(configuration);
         setCandlesticks(brokerGateway.getCandles(settings));
+        return true;
     }
 
     private void setCandlesticks(List<Candlestick> candles) {

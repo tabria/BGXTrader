@@ -9,6 +9,7 @@ import trader.entity.trade.BrokerTradeDetails;
 
 import java.math.BigDecimal;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -105,5 +106,10 @@ public class BreakEvenServiceTest {
     private void setFakePrice(double ask, double bid){
         when(priceMock.getAsk()).thenReturn(BigDecimal.valueOf(ask));
         when(priceMock.getBid()).thenReturn(BigDecimal.valueOf(bid));
+    }
+
+    @Test
+    public void givenService_WhenCallToString_ThenReturnCorrectString(){
+        assertEquals("position to break even", service.toString());
     }
 }
