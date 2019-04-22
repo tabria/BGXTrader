@@ -5,7 +5,6 @@ import trader.entity.trade.BrokerTradeDetails;
 import trader.exit.BaseExitStrategy;
 import trader.exit.service.BreakEvenService;
 import trader.exit.service.ClosePositionService;
-
 import java.math.BigDecimal;
 
 public final class FullCloseExitStrategy extends BaseExitStrategy {
@@ -28,7 +27,7 @@ public final class FullCloseExitStrategy extends BaseExitStrategy {
         BrokerTradeDetails tradeDetails = brokerGateway.getTradeDetails(FIRST_TRADE);
         boolean isMovedToBreakEven = breakEvenService.moveToBreakEven(tradeDetails, price, brokerGateway);
         if(isMovedToBreakEven){
-
+            presenter.execute(breakEvenService.toString());
         }
         closePosition(price, tradeDetails);
     }
@@ -42,8 +41,11 @@ public final class FullCloseExitStrategy extends BaseExitStrategy {
 
         BigDecimal firstTargetPrice = getFirstTarget(tradeDetails);
 
-        if(isAbleToSetStopLoss(tradeDetails.getCurrentUnits(), firstTargetPrice, price))
+        if(isAbleToSetStopLoss(tradeDetails.getCurrentUnits(), firstTargetPrice, price)){
             closePositionService.closePosition(tradeDetails, brokerGateway, configuration, PARTS_TO_CLOSE);
+
+            presenter.execute("Full", closePositionService.toString(), firstTargetPrice.toString());
+        }
     }
 
     private BigDecimal getFirstTarget(BrokerTradeDetails tradeDetails) {

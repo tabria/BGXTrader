@@ -17,6 +17,11 @@ public class ConsolePresenter implements Presenter {
         System.out.println(getHeader()+ " "+ response.getBody().toString());
     }
 
+    @Override
+    public void execute(String... args) {
+
+    }
+
     private String getHeader(){
         long timeMillis = System.currentTimeMillis();
         Date date = new Date(timeMillis);

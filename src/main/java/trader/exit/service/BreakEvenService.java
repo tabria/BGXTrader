@@ -30,7 +30,7 @@ public class BreakEvenService {
 
     @Override
     public String toString() {
-        return "position to break even";
+        return "Position moved to break even";
     }
 
     private BigDecimal getBreakEvenPrice(BrokerTradeDetails tradeDetails) {

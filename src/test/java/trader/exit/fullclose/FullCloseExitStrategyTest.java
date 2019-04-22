@@ -79,10 +79,12 @@ public class FullCloseExitStrategyTest extends BaseExitStrategyTest {
         setFakePrice("1.1280", "1.1282");
         setFakeBrokerGateway("1.1214");
         setFakeTradeDetails("11", "1.1254", "1.1234", "100", "100");
+        setFakePresenter();
 
         strategy.execute(priceMock);
 
         verify(brokerGatewayMock, times(1)).setTradeStopLossPrice(anyString(), anyString());
+        verify(presenterMock, times(1)).execute(anyString());
     }
 
     @Test
@@ -92,10 +94,12 @@ public class FullCloseExitStrategyTest extends BaseExitStrategyTest {
         setFakePrice("1.1226", "1.1228");
         setFakeBrokerGateway("1.1294");
         setFakeTradeDetails("11", "1.1254", "1.1274", "-100", "-100");
+        setFakePresenter();
 
         strategy.execute(priceMock);
 
         verify(brokerGatewayMock, times(1)).setTradeStopLossPrice(anyString(), anyString());
+        verify(presenterMock, times(1)).execute(anyString());
     }
 
     @Test
@@ -104,9 +108,12 @@ public class FullCloseExitStrategyTest extends BaseExitStrategyTest {
         setFakePrice("1.13120", "1.1314");
         setFakeBrokerGateway("1.1214");
         setFakeTradeDetails("11", "1.1254", "1.1234", "100", "100");
+        setFakePresenter();
+
         strategy.execute(priceMock);
 
         verify(brokerGatewayMock, times(1)).placeOrder(any(HashMap.class), anyString());
+        verify(presenterMock, times(1)).execute(anyString(), anyString(), anyString());
     }
 
     @Test
@@ -115,9 +122,13 @@ public class FullCloseExitStrategyTest extends BaseExitStrategyTest {
         setFakePrice("1.1194", "1.1196");
         setFakeBrokerGateway("1.1294");
         setFakeTradeDetails("11", "1.1254", "1.1274", "-100", "-100");
+        setFakePresenter();
+
         strategy.execute(priceMock);
 
         verify(brokerGatewayMock, times(1)).placeOrder(any(HashMap.class), anyString());
+        verify(presenterMock, times(1)).execute(anyString(), anyString(), anyString());
+
     }
 
     @Test(expected = NullArgumentException.class)
@@ -125,6 +136,8 @@ public class FullCloseExitStrategyTest extends BaseExitStrategyTest {
         FullCloseExitStrategy fullCloseExitStrategy = new FullCloseExitStrategy();
         fullCloseExitStrategy.setPresenter(null);
     }
+
+
 
     private void setUpdateCandlesServiceToReturnFalse() {
         when(updateCandlesServiceMock.updateCandles(brokerGatewayMock, configurationMock)).thenReturn(false);
@@ -139,5 +152,10 @@ public class FullCloseExitStrategyTest extends BaseExitStrategyTest {
     private void setClosePositionServiceToReturnFalse() {
         when(closePositionServiceMock.closePosition(eq(tradeDetailsMock), eq(brokerGatewayMock), eq(configurationMock), any(BigDecimal.class))).thenReturn(false);
         commonMembers.changeFieldObject(strategy, "closePositionService", closePositionServiceMock);
+    }
+
+    private void setFakePresenter(){
+        doNothing().when(presenterMock).execute(anyString());
+        commonMembers.changeFieldObject(strategy, "presenter", presenterMock);
     }
 }

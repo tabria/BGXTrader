@@ -31,7 +31,7 @@ public class ClosePositionService {
 
     @Override
     public String toString() {
-        return "position closed";
+        return "Position closed @ ";
     }
 
     private HashMap<String, String> createCloseSettings(BigDecimal currentUnits, TradingStrategyConfiguration configuration, BigDecimal partsToClose) {
