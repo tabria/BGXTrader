@@ -115,6 +115,35 @@ public class ConsolePresenterTest {
         assertEquals(expected, consoleContent.toString().trim());
     }
 
+    @Test
+    public void givenMultipleStrings_WhenCallExecute_ThenPrintCorrectMessage(){
+        consolePresenter.execute("1", "position closed @", "1.2345");
+        String expected = String.format("%s %s %s %s", getHeader(), "Full", "position closed @", "1.2345");
+        assertEquals(expected, consoleContent.toString().trim());
+    }
+
+    @Test
+    public void givenMultipleStringsWithPartsToCloseAboveOne_WhenCallExecute_ThenPrintCorrectMessage(){
+        consolePresenter.execute("3", "position closed @", "1.2345");
+        String expected = String.format("%s %s %s %s", getHeader(), "1/3", "position closed @", "1.2345");
+        assertEquals(expected, consoleContent.toString().trim());
+    }
+
+    @Test
+    public void givenMultipleStringsWithPartsNotANumber_WhenCallExecute_ThenPrintCorrectMessage(){
+        consolePresenter.execute("Bok", "position closed @", "1.2345");
+        String expected = String.format("%s %s %s %s", getHeader(), "", "position closed @", "1.2345");
+        assertEquals(expected, consoleContent.toString().trim());
+    }
+
+    @Test
+    public void givenSingleString_WhenCallExecute_ThenPrintCorrectMessage(){
+        consolePresenter.execute("move to break even");
+        String expected = String.format("%s %s", getHeader(), "move to break even");
+        assertEquals(expected, consoleContent.toString().trim());
+    }
+
+
     private String getHeader() {
         long timeMillis = System.currentTimeMillis();
         Date date = new Date(timeMillis);

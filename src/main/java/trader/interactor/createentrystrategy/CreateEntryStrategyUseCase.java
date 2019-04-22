@@ -1,6 +1,5 @@
 package trader.interactor.createentrystrategy;
 
-import trader.entity.indicator.Indicator;
 import trader.entry.EntryStrategy;
 import trader.exception.NoSuchStrategyException;
 import trader.exception.NullArgumentException;

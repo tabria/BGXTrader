@@ -10,6 +10,7 @@ public class TrailStopLossService {
 
     private BigDecimal exitBarHigh;
     private BigDecimal exitBarLow;
+    private String stopLossPrice;
 
 
 
@@ -18,15 +19,15 @@ public class TrailStopLossService {
         if (isReadyToSendTrailOrder(brokerGateway, tradeDetails) && isReadyToTrailStopLoss(tradeDetails, candlestick)){
             BigDecimal newStopLossPrice = getNewStopLossPrice(tradeDetails);
             brokerGateway.setTradeStopLossPrice(tradeDetails.getTradeID(), newStopLossPrice.toString());
+            stopLossPrice = newStopLossPrice.toString();
             return true;
-           // this.printInformation(newStopLossPrice);
         }
         return false;
     }
 
     @Override
     public String toString() {
-        return "stop loss trailed";
+        return String.format("Stop loss trailed @ %s", stopLossPrice);
     }
 
     void setExitBarComponents(BrokerTradeDetails tradeDetails, Candlestick candlestick) {

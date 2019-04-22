@@ -9,6 +9,7 @@ import trader.entity.trade.Trade;
 import trader.entry.EntryStrategy;
 import trader.exception.BadRequestException;
 import trader.exception.NullArgumentException;
+import trader.exit.ExitStrategy;
 import trader.order.OrderStrategy;
 import trader.entity.price.Price;
 
@@ -18,9 +19,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class PositionObserverTest extends BaseObserverTest {
 
@@ -29,6 +28,7 @@ public class PositionObserverTest extends BaseObserverTest {
     private EntryStrategy entryStrategyMock;
     private OrderStrategy orderStrategyMock;
     private TradingStrategyConfiguration configurationMock;
+    private ExitStrategy exitStrategyMock;
     private Price priceMock;
     private Trade tradeMock;
 
@@ -38,30 +38,36 @@ public class PositionObserverTest extends BaseObserverTest {
         entryStrategyMock = mock(EntryStrategy.class);
         orderStrategyMock = mock(OrderStrategy.class);
         configurationMock = mock(TradingStrategyConfiguration.class);
+        exitStrategyMock = mock(ExitStrategy.class);
         priceMock = mock(Price.class);
         tradeMock = mock(Trade.class);
-        positionObserver = new PositionObserver(brokerGatewayMock, entryStrategyMock, orderStrategyMock, configurationMock);
+        positionObserver = new PositionObserver(brokerGatewayMock, entryStrategyMock, orderStrategyMock, configurationMock, exitStrategyMock);
     }
 
 
     @Test(expected = NullArgumentException.class)
     public void WhenCreatePositionObserverWithNullBrokerGateway_Exception(){
-        new PositionObserver( null, entryStrategyMock, orderStrategyMock, configurationMock);
+        new PositionObserver( null, entryStrategyMock, orderStrategyMock, configurationMock, exitStrategyMock);
     }
 
     @Test(expected = NullArgumentException.class)
     public void WhenCreatePositionObserverWithNullEntryStrategy_Exception(){
-        new PositionObserver( brokerGatewayMock, null, orderStrategyMock, configurationMock);
+        new PositionObserver( brokerGatewayMock, null, orderStrategyMock, configurationMock, exitStrategyMock);
     }
 
     @Test(expected = NullArgumentException.class)
     public void WhenCreatePositionObserverWithNullOrderStrategy_Exception(){
-        new PositionObserver( brokerGatewayMock, entryStrategyMock, null, configurationMock);
+        new PositionObserver( brokerGatewayMock, entryStrategyMock, null, configurationMock, exitStrategyMock);
     }
 
     @Test(expected = NullArgumentException.class)
     public void WhenCreatePositionObserverWithNullConfiguration_Exception(){
-        new PositionObserver( brokerGatewayMock, entryStrategyMock, orderStrategyMock, null);
+        new PositionObserver( brokerGatewayMock, entryStrategyMock, orderStrategyMock, null, exitStrategyMock);
+    }
+
+    @Test(expected = NullArgumentException.class)
+    public void givenNullExitStrategy_WhenCreatePositionObserver_ThenThrowException() {
+        new PositionObserver( brokerGatewayMock, entryStrategyMock, orderStrategyMock, configurationMock, null);
     }
 
     @Test
@@ -86,11 +92,19 @@ public class PositionObserverTest extends BaseObserverTest {
     }
 
     @Test
-    public void TestIfTrdingConfigurationIsSet(){
+    public void TestIfTradingConfigurationIsSet(){
         Object configuration = commonTestMembers.extractFieldObject(positionObserver, "configuration");
 
         assertNotNull(commonTestMembers.extractFieldObject(positionObserver, "configuration"));
         assertEquals(configurationMock, configuration);
+    }
+
+    @Test
+    public void TestIfExitStrategyIsSet(){
+        Object exitStrategy = commonTestMembers.extractFieldObject(positionObserver, "exitStrategy");
+
+        assertNotNull(commonTestMembers.extractFieldObject(positionObserver, "exitStrategy"));
+        assertEquals(exitStrategyMock, exitStrategy);
     }
 
     @Test(expected = BadRequestException.class)
@@ -168,6 +182,17 @@ public class PositionObserverTest extends BaseObserverTest {
         doThrow(new BadRequestException()).when(orderStrategyMock).closeUnfilledOrders(brokerGatewayMock, priceMock);
 
         positionObserver.updateObserver(priceMock);
+    }
+
+    @Test
+    public void givenOpenTrades_WhenCallUpdateObserver_ThenCallExitStrategyExecute(){
+
+        when(brokerGatewayMock.totalOpenTradesSize()).thenReturn(1);
+        when(brokerGatewayMock.totalOpenOrdersSize()).thenReturn(0);
+        positionObserver.updateObserver(priceMock);
+
+        verify(exitStrategyMock, times(1)).execute(priceMock);
+
     }
 
     private void setZeroTradesAndOrders(){

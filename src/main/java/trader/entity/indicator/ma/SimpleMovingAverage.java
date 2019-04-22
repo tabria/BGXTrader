@@ -10,17 +10,9 @@ import java.util.List;
 
 public final class SimpleMovingAverage extends BaseIndicator {
 
-    ////////////////////////////remove/////////////////////////
-//    SimpleMovingAverage(long indicatorPeriod, CandlePriceType candlePriceType, CandlesUpdatable updater) {
-//        super(indicatorPeriod, candlePriceType, updater);
-//        setDivisor();
-//        initiateSMAValues();
-//    }
-///////////////////////////////////remove//////////////////////////
     SimpleMovingAverage(long indicatorPeriod, CandlePriceType candlePriceType, CandleGranularity granularity, String position) {
         super(indicatorPeriod, candlePriceType, granularity, position);
         setDivisor();
-     //   initiateSMAValues();
     }
 
 
@@ -52,11 +44,6 @@ public final class SimpleMovingAverage extends BaseIndicator {
     protected void setDivisor(){
         super.divisor = BigDecimal.valueOf(indicatorPeriod);
     }
-
-//    private void initiateSMAValues() {
-//        List<Candlestick> candles = candlesUpdater.getCandles();
-//        calculateSMAValue(candles);
-//    }
 
     private void calculateSMAValue(List<Candlestick> candlestickList) {
         verifyCalculationInput(candlestickList);

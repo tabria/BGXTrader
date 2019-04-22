@@ -4,8 +4,6 @@ import trader.entity.trade.point.Point;
 import trader.entity.trade.point.PointImpl;
 import trader.exception.NullArgumentException;
 
-import java.math.BigDecimal;
-
 public final class LineSegmentImpl implements LineSegment {
 
     private Point pointA;

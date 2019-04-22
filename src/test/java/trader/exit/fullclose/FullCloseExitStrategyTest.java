@@ -37,6 +37,7 @@ public class FullCloseExitStrategyTest extends BaseExitStrategyTest {
         strategy = new FullCloseExitStrategy();
         strategy.setConfiguration(configurationMock);
         strategy.setBrokerGateway(brokerGatewayMock);
+        strategy.setPresenter(presenterMock);
         setUpdateCandlesServiceToReturnFalse();
 
     }

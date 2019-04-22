@@ -36,8 +36,9 @@ public class HalfCloseTrailExitStrategyTest extends BaseExitStrategyTest {
         strategy = new HalfCloseTrailExitStrategy();
         strategy.setConfiguration(configurationMock);
         strategy.setBrokerGateway(brokerGatewayMock);
-
+        strategy.setPresenter(presenterMock);
         setUpdateCandlesServiceToReturnFalse();
+
     }
 
     @Test(expected = NullArgumentException.class)
@@ -87,10 +88,12 @@ public class HalfCloseTrailExitStrategyTest extends BaseExitStrategyTest {
         setFakePrice("1.1280", "1.1282");
         setFakeBrokerGateway("1.1214");
         setFakeTradeDetails("11", "1.1254", "1.1234", "100", "100");
+        setFakePresenter();
 
         strategy.execute(priceMock);
 
         verify(brokerGatewayMock, times(1)).setTradeStopLossPrice(anyString(), anyString());
+        verify(presenterMock, times(1)).execute(anyString());
     }
 
     @Test
@@ -101,12 +104,15 @@ public class HalfCloseTrailExitStrategyTest extends BaseExitStrategyTest {
         setFakePrice("1.1290", "1.1290");
         setFakeBrokerGateway("1.1214");
         setFakeTradeDetails("11", "1.1254", "1.1234", "100", "100");
+        setFakePresenter();
 
 
         strategy.execute(priceMock);
 
         verify(brokerGatewayMock, times(1)).setTradeStopLossPrice(anyString(), anyString());
         verify(brokerGatewayMock, times(1)).placeOrder(any(HashMap.class), anyString());
+        verify(presenterMock, times(1)).execute(anyString());
+        verify(presenterMock, times(1)).execute(anyString(), anyString(), anyString());
     }
 
     @Test
@@ -117,13 +123,13 @@ public class HalfCloseTrailExitStrategyTest extends BaseExitStrategyTest {
         setFakePrice("1.1290", "1.1292");
         setFakeBrokerGateway("1.1214");
         setFakeTradeDetails("11", "1.1254", "1.1234", "100", "50");
+        setFakePresenter();
 
         strategy.execute(priceMock);
 
         verify(brokerGatewayMock, times(1)).setTradeStopLossPrice(anyString(), anyString());
+        verify(presenterMock, times(1)).execute(anyString());
     }
-
-
 
     @Test
     public void givenShortTradeWithCorrectSettings_WhenCallExecute_ThenMoveStopToBreakEven() {
@@ -134,26 +140,29 @@ public class HalfCloseTrailExitStrategyTest extends BaseExitStrategyTest {
         setFakePrice("1.1226", "1.1228");
         setFakeBrokerGateway("1.1294");
         setFakeTradeDetails("11", "1.1254", "1.1274", "-100", "-100");
+        setFakePresenter();
 
         strategy.execute(priceMock);
 
         verify(brokerGatewayMock, times(1)).setTradeStopLossPrice(anyString(), anyString());
+        verify(presenterMock, times(1)).execute(anyString());
     }
 
     @Test
     public void givenShortTradeWithCorrectSettings_WhenCallExecute_ThenMoveStopToBreakEvenAndCloseHalfPosition() {
-
         setTrailStopLossServiceToReturnFalse();
         when(updateCandlesServiceMock.getCandlesticks()).thenReturn(new ArrayList<>());
         setFakePrice("1.1216","1.1218");
         setFakeBrokerGateway("1.1294");
         setFakeTradeDetails("11", "1.1254", "1.1274", "-100", "-100");
-
+        setFakePresenter();
 
         strategy.execute(priceMock);
 
         verify(brokerGatewayMock, times(1)).setTradeStopLossPrice(anyString(), anyString());
         verify(brokerGatewayMock, times(1)).placeOrder(any(HashMap.class), anyString());
+        verify(presenterMock, times(1)).execute(anyString());
+        verify(presenterMock, times(1)).execute(anyString(), anyString(), anyString());
     }
 
     @Test
@@ -164,10 +173,13 @@ public class HalfCloseTrailExitStrategyTest extends BaseExitStrategyTest {
         setFakePrice("1.1216", "1.1218");
         setFakeBrokerGateway("1.1294");
         setFakeTradeDetails("11", "1.1254", "1.1274", "-100", "-50");
+        setFakePresenter();
 
         strategy.execute(priceMock);
 
         verify(brokerGatewayMock, times(1)).setTradeStopLossPrice(anyString(), anyString());
+        verify(presenterMock, times(1)).execute(anyString());
+
     }
 
     private void setUpdateCandlesServiceToReturnFalse() {
@@ -188,6 +200,11 @@ public class HalfCloseTrailExitStrategyTest extends BaseExitStrategyTest {
     private void setTrailStopLossServiceToReturnFalse() {
         when(trailStopLossServiceMock.trailStopLoss(eq(tradeDetailsMock), any(Candlestick.class), eq(brokerGatewayMock))).thenReturn(false);
         commonMembers.changeFieldObject(strategy, "trailStopLossService", trailStopLossServiceMock);
+    }
+
+    private void setFakePresenter(){
+        doNothing().when(presenterMock).execute(anyString());
+        commonMembers.changeFieldObject(strategy, "presenter", presenterMock);
     }
 
 }

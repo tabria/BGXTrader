@@ -259,7 +259,7 @@ public class TrailStopLossServiceTest {
 
     @Test
     public void givenService_WhenCallToString_ThenReturnCorrectString(){
-        assertEquals("stop loss trailed", service.toString());
+        assertEquals("Stop loss trailed @ null", service.toString());
     }
 
     private void setFakeBrokerGateway(String stopLossPrice) {

@@ -39,10 +39,6 @@ public class StandardOrderStrategy implements OrderStrategy {
            BigDecimal delta = calculateStopLossAndPriceDelta(order, price);
            if(delta != null && delta.compareTo(STOP_LOSS_OFFSET) > 0){
                brokerGateway.cancelOrder(order.getId());
-//               TransactionID id = this.cancelOrderResponse.getOrderCancelTransaction().getId();
-//               DateTime time = this.cancelOrderResponse.getOrderCancelTransaction().getTime();
-//
-//               System.out.println("Order canceled id: "+id.toString()+" time: "+time);
            }
        }
     }

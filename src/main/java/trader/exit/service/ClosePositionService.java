@@ -1,11 +1,8 @@
 package trader.exit.service;
 
-import com.oanda.v20.order.MarketOrder;
 import trader.broker.BrokerGateway;
 import trader.configuration.TradingStrategyConfiguration;
 import trader.entity.trade.BrokerTradeDetails;
-import trader.presenter.Presenter;
-
 import java.math.BigDecimal;
 import java.util.HashMap;
 
@@ -31,7 +28,7 @@ public class ClosePositionService {
 
     @Override
     public String toString() {
-        return "Position closed @ ";
+        return "position closed @";
     }
 
     private HashMap<String, String> createCloseSettings(BigDecimal currentUnits, TradingStrategyConfiguration configuration, BigDecimal partsToClose) {

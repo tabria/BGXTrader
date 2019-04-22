@@ -8,7 +8,6 @@ import trader.entity.indicator.Indicator;
 import trader.entity.indicator.ma.enums.MAType;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
 import java.util.Map;
 
 

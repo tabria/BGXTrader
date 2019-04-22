@@ -40,7 +40,7 @@ public final class HalfCloseTrailExitStrategy extends BaseExitStrategy{
     public void execute(Price price) {
         updateCandlesService.updateCandles(brokerGateway, configuration);
         BrokerTradeDetails tradeDetails = brokerGateway.getTradeDetails(FIRST_TRADE);
-        breakEvenService.moveToBreakEven(tradeDetails, price, brokerGateway);
+        movePositionToBreakEven(price, tradeDetails);
         closePositionFirstHalf(price, tradeDetails);
         trailPosition(tradeDetails);
     }
@@ -55,6 +55,15 @@ public final class HalfCloseTrailExitStrategy extends BaseExitStrategy{
             List<Candlestick> candlesticks = updateCandlesService.getCandlesticks();
             Candlestick candlestick = candlesticks.get(candlesticks.size()-2);
             trailStopLossService.trailStopLoss(tradeDetails, candlestick, brokerGateway);
+
+            presenter.execute(trailStopLossService.toString());
+        }
+    }
+
+    private void movePositionToBreakEven(Price price, BrokerTradeDetails tradeDetails) {
+        boolean isMovedToBreakEven = breakEvenService.moveToBreakEven(tradeDetails, price, brokerGateway);
+        if(isMovedToBreakEven){
+            presenter.execute(breakEvenService.toString());
         }
     }
 
@@ -69,8 +78,12 @@ public final class HalfCloseTrailExitStrategy extends BaseExitStrategy{
         if (isTradeSizeReduced(tradeDetails) == 0){
             BigDecimal firstTargetPrice = getFirstTarget(tradeDetails);
 
-            if(isAbleToSetStopLoss(tradeDetails.getCurrentUnits(), firstTargetPrice, price))
+            if(isAbleToSetStopLoss(tradeDetails.getCurrentUnits(), firstTargetPrice, price)) {
                 closePositionService.closePosition(tradeDetails, brokerGateway, configuration, PARTS_TO_CLOSE);
+
+                presenter.execute(PARTS_TO_CLOSE.toString(), closePositionService.toString(), firstTargetPrice.toString());
+            }
+
         }
     }
 

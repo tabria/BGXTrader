@@ -132,7 +132,7 @@ public final class BGXStrategyMain implements Strategy {
     //////////////////////////////////////////////////// not tested/////////
     Observer setPositionObserver(){
 
-       return new PositionObserver(brokerGateway, entryStrategy, orderStrategy, configuration);
+       return new PositionObserver(brokerGateway, entryStrategy, orderStrategy, configuration, exitStrategy);
     }
 
 

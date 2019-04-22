@@ -44,14 +44,6 @@ public final class RelativeStrengthIndex extends BaseIndicator {
         }
     }
 
-//    @Override
-//    public void updateIndicator() {
-////        Candlestick candlestick = candlesUpdater.getUpdatedCandle();
-////        List<Candlestick> candles = candlesUpdater.getCandles();
-////        Candlestick prevCandle = getCurrentCandle(candles, candles.size() - 1);
-////        insertRemainingRSIValues(candlestick, prevCandle);
-//    }
-
     @Override
     protected void setDivisor() {}
 

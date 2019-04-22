@@ -15,7 +15,6 @@ public final class WeightedMovingAverage extends BaseIndicator {
         setDivisor();
     }
 
-
     @Override
     public void updateIndicator(List<Candlestick> candles) {
         if(indicatorValues.size() == 0){

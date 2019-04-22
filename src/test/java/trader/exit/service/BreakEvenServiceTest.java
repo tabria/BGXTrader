@@ -110,6 +110,6 @@ public class BreakEvenServiceTest {
 
     @Test
     public void givenService_WhenCallToString_ThenReturnCorrectString(){
-        assertEquals("position to break even", service.toString());
+        assertEquals("Position moved to break even", service.toString());
     }
 }

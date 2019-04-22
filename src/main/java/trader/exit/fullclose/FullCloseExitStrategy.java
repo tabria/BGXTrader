@@ -25,10 +25,7 @@ public final class FullCloseExitStrategy extends BaseExitStrategy {
     public void execute(Price price) {
         updateCandlesService.updateCandles(brokerGateway, configuration);
         BrokerTradeDetails tradeDetails = brokerGateway.getTradeDetails(FIRST_TRADE);
-        boolean isMovedToBreakEven = breakEvenService.moveToBreakEven(tradeDetails, price, brokerGateway);
-        if(isMovedToBreakEven){
-            presenter.execute(breakEvenService.toString());
-        }
+        movePositionToBreakEven(price, tradeDetails);
         closePosition(price, tradeDetails);
     }
 
@@ -45,6 +42,13 @@ public final class FullCloseExitStrategy extends BaseExitStrategy {
             closePositionService.closePosition(tradeDetails, brokerGateway, configuration, PARTS_TO_CLOSE);
 
             presenter.execute("Full", closePositionService.toString(), firstTargetPrice.toString());
+        }
+    }
+
+    private void movePositionToBreakEven(Price price, BrokerTradeDetails tradeDetails) {
+        boolean isMovedToBreakEven = breakEvenService.moveToBreakEven(tradeDetails, price, brokerGateway);
+        if(isMovedToBreakEven){
+            presenter.execute(breakEvenService.toString());
         }
     }
 

@@ -62,9 +62,6 @@ public final class StandardEntryStrategy implements EntryStrategy {
 
     @Override
     public Trade generateTrade(){
-        validateConfigurationExistence();
-        validateIndicatorExistence();
-        validateCreateTradeControllerExistence();
         LineSegment fastWMALineSegment = getLineSegment(this.fastWMA);
         LineSegment middleWMALineSegment = getLineSegment(this.middleWMA);
         LineSegment slowWMALineSegment = getLineSegment(this.slowWMA);
@@ -109,22 +106,6 @@ public final class StandardEntryStrategy implements EntryStrategy {
         return "Entry strategy: STANDARD";
     }
 
-    private void validateIndicatorExistence() {
-        if(rsi == null || priceSMA == null || slowWMA == null ||
-                fastWMA == null || dailySMA == null || middleWMA == null)
-            throw new NullArgumentException();
-    }
-
-    private void validateConfigurationExistence() {
-        if(configuration == null)
-            throw new NullArgumentException();
-    }
-
-    private void validateCreateTradeControllerExistence() {
-        if(createTradeController == null)
-            throw new NullArgumentException();
-    }
-
     private void validateInput(List<Indicator> indicators) {
         if(indicators == null || indicators.size() != INDICATORS_COUNT)
             throw new NoSuchStrategyException();
@@ -139,12 +120,9 @@ public final class StandardEntryStrategy implements EntryStrategy {
 
         Point intersectionPoint = IntersectionService.calculateIntersectionPoint(fastSegment, middleSegment);
         List<BigDecimal> dailyValues = this.dailySMA.getValues();
-
         if (isLongCross())
-            //          System.out.println("New Long TradeImpl generated: " + intersectionPoint.getPrice());
             return getTrade(intersectionPoint, dailyValues);
         else if (isShortCross())
-            //          System.out.println("New SHORT TradeImpl generated: " + intersectionPoint.getPrice());
             return getTrade(intersectionPoint, dailyValues);
         return defaultTrade();
     }

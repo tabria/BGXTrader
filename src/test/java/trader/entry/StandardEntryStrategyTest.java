@@ -114,33 +114,8 @@ public class StandardEntryStrategyTest {
     }
 
     @Test(expected = NullArgumentException.class)
-    public void WhenCallGenerateWithNullConfiguration_Exception(){
-        StandardEntryStrategy ses = new StandardEntryStrategy();
-        ses.generateTrade();
-    }
-
-    @Test(expected = NullArgumentException.class)
     public void WhenSetCreateTraderControllerWithNull_Exception(){
         standardEntryStrategy.setCreateTradeController(null);
-    }
-
-    @Test(expected = NullArgumentException.class)
-    public void WhenCallGenerateWithNullIndicators_Exception(){
-        StandardEntryStrategy ses = new StandardEntryStrategy();
-        ses.generateTrade();
-    }
-
-    @Test
-    public void WhenCallValidateIndicatorWithValidIndicators_NoNullArgumentException() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        Method validateIndicatorExistence = commonMembers.getPrivateMethodForTest(standardEntryStrategy, "validateIndicatorExistence");
-        validateIndicatorExistence.invoke(standardEntryStrategy);
-    }
-
-    @Test(expected = NullArgumentException.class)
-    public void WhenCallGenerateTradeAndCreateTradeControllerIsNull_Exception(){
-        standardEntryStrategy = new StandardEntryStrategy();
-        standardEntryStrategy.setIndicators(indicators);
-        standardEntryStrategy.generateTrade();
     }
 
     @Test

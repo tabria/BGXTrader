@@ -3,7 +3,6 @@ package trader.entity.indicator.rsi;
 import trader.exception.*;
 import trader.entity.indicator.BaseIndicatorBuilder;
 import trader.entity.indicator.Indicator;
-import java.util.HashMap;
 import java.util.Map;
 
 
