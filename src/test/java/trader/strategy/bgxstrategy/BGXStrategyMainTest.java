@@ -3,6 +3,7 @@ package trader.strategy.bgxstrategy;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -15,12 +16,14 @@ import trader.configuration.BGXConfigurationImpl;
 import trader.entry.EntryStrategy;
 import trader.entry.standard.StandardEntryStrategy;
 import trader.exception.EmptyArgumentException;
+import trader.exit.ExitStrategy;
 import trader.observer.Observer;
 import trader.entity.candlestick.candle.CandleGranularity;
 import trader.entity.candlestick.candle.CandlePriceType;
 import trader.entity.indicator.Indicator;
 import trader.exception.NullArgumentException;
 import trader.configuration.TradingStrategyConfiguration;
+import trader.order.OrderStrategy;
 import trader.order.standard.StandardOrderStrategy;
 import trader.presenter.Presenter;
 import trader.requestor.*;
@@ -55,8 +58,13 @@ public class BGXStrategyMainTest {
     private RequestBuilder requestBuilderMock;
     private Request requestMock;
     private UseCaseFactory useCaseFactoryMock;
-    private UseCase useCaseMock = mock(UseCase.class);
+    private UseCase useCaseMock;
+  //  private UseCase useCaseSpy;
     private Response responseMock = mock(Response.class);
+    private BrokerGateway brokerGatewayMock;
+    private EntryStrategy entryStrategyMock;
+    private OrderStrategy orderStrategyMock;
+    private ExitStrategy exitStrategyMock;
     private TradingStrategyConfiguration configurationMock;
     private Presenter presenterMock;
     private BGXStrategyMain bgxStrategyMain;
@@ -64,38 +72,18 @@ public class BGXStrategyMainTest {
     private List<Map<String, String>> falseIndicators;
     private CommonTestClassMembers commonMembers;
 
-//    private List<TradeImpl> trades;
-//    private List<Order> orders;
-//    private Order mockOrder;
-//    private ApiConnector apiConnector;
-
-//    private TradeImpl mockTrade;
-
-//    private OrderService mockOrderService;
-//    private ExitStrategy mockExitStrategy;
-//    private ZonedDateTime timeNow;
-//    private List<Candlestick> candlesticks;
-//    private Candlestick mockCandle;
-
     @Before
     public void before() {
-//        mockCandle = mock(Candlestick.class);
-//        trades = new ArrayList<>();
-//        orders = new ArrayList<>();
-//        mockOrderService = mock(OrderService.class);
-//        mockExitStrategy = mock(ExitStrategy.class);
-
-//        mockOrder = mock(Order.class);
-//        mockTrade = mock(TradeImpl.class);
-//        timeNow = ZonedDateTime.now().withZoneSameInstant(ZoneId.of("UTC"));
-//        candlesticks = new ArrayList<>();
-//        applySettings();
-//        fillCandlestickList();
         commonMembers = new CommonTestClassMembers();
+        brokerGatewayMock = mock(BrokerGateway.class);
+        entryStrategyMock = mock(EntryStrategy.class);
+        orderStrategyMock = mock(OrderStrategy.class);
+        exitStrategyMock = mock(ExitStrategy.class);
         presenterMock = mock(Presenter.class);
         requestBuilderMock = mock(RequestBuilder.class);
         requestMock = mock(Request.class);
         useCaseFactoryMock = mock(UseCaseFactory.class);
+ //       useCaseSpy = spy(UseCase.class);
         useCaseMock = mock(UseCase.class);
         responseMock = mock(Response.class);
         configurationMock = mock(TradingStrategyConfiguration.class);
@@ -103,7 +91,9 @@ public class BGXStrategyMainTest {
         setFakeResponse();
         setFakeConfiguration();
         setFalseInitialIndicators();
-      //  bgxStrategyMain = new BGXStrategyMain(BROKER_NAME, BGX_STRATEGY_CONFIG_FILE_NAME, BROKER_CONFIG_FILE_NAME);
+        setFakeUseCaseFactory();
+        setFakeUseCase();
+        bgxStrategyMain = new BGXStrategyMain(BROKER_NAME, BGX_STRATEGY_CONFIG_FILE_NAME, BROKER_CONFIG_FILE_NAME);
 
     }
 
@@ -142,7 +132,7 @@ public class BGXStrategyMainTest {
         when(requestMock.getBody()).thenReturn(setFakeConnectorSettings());
         BaseGateway gateway = mock(BaseGateway.class);
         PowerMockito.mockStatic(BaseGateway.class);
-        PowerMockito.when(BaseGateway.create(anyString(), any(BrokerConnector.class))).thenReturn(gateway);
+        PowerMockito.when(BaseGateway.create(anyString(), any(BrokerConnector.class), any(Presenter.class))).thenReturn(gateway);
 
         bgxStrategyMain = new BGXStrategyMain(BROKER_NAME, BGX_STRATEGY_CONFIG_FILE_NAME, BROKER_CONFIG_FILE_NAME);
 
@@ -154,6 +144,17 @@ public class BGXStrategyMainTest {
         assertEquals(gateway, brokerGateway);
     }
 
+
+
+    private void setFakeUseCaseFactory(){
+        when(useCaseFactoryMock.make(anyString(), any(Presenter.class))).thenReturn(useCaseMock);
+    }
+
+    private void setFakeUseCase(){
+        when(spy(useCaseMock).execute(any(Request.class))).thenReturn(responseMock);
+       // doNothing().when(useCaseSpy).execute(any(Request.class));
+    }
+
     private void setFakeRequest(){
         PowerMockito.mockStatic(RequestBuilderCreator.class);
         PowerMockito.when(RequestBuilderCreator.create(any())).thenReturn(requestBuilderMock);
@@ -162,7 +163,7 @@ public class BGXStrategyMainTest {
     }
 
     private void setFakeResponse(){
-        when(useCaseMock.execute(requestMock)).thenReturn(responseMock);
+        //when(useCaseSpy.execute(requestMock)).thenReturn(responseMock);
         when(useCaseFactoryMock.make(anyString(), any(Presenter.class))).thenReturn(useCaseMock);
     }
 
@@ -227,7 +228,7 @@ public class BGXStrategyMainTest {
 
     @Test
     public void WhenCallSetPositionObserverThenHeMustHaveEntryStrategy(){
-        Observer observer = bgxStrategyMain.setPositionObserver();
+        Observer observer = bgxStrategyMain.setPositionObserver(brokerGatewayMock, entryStrategyMock, orderStrategyMock, configurationMock, exitStrategyMock);
         Object entryStrategy = commonMembers.extractFieldObject(observer, "entryStrategy");
 
         assertNotNull(entryStrategy);
@@ -236,7 +237,7 @@ public class BGXStrategyMainTest {
 
     @Test
     public void WhenCallSetPositionObserverThenHeMustHaveOrderStrategy(){
-        Observer observer = bgxStrategyMain.setPositionObserver();
+        Observer observer = bgxStrategyMain.setPositionObserver(brokerGatewayMock, entryStrategyMock, orderStrategyMock, configurationMock, exitStrategyMock);
         Object orderStrategy = commonMembers.extractFieldObject(observer, "orderStrategy");
 
         assertNotNull(orderStrategy);
@@ -245,7 +246,7 @@ public class BGXStrategyMainTest {
 
     @Test
     public void WhenCallSetPositionObserverThenHeMustHaveConfiguration(){
-        Observer observer = bgxStrategyMain.setPositionObserver();
+        Observer observer = bgxStrategyMain.setPositionObserver(brokerGatewayMock, entryStrategyMock, orderStrategyMock, configurationMock, exitStrategyMock);
         Object configuration = commonMembers.extractFieldObject(observer, "configuration");
 
         assertNotNull(configuration);
@@ -340,103 +341,5 @@ public class BGXStrategyMainTest {
         }
         return indicator;
     }
-
-//    private void addIndicatorB() {
-//        String indicatorB = "emaIndicator";
-//        HashMap<String, String> settingsB = indicatorASettings("9", "MEDIAN");
-//        settingsB.put("maType", "EXPONENTIAL");
-//        bgxStrategyMain.addIndicators(indicatorB, settingsB);
-//    }
-//
-//    private void addIndicatorA() {
-//        String indicatorA = "rsiIndicator";
-//        HashMap<String, String> settingsA = indicatorASettings("17", "LOW");
-//        bgxStrategyMain.addIndicators(indicatorA, settingsA);
-//    }
-//
-//    private HashMap<String, String> indicatorASettings(String s, String low) {
-//        HashMap<String, String> settingsA = new HashMap<>();
-//        settingsA.put("period", s);
-//        settingsA.put("candlePriceType", low);
-//        return settingsA;
-//    }
-
-//
-//    @Test(expected = SubmitNewOrderCalledException.class)
-//    public void ifNoOpenOrdersAndNoOpenTrades_SubmitNewOrder(){
-//        commonMembers.changeFieldObject(bgxStrategyMain, "orderService", mockOrderService);
-//        when(apiConnector.getOpenOrders()).thenReturn(new ArrayList<>());
-//        when(apiConnector.getOpenTrades()).thenReturn(new ArrayList<>());
-//        bgxStrategyMain.execute();
-//    }
-//
-//    @Test(expected = CloseUnfilledOrderCalledException.class)
-//    public void ifNoOpenTradesButHaveOpenOrders_closeUnfilledOrder(){
-//        commonMembers.changeFieldObject(bgxStrategyMain, "orderService", mockOrderService);
-//        when(apiConnector.getOpenTrades()).thenReturn(new ArrayList<>());
-//        bgxStrategyMain.execute();
-//    }
-//
-//    @Test(expected = ExitStrategyExecuteCalledException.class)
-//    public void ifOpenTrades_Execute(){
-//        commonMembers.changeFieldObject(bgxStrategyMain, "exitStrategy", mockExitStrategy);
-//        bgxStrategyMain.execute();
-//    }
-//
-//    @Test
-//    public void testToString(){
-//       assertEquals("bgxstrategy", bgxStrategyMain.toString());
-//    }
-//
-//
-//
-//    private void applySettings() {
-//        trades.add(mockTrade);
-//        orders.add(mockOrder);
-//        orderSettings();
-//        tradeSettings();
-//        when(apiConnector.getInitialCandles()).thenReturn(candlesticks);
-//        when(apiConnector.updateCandle()).thenReturn(mockCandle);
-//    }
-//
-//    private void tradeSettings() {
-//        when(apiConnector.getOpenTrades()).thenReturn(trades);
-//        doThrow(new ExitStrategyExecuteCalledException()).when(mockExitStrategy).execute();
-//    }
-//
-//    private void orderSettings() {
-//        when(apiConnector.getOpenOrders()).thenReturn(orders);
-//        doThrow(new SubmitNewOrderCalledException()).when(mockOrderService).submitNewOrder();
-//        doThrow(new CloseUnfilledOrderCalledException()).when(mockOrderService).closeUnfilledOrder();
-//    }
-//
-//    private void fillCandlestickList(){
-//        for (int i = 0; i < CANDLESTICK_LIST_SIZE; i++) {
-//            timeNow = timeNow.plusSeconds(30);
-//            candlesticks.add(createCandlestickMock());
-//            setMockCandleTime(timeNow = timeNow.plusSeconds(30));
-//        }
-//    }
-//
-//    private Candlestick createCandlestickMock() {
-//        Candlestick newCandlestick = mock(Candlestick.class);
-//        when(newCandlestick.getDateTime()).thenReturn(timeNow);
-//        when(newCandlestick.getOpenPrice()).thenReturn(DEFAULT_PRICE);
-//        when(newCandlestick.getHighPrice()).thenReturn(DEFAULT_PRICE);
-//        when(newCandlestick.getLowPrice()).thenReturn(DEFAULT_PRICE);
-//        when(newCandlestick.getClosePrice()).thenReturn(DEFAULT_PRICE);
-//        return newCandlestick;
-//    }
-//
-//    private void setMockCandleTime(ZonedDateTime time) {
-//        when(mockCandle.getDateTime()).thenReturn(time);
-//        when(mockCandle.isComplete()).thenReturn(true);
-//    }
-//
-//    private class CloseUnfilledOrderCalledException extends RuntimeException{};
-//    private class SubmitNewOrderCalledException extends RuntimeException{};
-//    private class ExitStrategyExecuteCalledException extends RuntimeException{};
-
-
 
 }

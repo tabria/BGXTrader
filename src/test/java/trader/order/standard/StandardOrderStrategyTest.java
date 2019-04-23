@@ -210,10 +210,11 @@ public class StandardOrderStrategyTest {
         setFalseInputForCalculatingUnitsSize(1.2000, 0.01);
         when(connectorMock.getLeverage()).thenReturn(leverage);
         when(brokerGatewayMock.placeOrder(any(HashMap.class), anyString())).thenReturn(expectedID);
+        when(configurationMock.getInstrument()).thenReturn("EUR_USD");
         orderStrategy.placeTradeAsOrder(brokerGatewayMock, priceMock, tradeMock, configurationMock);
         String lastID = (String) commonMembers.extractFieldObject(orderStrategy, "lastOrderTransactionID");
 
-        verify(presenterMock, times(1)).execute(anyString());
+        verify(presenterMock, times(1)).execute(anyString(), anyString(), anyString());
         assertNotEquals(lastOrderTransactionID, lastID);
         assertEquals(expectedID, lastID);
     }

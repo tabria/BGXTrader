@@ -25,6 +25,7 @@ import trader.entity.trade.BrokerTradeDetails;
 import trader.exception.BadRequestException;
 import trader.exception.EmptyArgumentException;
 import trader.exception.NullArgumentException;
+import trader.presenter.Presenter;
 import trader.requestor.Request;
 import trader.responder.Response;
 
@@ -56,6 +57,7 @@ public class OandaGatewayTest {
     private OandaRequestBuilder mockRequestBuilder;
     private ArgumentCaptor<HashMap> argument;
     private Account accountMock;
+    private Presenter presenterMock;
     private Transformable oandaTransformerMock;
 
 
@@ -74,7 +76,8 @@ public class OandaGatewayTest {
         argument = ArgumentCaptor.forClass(HashMap.class);
         accountMock = mock(Account.class);
         oandaTransformerMock = mock(OandaTransformer.class);
-        oandaGateway = (OandaGateway) BaseGateway.create("Oanda", connectorMock);
+        presenterMock = mock(Presenter.class);
+        oandaGateway = (OandaGateway) BaseGateway.create("Oanda", connectorMock, presenterMock);
     }
 
     @SuppressWarnings("unchecked")
@@ -361,7 +364,7 @@ public class OandaGatewayTest {
 
     @Test
     public void givenCorrectSettings_WhenCallToString_ThenReturnCorrectString(){
-       BrokerGateway gateway = (OandaGateway) BaseGateway.create("Oanda", connectorMock);
+       BrokerGateway gateway = (OandaGateway) BaseGateway.create("Oanda", connectorMock, presenterMock);
         assertEquals("Gateway: OANDA", gateway.toString());
     }
 

@@ -60,7 +60,7 @@ public class ClosePositionServiceTest {
 
     @Test
     public void givenService_WhenCallToString_ThenReturnCorrectString(){
-        assertEquals("Position closed @", service.toString());
+        assertEquals("position closed @", service.toString());
     }
 
     private void setFakeBrokerTradeDetails(int tradeIndex , double units){

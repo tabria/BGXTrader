@@ -40,6 +40,6 @@ public class BrokerService {
         TraderController<BrokerConnector> controller = new CreateBrokerConnectorController<>(useCaseFactory, presenter);
         Response<BrokerConnector> brokerResponse = controller.execute(settings);
         BrokerConnector connector = brokerResponse.getBody();
-        return BaseGateway.create(brokerName, connector);
+        return BaseGateway.create(brokerName, connector, presenter);
     }
 }

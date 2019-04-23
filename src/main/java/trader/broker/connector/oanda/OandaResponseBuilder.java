@@ -15,8 +15,10 @@ import com.oanda.v20.trade.TradeSetDependentOrdersRequest;
 import com.oanda.v20.trade.TradeSetDependentOrdersResponse;
 import trader.connection.Connection;
 import trader.exception.EmptyArgumentException;
+import trader.exception.NoSuchDataStructureException;
 import trader.exception.NullArgumentException;
 import trader.interactor.ResponseImpl;
+import trader.presenter.Presenter;
 import trader.requestor.Request;
 import trader.responder.Response;
 
@@ -24,20 +26,21 @@ import java.util.List;
 
 public class OandaResponseBuilder {
 
-    private static final String CANCEL_ORDER = "cancelOrder";
-    private static final String SET_STOP_LOSS_PRICE = "setStopLossPrice";
-
     private Context context;
     private String url;
+    private Presenter presenter;
 
-    OandaResponseBuilder(Context context, String url){
+    OandaResponseBuilder(Context context, String url, Presenter presenter){
         verifyInput(context, url);
         this.context = context;
         this.url = url.trim();
+        setPresenter(presenter);
     }
 
     public <T, E> Response<E> buildResponse(String type, Request<T> request) {
         verifyInput(request, type);
+        if(type.trim().equalsIgnoreCase("accountid"))
+            return setResponse((E) createAccountResponse(request));
         if(type.trim().equalsIgnoreCase("price"))
             return setResponse((E) createPriceResponse(request));
         if(type.trim().equalsIgnoreCase("candle"))
@@ -45,26 +48,37 @@ public class OandaResponseBuilder {
         if(type.trim().equalsIgnoreCase("marketIfTouchedOrder"))
             return setResponse((E) createOrderCreateResponse(request));
         if(type.trim().equalsIgnoreCase("cancelOrder"))
-            return setResponse((E) createCancelOrderResponce(request));
+            return setResponse((E) createCancelOrderResponse(request));
         if(type.trim().equalsIgnoreCase("setStopLossPrice"))
             return setResponse((E) createSetStopLossPriceResponse(request));
-        return null;
+        throw new NoSuchDataStructureException();
     }
 
-    private <T> TradeSetDependentOrdersResponse createSetStopLossPriceResponse(Request<T> request) {
-
-        TradeSetDependentOrdersRequest requestDataStructure = (TradeSetDependentOrdersRequest) request.getBody();
-        try {
-            return this.context.trade.setDependentOrders(requestDataStructure);
+    private <T> Object createAccountResponse(Request<T> request) {
+        try{
+            AccountID accountID = (AccountID) request.getBody();
+            return context.account.get(accountID).getAccount();
         } catch (ExecuteException | RequestException e) {
-            Connection.waitToConnect(url);
+            Connection.waitToConnect(url, presenter);
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
         }
         return null;
     }
 
-    private <T> OrderCancelResponse createCancelOrderResponce(Request<T> request) {
+    private <T> TradeSetDependentOrdersResponse createSetStopLossPriceResponse(Request<T> request) {
+        TradeSetDependentOrdersRequest requestDataStructure = (TradeSetDependentOrdersRequest) request.getBody();
+        try {
+            return this.context.trade.setDependentOrders(requestDataStructure);
+        } catch (ExecuteException | RequestException e) {
+            Connection.waitToConnect(url, presenter);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
+    private <T> OrderCancelResponse createCancelOrderResponse(Request<T> request) {
         try {
 
             List<Object> requestDataStructure = (List<Object>) request.getBody();
@@ -72,7 +86,7 @@ public class OandaResponseBuilder {
             OrderSpecifier order = (OrderSpecifier) requestDataStructure.get(1);
             return context.order.cancel(account, order);
         } catch (ExecuteException | RequestException e) {
-            Connection.waitToConnect(url);
+            Connection.waitToConnect(url, presenter);
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
         }
@@ -84,7 +98,7 @@ public class OandaResponseBuilder {
             OrderCreateRequest request = (OrderCreateRequest) createMarketIfTouchedOrderRequest.getBody();
             return context.order.create(request);
         } catch (ExecuteException | RequestException e) {
-            Connection.waitToConnect(url);
+            Connection.waitToConnect(url, presenter);
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
         }
@@ -96,7 +110,7 @@ public class OandaResponseBuilder {
             PricingGetRequest request = (PricingGetRequest) priceRequest.getBody();
             return context.pricing.get(request);
         } catch (ExecuteException | RequestException e) {
-            Connection.waitToConnect(url);
+            Connection.waitToConnect(url, presenter);
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
         }
@@ -108,7 +122,7 @@ public class OandaResponseBuilder {
             InstrumentCandlesRequest request = (InstrumentCandlesRequest) candlesRequest.getBody();
             return context.instrument.candles(request);
         } catch (ExecuteException | RequestException e) {
-            Connection.waitToConnect(url);
+            Connection.waitToConnect(url, presenter);
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
         }
@@ -120,6 +134,12 @@ public class OandaResponseBuilder {
             throw new NullArgumentException();
         if(str.trim().isEmpty())
             throw new EmptyArgumentException();
+    }
+
+    public void setPresenter(Presenter presenter) {
+        if(presenter == null)
+            throw new NullArgumentException();
+        this.presenter = presenter;
     }
 
     private <E> Response<E> setResponse(E responseValue) {

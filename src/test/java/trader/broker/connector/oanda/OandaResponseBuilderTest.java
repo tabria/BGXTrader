@@ -14,13 +14,12 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import trader.CommonTestClassMembers;
-import trader.OandaAPIMock.OandaAPIMockInstrument;
-import trader.OandaAPIMock.OandaAPIMockOrder;
-import trader.OandaAPIMock.OandaAPIMockPricing;
-import trader.OandaAPIMock.OandaAPIMockTrade;
+import trader.OandaAPIMock.*;
 import trader.connection.Connection;
 import trader.exception.EmptyArgumentException;
+import trader.exception.NoSuchDataStructureException;
 import trader.exception.NullArgumentException;
+import trader.presenter.Presenter;
 import trader.requestor.Request;
 import trader.responder.Response;
 
@@ -43,7 +42,9 @@ public class OandaResponseBuilderTest {
     private OandaAPIMockInstrument oandaAPIMockInstrument;
     private OandaAPIMockOrder oandaAPIMockOrder;
     private OandaAPIMockTrade oandaAPIMockTrade;
+    private OandaAPIMockAccount oandaAPIMockAccount;
     private OandaResponseBuilder responseBuilder;
+    private Presenter presenterMock;
     private CommonTestClassMembers commonMembers;
 
     @Before
@@ -52,17 +53,19 @@ public class OandaResponseBuilderTest {
         oandaAPIMockInstrument = new OandaAPIMockInstrument(2);
         oandaAPIMockOrder = new OandaAPIMockOrder();
         oandaAPIMockTrade = new OandaAPIMockTrade();
+        oandaAPIMockAccount = new OandaAPIMockAccount();
         oandaAPIMockPricing.setMockPricingGetResponse(oandaAPIMockPricing.getMockPricingGetResponse());
         contextMock = oandaAPIMockPricing.getContext();
         requestMock = mock(Request.class);
+        presenterMock = mock(Presenter.class);
         commonMembers = new CommonTestClassMembers();
         when(requestMock.getBody()).thenReturn(oandaAPIMockPricing.getMockPricingGetRequest());
-        responseBuilder = new OandaResponseBuilder(contextMock, URL);
+        responseBuilder = new OandaResponseBuilder(contextMock, URL, presenterMock);
     }
 
     @Test(expected = NullArgumentException.class)
     public void WhenCreatedThenContextMustNotBeNull(){
-        new OandaResponseBuilder(null, "url");
+        new OandaResponseBuilder(null, "url", presenterMock);
     }
 
     @Test
@@ -74,18 +77,23 @@ public class OandaResponseBuilderTest {
 
     @Test(expected = NullArgumentException.class)
     public void WhenCreatedWithNullURL_Exception(){
-        new OandaResponseBuilder(contextMock, null);
+        new OandaResponseBuilder(contextMock, null, presenterMock);
     }
 
     @Test(expected = EmptyArgumentException.class)
     public void WhenCreatedWithEmptyURL_Exception(){
-        new OandaResponseBuilder(contextMock, "  ");
+        new OandaResponseBuilder(contextMock, "  ", presenterMock);
+    }
+
+    @Test(expected = NullArgumentException.class)
+    public void WhenCreatedWithNullPresenter_Exception(){
+        new OandaResponseBuilder(contextMock, "url", null);
     }
 
     @Test
     public void WhenCreatedWithCorrectURLWithExtraSpaces_CorrectResult(){
         String testUrl = "  xxx.com   ";
-        OandaResponseBuilder oandaResponseBuilder = new OandaResponseBuilder(contextMock, testUrl );
+        OandaResponseBuilder oandaResponseBuilder = new OandaResponseBuilder(contextMock, testUrl, presenterMock);
         String url = (String) commonMembers.extractFieldObject(oandaResponseBuilder, "url");
 
         assertEquals(testUrl.trim(), url);
@@ -106,11 +114,9 @@ public class OandaResponseBuilderTest {
         responseBuilder.buildResponse("price", null);
     }
 
-    @Test
-    public void WhenCallBuildResponseWithNotExistingType_ReturnNull(){
-        Response response = responseBuilder.buildResponse("kar", requestMock);
-
-        assertNull(response);
+    @Test(expected = NoSuchDataStructureException.class)
+    public void WhenCallBuildResponseWithNotExistingType_ThrowException(){
+        responseBuilder.buildResponse("kar", requestMock);
     }
 
     @Test
@@ -125,7 +131,7 @@ public class OandaResponseBuilderTest {
     @Test
     public void WhenBuildResponseThrowExecuteOrRequestExceptions_ResponseIsNull() throws RequestException, ExecuteException {
         oandaAPIMockPricing.setMockPricingGetResponseToThrowException(RequestException.class);
-        setStaticConnectonWaitToReturnTrue();
+        setStaticConnectionWaitToReturnTrue();
         Response<PricingGetResponse> actualResponse = this.responseBuilder.buildResponse("price", requestMock);
 
         assertNull(actualResponse);
@@ -139,7 +145,7 @@ public class OandaResponseBuilderTest {
 
     @Test
     public void WhenCallBuildResponseWithCandle_CorrectResponse(){
-        OandaResponseBuilder responseBuilder = new OandaResponseBuilder(oandaAPIMockInstrument.getContext(), URL);
+        OandaResponseBuilder responseBuilder = new OandaResponseBuilder(oandaAPIMockInstrument.getContext(), URL, presenterMock);
         when(requestMock.getBody()).thenReturn(oandaAPIMockInstrument.getMockRequest());
         Response response = responseBuilder.buildResponse("candle", requestMock);
 
@@ -148,7 +154,7 @@ public class OandaResponseBuilderTest {
 
     @Test
     public void WhenBuildResponseForCandleThrowExecuteOrRequestExceptions_ResponseIsNull() throws RequestException, ExecuteException {
-        setStaticConnectonWaitToReturnTrue();
+        setStaticConnectionWaitToReturnTrue();
         setInstrumentCandleResponseToThrowException(RequestException.class);
         Response<InstrumentCandlesResponse> actualResponse = responseBuilder.buildResponse("candle", requestMock);
 
@@ -178,7 +184,7 @@ public class OandaResponseBuilderTest {
 
     @Test
     public void WhenBuildResponseForCreateOrderCreateResponseThrowExecuteException_ReturnNull() throws RequestException, ExecuteException {
-        setStaticConnectonWaitToReturnTrue();
+        setStaticConnectionWaitToReturnTrue();
         setOrderCreateResponseToThrowException(RequestException.class);
         Response response = responseBuilder.buildResponse("marketIfTouchedOrder", requestMock);
 
@@ -203,7 +209,7 @@ public class OandaResponseBuilderTest {
 
     @Test
     public void WhenBuildResponseForCancelOrderResponseThrowExecuteException_ReturnNull() throws RequestException, ExecuteException {
-        setStaticConnectonWaitToReturnTrue();
+        setStaticConnectionWaitToReturnTrue();
         createFakeOrderCancelRequest();
         oandaAPIMockOrder.setMockOrderCancelResponseToThrowException(RequestException.class);
         Response response = responseBuilder.buildResponse("cancelOrder", requestMock);
@@ -227,8 +233,8 @@ public class OandaResponseBuilderTest {
     }
 
     @Test
-    public void WhenBuildResponseForetStopLossPriceResponseThrowExecuteException_ReturnNull() throws RequestException, ExecuteException {
-        setStaticConnectonWaitToReturnTrue();
+    public void WhenBuildResponseForStopLossPriceResponseThrowExecuteException_ReturnNull() throws RequestException, ExecuteException {
+        setStaticConnectionWaitToReturnTrue();
         setFakeTradeSetDependentRequest();
         oandaAPIMockTrade.setDependentOrderResponseToThrowException(RequestException.class);
         Response response = responseBuilder.buildResponse("setStopLossPrice", requestMock);
@@ -236,10 +242,28 @@ public class OandaResponseBuilderTest {
         assertNull(response);
     }
 
+    @Test
+    public void givenAccountID_WhenCallBuildResponse_ThenReturnCorrectResponse(){
+        AccountID accountID = mock(AccountID.class);
+        when(accountID.toString()).thenReturn("123243432");
+        when(requestMock.getBody()).thenReturn(accountID);
+        createFakeAccountCreateRequest();
+        Response response = responseBuilder.buildResponse("accountID", requestMock);
 
+        assertEquals(oandaAPIMockAccount.getMockAccount(), response.getBody());
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void givenBadAccountID_WhenCallBuildResponse_ThenThrowException() {
+        AccountID accountID = mock(AccountID.class);
+        when(accountID.toString()).thenReturn("123243432");
+        when(requestMock.getBody()).thenReturn(accountID);
+        responseBuilder.buildResponse("accountID", requestMock);
+
+    }
 
     private void setFakeTradeSetDependentRequest() {
-        responseBuilder = new OandaResponseBuilder(oandaAPIMockTrade.getContext(), URL);
+        responseBuilder = new OandaResponseBuilder(oandaAPIMockTrade.getContext(), URL, presenterMock);
         when(requestMock.getBody()).thenReturn(oandaAPIMockTrade.getTradeSetDependentOrdersRequestMock());
         oandaAPIMockTrade.setSetDependentOrdersMock();
     }
@@ -261,24 +285,28 @@ public class OandaResponseBuilderTest {
         objects.add(accountIDMock);
         objects.add(orderSpecifierMock);
 
-        responseBuilder = new OandaResponseBuilder(oandaAPIMockOrder.getContext(), URL);
+        responseBuilder = new OandaResponseBuilder(oandaAPIMockOrder.getContext(), URL, presenterMock);
         when(requestMock.getBody()).thenReturn(objects);
         oandaAPIMockOrder.setOrderCancelResponse(accountIDMock, orderSpecifierMock);
     }
 
     private void createFakeInstrumentCandleRequest() {
-        responseBuilder = new OandaResponseBuilder(oandaAPIMockInstrument.getContext(), URL);
+        responseBuilder = new OandaResponseBuilder(oandaAPIMockInstrument.getContext(), URL, presenterMock);
         when(requestMock.getBody()).thenReturn(oandaAPIMockInstrument.getMockRequest());
     }
 
     private void createFakeOrderCreateRequest() {
-        responseBuilder = new OandaResponseBuilder(oandaAPIMockOrder.getContext(), URL);
+        responseBuilder = new OandaResponseBuilder(oandaAPIMockOrder.getContext(), URL, presenterMock);
         when(requestMock.getBody()).thenReturn(oandaAPIMockOrder.getMockOrderCreateRequest());
     }
 
+    private void createFakeAccountCreateRequest() {
+        responseBuilder = new OandaResponseBuilder(oandaAPIMockAccount.getContext(), URL, presenterMock);
+       // when(requestMock.getBody()).thenReturn(oandaAPIMockOrder.getMockOrderCreateRequest());
+    }
 
-    private void setStaticConnectonWaitToReturnTrue() {
+    private void setStaticConnectionWaitToReturnTrue() {
         PowerMockito.mockStatic(Connection.class);
-        PowerMockito.when(Connection.waitToConnect(URL)).thenReturn(true);
+        PowerMockito.when(Connection.waitToConnect(URL, presenterMock)).thenReturn(true);
     }
 }

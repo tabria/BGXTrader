@@ -9,7 +9,6 @@ import trader.interactor.createbgxconfiguration.CreateBGXConfigurationRequestBui
 import static org.junit.Assert.*;
 
 
-
 public class RequestBuilderCreatorTest {
 
     @Test(expected = NullArgumentException.class)

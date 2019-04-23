@@ -85,7 +85,7 @@ public class BrokerServiceTest {
 
     private void setFakeBaseGateway() {
         PowerMockito.mockStatic(BaseGateway.class);
-        PowerMockito.when(BaseGateway.create(anyString(), any(BrokerConnector.class))).thenReturn(baseGatewayMock);
+        PowerMockito.when(BaseGateway.create(anyString(), any(BrokerConnector.class), any(Presenter.class))).thenReturn(baseGatewayMock);
     }
 
 }

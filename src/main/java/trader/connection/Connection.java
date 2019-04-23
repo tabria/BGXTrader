@@ -1,4 +1,6 @@
 package trader.connection;
+import trader.presenter.Presenter;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -8,29 +10,26 @@ public class Connection {
     private static final int BEGIN_INDEX = 8;
     private static String message = "";
 
-   // private Connection() { }
-
-    public static boolean waitToConnect(String url) {
+    public static boolean waitToConnect(String url, Presenter presenter) {
         while (true){
-            if (verifyHostIpExistence(url, DEFAULT_SLEEP_TIME_MILLIS))
+            if (verifyHostIpExistence(url, DEFAULT_SLEEP_TIME_MILLIS, presenter))
                 break;
         }
-        MessagePrinter.printMessage("Connected");
+        presenter.execute("CONNECTED");
         return true;
     }
 
-    private static boolean verifyHostIpExistence (String url, long sleepInterval) {
-        message ="";
+    static boolean verifyHostIpExistence (String url, long sleepInterval, Presenter presenter) {
         try {
             getAddresses(extractHost(url));
             return true;
         } catch (UnknownHostException e) {
-            activateSleep(sleepInterval);
+            activateSleep(message, sleepInterval, presenter);
         }
         return false;
     }
 
-    private static String extractHost(String url) {
+    static String extractHost(String url) {
         return url.substring(BEGIN_INDEX);
     }
 
@@ -38,12 +37,23 @@ public class Connection {
         InetAddress[] allByName = InetAddress.getAllByName(host);
     }
 
-    private static void activateSleep(long sleepInterval) {
+    static void activateSleep(String message, long sleepInterval, Presenter presenter) {
         try {
-            message = MessagePrinter.printReconnecting(message);
+            if(message.isEmpty() || message.equalsIgnoreCase("connected")){
+                setMessage("Connection Lost.Reconnecting...");
+                presenter.execute(getMessage());
+            }
             Thread.sleep(sleepInterval);
         } catch (InterruptedException e1) {
             e1.printStackTrace();
         }
+    }
+
+    private static void setMessage(String inputMessage){
+        message = inputMessage;
+    }
+
+    private static String getMessage() {
+        return message;
     }
 }

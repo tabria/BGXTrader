@@ -15,6 +15,7 @@ import trader.entity.trade.BrokerTradeDetails;
 import trader.exception.BadRequestException;
 import trader.exception.EmptyArgumentException;
 import trader.exception.NullArgumentException;
+import trader.presenter.Presenter;
 import trader.requestor.Request;
 import trader.responder.Response;
 
@@ -30,7 +31,6 @@ public class OandaGateway extends BaseGateway {
     private static final String INSTRUMENT = "instrument";
     private static final String PRICE = "price";
     private static final String CANDLE = "candle";
-    private static final String CREATE_MARKET_IF_TOUCHED_ORDER = "marketIfTouchedOrder";
     private static final String TRADE_ID = "tradeID";
     private static final String ORDER_ID = "orderID";
     private static final String CANCEL_ORDER = "cancelOrder";
@@ -38,6 +38,7 @@ public class OandaGateway extends BaseGateway {
 
     private Context context;
     private BrokerConnector connector;
+    private Presenter presenter;
     private OandaAccountValidator oandaAccountValidator ;
     private OandaRequestBuilder oandaRequestBuilder;
     private OandaResponseBuilder oandaResponseBuilder;
@@ -45,12 +46,13 @@ public class OandaGateway extends BaseGateway {
     private HashMap<String, String> priceSettings;
     private HashMap<String, String> accountSettings;
 
-    private OandaGateway(BrokerConnector connector){
+    private OandaGateway(BrokerConnector connector, Presenter presenter){
         this.connector = connector;
+        this.presenter = presenter;
         setContext();
         oandaAccountValidator = new OandaAccountValidator();
         oandaRequestBuilder = new OandaRequestBuilder();
-        oandaResponseBuilder = new OandaResponseBuilder(context, connector.getUrl());
+        oandaResponseBuilder = new OandaResponseBuilder(context, connector.getUrl(), presenter);
         oandaTransformer = new OandaTransformer();
         priceSettings = setAccount();
         accountSettings = setAccount();

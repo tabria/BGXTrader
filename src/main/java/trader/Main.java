@@ -46,6 +46,7 @@ public class Main {
         Strategy strategy = new BGXStrategyMain("Oanda", "bgxStrategyConfig.yaml", "oandaBrokerConfig.yaml");
       //  Strategy strategy = new BGXStrategyMain(apiConnector);
         ThreadedStrategy threadedStrategy = new ThreadedStrategy(strategy);
+   //     strategy.execute();
 
 
 
@@ -131,7 +132,7 @@ public class Main {
 //        priceObserver.registerObserver(rsiObserver);
  //       priceObserver.registerObserver(tradeManager);
 
-        System.out.println("Start ");
+      //  System.out.println("Start ");
 
  //       PricePull pricePull = new PricePull("PricePull", priceObserver);
     }
