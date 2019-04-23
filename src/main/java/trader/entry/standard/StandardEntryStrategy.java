@@ -46,6 +46,7 @@ public final class StandardEntryStrategy implements EntryStrategy {
         tradeCalculationService = new TradeCalculationService();
     }
 
+    @Override
     public void setConfiguration(TradingStrategyConfiguration configuration) {
         if(configuration == null)
             throw new NullArgumentException();

@@ -10,6 +10,7 @@ import trader.requestor.Request;
 import trader.requestor.UseCase;
 import trader.requestor.UseCaseFactory;
 import trader.responder.Response;
+import trader.strategy.TradingStrategyConfiguration;
 
 import java.util.ArrayList;
 
@@ -24,6 +25,7 @@ public class EntryServiceTest {
     private UseCaseFactory useCaseFactoryMock;
     private EntryService entryService;
     private Presenter presenterMock;
+    private TradingStrategyConfiguration configuration;
 
     @Before
     public void setUp() throws Exception {
@@ -33,7 +35,8 @@ public class EntryServiceTest {
         useCaseMock = mock(UseCase.class);
         entryStrategyMock = mock(EntryStrategy.class);
         useCaseFactoryMock = mock(UseCaseFactory.class);
-        entryService = new EntryService(useCaseFactoryMock, presenterMock);
+        configuration = mock(TradingStrategyConfiguration.class);
+        entryService = new EntryService(useCaseFactoryMock, presenterMock, configuration);
 
     }
 
@@ -61,6 +64,14 @@ public class EntryServiceTest {
         entryService.createEntryStrategy("standard", new ArrayList<>());
 
         verify(entryStrategyMock, times(1)).setCreateTradeController(any(TraderController.class));
+    }
+
+    @Test
+    public void givenCorrectSettings_WhenCallCreateEntryStrategy_ThenSetConfiguration(){
+        setFakeEntryStrategy();
+        entryService.createEntryStrategy("standard", new ArrayList<>());
+
+        verify(entryStrategyMock, timeout(1)).setConfiguration(any(TradingStrategyConfiguration.class));
     }
 
     @Test

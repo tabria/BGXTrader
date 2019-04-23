@@ -89,7 +89,7 @@ public final class BGXStrategyMain implements Strategy {
     }
 
     private EntryStrategy setEntryStrategy() {
-        EntryService entryService = new EntryService(useCaseFactory, presenter);
+        EntryService entryService = new EntryService(useCaseFactory, presenter, configuration);
         return entryService.createEntryStrategy(configuration.getEntryStrategy(), indicatorList);
     }
 

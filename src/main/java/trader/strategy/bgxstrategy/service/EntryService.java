@@ -9,6 +9,7 @@ import trader.exception.NullArgumentException;
 import trader.presenter.Presenter;
 import trader.requestor.UseCaseFactory;
 import trader.responder.Response;
+import trader.strategy.TradingStrategyConfiguration;
 
 import java.util.HashMap;
 import java.util.List;
@@ -18,10 +19,12 @@ public class EntryService {
 
     private Presenter presenter;
     private UseCaseFactory useCaseFactory;
+    private TradingStrategyConfiguration configuration;
 
-    public EntryService(UseCaseFactory useCaseFactory, Presenter presenter) {
+    public EntryService(UseCaseFactory useCaseFactory, Presenter presenter, TradingStrategyConfiguration configuration) {
         this.useCaseFactory = useCaseFactory;
         this.presenter = presenter;
+        this.configuration = configuration;
     }
 
     public EntryStrategy createEntryStrategy(String entryStrategyName, List<Indicator> indicators) {
@@ -35,6 +38,7 @@ public class EntryService {
         Response<EntryStrategy> entryResponse = controller.execute(inputSettings);
         EntryStrategy strategy = entryResponse.getBody();
         strategy.setIndicators(indicators);
+        strategy.setConfiguration(configuration);
         strategy.setCreateTradeController(new CreateTradeController<>(useCaseFactory, presenter));
         return strategy;
     }
