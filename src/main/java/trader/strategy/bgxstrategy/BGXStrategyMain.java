@@ -64,6 +64,7 @@ public final class BGXStrategyMain implements Strategy {
 
         new PricePull("PricePull", priceObservable);
 
+
     }
 
     @Override

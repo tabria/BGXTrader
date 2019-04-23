@@ -1,5 +1,6 @@
 package trader.interactor.createtrade;
 
+import trader.entity.trade.Direction;
 import trader.entity.trade.Trade;
 import trader.entity.trade.TradeImpl;
 import trader.interactor.ResponseImpl;
@@ -25,7 +26,8 @@ public class CreateTradeUseCase implements UseCase {
         Map<String, Object> settings = (Map<String, Object>) request.getBody();
         Trade trade = setTrade(settings);
         Response<E> response = setResponse((E) trade);
-        presenter.execute(response);
+        if(!trade.getDirection().equals(Direction.FLAT))
+            presenter.execute(response);
         return response;
     }
 

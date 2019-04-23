@@ -41,7 +41,8 @@ public final class FullCloseExitStrategy extends BaseExitStrategy {
         if(isAbleToSetStopLoss(tradeDetails.getCurrentUnits(), firstTargetPrice, price)){
             closePositionService.closePosition(tradeDetails, brokerGateway, configuration, PARTS_TO_CLOSE);
 
-            presenter.execute("Full", closePositionService.toString(), firstTargetPrice.toString());
+            BigDecimal closePrice = tradeDetails.getCurrentUnits().compareTo(BigDecimal.ZERO)<0 ? price.getAsk() : price.getBid();
+            presenter.execute("Full", closePositionService.toString(), closePrice.toString());
         }
     }
 

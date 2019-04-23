@@ -45,7 +45,7 @@ public class OandaResponseBuilder {
             return setResponse((E) createPriceResponse(request));
         if(type.trim().equalsIgnoreCase("candle"))
             return setResponse((E) createCandlesResponse(request));
-        if(type.trim().equalsIgnoreCase("marketIfTouchedOrder"))
+        if(type.trim().equalsIgnoreCase("marketIfTouchedOrder") || type.trim().equalsIgnoreCase("marketOrder"))
             return setResponse((E) createOrderCreateResponse(request));
         if(type.trim().equalsIgnoreCase("cancelOrder"))
             return setResponse((E) createCancelOrderResponse(request));
@@ -93,9 +93,9 @@ public class OandaResponseBuilder {
         return null;
     }
 
-    private <T> OrderCreateResponse createOrderCreateResponse(Request<T> createMarketIfTouchedOrderRequest) {
+    private <T> OrderCreateResponse createOrderCreateResponse(Request<T> createOrderRequest) {
         try {
-            OrderCreateRequest request = (OrderCreateRequest) createMarketIfTouchedOrderRequest.getBody();
+            OrderCreateRequest request = (OrderCreateRequest) createOrderRequest.getBody();
             return context.order.create(request);
         } catch (ExecuteException | RequestException e) {
             Connection.waitToConnect(url, presenter);

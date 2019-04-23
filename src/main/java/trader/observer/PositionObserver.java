@@ -36,15 +36,15 @@ public class PositionObserver extends BaseObserver {
 
     @Override
     public void updateObserver(Price price) {
-        if(brokerGateway.totalOpenTradesSize() == 0 && brokerGateway.totalOpenOrdersSize() == 0){
+        if(brokerGateway.totalOpenTradesSize() > 0){
+            exitStrategy.execute(price);
+        }else if(brokerGateway.totalOpenOrdersSize() > 0) {
+            orderStrategy.closeUnfilledOrders(brokerGateway, price);
+        }else if(brokerGateway.totalOpenTradesSize() == 0 && brokerGateway.totalOpenOrdersSize() == 0){
             Trade newTrade = entryStrategy.generateTrade();
             setTradableForThreshold(price, newTrade);
             if(isTradable(newTrade))
                orderStrategy.placeTradeAsOrder(brokerGateway, price, newTrade, configuration);
-        } else if(brokerGateway.totalOpenOrdersSize() > 0) {
-            orderStrategy.closeUnfilledOrders(brokerGateway, price);
-        } else if(brokerGateway.totalOpenTradesSize() > 0){
-            exitStrategy.execute(price);
         }
     }
 

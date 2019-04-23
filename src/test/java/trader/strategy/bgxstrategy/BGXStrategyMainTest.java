@@ -87,12 +87,12 @@ public class BGXStrategyMainTest {
         useCaseMock = mock(UseCase.class);
         responseMock = mock(Response.class);
         configurationMock = mock(TradingStrategyConfiguration.class);
-        setFakeRequest();
-        setFakeResponse();
-        setFakeConfiguration();
-        setFalseInitialIndicators();
-        setFakeUseCaseFactory();
-        setFakeUseCase();
+//        setFakeRequest();
+//        setFakeResponse();
+//        setFakeConfiguration();
+//        setFalseInitialIndicators();
+//        setFakeUseCaseFactory();
+//        setFakeUseCase();
         bgxStrategyMain = new BGXStrategyMain(BROKER_NAME, BGX_STRATEGY_CONFIG_FILE_NAME, BROKER_CONFIG_FILE_NAME);
 
     }
