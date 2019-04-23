@@ -1,7 +1,7 @@
 package trader.strategy.bgxstrategy.service;
 
 import org.yaml.snakeyaml.Yaml;
-import trader.configuration.TradingStrategyConfiguration;
+import trader.strategy.TradingStrategyConfiguration;
 import trader.controller.CreateBGXConfigurationController;
 import trader.controller.TraderController;
 import trader.exception.BadRequestException;

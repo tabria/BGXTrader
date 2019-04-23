@@ -1,7 +1,7 @@
 package trader.strategy.bgxstrategy.service;
 
 import trader.broker.BrokerGateway;
-import trader.configuration.TradingStrategyConfiguration;
+import trader.strategy.TradingStrategyConfiguration;
 import trader.controller.CreateExitStrategyController;
 import trader.controller.TraderController;
 import trader.exception.NullArgumentException;

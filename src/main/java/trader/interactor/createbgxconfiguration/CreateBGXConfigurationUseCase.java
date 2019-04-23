@@ -1,13 +1,13 @@
 package trader.interactor.createbgxconfiguration;
 
-import trader.configuration.BGXConfigurationImpl;
+import trader.entity.configuration.BGXConfigurationImpl;
 import trader.interactor.ResponseImpl;
 import trader.interactor.createbgxconfiguration.enums.Constants;
 import trader.presenter.Presenter;
 import trader.requestor.Request;
 import trader.requestor.UseCase;
 import trader.responder.Response;
-import trader.configuration.TradingStrategyConfiguration;
+import trader.strategy.TradingStrategyConfiguration;
 
 import java.util.Map;
 

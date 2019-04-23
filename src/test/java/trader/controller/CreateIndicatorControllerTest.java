@@ -2,24 +2,12 @@ package trader.controller;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import trader.broker.BrokerGateway;
-import trader.broker.connector.BrokerConnector;
-import trader.configuration.TradingStrategyConfiguration;
 import trader.entity.indicator.Indicator;
-import trader.exception.NullArgumentException;
 import trader.requestor.*;
 import trader.responder.Response;
-import trader.strategy.observable.PriceObservable;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

@@ -3,7 +3,7 @@ package trader.exit.service;
 import org.junit.Before;
 import org.junit.Test;
 import trader.broker.BrokerGateway;
-import trader.configuration.TradingStrategyConfiguration;
+import trader.strategy.TradingStrategyConfiguration;
 import trader.entity.price.Price;
 import trader.entity.trade.BrokerTradeDetails;
 

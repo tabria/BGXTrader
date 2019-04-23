@@ -1,4 +1,4 @@
-package trader.configuration;
+package trader.strategy;
 
 import trader.entity.candlestick.candle.CandleGranularity;
 

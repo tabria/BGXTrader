@@ -1,6 +1,7 @@
-package trader.strategy;
+package trader;
 
 import trader.exception.NullArgumentException;
+import trader.strategy.Strategy;
 
 public class ThreadedStrategy implements Runnable {
 

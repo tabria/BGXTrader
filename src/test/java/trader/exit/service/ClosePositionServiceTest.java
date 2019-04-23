@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import trader.broker.BrokerGateway;
-import trader.configuration.TradingStrategyConfiguration;
+import trader.strategy.TradingStrategyConfiguration;
 import trader.entity.trade.BrokerTradeDetails;
 
 import java.math.BigDecimal;

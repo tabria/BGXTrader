@@ -1,7 +1,7 @@
 package trader.order.standard;
 
 import trader.broker.BrokerGateway;
-import trader.configuration.TradingStrategyConfiguration;
+import trader.strategy.TradingStrategyConfiguration;
 import trader.entity.order.Order;
 import trader.entity.order.enums.OrderType;
 import trader.entity.trade.Direction;

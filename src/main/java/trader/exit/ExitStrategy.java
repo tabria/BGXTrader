@@ -1,7 +1,7 @@
 package trader.exit;
 
 import trader.broker.BrokerGateway;
-import trader.configuration.TradingStrategyConfiguration;
+import trader.strategy.TradingStrategyConfiguration;
 import trader.entity.price.Price;
 import trader.presenter.Presenter;
 

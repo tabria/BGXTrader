@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import trader.CommonTestClassMembers;
-import trader.configuration.TradingStrategyConfiguration;
+import trader.strategy.TradingStrategyConfiguration;
 import trader.controller.TraderController;
 import trader.entity.indicator.Indicator;
 import trader.entity.trade.point.Point;
@@ -16,8 +16,6 @@ import trader.exception.NoSuchStrategyException;
 import trader.exception.NullArgumentException;
 import trader.responder.Response;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;

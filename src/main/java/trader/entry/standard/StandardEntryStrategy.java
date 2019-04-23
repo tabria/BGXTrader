@@ -1,6 +1,6 @@
 package trader.entry.standard;
 
-import trader.configuration.TradingStrategyConfiguration;
+import trader.strategy.TradingStrategyConfiguration;
 import trader.controller.TraderController;
 import trader.entity.indicator.Indicator;
 import trader.entity.trade.point.Point;

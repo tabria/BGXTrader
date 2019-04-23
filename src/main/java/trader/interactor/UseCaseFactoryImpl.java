@@ -1,9 +1,11 @@
-package trader.requestor;
+package trader.interactor;
 
 import trader.exception.EmptyArgumentException;
 import trader.exception.NoSuchUseCaseException;
 import trader.exception.NullArgumentException;
 import trader.presenter.Presenter;
+import trader.requestor.UseCase;
+import trader.requestor.UseCaseFactory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

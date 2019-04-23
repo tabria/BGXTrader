@@ -1,5 +1,6 @@
 package trader.controller;
 
+import trader.interactor.RequestBuilderCreator;
 import trader.presenter.Presenter;
 import trader.requestor.*;
 import trader.responder.Response;

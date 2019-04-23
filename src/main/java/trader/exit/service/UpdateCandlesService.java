@@ -1,7 +1,7 @@
 package trader.exit.service;
 
 import trader.broker.BrokerGateway;
-import trader.configuration.TradingStrategyConfiguration;
+import trader.strategy.TradingStrategyConfiguration;
 import trader.entity.candlestick.Candlestick;
 
 import java.util.ArrayList;

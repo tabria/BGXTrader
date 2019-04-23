@@ -1,4 +1,4 @@
-package trader.configuration;
+package trader.entity.configuration;
 
 import org.junit.Before;
 import org.junit.Test;

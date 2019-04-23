@@ -1,6 +1,6 @@
 package trader.entry.standard.service;
 
-import trader.configuration.TradingStrategyConfiguration;
+import trader.strategy.TradingStrategyConfiguration;
 import trader.entity.trade.point.Point;
 import trader.entity.trade.Direction;
 import trader.exception.NullArgumentException;

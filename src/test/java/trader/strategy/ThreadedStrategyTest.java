@@ -3,6 +3,7 @@ package trader.strategy;
 import org.junit.Before;
 import org.junit.Test;
 import trader.CommonTestClassMembers;
+import trader.ThreadedStrategy;
 import trader.exception.NullArgumentException;
 
 import static org.junit.Assert.assertEquals;

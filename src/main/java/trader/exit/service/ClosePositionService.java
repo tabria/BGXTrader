@@ -1,7 +1,7 @@
 package trader.exit.service;
 
 import trader.broker.BrokerGateway;
-import trader.configuration.TradingStrategyConfiguration;
+import trader.strategy.TradingStrategyConfiguration;
 import trader.entity.trade.BrokerTradeDetails;
 import java.math.BigDecimal;
 import java.util.HashMap;

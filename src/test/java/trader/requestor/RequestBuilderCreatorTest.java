@@ -4,6 +4,7 @@ import org.junit.Test;
 import trader.exception.EmptyArgumentException;
 import trader.exception.NoSuchRequestBuilderException;
 import trader.exception.NullArgumentException;
+import trader.interactor.RequestBuilderCreator;
 import trader.interactor.createbgxconfiguration.CreateBGXConfigurationRequestBuilder;
 
 import static org.junit.Assert.*;

@@ -1,7 +1,7 @@
 package trader.observer;
 
 import trader.broker.BrokerGateway;
-import trader.configuration.TradingStrategyConfiguration;
+import trader.strategy.TradingStrategyConfiguration;
 import trader.controller.enums.SettingsFieldNames;
 import trader.entity.candlestick.Candlestick;
 import trader.exception.NullArgumentException;

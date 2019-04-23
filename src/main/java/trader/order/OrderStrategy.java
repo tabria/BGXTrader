@@ -1,7 +1,7 @@
 package trader.order;
 
 import trader.broker.BrokerGateway;
-import trader.configuration.TradingStrategyConfiguration;
+import trader.strategy.TradingStrategyConfiguration;
 import trader.entity.trade.Trade;
 import trader.entity.price.Price;
 

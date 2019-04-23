@@ -1,4 +1,4 @@
-package trader.strategy.observable;
+package trader.observable;
 
 
 import trader.strategy.Observable;

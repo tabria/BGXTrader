@@ -1,9 +1,6 @@
 package trader.presenter;
 
-import com.oanda.v20.ExecuteException;
 import trader.responder.Response;
-
-import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 

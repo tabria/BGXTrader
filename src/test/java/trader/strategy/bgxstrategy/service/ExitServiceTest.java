@@ -3,7 +3,7 @@ package trader.strategy.bgxstrategy.service;
 import org.junit.Before;
 import org.junit.Test;
 import trader.broker.BrokerGateway;
-import trader.configuration.TradingStrategyConfiguration;
+import trader.strategy.TradingStrategyConfiguration;
 import trader.exception.NullArgumentException;
 import trader.exit.ExitStrategy;
 import trader.presenter.Presenter;

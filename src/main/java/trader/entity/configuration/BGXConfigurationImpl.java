@@ -1,7 +1,8 @@
-package trader.configuration;
+package trader.entity.configuration;
 
 import trader.entity.candlestick.candle.CandleGranularity;
 import trader.exception.*;
+import trader.strategy.TradingStrategyConfiguration;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

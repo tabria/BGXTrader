@@ -5,7 +5,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import trader.configuration.TradingStrategyConfiguration;
+import trader.strategy.TradingStrategyConfiguration;
 import trader.entity.candlestick.Candlestick;
 import trader.entity.candlestick.candle.CandleGranularity;
 import trader.entity.indicator.Indicator;

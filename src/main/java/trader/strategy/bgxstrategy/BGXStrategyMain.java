@@ -4,6 +4,7 @@ import trader.broker.BrokerGateway;
 import trader.connection.Connection;
 import trader.entity.indicator.Indicator;
 import trader.entry.EntryStrategy;
+import trader.interactor.UseCaseFactoryImpl;
 import trader.observer.Observer;
 import trader.observer.PositionObserver;
 import trader.observer.UpdateIndicatorObserver;
@@ -12,12 +13,12 @@ import trader.presenter.Presenter;
 import trader.requestor.*;
 import trader.strategy.Observable;
 import trader.order.OrderStrategy;
-import trader.configuration.TradingStrategyConfiguration;
+import trader.strategy.TradingStrategyConfiguration;
 import trader.strategy.bgxstrategy.service.*;
-import trader.strategy.observable.PriceObservable;
+import trader.observable.PriceObservable;
 import trader.strategy.Strategy;
 import trader.exit.ExitStrategy;
-import trader.strategy.observable.PricePull;
+import trader.observable.PricePull;
 import trader.validation.Validator;
 
 import java.util.List;
@@ -109,8 +110,6 @@ public final class BGXStrategyMain implements Strategy {
         }
     }
 
-
-    //////////////////////////////////////////////////// not tested/////////
     Observer setPositionObserver(BrokerGateway brokerGateway,
                                  EntryStrategy entryStrategy,
                                  OrderStrategy orderStrategy,
@@ -119,9 +118,6 @@ public final class BGXStrategyMain implements Strategy {
 
        return new PositionObserver(brokerGateway, entryStrategy, orderStrategy, configuration, exitStrategy);
     }
-
-
-///// not tested//////////////
 
 
 

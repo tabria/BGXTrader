@@ -2,17 +2,14 @@ package trader.order.standard;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.internal.matchers.Null;
 import trader.CommonTestClassMembers;
 import trader.broker.BrokerGateway;
 import trader.broker.connector.BrokerConnector;
-import trader.configuration.TradingStrategyConfiguration;
+import trader.strategy.TradingStrategyConfiguration;
 import trader.entity.order.Order;
 import trader.entity.order.enums.OrderType;
 import trader.entity.trade.Direction;
 import trader.entity.trade.Trade;
-import trader.exception.BadRequestException;
 import trader.exception.EmptyArgumentException;
 import trader.exception.NullArgumentException;
 import trader.entity.price.Price;

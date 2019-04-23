@@ -7,7 +7,7 @@ import org.junit.rules.ExpectedException;
 import trader.presenter.Presenter;
 import trader.requestor.Request;
 import trader.responder.Response;
-import trader.configuration.TradingStrategyConfiguration;
+import trader.strategy.TradingStrategyConfiguration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
