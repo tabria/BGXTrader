@@ -25,8 +25,8 @@ import java.util.Map;
 public final class StandardEntryStrategy implements EntryStrategy {
 
     private static final int INDICATORS_COUNT = 6;
-    private static final int START_OFFSET = 3;
-    private static final int END_OFFSET = 2;
+    private static final int START_OFFSET = 2;
+    private static final int END_OFFSET = 1;
 
 
     private TraderController<Trade> createTradeController;
@@ -151,6 +151,7 @@ public final class StandardEntryStrategy implements EntryStrategy {
         settings.put("entryPrice", entryPrice.toString());
         settings.put("stopLossPrice", stopLossPrice.toString());
         settings.put("tradable", String.valueOf(tradable));
+        settings.put("direction", String.valueOf(direction));
         return settings;
     }
 

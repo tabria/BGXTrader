@@ -58,7 +58,7 @@ public class StandardOrderStrategy implements OrderStrategy {
         if (availableMargin.compareTo(futureMargin)>0 && isNotZero(unitsSize)){
             HashMap<String, String> settings = gatherOrderSettings(trade, configuration, unitsSize);
             lastOrderTransactionID = brokerGateway.placeOrder(settings, MARKET_IF_TOUCHED_ORDER);
-            presenter.execute(configuration.getInstrument(), trade.toString(), unitsSize.toString());
+            presenter.execute( "ORDER",configuration.getInstrument(),trade.toString(), unitsSize.toString());
         }
     }
 
@@ -106,6 +106,7 @@ public class StandardOrderStrategy implements OrderStrategy {
         return "Order strategy: STANDARD";
     }
 
+    @Override
     public void setPresenter(Presenter presenter){
         if(presenter == null)
             throw new NullArgumentException();

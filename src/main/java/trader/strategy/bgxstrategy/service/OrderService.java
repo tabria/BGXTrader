@@ -32,6 +32,8 @@ public class OrderService {
         settings.put("orderStrategy", orderStrategyName);
         inputSettings.put("settings", settings);
         Response<OrderStrategy> orderResponse = controller.execute(inputSettings);
-        return orderResponse.getBody();
+        OrderStrategy strategy = orderResponse.getBody();
+        strategy.setPresenter(presenter);
+        return strategy;
     }
 }

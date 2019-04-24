@@ -211,7 +211,7 @@ public class StandardOrderStrategyTest {
         orderStrategy.placeTradeAsOrder(brokerGatewayMock, priceMock, tradeMock, configurationMock);
         String lastID = (String) commonMembers.extractFieldObject(orderStrategy, "lastOrderTransactionID");
 
-        verify(presenterMock, times(1)).execute(anyString(), anyString(), anyString());
+        verify(presenterMock, times(1)).execute(anyString(),anyString(), anyString(), anyString());
         assertNotEquals(lastOrderTransactionID, lastID);
         assertEquals(expectedID, lastID);
     }

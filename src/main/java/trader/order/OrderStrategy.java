@@ -1,6 +1,7 @@
 package trader.order;
 
 import trader.broker.BrokerGateway;
+import trader.presenter.Presenter;
 import trader.strategy.TradingStrategyConfiguration;
 import trader.entity.trade.Trade;
 import trader.entity.price.Price;
@@ -21,4 +22,5 @@ public interface OrderStrategy {
 
     void closeUnfilledOrders(BrokerGateway brokerGateway, Price price);
 
+    void setPresenter(Presenter presenter);
 }

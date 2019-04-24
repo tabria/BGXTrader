@@ -116,7 +116,7 @@ public class TradeImplTest {
         trade.setStopLossPrice(DEFAULT_PRICE.toString());
         trade.setEntryPrice(DEFAULT_PRICE.toString());
         trade.setTradable("false");
-        String expected = String.format("%s trade entry@%s, SL@%s, units:", "FLAT", DEFAULT_PRICE, DEFAULT_PRICE);
+        String expected = String.format("[TRADE] direction@%s, entry@%s, SL@%s, units@", "FLAT", DEFAULT_PRICE, DEFAULT_PRICE);
 
         assertEquals(expected, trade.toString());
     }

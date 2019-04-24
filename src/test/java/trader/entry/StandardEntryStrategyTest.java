@@ -30,11 +30,11 @@ import static org.mockito.Mockito.when;
 public class StandardEntryStrategyTest {
 
     private List<BigDecimal> rsiValues = createIndicatorValues(49, 50, 22);
-    private List<BigDecimal> priceSMAValues = createIndicatorValues(1.22889, 1.23339, 1.23339);
+    private List<BigDecimal> priceSMAValues = createIndicatorValues(1.22889, 1.22889, 1.23339);
     private List<BigDecimal> slowWMAValues = createIndicatorValues(1.22889, 1.22739, 1.22639);
-    private List<BigDecimal> fastWMAValues = createIndicatorValues(1.22889, 1.23339, 1.23339);
+    private List<BigDecimal> fastWMAValues = createIndicatorValues(1.22889, 1.22889, 1.23339);
     private List<BigDecimal> dailyValues = createIndicatorValues(1.5656, 1.5656, 1.5656);
-    private List<BigDecimal> middleWMAValues = createIndicatorValues(1.23119,1.23196, 1.23196);
+    private List<BigDecimal> middleWMAValues = createIndicatorValues(1.23119,1.23119, 1.23196);
 
 
     private static final BigDecimal DEFAULT_ENTRY_FILTER = BigDecimal.valueOf(0.0020)
@@ -154,8 +154,8 @@ public class StandardEntryStrategyTest {
     @Test
     public void WhenFastWMACrossMiddleWMAFromAboveThenGenerateShortTradeDifferentFromDefault() {
         List<BigDecimal> slowWMAValues = createIndicatorValues(1.23889, 1.23739, 1.23639);
-        List<BigDecimal> fastWMAValues = createIndicatorValues(1.23219, 1.23196, 1.23196);
-        List<BigDecimal> middleWMAValues = createIndicatorValues(1.22889, 1.23339, 1.23339);
+        List<BigDecimal> fastWMAValues = createIndicatorValues(1.23219, 1.23219, 1.23196);
+        List<BigDecimal> middleWMAValues = createIndicatorValues(1.22889, 1.22889, 1.23339);
         setFalseInitialIndicators(rsiValues, priceSMAValues, slowWMAValues, fastWMAValues, dailyValues, middleWMAValues);
 
         assertForTradableTrade();
@@ -183,8 +183,8 @@ public class StandardEntryStrategyTest {
 
     @Test
     public void WhenFastWMACrossMiddleWMAWithFirstFastWMAPointOnTopOfFirstMiddleWMAPointThenGenerateLongNonDefaultTrade() {
-        List<BigDecimal> fastWMAValues = createIndicatorValues(1.23119, 1.23339, 1.23339);
-        List<BigDecimal> middleWMAValues = createIndicatorValues(1.23119, 1.23196, 1.23196);
+        List<BigDecimal> fastWMAValues = createIndicatorValues(1.23119, 1.23119, 1.23339);
+        List<BigDecimal> middleWMAValues = createIndicatorValues(1.23119, 1.23119, 1.23196);
         List<BigDecimal> slowWMAValues = createIndicatorValues(1.23019, 1.23039, 1.23039);
         List<BigDecimal> rsiValues = createIndicatorValues(49, 50, 22);
         setFalseInitialIndicators(rsiValues, priceSMAValues, slowWMAValues, fastWMAValues, dailyValues, middleWMAValues);
@@ -204,8 +204,8 @@ public class StandardEntryStrategyTest {
     @Test
     public void WhenPriceSMACrossMiddleWMAFromAboveThenGenerateShortNonDefaultTrade() {
         List<BigDecimal> fastWMAValues = createIndicatorValues(1.23519, 1.23496, 1.23496);
-        List<BigDecimal> priceSMAValues = createIndicatorValues(1.23219, 1.23196, 1.23196);
-        List<BigDecimal> middleWMAValues = createIndicatorValues(1.22889, 1.23339, 1.23339);
+        List<BigDecimal> priceSMAValues = createIndicatorValues(1.23219, 1.23219, 1.23196);
+        List<BigDecimal> middleWMAValues = createIndicatorValues(1.22889, 1.22889, 1.23339);
         List<BigDecimal> slowWMAValues = createIndicatorValues(1.23889, 1.23739, 1.23639);
         setFalseInitialIndicators(rsiValues, priceSMAValues, slowWMAValues, fastWMAValues, dailyValues, middleWMAValues);
 
@@ -240,8 +240,8 @@ public class StandardEntryStrategyTest {
     @Test
     public void WhenPriceSMACrossMiddleWMAWithFirstPriceWMAPointOnTopOfFirstMiddleWMAPointThenGenerateCorrectLongSignal() {
         List<BigDecimal> fastWMAValues = createIndicatorValues(1.23419, 1.23439, 1.23439);
-        List<BigDecimal> priceSMAValues = createIndicatorValues(1.23119, 1.23339, 1.23339);
-        List<BigDecimal> middleWMAValues = createIndicatorValues(1.23119, 1.23196, 1.23196);
+        List<BigDecimal> priceSMAValues = createIndicatorValues(1.23119, 1.23119, 1.23339);
+        List<BigDecimal> middleWMAValues = createIndicatorValues(1.23119, 1.23119, 1.23196);
         List<BigDecimal> slowWMAValues = createIndicatorValues(1.23019, 1.23039, 1.23039);
         setFalseInitialIndicators(rsiValues, priceSMAValues, slowWMAValues, fastWMAValues, dailyValues, middleWMAValues);
 
@@ -251,9 +251,9 @@ public class StandardEntryStrategyTest {
     @Test
     public void WhenPriceSMACrossSlowWMAFromBelowThenGenerateLongNonDefaultTrade() {
         List<BigDecimal> fastWMAValues = createIndicatorValues(1.22989, 1.23019, 1.23019);
-        List<BigDecimal> priceSMAValues = createIndicatorValues(1.22889, 1.22993, 1.22999);
+        List<BigDecimal> priceSMAValues = createIndicatorValues(1.22889, 1.22889, 1.22999);
         List<BigDecimal> middleWMAValues = createIndicatorValues(1.23119, 1.23196, 1.23196);
-        List<BigDecimal> slowWMAValues = createIndicatorValues(1.22909, 1.22939, 1.22939);
+        List<BigDecimal> slowWMAValues = createIndicatorValues(1.22909, 1.22909, 1.22939);
         setFalseInitialIndicators(rsiValues, priceSMAValues, slowWMAValues, fastWMAValues, dailyValues, middleWMAValues);
 
         assertForTradableTrade();
@@ -262,9 +262,9 @@ public class StandardEntryStrategyTest {
     @Test
     public void WhenPriceSMACrossSlowWMAFromAboveThenGenerateShortNonDefaultTrade() {
         List<BigDecimal> fastWMAValues = createIndicatorValues(1.23639, 1.23496, 1.23496);
-        List<BigDecimal> priceSMAValues = createIndicatorValues(1.23991, 1.23716, 1.23716);
+        List<BigDecimal> priceSMAValues = createIndicatorValues(1.23991, 1.23991, 1.23716);
         List<BigDecimal> middleWMAValues = createIndicatorValues(1.23619, 1.23239, 1.23339);
-        List<BigDecimal> slowWMAValues = createIndicatorValues(1.23889, 1.23739, 1.23739);
+        List<BigDecimal> slowWMAValues = createIndicatorValues(1.23889, 1.23889, 1.23739);
         setFalseInitialIndicators(rsiValues, priceSMAValues, slowWMAValues, fastWMAValues, dailyValues, middleWMAValues);
 
         assertForTradableTrade();
@@ -299,9 +299,9 @@ public class StandardEntryStrategyTest {
     @Test
     public void WhenPriceSMACrossSlowWMAWithFirstPriceWMAPointOnTopOfFirstSlowWMAPointThenGenerateLongNonDefaultTrade() {
         List<BigDecimal> fastWMAValues = createIndicatorValues(1.23109, 1.23109, 1.23109);
-        List<BigDecimal> priceSMAValues = createIndicatorValues(1.23019, 1.23099, 1.23099);
+        List<BigDecimal> priceSMAValues = createIndicatorValues(1.23019, 1.23019, 1.23099);
         List<BigDecimal> middleWMAValues = createIndicatorValues(1.23119, 1.23196, 1.23196);
-        List<BigDecimal> slowWMAValues = createIndicatorValues(1.23019, 1.23039, 1.23039);
+        List<BigDecimal> slowWMAValues = createIndicatorValues(1.23019, 1.23019, 1.23039);
         List<BigDecimal> dailyValues = createIndicatorValues(1.5656, 1.5656, 1.5656);
         List<BigDecimal> rsiValues = createIndicatorValues(49, 50, 22);
         setFalseInitialIndicators(rsiValues, priceSMAValues, slowWMAValues, fastWMAValues, dailyValues, middleWMAValues);
