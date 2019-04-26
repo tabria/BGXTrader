@@ -6,6 +6,7 @@ import trader.entity.candlestick.candle.CandlePriceType;
 import trader.entity.candlestick.Candlestick;
 import trader.entity.indicator.BaseIndicator;
 import java.math.BigDecimal;
+import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -39,8 +40,10 @@ public final class RelativeStrengthIndex extends BaseIndicator {
         } else {
             Candlestick candlestick = candles.get(candles.size()-1);
             Candlestick prevCandle = getCurrentCandle(candlestickList, candlestickList.size() - 1);
-            insertRemainingRSIValues(candlestick, prevCandle);
-            candlestickList.add(candlestick);
+            if(isTimeToUpdate(candlestick, prevCandle)){
+                insertRemainingRSIValues(candlestick, prevCandle);
+                candlestickList.add(candlestick);
+            }
         }
     }
 
@@ -55,6 +58,11 @@ public final class RelativeStrengthIndex extends BaseIndicator {
                 ", granularity=" + granularity.toString() +
                 ", rsiValues=" + indicatorValues.toString() +
                 '}';
+    }
+
+    private boolean isTimeToUpdate(Candlestick candlestick, Candlestick prevCandle) {
+        ZonedDateTime nextUpdateTime = prevCandle.getDateTime().plusSeconds(granularity.toSeconds());
+        return candlestick.getDateTime().compareTo(nextUpdateTime) >0;
     }
 
     private void setRSIValues(List<Candlestick> candlestickList) {

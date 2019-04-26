@@ -57,8 +57,25 @@ public class RelativeStrengthIndexTest extends BaseIndicatorTest {
     }
 
     @Test
-    public void WhenCallUpdateIndicatorCandlesticksListIsUpdated(){
-        updateCandlestickList(rsi);
+    public void WhenCallUpdateIndicatorAndNewPriceTimeIsLessThanNextUpdateTime_ThenNoUpdate(){
+        this.rsi.updateIndicator(indicatorUpdateHelper.getFakeCandlestickListFullOfMock());
+
+        int oldSize = rsi.getValues().size();
+        this.rsi.updateIndicator(getListWithSingleNewCandle(NO_UPDATE_NEW_DATETIME_ENTRY));
+        int newSize = rsi.getValues().size();
+
+        assertEquals(oldSize, newSize);
+    }
+
+    @Test
+    public void WhenCallUpdateIndicatorAndNewPriceTimeIsAboveTheNextUpdateTime_ThenUpdate(){
+        this.rsi.updateIndicator(indicatorUpdateHelper.getFakeCandlestickListFullOfMock());
+
+        int oldSize = rsi.getValues().size();
+        this.rsi.updateIndicator(getListWithSingleNewCandle(UPDATE_NEW_DATETIME_ENTRY));
+        int newSize = rsi.getValues().size();
+
+        assertEquals(oldSize + 1, newSize);
     }
 
     @Test
@@ -69,11 +86,18 @@ public class RelativeStrengthIndexTest extends BaseIndicatorTest {
     }
 
     @Test
+    public void WhenCallUpdateIndicatorCandlesticksListIsUpdated(){
+        updateCandlestickList(rsi);
+    }
+
+
+
+    @Test
     public void WhenCallUpdateIndicatorAndValuesCountIsNotZero_SuccessfulUpdateWithSingleCandle() {
         this.rsi.updateIndicator(indicatorUpdateHelper.getFakeCandlestickListFullOfMock());
         int oldSize = this.rsi.getValues().size();
         BigDecimal oldLastValue = this.rsi.getValues().get(oldSize-1);
-        this.rsi.updateIndicator(indicatorUpdateHelper.getFakeCandlestickListFullOfMock());
+        this.rsi.updateIndicator(getListWithSingleNewCandle(UPDATE_NEW_DATETIME_ENTRY));
         int newSize = this.rsi.getValues().size();
         BigDecimal newNextToLastValue = this.rsi.getValues().get(newSize-2);
 
@@ -109,4 +133,6 @@ public class RelativeStrengthIndexTest extends BaseIndicatorTest {
         List<BigDecimal> rsiValues = this.rsi.getValues();
         return rsiValues.get(rsiValues.size() - 1);
     }
+
+
 }

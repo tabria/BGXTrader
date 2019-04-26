@@ -21,7 +21,8 @@ public abstract class BaseIndicatorTest {
     private static final int DIVIDER = 2;
     private static final int MINIMUM_CANDLES_COUNT = 3;
     private static final String NEW_PRICE_ENTRY = "1.16814";
-    private static final String NEW_DATETIME_ENTRY = "2018-08-01T09:53:00Z";
+    public static final String NO_UPDATE_NEW_DATETIME_ENTRY = "2018-08-01T09:53:00Z";
+    public static final String UPDATE_NEW_DATETIME_ENTRY = "2018-08-01T10:53:00Z";
 
 
     protected IndicatorUpdateHelper indicatorUpdateHelper;
@@ -50,10 +51,10 @@ public abstract class BaseIndicatorTest {
 
     protected abstract BigDecimal getLastCandlestickPrice();
 
-    public List<Candlestick> getListWithSingleNewCandle(){
+    public List<Candlestick> getListWithSingleNewCandle(String newTime){
         Candlestick newCandle =mock(Candlestick.class);
         ZonedDateTime candleDateTime = ZonedDateTime
-                .parse(NEW_DATETIME_ENTRY).withZoneSameInstant(ZoneId.of("UTC"));
+                .parse(newTime).withZoneSameInstant(ZoneId.of("UTC"));
         when(newCandle.getClosePrice()).thenReturn(new BigDecimal(NEW_PRICE_ENTRY));
         when(newCandle.getDateTime()).thenReturn(candleDateTime);
         List<Candlestick> candles = new ArrayList<>();
@@ -73,7 +74,7 @@ public abstract class BaseIndicatorTest {
         int initialSize = getIndicatorCandlestickListSize(indicator);
         indicator.updateIndicator(indicatorUpdateHelper.getFakeCandlestickListFullOfMock());
         int sizeAfterFirstUpdate = getIndicatorCandlestickListSize(indicator);
-        indicator.updateIndicator(getListWithSingleNewCandle());
+        indicator.updateIndicator(getListWithSingleNewCandle(UPDATE_NEW_DATETIME_ENTRY));
         int sizeAfterSingleCandleUpdate = getIndicatorCandlestickListSize(indicator);
 
         assertNotEquals(initialSize, sizeAfterFirstUpdate);

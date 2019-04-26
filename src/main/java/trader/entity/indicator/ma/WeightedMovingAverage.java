@@ -6,6 +6,7 @@ import trader.entity.candlestick.Candlestick;
 import trader.entity.indicator.BaseIndicator;
 
 import java.math.BigDecimal;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 public final class WeightedMovingAverage extends BaseIndicator {
@@ -21,8 +22,11 @@ public final class WeightedMovingAverage extends BaseIndicator {
             candlestickList.addAll(candles);
             setWMAValues(candles);
         } else {
-            candlestickList.add(candles.get(candles.size()-1));
-            indicatorValues.add(calculateWMAValue(candlestickList, candlestickList.size() - 1));
+            Candlestick lastIndicatorCandle = getLastCandlestick(candlestickList, candlestickList.size() - 1);
+            if(isTimeToUpdate(candles.get(candles.size()-1), lastIndicatorCandle)) {
+                candlestickList.add(candles.get(candles.size() - 1));
+                indicatorValues.add(calculateWMAValue(candlestickList, candlestickList.size() - 1));
+            }
         }
     }
 
@@ -42,6 +46,15 @@ public final class WeightedMovingAverage extends BaseIndicator {
                 .add(BigDecimal.ONE)
                 .divide(BigDecimal.valueOf(2), 5, BigDecimal.ROUND_HALF_UP)
                 .multiply(BigDecimal.valueOf(indicatorPeriod)).setScale(5, BigDecimal.ROUND_HALF_UP);
+    }
+
+    private boolean isTimeToUpdate(Candlestick candlestick, Candlestick prevCandle) {
+        ZonedDateTime nextUpdateTime = prevCandle.getDateTime().plusSeconds(granularity.toSeconds());
+        return candlestick.getDateTime().compareTo(nextUpdateTime) >0;
+    }
+
+    private Candlestick getLastCandlestick(List<Candlestick> candlestickList, int candleIndex) {
+        return candlestickList.get(candleIndex);
     }
 
     private void setWMAValues(List<Candlestick> candlestickList){

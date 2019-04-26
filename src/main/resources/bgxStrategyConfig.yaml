@@ -49,7 +49,7 @@ indicator6:
   granularity: "M30"
   type: "WEIGHTED"
 candlesQuantity:
-  initial: "500"
+  initial: "4999"
   update: "2"
 risk:
   riskPerTrade: "0.01"

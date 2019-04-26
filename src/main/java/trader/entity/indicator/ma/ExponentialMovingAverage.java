@@ -6,6 +6,7 @@ import trader.entity.candlestick.candle.CandlePriceType;
 import trader.entity.candlestick.Candlestick;
 import trader.entity.indicator.BaseIndicator;
 import java.math.BigDecimal;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 public final class ExponentialMovingAverage extends BaseIndicator {
@@ -29,9 +30,12 @@ public final class ExponentialMovingAverage extends BaseIndicator {
             candlestickList.addAll(candles);
             setEMAValues(candles);
         } else {
-            Candlestick candlestick = candles.get(candles.size()-1);
-            candlestickList.add(candlestick);
-            indicatorValues.add(currentPriceSmoothed(candlestick).add(previousEMASmoothed()));
+            Candlestick lastIndicatorCandle = getLastCandlestick(candlestickList, candlestickList.size() - 1);
+            if(isTimeToUpdate(candles.get(candles.size()-1), lastIndicatorCandle)) {
+                Candlestick candlestick = candles.get(candles.size() - 1);
+                candlestickList.add(candlestick);
+                indicatorValues.add(currentPriceSmoothed(candlestick).add(previousEMASmoothed()));
+            }
         }
     }
 
@@ -48,6 +52,15 @@ public final class ExponentialMovingAverage extends BaseIndicator {
     @Override
     protected void setDivisor(){
         divisor = BigDecimal.valueOf(indicatorPeriod);
+    }
+
+    private boolean isTimeToUpdate(Candlestick candlestick, Candlestick prevCandle) {
+        ZonedDateTime nextUpdateTime = prevCandle.getDateTime().plusSeconds(granularity.toSeconds());
+        return candlestick.getDateTime().compareTo(nextUpdateTime) >0;
+    }
+
+    private Candlestick getLastCandlestick(List<Candlestick> candlestickList, int candleIndex) {
+        return candlestickList.get(candleIndex);
     }
 
     private void setSmoothFactor(){

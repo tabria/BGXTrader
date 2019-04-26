@@ -54,9 +54,32 @@ public class SimpleMovingAverageTest extends BaseIndicatorTest {
     }
 
     @Test
+    public void WhenCallUpdateIndicatorAndNewPriceTimeIsLessThanNextUpdateTime_ThenNoUpdate(){
+        this.sma.updateIndicator(indicatorUpdateHelper.getFakeCandlestickListFullOfMock());
+
+        int oldSize = sma.getValues().size();
+        this.sma.updateIndicator(getListWithSingleNewCandle(NO_UPDATE_NEW_DATETIME_ENTRY));
+        int newSize = sma.getValues().size();
+
+        assertEquals(oldSize, newSize);
+    }
+
+    @Test
+    public void WhenCallUpdateIndicatorAndNewPriceTimeIsAboveTheNextUpdateTime_ThenUpdate(){
+        this.sma.updateIndicator(indicatorUpdateHelper.getFakeCandlestickListFullOfMock());
+
+        int oldSize = sma.getValues().size();
+        this.sma.updateIndicator(getListWithSingleNewCandle(UPDATE_NEW_DATETIME_ENTRY));
+        int newSize = sma.getValues().size();
+
+        assertEquals(oldSize + 1, newSize);
+    }
+
+    @Test
     public void WhenCallUpdateIndicatorCandlesticksListIsUpdated(){
         updateCandlestickList(sma);
     }
+
 
     @Test
     public void WhenCallUpdateIndicatorAndValuesCountIsZero_CorrectUpdate() {
@@ -71,7 +94,7 @@ public class SimpleMovingAverageTest extends BaseIndicatorTest {
         this.sma.updateIndicator(indicatorUpdateHelper.getFakeCandlestickListFullOfMock());
         int oldSize = this.sma.getValues().size();
         BigDecimal oldLastValue = this.sma.getValues().get(oldSize-1);
-        this.sma.updateIndicator(getListWithSingleNewCandle());
+        this.sma.updateIndicator(getListWithSingleNewCandle(UPDATE_NEW_DATETIME_ENTRY));
         int newSize = this.sma.getValues().size();
         BigDecimal newNextToLastValue = this.sma.getValues().get(newSize-2);
 

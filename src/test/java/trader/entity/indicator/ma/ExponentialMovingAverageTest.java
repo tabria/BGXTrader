@@ -91,7 +91,7 @@ public class ExponentialMovingAverageTest extends BaseIndicatorTest {
         this.ema.updateIndicator(indicatorUpdateHelper.getFakeCandlestickListFullOfMock());
         int oldSize = this.ema.getValues().size();
         BigDecimal oldLastValue = this.ema.getValues().get(oldSize-1);
-        this.ema.updateIndicator(indicatorUpdateHelper.getFakeCandlestickListFullOfMock());
+        this.ema.updateIndicator(getListWithSingleNewCandle(UPDATE_NEW_DATETIME_ENTRY));
         int newSize = this.ema.getValues().size();
         BigDecimal newNextToLastValue = this.ema.getValues().get(newSize-2);
 
@@ -112,9 +112,34 @@ public class ExponentialMovingAverageTest extends BaseIndicatorTest {
         ema.updateIndicator(new ArrayList<>());
     }
 
+
+    @Test
+    public void WhenCallUpdateIndicatorAndNewPriceTimeIsLessThanNextUpdateTime_ThenNoUpdate(){
+        this.ema.updateIndicator(indicatorUpdateHelper.getFakeCandlestickListFullOfMock());
+
+        int oldSize = ema.getValues().size();
+        this.ema.updateIndicator(getListWithSingleNewCandle(NO_UPDATE_NEW_DATETIME_ENTRY));
+        int newSize = ema.getValues().size();
+
+        assertEquals(oldSize, newSize);
+    }
+
+    @Test
+    public void WhenCallUpdateIndicatorAndNewPriceTimeIsAboveTheNextUpdateTime_ThenUpdate(){
+        this.ema.updateIndicator(indicatorUpdateHelper.getFakeCandlestickListFullOfMock());
+
+        int oldSize = ema.getValues().size();
+        this.ema.updateIndicator(getListWithSingleNewCandle(UPDATE_NEW_DATETIME_ENTRY));
+        int newSize = ema.getValues().size();
+
+        assertEquals(oldSize + 1, newSize);
+    }
+
     @Override
     protected BigDecimal getLastCandlestickPrice() {
         List<BigDecimal> maValues = this.ema.getValues();
         return maValues.get(maValues.size() - 1);
     }
+
+
 }

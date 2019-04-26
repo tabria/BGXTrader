@@ -5,6 +5,7 @@ import trader.entity.candlestick.candle.CandlePriceType;
 import trader.entity.candlestick.Candlestick;
 import trader.entity.indicator.BaseIndicator;
 import java.math.BigDecimal;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 
@@ -18,18 +19,22 @@ public final class SimpleMovingAverage extends BaseIndicator {
 
     @Override
     public void updateIndicator(List<Candlestick> candles) {
-        candlestickList.addAll(candles);
         if(indicatorValues.size() == 0){
+            candlestickList.addAll(candles);
             calculateSMAValue(candles);
         } else {
-            BigDecimal smaValue = BigDecimal.ZERO;
-            for (int i = candlestickList.size()-1; i >= candlestickList.size() - indicatorPeriod ; i--) {
-                smaValue = smaValue.add(obtainPrice(candlestickList.get(i)));
+            Candlestick lastIndicatorCandle = getLastCandlestick(candlestickList, candlestickList.size() - 1);
+            if(isTimeToUpdate(candles.get(candles.size()-1), lastIndicatorCandle)) {
+                candlestickList.addAll(candles);
+                BigDecimal smaValue = BigDecimal.ZERO;
+                for (int i = candlestickList.size() - 1; i >= candlestickList.size() - indicatorPeriod; i--) {
+                    smaValue = smaValue.add(obtainPrice(candlestickList.get(i)));
+                }
+                indicatorValues.add(smaValue.divide(divisor, 5, BigDecimal.ROUND_HALF_UP));
             }
-            indicatorValues.add(smaValue.divide(divisor, 5, BigDecimal.ROUND_HALF_UP));
         }
     }
-    
+
     @Override
     public String toString() {
         return "SimpleMovingAverage{" +
@@ -43,6 +48,15 @@ public final class SimpleMovingAverage extends BaseIndicator {
     @Override
     protected void setDivisor(){
         super.divisor = BigDecimal.valueOf(indicatorPeriod);
+    }
+
+    private boolean isTimeToUpdate(Candlestick candlestick, Candlestick prevCandle) {
+        ZonedDateTime nextUpdateTime = prevCandle.getDateTime().plusSeconds(granularity.toSeconds());
+        return candlestick.getDateTime().compareTo(nextUpdateTime) >0;
+    }
+
+    private Candlestick getLastCandlestick(List<Candlestick> candlestickList, int candleIndex) {
+        return candlestickList.get(candleIndex);
     }
 
     private void calculateSMAValue(List<Candlestick> candlestickList) {

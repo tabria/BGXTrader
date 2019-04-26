@@ -67,7 +67,7 @@ public class WeightedMovingAverageTest extends BaseIndicatorTest {
         this.wma.updateIndicator(indicatorUpdateHelper.getFakeCandlestickListFullOfMock());
         int oldSize = this.wma.getValues().size();
         BigDecimal oldLastValue = this.wma.getValues().get(oldSize-1);
-        this.wma.updateIndicator(indicatorUpdateHelper.getFakeCandlestickListFullOfMock());
+        this.wma.updateIndicator(getListWithSingleNewCandle(UPDATE_NEW_DATETIME_ENTRY));
         int newSize = this.wma.getValues().size();
         BigDecimal newNextToLastValue = this.wma.getValues().get(newSize-2);
 
@@ -93,5 +93,27 @@ public class WeightedMovingAverageTest extends BaseIndicatorTest {
     protected BigDecimal getLastCandlestickPrice() {
         List<BigDecimal> maValues = this.wma.getValues();
         return maValues.get(maValues.size() - 1);
+    }
+
+    @Test
+    public void WhenCallUpdateIndicatorAndNewPriceTimeIsLessThanNextUpdateTime_ThenNoUpdate(){
+        this.wma.updateIndicator(indicatorUpdateHelper.getFakeCandlestickListFullOfMock());
+
+        int oldSize = wma.getValues().size();
+        this.wma.updateIndicator(getListWithSingleNewCandle(NO_UPDATE_NEW_DATETIME_ENTRY));
+        int newSize = wma.getValues().size();
+
+        assertEquals(oldSize, newSize);
+    }
+
+    @Test
+    public void WhenCallUpdateIndicatorAndNewPriceTimeIsAboveTheNextUpdateTime_ThenUpdate(){
+        this.wma.updateIndicator(indicatorUpdateHelper.getFakeCandlestickListFullOfMock());
+
+        int oldSize = wma.getValues().size();
+        this.wma.updateIndicator(getListWithSingleNewCandle(UPDATE_NEW_DATETIME_ENTRY));
+        int newSize = wma.getValues().size();
+
+        assertEquals(oldSize + 1, newSize);
     }
 }
