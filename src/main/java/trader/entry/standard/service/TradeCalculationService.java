@@ -11,7 +11,6 @@ public class TradeCalculationService {
 
     private TradingStrategyConfiguration configuration;
 
-
     public TradeCalculationService() {
     }
 

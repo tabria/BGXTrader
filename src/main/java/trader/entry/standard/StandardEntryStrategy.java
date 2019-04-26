@@ -28,7 +28,6 @@ public final class StandardEntryStrategy implements EntryStrategy {
     private static final int START_OFFSET = 2;
     private static final int END_OFFSET = 1;
 
-
     private TraderController<Trade> createTradeController;
     private TradeCalculationService tradeCalculationService;
     private TradingStrategyConfiguration configuration;

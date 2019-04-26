@@ -23,7 +23,7 @@ public final class SimpleMovingAverage extends BaseIndicator {
             calculateSMAValue(candles);
         } else {
             BigDecimal smaValue = BigDecimal.ZERO;
-            for (int i = candlestickList.size()-1; i >indicatorPeriod ; i--) {
+            for (int i = candlestickList.size()-1; i >= candlestickList.size() - indicatorPeriod ; i--) {
                 smaValue = smaValue.add(obtainPrice(candlestickList.get(i)));
             }
             indicatorValues.add(smaValue.divide(divisor, 5, BigDecimal.ROUND_HALF_UP));
