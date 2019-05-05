@@ -119,6 +119,18 @@ public class OandaGateway extends BaseGateway {
     }
 
     @Override
+    public String cancelOrder(String orderID) {
+        validateStringInput(orderID);
+        HashMap<String, String> settings = setAccount();
+        settings.put(ORDER_ID, orderID);
+        Request<?> orderCancelRequest = oandaRequestBuilder.build("orderSpecifier", settings);
+        Response<OrderCancelResponse> cancelOrderResponse = oandaResponseBuilder.buildResponse("orderSpecifier",orderCancelRequest);
+        OrderCancelResponse responseDataStructure = cancelOrderResponse.getBody();
+        return responseDataStructure.getLastTransactionID().toString();
+    }
+
+
+    @Override
     public trader.entity.order.Order getOrder(trader.entity.order.enums.OrderType type){
         for (Order order : getOrders()){
             if (order.getType().toString().equals(type.toString()))
@@ -164,18 +176,6 @@ public class OandaGateway extends BaseGateway {
         }
         return BigDecimal.ZERO;
     }
-
-    @Override
-    public String cancelOrder(String orderID) {
-        validateStringInput(orderID);
-        HashMap<String, String> settings = setAccount();
-        settings.put(ORDER_ID, orderID);
-        Request<?> orderCancelRequest = oandaRequestBuilder.build(CANCEL_ORDER, settings);
-        Response<OrderCancelResponse> cancelOrderResponse = oandaResponseBuilder.buildResponse("orderSpecifier",orderCancelRequest);
-        OrderCancelResponse responseDataStructure = cancelOrderResponse.getBody();
-        return responseDataStructure.getLastTransactionID().toString();
-    }
-
 
     @Override
     public String toString() {

@@ -15,7 +15,11 @@ public class Connection {
             if (verifyHostIpExistence(url, DEFAULT_SLEEP_TIME_MILLIS, presenter))
                 break;
         }
-        presenter.execute("CONNECTED");
+        if(!message.equalsIgnoreCase("CONNECTED")){
+            message = "CONNECTED";
+            presenter.execute("CONNECTED");
+        }
+
         return true;
     }
 

@@ -29,7 +29,7 @@ import static org.mockito.Mockito.when;
 
 public class StandardEntryStrategyTest {
 
-    private List<BigDecimal> rsiValues = createIndicatorValues(49, 50, 22);
+    private List<BigDecimal> rsiValues = createIndicatorValues(49, 50, 50);
     private List<BigDecimal> priceSMAValues = createIndicatorValues(1.22889, 1.22889, 1.23339);
     private List<BigDecimal> slowWMAValues = createIndicatorValues(1.22889, 1.22739, 1.22639);
     private List<BigDecimal> fastWMAValues = createIndicatorValues(1.22889, 1.22889, 1.23339);
@@ -186,7 +186,7 @@ public class StandardEntryStrategyTest {
         List<BigDecimal> fastWMAValues = createIndicatorValues(1.23119, 1.23119, 1.23339);
         List<BigDecimal> middleWMAValues = createIndicatorValues(1.23119, 1.23119, 1.23196);
         List<BigDecimal> slowWMAValues = createIndicatorValues(1.23019, 1.23039, 1.23039);
-        List<BigDecimal> rsiValues = createIndicatorValues(49, 50, 22);
+        List<BigDecimal> rsiValues = createIndicatorValues(49, 50, 50);
         setFalseInitialIndicators(rsiValues, priceSMAValues, slowWMAValues, fastWMAValues, dailyValues, middleWMAValues);
 
         assertForTradableTrade();
@@ -303,7 +303,7 @@ public class StandardEntryStrategyTest {
         List<BigDecimal> middleWMAValues = createIndicatorValues(1.23119, 1.23196, 1.23196);
         List<BigDecimal> slowWMAValues = createIndicatorValues(1.23019, 1.23019, 1.23039);
         List<BigDecimal> dailyValues = createIndicatorValues(1.5656, 1.5656, 1.5656);
-        List<BigDecimal> rsiValues = createIndicatorValues(49, 50, 22);
+        List<BigDecimal> rsiValues = createIndicatorValues(49, 50, 50);
         setFalseInitialIndicators(rsiValues, priceSMAValues, slowWMAValues, fastWMAValues, dailyValues, middleWMAValues);
 
         assertForTradableTrade();

@@ -3,6 +3,7 @@ package trader.broker.connector.oanda;
 import com.oanda.v20.Context;
 import com.oanda.v20.ExecuteException;
 import com.oanda.v20.RequestException;
+import com.oanda.v20.account.Account;
 import com.oanda.v20.account.AccountID;
 import com.oanda.v20.instrument.InstrumentCandlesRequest;
 import com.oanda.v20.instrument.InstrumentCandlesResponse;
@@ -51,7 +52,23 @@ public class OandaResponseBuilder {
             return setResponse((E) createCancelOrderResponse(request));
         if(type.trim().equalsIgnoreCase("setStopLossPrice"))
             return setResponse((E) createSetStopLossPriceResponse(request));
+        if(type.trim().equalsIgnoreCase("orderSpecifier"))
+            return setResponse((E) createCloseOrderResponse(request));
         throw new NoSuchDataStructureException();
+    }
+
+    private <T> OrderCancelResponse createCloseOrderResponse(Request<T> request) {
+        List<Object> body = (List<Object>) request.getBody();
+        AccountID accountID = (AccountID) body.get(0);
+        OrderSpecifier orderSpecifier = (OrderSpecifier) body.get(1);
+        try {
+            return this.context.order.cancel(accountID, orderSpecifier);
+        } catch (ExecuteException | RequestException e) {
+            Connection.waitToConnect(url, presenter);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
     }
 
     private <T> Object createAccountResponse(Request<T> request) {

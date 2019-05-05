@@ -162,7 +162,7 @@ public final class StandardEntryStrategy implements EntryStrategy {
     private boolean isRSITradable(LineSegment lineSegment) {
         direction = this.getIntersectionDirection(lineSegment);
         List<BigDecimal> rsiValues = this.rsi.getValues();
-        BigDecimal checkValue = rsiValues.get(rsiValues.size() - 2);
+        BigDecimal checkValue = rsiValues.get(rsiValues.size() - 1);
         if (direction.equals(Direction.UP)){
             return checkValue.compareTo(configuration.getRsiFilter()) >= 0;
         }

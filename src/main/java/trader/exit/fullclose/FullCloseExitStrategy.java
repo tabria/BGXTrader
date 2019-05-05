@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 
 public final class FullCloseExitStrategy extends BaseExitStrategy {
     //original 25
-    private static final BigDecimal TARGET_DISTANCE = BigDecimal.valueOf(0.0054);
+    private static final BigDecimal TARGET_DISTANCE = BigDecimal.valueOf(0.0056);
     private static final int FIRST_TRADE = 0;
     private static final BigDecimal PARTS_TO_CLOSE = BigDecimal.valueOf(1);
 
