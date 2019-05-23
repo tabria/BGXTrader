@@ -6,13 +6,24 @@ import java.util.Date;
 
 public class ConsolePresenter implements Presenter {
 
+    private String lastMessage;
 
     public ConsolePresenter() {
+        lastMessage = "";
     }
 
     @Override
     public void execute(Response response){
-        System.out.println(String.format("%s %s", getHeader(), response.getBody().toString()));
+        printLastMessage(response.getBody().toString());
+//        printLastMessage(String.format("%s %s", getHeader(), response.getBody().toString()));
+
+    }
+
+    private void printLastMessage(String response) {
+        if(!response.equalsIgnoreCase(lastMessage)){
+            lastMessage = response;
+            System.out.println(String.format("%s %s", getHeader(), lastMessage));
+        }
     }
 
     @Override
@@ -26,8 +37,8 @@ public class ConsolePresenter implements Presenter {
         } else{
             output.append(args[0]);
         }
+        printLastMessage(output.toString());
 
-        System.out.println(String.format("%s %s", getHeader(), output.toString()));
     }
 
     private void setParts(StringBuilder output, String arg) {

@@ -50,7 +50,7 @@ public final class WeightedMovingAverage extends BaseIndicator {
 
     private boolean isTimeToUpdate(Candlestick candlestick, Candlestick prevCandle) {
         ZonedDateTime nextUpdateTime = prevCandle.getDateTime().plusSeconds(granularity.toSeconds());
-        return candlestick.getDateTime().compareTo(nextUpdateTime) >0;
+        return candlestick.getDateTime().compareTo(nextUpdateTime) >=0;
     }
 
     private Candlestick getLastCandlestick(List<Candlestick> candlestickList, int candleIndex) {

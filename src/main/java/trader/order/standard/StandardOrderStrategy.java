@@ -19,7 +19,7 @@ public class StandardOrderStrategy implements OrderStrategy {
 
     private static final BigDecimal ONE_PIP = BigDecimal.valueOf(0.0001);
     private static final BigDecimal PIP_MULTIPLIER = BigDecimal.valueOf(10_000);
-    private static final BigDecimal STOP_LOSS_OFFSET = BigDecimal.valueOf(0.0005);
+    private static final BigDecimal STOP_LOSS_OFFSET = BigDecimal.valueOf(0.0000);
     private static final String TRADE_STOP_LOSS_PRICE = "tradeStopLossPrice";
     private static final String TRADE_ENTRY_PRICE = "tradeEntryPrice";
     private static final String INSTRUMENT = "instrument";

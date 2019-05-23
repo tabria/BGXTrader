@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 
 public class PositionObserver extends BaseObserver {
 
-    private static final BigDecimal TRADABLE_THRESHOLD = BigDecimal.valueOf(0.0020);
+    private static final BigDecimal TRADABLE_THRESHOLD = BigDecimal.valueOf(0.0022);
     private TradingStrategyConfiguration configuration;
     private EntryStrategy entryStrategy;
     private OrderStrategy orderStrategy;
